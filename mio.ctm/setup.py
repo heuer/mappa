@@ -63,14 +63,14 @@ setup(
       packages = find_packages(),
       namespace_packages = ['mio'],
       entry_points = """
-      [tm.reader]
+      [mio.reader]
       ctm = mio.ctm
       """,
       platforms = 'any',
       zip_safe = False,
       include_package_data = True,
       package_data = {'': ['*.txt']},
-      install_requires=['tm>=0.1.5', 'ply>=3.3'],
+      install_requires=['tm>=0.1.7', 'ply>=3.3'],
       keywords = ['Topic Maps', 'Semantic Web', 'XTM'],
       classifiers = [
                     'Intended Audience :: Developers',

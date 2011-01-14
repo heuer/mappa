@@ -65,7 +65,7 @@ setup(
       url = 'http://mappa.semagia.com/',
       license = 'BSD',
       packages = find_packages(),
-      entry_points = {'tm.reader':''},
+      entry_points = {'mio.reader':''},
       platforms = 'any',
       zip_safe = False,
       include_package_data = True,

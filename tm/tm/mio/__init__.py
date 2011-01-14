@@ -86,7 +86,7 @@ def register_deserializer(module, syn, warn=True):
             warnings.warn('The deserializer "%r" was replaced by "%r"' % (_DESERIALIZERS.get(syn), module))
     _DESERIALIZERS[syn] = module
 
-_ENTRY_POINT = 'tm.reader'
+_ENTRY_POINT = 'mio.reader'
 
 # Register all deserializers
 import pkg_resources
