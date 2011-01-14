@@ -43,7 +43,7 @@ This module provides some PyTM constants.
 __all__ = ['UCS', 'ANY']
 
 # major, minor, micro, releaselevel
-__version_info__ = (0, 1, 6, '')
+__version_info__ = (0, 1, 7, '')
 
 __version__ = '%s%s' % ('.'.join(map(str, __version_info__[:3])), __version_info__[3] and '.%s' % __version_info__[3] or '')
 
