@@ -6,6 +6,7 @@ Changes
 ------------------
 * Added MIOParseException
 * literalutils to normalize literals like xsd:decimal, xsd:integer
+* Removed deprecated ``tm.mio.plyutils`` module.
 
 
 0.1.6 - 2010-10-28
