@@ -135,14 +135,6 @@ class XTM21Handler(mio_handler.HamsterMapHandler):
         super(XTM21Handler, self).startTopic(identity)
         self._start_topic(identity, _STATE_IDENTITY)
 
-    def handleTopicMapReifier(self, reifier):
-        if self._state != _STATE_INITIAL:
-            msg = 'Ignoring topic map reifier "%s" since it is not allowed to write according to the schema' % reifier
-            logging.info(msg)
-            self._out.comment(msg)
-        else:
-            self._write_reifier(reifier)
-
     #
     # Hamster handler methods
     #
