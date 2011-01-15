@@ -39,7 +39,7 @@ Tests against the XTM 2.1 MIOHandler
 :version:      $Rev: 168 $ - $Date: 2009-06-26 14:22:56 +0200 (Fr, 26 Jun 2009) $
 :license:      BSD license
 """
-from unittest import TestCase
+import unittest
 from StringIO import StringIO
 import codecs
 import os
@@ -47,13 +47,12 @@ import mappa
 from mappa.miohandler import MappaMapHandler
 from mappa.writer.cxtm import CXTMTopicMapWriter
 from tm.mio import Source
-from mio.xtm import create_deserializer
-from mio.xtm.miohandler import XTM21Handler
+from mio.xtm import create_deserializer, XTM21Handler
 
-class TestXTM21Handler(TestCase):
+class TestXTM21Handler(unittest.TestCase):
 
     def __init__(self, file):
-        TestCase.__init__(self, 'test_cxtm')
+        unittest.TestCase.__init__(self, 'test_cxtm')
         self.file = file
         self.expected = os.path.abspath(os.path.dirname(file) + '/../baseline/%s.cxtm' % os.path.split(file)[1])
 
@@ -93,8 +92,8 @@ class TestXTM21Handler(TestCase):
         if not expected == res:
             self.fail('failed: %s.\nExpected: %s\nGot: %s\nGenerated XTM 2.1: %s' % (self.file, expected, res, out.getvalue()))
 
-if __name__ == '__main__':
-    import unittest, glob
+def create_suite():
+    import glob
     suite = unittest.TestSuite()
     dir = os.path.abspath('./cxtm/xtm2/in/')
     for filename in glob.glob(dir + '/*.xtm'):
@@ -103,5 +102,8 @@ if __name__ == '__main__':
     dir = os.path.abspath('./cxtm/xtm21/in/')
     for filename in glob.glob(dir + '/*.xtm'):
         testcase = TestXTM21Handler(filename)
-        suite.addTest(testcase)    
-    unittest.main(defaultTest='suite')
+        suite.addTest(testcase)
+    return suite
+
+if __name__ == '__main__':
+    unittest.main(defaultTest='create_suite')
