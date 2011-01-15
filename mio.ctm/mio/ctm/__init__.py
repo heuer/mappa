@@ -49,8 +49,9 @@ from tm import plyutils
 # pylint: disable-msg=E0611
 from environment import Environment 
 from contenthandler import MainContentHandler
+from miohandler import CTMHandler
 
-__all__ = ['create_deserializer']
+__all__ = ['create_deserializer', 'CTMHandler']
 
 def create_deserializer(**kw): # pylint: disable-msg=W0613
     """\
