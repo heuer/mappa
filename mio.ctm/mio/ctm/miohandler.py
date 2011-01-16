@@ -89,7 +89,13 @@ class CTMHandler(mio_handler.HamsterMapHandler):
 
     def add_prefix(self, prefix, iri):
         """\
-        
+        Assigns the ``prefix`` to the IRI. If the handler has already serialized
+        the prefixes, it's not possible to override an existing prefix.
+
+        `prefix`
+            The prefix (a valid CTM identifier)
+        `iri`
+            The IRI (a valid CTM IRI)
         """
         if not prefix or not iri:
             raise ValueError('Neither the prefix nor the IRI must be None, got: "%s" "%s"' % (prefix, iri))
@@ -97,12 +103,19 @@ class CTMHandler(mio_handler.HamsterMapHandler):
             raise ValueError('The prefix "%s" is not a valid CTM identifier' % prefix)
         if not is_valid_iri(iri):
             raise ValueError('The IRI "%s" is not a valid CTM IRI' % iri)
+        existing = self._prefixes.get(prefix)
+        if self._header_written and existing and existing != iri:
+            raise MIOException('The prefix "%s" is already bound to <%s>' % (prefix, existing))
         self._prefixes[prefix] = iri
 
 
     def remove_prefix(self, prefix):
         """\
+        Removes the registered `prefix`. It's not possible to remove a
+        prefix if the handler has already serialized a prefix/IRI binding.
 
+        `prefix`
+            The prefix to remove.
         """
         if self._header_written:
             raise MIOException('The prefix "%s" has been serialized already' % prefix)
