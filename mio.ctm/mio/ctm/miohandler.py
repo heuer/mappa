@@ -40,6 +40,7 @@ translates events into Compact Topic Maps (CTM) syntax.
 :version:      $Rev:$ - $Date:$
 :license:      BSD license
 """
+import codecs
 import logging
 from tm import XSD
 from tm.mio import SUBJECT_IDENTIFIER, SUBJECT_LOCATOR, ITEM_IDENTIFIER, MIOException
@@ -65,7 +66,7 @@ class CTMHandler(mio_handler.HamsterMapHandler):
         `fileobj`
             A file-like object which has a ``write`` method.
         """
-        self._out = fileobj
+        self._out = codecs.getwriter(encoding)(fileobj)
         self._prefixes = {}
         self._indent = ' ' * 4
         self._something_written = False
