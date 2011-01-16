@@ -152,14 +152,45 @@ class TestPrefixes(unittest.TestCase):
             pass
 
     def test_illegal_removal(self):
-        pass
+        out = StringIO()
+        handler = self.make_handler(out)
+        prefix, iri = 'base', 'http://www.semagia.com/base'
+        handler.add_prefix(prefix, iri)
+        handler.startTopicMap()
+        try:
+            handler.remove_prefix(prefix)
+            self.fail('A prefix must not be removable once it is serialized')
+        except MIOException:
+            pass
+
+class TestAdditionalInfo(unittest.TestCase):
+
+    def test_author(self):
+        out = StringIO()
+        handler = CTMHandler(out)
+        self.assert_(handler.author is None)
+        handler.author = 'Lars'
+        self.assert_(handler.author == 'Lars')
+        handler.startTopicMap()
+        handler.endTopicMap()
+        self.assert_("Author:   Lars" in out.getvalue())
+
+    def test_title(self):
+        out = StringIO()
+        handler = CTMHandler(out)
+        self.assert_(handler.title is None)
+        handler.title = 'Test'
+        self.assert_(handler.title == 'Test')
+        handler.startTopicMap()
+        handler.endTopicMap()
+        self.assert_("Title:    Test" in out.getvalue())
 
 
 def suite():
     def make_test(testcls):
         return unittest.TestLoader().loadTestsFromTestCase(testcls)
     import glob
-    suite = unittest.TestSuite([make_test(TestPrefixes)])
+    suite = unittest.TestSuite([make_test(TestPrefixes), make_test(TestAdditionalInfo)])
     excluded = ['occurrence-string-multiline2.ctm', 'tm-reifier2.ctm']
     dir = os.path.abspath('./cxtm/ctm/in/')
     for filename in glob.glob(dir + '/*.ctm'):

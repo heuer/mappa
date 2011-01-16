@@ -104,7 +104,7 @@ class CTMHandler(mio_handler.HamsterMapHandler):
         """\
 
         """
-        if self._something_written:
+        if self._header_written:
             raise MIOException('The prefix "%s" has been serialized already' % prefix)
         self._prefixes.pop(prefix, None)
 
