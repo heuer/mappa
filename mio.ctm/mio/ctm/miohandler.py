@@ -106,8 +106,10 @@ class CTMHandler(mio_handler.HamsterMapHandler):
         existing = self._prefixes.get(prefix)
         if self._header_written and existing and existing != iri:
             raise MIOException('The prefix "%s" is already bound to <%s>' % (prefix, existing))
-        self._prefixes[prefix] = iri
-
+        if not existing == iri:
+            self._prefixes[prefix] = iri
+            if self._header_written:
+                self._write_prefix(prefix, iri)
 
     def remove_prefix(self, prefix):
         """\
@@ -120,7 +122,6 @@ class CTMHandler(mio_handler.HamsterMapHandler):
         if self._header_written:
             raise MIOException('The prefix "%s" has been serialized already' % prefix)
         self._prefixes.pop(prefix, None)
-
 
     #
     # MIO handler methods
@@ -290,6 +291,7 @@ class CTMHandler(mio_handler.HamsterMapHandler):
             self._write_prefix(prefix, self._prefixes[prefix])
 
     def _write_prefix(self, prefix, iri):
+        self._finish_pending_topic()
         self._out.write('%%prefix %s <%s>%s' % (prefix, iri, _NL))
 
     def _write_reifier(self, reifier):

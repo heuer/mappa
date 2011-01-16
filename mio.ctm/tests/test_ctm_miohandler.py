@@ -117,6 +117,12 @@ class TestPrefixes(unittest.TestCase):
         self.assertEquals(iri, handler.prefixes[prefix])
         handler.remove_prefix(prefix)
         self.assert_(prefix not in handler.prefixes)
+        handler.add_prefix(prefix, iri)
+        self.assert_(iri == handler.prefixes[prefix])
+        handler.add_prefix(prefix, iri)
+        self.assert_(iri == handler.prefixes[prefix])
+        handler.add_prefix(prefix, new_iri)
+        self.assert_(new_iri == handler.prefixes[prefix])
 
     def test_registering_illegal(self):
         handler = self.make_handler()
@@ -162,6 +168,33 @@ class TestPrefixes(unittest.TestCase):
             self.fail('A prefix must not be removable once it is serialized')
         except MIOException:
             pass
+
+    def test_illegal_add(self):
+        out = StringIO()
+        handler = self.make_handler(out)
+        prefix, iri = 'base', 'http://www.semagia.com/base'
+        handler.add_prefix(prefix, iri)
+        handler.startTopicMap()
+        # Legal: Reusing the prefix with the same IRI is allowed
+        handler.add_prefix(prefix, iri)
+        new_iri = iri + '/something-different'
+        try:
+            handler.add_prefix(prefix, new_iri)
+            self.fail('A prefix must not be modifiable once it is serialized')
+        except MIOException:
+            pass
+
+    def test_legal_add_within_stream(self):
+        out = StringIO()
+        handler = self.make_handler(out)
+        prefix, iri = 'base', 'http://www.semagia.com/base'
+        handler.add_prefix(prefix, iri)
+        handler.startTopicMap()
+        prefix2, iri2 = 'p2', 'http://www.semagia.com/something-different'
+        handler.add_prefix(prefix2, iri2)
+        handler.endTopicMap()
+        self.assert_('%%prefix %s <%s>' % (prefix, iri) in out.getvalue())
+        self.assert_('%%prefix %s <%s>' % (prefix2, iri2) in out.getvalue())
 
 class TestAdditionalInfo(unittest.TestCase):
 
