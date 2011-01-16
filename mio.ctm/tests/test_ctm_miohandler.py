@@ -46,7 +46,7 @@ import os
 import mappa
 from mappa.miohandler import MappaMapHandler
 from mappa.writer.cxtm import CXTMTopicMapWriter
-from tm.mio import Source
+from tm.mio import Source, MIOException
 from mio.ctm import create_deserializer, CTMHandler
 
 class TestCTMHandler(unittest.TestCase):
@@ -72,14 +72,17 @@ class TestCTMHandler(unittest.TestCase):
         out = StringIO()
         deser = create_deserializer()
         deser.handler = self._make_ctmhandler(out)
-        deser.parse(src)
+        try:
+            deser.parse(src)
+        except MIOException, ex:
+            self.fail('failed: %s.\nError: %s' % (self.file, ex))            
         # 2. Read the generated CTM
         deser = create_deserializer()
         deser.handler = self._make_handler()
         new_src = Source(data=out.getvalue(), iri=src.iri)
         try:
             deser.parse(new_src)
-        except Exception, ex:
+        except MIOException, ex:
             self.fail('failed: %s.\nError: %s\nGenerated CTM: %s' % (self.file, ex, out.getvalue()))
         # 3. Generate the CXTM
         f = codecs.open(self.expected, encoding='utf-8')
@@ -92,15 +95,79 @@ class TestCTMHandler(unittest.TestCase):
         if not expected == res:
             self.fail('failed: %s.\nExpected: %s\nGot: %s\nGenerated CTM: %s' % (self.file, expected, res, out.getvalue()))
 
-def create_suite():
+class TestPrefixes(unittest.TestCase):
+
+    def make_handler(self, out=None):
+        if out == None:
+            out = StringIO()
+        return CTMHandler(out)
+
+    def test_registering(self):
+        handler = self.make_handler()
+        self.assertTrue(len(handler.prefixes) == 0)
+        prefix, iri = 'base', 'http://www.semagia.com/base'
+        handler.add_prefix(prefix, iri)
+        prefixes = handler.prefixes
+        self.assertTrue(len(prefixes) == 1)
+        self.assertEquals(iri, prefixes[prefix])
+        new_iri = iri + '/something-different'
+        prefixes[prefix] = new_iri
+        self.assertEquals(new_iri, prefixes[prefix])
+        # The IRI must not have changed at the handler
+        self.assertEquals(iri, handler.prefixes[prefix])
+        handler.remove_prefix(prefix)
+        self.assert_(prefix not in handler.prefixes)
+
+    def test_registering_illegal(self):
+        handler = self.make_handler()
+        try:
+            handler.add_prefix('.aaa', 'http://www.semagia.com/')
+            self.fail('Expected an exception, illegal CTM identifier as prefix')
+        except ValueError:
+            pass
+        try:
+            handler.add_prefix('', 'http://www.semagia.com/')
+            self.fail('Expected an exception, illegal CTM identifier as prefix')
+        except ValueError:
+            pass
+        try:
+            handler.add_prefix(None, 'http://www.semagia.com/')
+            self.fail('Expected an exception, illegal CTM identifier as prefix')
+        except ValueError:
+            pass
+        try:
+            handler.add_prefix('a', '')
+            self.fail('Expected an exception, illegal CTM IRI')
+        except ValueError:
+            pass
+        try:
+            handler.add_prefix('a', None)
+            self.fail('Expected an exception, illegal CTM IRI')
+        except ValueError:
+            pass
+        try:
+            handler.add_prefix('a', 'http://www.{semagia}.com/')
+            self.fail('Expected an exception, illegal CTM IRI')
+        except ValueError:
+            pass
+
+    def test_illegal_removal(self):
+        pass
+
+
+def suite():
+    def make_test(testcls):
+        return unittest.TestLoader().loadTestsFromTestCase(testcls)
     import glob
-    exclude = ['occurrence-string-multiline2.ctm', ]
-    suite = unittest.TestSuite()
+    suite = unittest.TestSuite([make_test(TestPrefixes)])
+    excluded = ['occurrence-string-multiline2.ctm', 'tm-reifier2.ctm']
     dir = os.path.abspath('./cxtm/ctm/in/')
     for filename in glob.glob(dir + '/*.ctm'):
+        if os.path.split(filename)[-1] in excluded:
+            continue
         testcase = TestCTMHandler(filename)
         suite.addTest(testcase)
     return suite
 
 if __name__ == '__main__':
-    unittest.main(defaultTest='create_suite')
+    unittest.main(defaultTest='suite')

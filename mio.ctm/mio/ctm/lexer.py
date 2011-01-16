@@ -203,7 +203,7 @@ def t_INTEGER(t):
     return t
 
 def t_triple_string(t):
-    r'"""("?"?[^"])*"""'
+    r'"{3}([^"\\]|(\\[\\"rntuU])|"|"")*"{3}'
     t.value = t.value[3:-3]
     t.type = 'STRING'
     t.lexer.lineno += t.value.count('\n')

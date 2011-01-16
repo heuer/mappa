@@ -176,6 +176,8 @@ def is_valid_id(ident):
     False
     >>> is_valid_id('a1976-09-19')
     True
+    >>> is_valid_id('.isa')
+    False
     >>> is_valid_id('isa')
     True
     >>> is_valid_id(u'öüä')

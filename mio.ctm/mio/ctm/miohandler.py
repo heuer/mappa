@@ -40,8 +40,9 @@ translates events into Compact Topic Maps (CTM) syntax.
 :version:      $Rev:$ - $Date:$
 :license:      BSD license
 """
+import logging
 from tm import XSD
-from tm.mio import SUBJECT_IDENTIFIER, SUBJECT_LOCATOR, ITEM_IDENTIFIER
+from tm.mio import SUBJECT_IDENTIFIER, SUBJECT_LOCATOR, ITEM_IDENTIFIER, MIOException
 import tm.mio.handler as mio_handler
 from utils import is_valid_id, is_valid_local_part, is_valid_iri, is_native_datatype
 
@@ -68,7 +69,14 @@ class CTMHandler(mio_handler.HamsterMapHandler):
         self._prefixes = {}
         self._indent = ' ' * 4
         self._something_written = False
+        self._header_written = False
         self._last_topic = None
+        self._encoding = encoding.lower()
+        # Optional properties
+        self.title = None
+        self.author = None
+        self.license = None
+        self.comment = None
 
     def _get_indentation(self):
         return len(self._indent)
@@ -77,15 +85,37 @@ class CTMHandler(mio_handler.HamsterMapHandler):
         self._indent = ' ' * val
 
     indentation = property(_get_indentation, _set_indentation, doc='Sets the indentation level')
+    prefixes = property(lambda self: dict(self._prefixes), doc='Returns the registered prefixes (a dict)')
 
     def add_prefix(self, prefix, iri):
         """\
         
         """
+        if not prefix or not iri:
+            raise ValueError('Neither the prefix nor the IRI must be None, got: "%s" "%s"' % (prefix, iri))
+        if not is_valid_id(prefix):
+            raise ValueError('The prefix "%s" is not a valid CTM identifier' % prefix)
+        if not is_valid_iri(iri):
+            raise ValueError('The IRI "%s" is not a valid CTM IRI' % iri)
+        self._prefixes[prefix] = iri
+
+
+    def remove_prefix(self, prefix):
+        """\
+
+        """
+        if self._something_written:
+            raise MIOException('The prefix "%s" has been serialized already' % prefix)
+        self._prefixes.pop(prefix, None)
+
 
     #
     # MIO handler methods
     #
+    def startTopicMap(self):
+        super(CTMHandler, self).startTopicMap()
+        self._write_header()
+
     def endTopicMap(self):
         super(CTMHandler, self).endTopicMap()
         self._finish_pending_topic()
@@ -129,7 +159,14 @@ class CTMHandler(mio_handler.HamsterMapHandler):
     def _handle_topicmap_reifier(self, reifier):
         if reifier:
             if self._something_written:
-                msg = 'Ignoring topic map reifier "%r"' % reifier
+                kind, iri = reifier
+                if kind == ITEM_IDENTIFIER:
+                    kind = 'item identifier'
+                elif kind == SUBJECT_IDENTIFIER:
+                    kind = 'subject identifier'
+                elif kind == SUBJECT_LOCATOR:
+                    kind = 'subject locator'
+                msg = 'Ignoring the topic map reifier with the %s <%s>' % (kind, iri)
                 logging.warn(msg)
             else:
                 self._something_written = True
@@ -215,6 +252,32 @@ class CTMHandler(mio_handler.HamsterMapHandler):
         if self._last_topic:
             self._out.write('.\n')
             self._last_topic = None
+
+    def _write_header(self):
+        """\
+
+        """
+        self._header_written = True
+        write = self._out.write
+        if self._encoding != 'utf-8':
+            write('%%encoding "%s"%s' % (self._encoding, _NL))
+        if self.title or self.author or self.license or self.comment:
+            write('#(%s' % _NL)
+            if self.title:
+                write('Title:    %s%s' % (self.title, _NL))
+            if self.author:
+                write('Author:   %s%s' % (self.author, _NL))
+            if self.license:
+                write('License:  %s%s' % (self.license, _NL))
+            if self.comment:
+                write('%s%s%s' & (_NL, self.comment, _NL))
+            write('%s)#%s' % (_NL, _NL))
+        write(_NL)
+        for prefix in sorted(self._prefixes.keys()):
+            self._write_prefix(prefix, self._prefixes[prefix])
+
+    def _write_prefix(self, prefix, iri):
+        self._out.write('%%prefix %s <%s>%s' % (prefix, iri, _NL))
 
     def _write_reifier(self, reifier):
         if reifier:
