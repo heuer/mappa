@@ -57,7 +57,7 @@ def create_deserializer(**kw): # pylint: disable-msg=W0613
     """\
     
     """
-    return CTMDeserializer()
+    return CTMDeserializer(newlexer=kw.get('newlexer', False))
 
 _ENCODING = re.compile(r'^%encoding\s*"([^"]+)"').match
 
@@ -68,7 +68,7 @@ class CTMDeserializer(Deserializer):
     
     version = '1.0'
     
-    def __init__(self, context=None, included_by=None):
+    def __init__(self, context=None, included_by=None, newlexer=False):
         """\
         
         `context`
@@ -81,13 +81,18 @@ class CTMDeserializer(Deserializer):
         self.included_by = included_by
         self.environment = None
         self.wildcard_counter = 0
+        self._new_lexer = newlexer
 
     def _do_parse(self, source):
         """\
         
         """
         # pylint: disable-msg=E0611, F0401
-        from mio.ctm import lexer
+        new_lexer = self._new_lexer
+        if new_lexer:
+            from mio.ctm.lexerng import Lexer
+        else:
+            from mio.ctm import lexer
         from mio.ctm import parser
         parser = plyutils.make_parser(parser)
         parser.content_handler = MainContentHandler(Environment(
@@ -104,7 +109,10 @@ class CTMDeserializer(Deserializer):
                 data = urlopen(source.iri)
             except IOError:
                 raise MIOException('Cannot read from "%s"' % source.iri)
-        parser.parse(self._reader(data, source.encoding), lexer=plyutils.make_lexer(lexer))
+        if new_lexer:
+            parser.parse(lexer=Lexer(data, source.encoding))
+        else:
+            parser.parse(self._reader(data, source.encoding), lexer=plyutils.make_lexer(lexer))
         self.wildcard_counter = self.environment.wildcard_counter
 
     def _reader(self, fileobj, encoding=None):
