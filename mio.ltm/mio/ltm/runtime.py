@@ -75,7 +75,7 @@ class LTMContext(object):
         if doc_iri in self._context.loaded:
             return
         self._context.add_loaded(doc_iri)
-        from mio.reader.ltm import LTMDeserializer
+        from mio.ltm import LTMDeserializer
         deser = LTMDeserializer(legacy=self._legacy, 
                                 context=self._context, 
                                 included_by=(included or set()))

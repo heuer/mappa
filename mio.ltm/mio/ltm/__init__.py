@@ -90,8 +90,8 @@ class LTMDeserializer(Deserializer):
         
         """
         # pylint: disable-msg=E0611, F0401
-        from mio.reader.ltm import lexer
-        from mio.reader.ltm import parser
+        from mio.ltm import lexer
+        from mio.ltm import parser
         parser = plyutils.make_parser(parser)
         parser.context = LTMContext(handler=self.handler, 
                                     iri=source.iri, 

@@ -40,7 +40,7 @@ Linear Topic Maps Notation (LTM) 1.3 lexer.
 :license:      BSD license
 """
 from tm.mio import MIOException
-from mio.reader.ltm.utils import unescape_unicode
+from mio.ltm.utils import unescape_unicode
 
 directives = {
     'PREFIX': 'DIR_PREFIX',
