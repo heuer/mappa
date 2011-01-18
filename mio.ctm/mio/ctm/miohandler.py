@@ -104,6 +104,8 @@ class CTMHandler(mio_handler.HamsterMapHandler):
             raise ValueError('The prefix "%s" is not a valid CTM identifier' % prefix)
         if not is_valid_iri(iri):
             raise ValueError('The IRI "%s" is not a valid CTM IRI' % iri)
+        if self._last_topic:
+            raise MIOException('Cannot add prefix "%s" <%s>. Issue an "endTopic" event first' % (prefix, iri))
         existing = self._prefixes.get(prefix)
         if self._header_written and existing and existing != iri:
             raise MIOException('The prefix "%s" is already bound to <%s>' % (prefix, existing))
@@ -292,7 +294,6 @@ class CTMHandler(mio_handler.HamsterMapHandler):
             self._write_prefix(prefix, self._prefixes[prefix])
 
     def _write_prefix(self, prefix, iri):
-        self._finish_pending_topic()
         self._out.write('%%prefix %s <%s>%s' % (prefix, iri, _NL))
 
     def _write_reifier(self, reifier):

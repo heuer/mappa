@@ -46,7 +46,7 @@ import os
 import mappa
 from mappa.miohandler import MappaMapHandler
 from mappa.writer.cxtm import CXTMTopicMapWriter
-from tm.mio import Source, MIOException
+from tm.mio import Source, MIOException, SUBJECT_IDENTIFIER
 from mio.ctm import create_deserializer, CTMHandler
 
 class TestCTMHandler(unittest.TestCase):
@@ -181,6 +181,15 @@ class TestPrefixes(unittest.TestCase):
         try:
             handler.add_prefix(prefix, new_iri)
             self.fail('A prefix must not be modifiable once it is serialized')
+        except MIOException:
+            pass
+        out = StringIO()
+        handler = self.make_handler(out)
+        handler.startTopicMap()
+        handler.startTopic((SUBJECT_IDENTIFIER, 'http://psi.semagia.com/bla'))
+        try:
+            handler.add_prefix(prefix, iri)
+            self.fail("Within a topic, adding a prefix shouldn't be allowed")
         except MIOException:
             pass
 
