@@ -225,7 +225,7 @@ class Environment(object):
             Either ``None`` or a list of document IRIs from which the CTM 
             source is included by.
         """
-        from mio.reader.ctm import CTMDeserializer
+        from mio.ctm import CTMDeserializer
         deser = CTMDeserializer(context=self._context, included_by=included)
         deser.handler = self._maphandler
         deser.subordinate = True
