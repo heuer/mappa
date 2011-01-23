@@ -120,7 +120,9 @@ def t_DATA(t):
 
 def t_directive(t):
     r'\#[A-Z]+'
-    t.type = directives[t.value[1:]]
+    t.type = directives.get(t.value[1:])
+    if not t.type:
+        raise MIOException('Unknown directive "%s"' % t.value)
     return t
 
 
