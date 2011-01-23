@@ -44,7 +44,7 @@ Port of the Java ``com.semagio.mio.xtm`` package to Python.
 import xml.sax.handler as sax_handler
 import xml.sax as sax
 from tm.mio.deserializer import Deserializer, Context
-from tm.mio.xmlutils import as_inputsource, attributes
+from tm.xmlutils import as_inputsource, attributes
 from xtm1 import XTM10ContentHandler, NS_XTM as NS_XTM_10
 from xtm2 import XTM2ContentHandler, NS_XTM as NS_XTM_2
 from miohandler import XTM21Handler
