@@ -57,27 +57,30 @@ _CONTENT_HANDLERS = {'1.0': XTM10ContentHandler,
                      }
 
 def create_deserializer(**kw):
-    return XTMDeserializer(kw.get('version'))
+    return XTMDeserializer(version=kw.get('version'), strict=kw.get('strict', True))
 
 
 class XTMDeserializer(Deserializer):
     """\
     Generic XTM deserializer that supports XTM 1.0, XTM 2.0 and 2.1.
     """
-    def __init__(self, version=None):
+    def __init__(self, version=None, strict=True):
         super(XTMDeserializer, self).__init__()
-        self.__version = version
-        
-    def _version(self):
-        if not self.__version:
+        self._version = version
+        self._strict = strict
+
+    @property        
+    def version(self):
+        if not self._version:
             raise AttributeError('The version information is not available yet')
-        return self.__version
+        return self._version
 
     def _do_parse(self, source):
         """\
         
         """
-        content_handler = _CONTENT_HANDLERS.get(self.__version, XTMContentHandler)()
+        content_handler = _CONTENT_HANDLERS.get(self._version, XTMContentHandler)()
+        content_handler.strict = self._strict
         content_handler.map_handler = self.handler
         content_handler.doc_iri = source.iri
         content_handler.subordinate = self.subordinate
@@ -86,9 +89,8 @@ class XTMDeserializer(Deserializer):
         parser.setFeature(sax.handler.feature_namespaces, True)
         parser.setContentHandler(content_handler)
         parser.parse(as_inputsource(source))
-        self.__version = self.__version or content_handler.version
+        self._version = self._version or content_handler.version
 
-    version = property(_version)
 
 class XTMContentHandler(sax_handler.ContentHandler):
     """\
@@ -102,6 +104,7 @@ class XTMContentHandler(sax_handler.ContentHandler):
         self.doc_iri = None
         self.context = Context()
         self.version = None
+        self.strict = True
     
     def startElementNS(self, name, qname, attrs):
         if not self._content_handler:
@@ -130,6 +133,7 @@ class XTMContentHandler(sax_handler.ContentHandler):
             self.version = '1.0'
         # Provide missing info
         handler.map_handler = self.map_handler
+        handler.strict = self.strict
         handler.subordinate = self.subordinate
         handler.doc_iri = self.doc_iri
         handler.context= self.context

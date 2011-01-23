@@ -108,6 +108,7 @@ class XTM10ContentHandler(object, sax_handler.ContentHandler):
         self.subordinate = False
         self.context = Context()
         self.reset(locator)
+        self.strict = True
 
     def reset(self, locator=None):
         self._stack = []    # Stack of element names
@@ -237,11 +238,11 @@ class XTM10ContentHandler(object, sax_handler.ContentHandler):
             self._process_mergemap_scope()
             handler.endName()
         elif BASE_NAME_STRING == name:
-            handler.value(''.join(self._content))
+            handler.value(u''.join(self._content))
             self._accept_content = False
         elif RESOURCE_DATA == name:
             parent_el = stack[-1]
-            value = ''.join(self._content), XSD.string
+            value = u''.join(self._content), XSD.string
             if OCCURRENCE == parent_el:
                 handler.value(*value)
             elif VARIANT_NAME == parent_el:
@@ -251,6 +252,8 @@ class XTM10ContentHandler(object, sax_handler.ContentHandler):
             self._accept_content = False
         elif VARIANT == name:
             variant = self._variants.pop()
+            if not variant.seen_scope:
+                raise mio.MIOException('The variant "%s" has no scope' % variant)
             handler.startVariant()
             handler.startScope()
             for theme in variant.scope:
@@ -322,7 +325,7 @@ class XTM10ContentHandler(object, sax_handler.ContentHandler):
             stack = self._stack 
             if ASSOCIATION in stack \
                 or OCCURRENCE in stack \
-                or BASE_NAME in stack: # instanceOf in name is invalid but Ontopia uses it
+                or (BASE_NAME in stack and not self.strict): # instanceOf in name is invalid but Ontopia uses it
                 handler.type(ref)
                 self._seen_type = True
             elif TOPIC in stack:
@@ -338,6 +341,7 @@ class XTM10ContentHandler(object, sax_handler.ContentHandler):
         elif SCOPE == parent_el:
             self._process_theme(ref)
         elif PARAMETERS == parent_el:
+            self._variants[-1].seen_scope = True
             self._variants[-1].scope.append(ref)
         elif ROLE_SPEC == parent_el:
             self._role_type = ref
@@ -422,7 +426,7 @@ class Variant(object):
     """\
     Internally used object to keep track about variants.
     """
-    __slots__ = ['iid', 'literal', 'scope']
+    __slots__ = ['iid', 'literal', 'scope', 'seen_scope']
     def __init__(self, iid=None):
         """\
         
@@ -430,6 +434,10 @@ class Variant(object):
         self.iid = iid
         self.literal = None
         self.scope = []
+        self.seen_scope = False
+
+    def __str__(self):
+        return 'Variant(iid=%s, literal=%s, scope=%s)' % (self.iid, self.literal, self.scope)
 
 class MergeMap(object):
     

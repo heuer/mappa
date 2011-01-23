@@ -118,6 +118,7 @@ class XTM2ContentHandler(sax_handler.ContentHandler):
         self.reset(locator)
         self.version = '2.0'
         self._seen_identity = False
+        self.strict = True
 
     def reset(self, locator=None):
         self._state = _STATE_INITIAL
@@ -272,6 +273,8 @@ class XTM2ContentHandler(sax_handler.ContentHandler):
             return
         handler = self.map_handler
         if TOPIC == name:
+            if not self._seen_identity:
+                raise mio.MIOException('Found a topic without an identity')
             self._state = _STATE_INITIAL
         elif name in (TOPIC_MAP, TOPIC_REF, RESOURCE_REF):
             return
