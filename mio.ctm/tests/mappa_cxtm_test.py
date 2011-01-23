@@ -38,12 +38,26 @@
 :version:      $Rev: 169 $ - $Date: 2009-06-26 14:44:17 +0200 (Fr, 26 Jun 2009) $
 :license:      BSD license
 """
+import os
+import codecs
 from unittest import TestCase
 import mappa
+from StringIO import StringIO
+from tm.mio import Source, MIOException
+from mappa import ModelConstraintViolation
+from mappa.writer.cxtm import CXTMTopicMapWriter
 from mappa.miohandler import MappaMapHandler
 
-class JMIOTestCase(TestCase):
+class CXTMTestCase(TestCase):
+    """\
 
+    """
+    def __init__(self, deserializer, input, post_process=None):
+        super(CXTMTestCase, self).__init__('test_cxtm')
+        self.deserializer = deserializer
+        self.input = input
+        self.post_process = post_process
+        
     def setUp(self):
         conn = mappa.connect()
         self._tm = conn.create('http://www.semagia.com/pytm')
@@ -52,36 +66,48 @@ class JMIOTestCase(TestCase):
         return MappaMapHandler(self._tm)
 
 
-from StringIO import StringIO
-import codecs
-import os
-from mappa.writer.cxtm import CXTMTopicMapWriter
-from tm.mio import Source
-
-class JCXTMTestCase(JMIOTestCase):
+class ValidCXTMTestCase(CXTMTestCase):
     """\
     
     """
-    def __init__(self, deserializer, input):
-        JMIOTestCase.__init__(self, 'test_cxtm')
-        self.input = input
+    def __init__(self, deserializer, input, post_process=None):
+        super(ValidCXTMTestCase, self).__init__(deserializer, input, post_process)
         self.expected = os.path.abspath(os.path.dirname(input) + '/../baseline/%s.cxtm' % os.path.split(input)[1])
-        self.deserializer = deserializer
 
     def test_cxtm(self):
         src = Source(file=open(self.input, 'rb'))
         self.deserializer.handler = self._make_handler()
         try:
             self.deserializer.parse(src)
+            if self.post_process:
+                self.post_process(self._tm)
         except Exception, ex:
-            raise Exception(ex, 'Error in ' + self.input)
+            raise Exception(ex, u'Error in ' + self.input)
         # CXTM is always UTF-8
-        f = codecs.open(self.expected, encoding='utf-8')
-        expected = f.read()
-        f.close()
+        expected = codecs.open(self.expected, encoding='utf-8').read()
         result = StringIO()
         c14n = CXTMTopicMapWriter(result, src.iri)
         c14n.write(self._tm)
         res = result.getvalue()
         if not expected == res:
-            self.fail('failed: %s.\nExpected: %s\nGot: %s' % (self.input, expected, res))
+            self.fail(u'failed: %s.\nExpected: %s\nGot: %s' % (self.input, expected, res))
+
+
+class InvalidCXTMTestCase(CXTMTestCase):
+    """\
+
+    """
+    def __init__(self, deserializer, input, post_process=None):
+        super(InvalidCXTMTestCase, self).__init__(deserializer, input, post_process)
+
+    def test_cxtm(self):
+        src = Source(file=open(self.input, 'rb'))
+        self.deserializer.handler = self._make_handler()
+        try:
+            self.deserializer.parse(src)
+            self.fail('Expected an error in "%s"' % self.input)
+        except MIOException:
+            pass
+        except ModelConstraintViolation:
+            pass
+
