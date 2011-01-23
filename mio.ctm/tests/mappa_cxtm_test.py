@@ -84,11 +84,11 @@ class ValidCXTMTestCase(CXTMTestCase):
         except Exception, ex:
             raise Exception(ex, u'Error in ' + self.input)
         # CXTM is always UTF-8
-        expected = codecs.open(self.expected, encoding='utf-8').read()
+        expected = codecs.open(self.expected, 'r', encoding='utf-8').read()
         result = StringIO()
         c14n = CXTMTopicMapWriter(result, src.iri)
         c14n.write(self._tm)
-        res = result.getvalue()
+        res = unicode(result.getvalue(), 'utf-8')
         if not expected == res:
             self.fail(u'failed: %s.\nExpected: %s\nGot: %s' % (self.input, expected, res))
 
