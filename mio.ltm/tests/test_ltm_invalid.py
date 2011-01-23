@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2007 - 2009 -- Lars Heuer - Semagia <http://www.semagia.com/>.
+# Copyright (c) 2007 - 2011 -- Lars Heuer - Semagia <http://www.semagia.com/>.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -36,20 +36,22 @@
 
 :author:       Lars Heuer (heuer[at]semagia.com)
 :organization: Semagia - http://www.semagia.com/
-:version:      $Rev: 315 $ - $Date: 2009-12-25 15:01:14 +0100 (Fr, 25 Dez 2009) $
+:version:      $Rev: 225 $ - $Date: 2009-07-23 21:52:41 +0200 (Do, 23 Jul 2009) $
 :license:      BSD license
 """
 import unittest
 import glob
 import os
-from mappa_cxtm_test import JCXTMTestCase
+from mappa_cxtm_test import InvalidCXTMTestCase
 from mio.ltm import create_deserializer
 
-suite = unittest.TestSuite()
-dir = os.path.abspath('./cxtm/ltm/in/')
-for filename in glob.glob(dir + '/*.ltm'):
-    testcase = JCXTMTestCase(create_deserializer(legacy=True), filename)
-    suite.addTest(testcase)
+def suite():
+    suite = unittest.TestSuite()
+    dir = os.path.abspath('./cxtm/ltm/invalid/')
+    for filename in glob.glob(dir + '/*.ltm'):
+        testcase = InvalidCXTMTestCase(create_deserializer(legacy=True), filename)
+        suite.addTest(testcase)
+    return suite
 
 if __name__ == '__main__':
     unittest.main(defaultTest='suite')
