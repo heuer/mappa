@@ -118,6 +118,6 @@ class LTMDeserializer(Deserializer):
         m = _ENCODING(line)
         if m:
             encoding = m.group(1)
-            if found_bom and encoding != 'utf-8':
+            if found_bom and encoding.lower() != 'utf-8':
                 raise MIOException('Found BOM, but encoding directive declares "%s"' % encoding)
         return codecs.getreader(encoding)(StringIO(''.join([line, fileobj.read()]))).read()
