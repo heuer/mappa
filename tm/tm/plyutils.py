@@ -44,11 +44,11 @@ import sys
 import ply.yacc as yacc
 import ply.lex as lex
 _yacc_pickle = False
-if sys.platform[:4] == 'java' and yacc.__version__ == '3.3':
+if sys.platform[:4] == 'java' and yacc.__version__ != 'PLY_WITH_PICKLABLE_YACC':
     # Work-around for parsers which create a big parsetab file
     # Import would result in:
     #   java.lang.ClassFormatError: Invalid method Code length <number-here>
-    import tm._picklable_yacc as yacc # TODO: Remove this hack once Ply 3.4 is out
+    import tm._picklable_yacc as yacc # TODO: Remove this hack once a Ply version with this function is released
     _yacc_pickle = True
 del sys
 # For some reason pylint thinks that ply.lex and ply.yacc do not exist
