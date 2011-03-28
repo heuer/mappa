@@ -85,7 +85,15 @@ class TestXTMDeserializer(TestCase):
         deser = self._parse('<topicMap xmlns="http://www.topicmaps.org/xtm/" version="2.0"></topicMap>')
         self.assert_('2.0' == deser.version)
 
+    def test_xtm21_detection1(self):
+        deser = self._parse('<topicMap version="2.1"></topicMap>')
+        self.assert_('2.1' == deser.version)
+
+    def test_xtm21_detection2(self):
+        deser = self._parse('<topicMap xmlns="http://www.topicmaps.org/xtm/" version="2.1"></topicMap>')
+        self.assert_('2.1' == deser.version)
+
 
 if __name__ == '__main__':
-    from test import test_support
-    test_support.run_unittest(TestXTMDeserializer)
+    import unittest
+    unittest.main()
