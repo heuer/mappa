@@ -42,7 +42,7 @@
 import xml.sax.handler as sax_handler
 import xml.sax as sax
 from tm.mio.deserializer import Deserializer
-from tm.mio.xmlutils import as_inputsource
+from tm.xmlutils import as_inputsource
 
 __all__ = ['create_deserializer']
 
