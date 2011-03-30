@@ -36,7 +36,6 @@ Tests against the CTM 1.0 MIOHandler
 
 :author:       Lars Heuer (heuer[at]semagia.com)
 :organization: Semagia - http://www.semagia.com/
-:version:      $Rev: 168 $ - $Date: 2009-06-26 14:22:56 +0200 (Fr, 26 Jun 2009) $
 :license:      BSD license
 """
 import unittest
