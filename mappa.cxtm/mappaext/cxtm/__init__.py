@@ -40,7 +40,7 @@
 """
 from .cxtm1 import CXTMTopicMapWriter
 
-def create_writer(out, base, version=None):
+def create_writer(out, base, version=None, **kw):
     """\
     
     """
