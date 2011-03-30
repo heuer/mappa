@@ -44,9 +44,6 @@ except ImportError:
     use_setuptools()
     from setuptools import setup, find_packages
 
-if sys.version_info < (2, 3):
-    raise Exception('Topic Maps requires Python 2.3 or higher')
-
 f = open(os.path.join(os.path.dirname(__file__), 'VERSION.txt'))
 VERSION = f.readline()
 f.close()

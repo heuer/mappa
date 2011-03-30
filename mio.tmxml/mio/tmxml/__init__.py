@@ -43,6 +43,7 @@ import xml.sax.handler as sax_handler
 import xml.sax as sax
 from tm.mio.deserializer import Deserializer
 from tm.xmlutils import as_inputsource
+from .handler import TMXMLContentHandler
 
 __all__ = ['create_deserializer']
 
@@ -64,7 +65,6 @@ class TMXMLDeserializer(Deserializer):
         """\
         
         """
-        from mio.tmxml.handler import TMXMLContentHandler
         content_handler = TMXMLContentHandler()
         content_handler.map_handler = self.handler
         content_handler.doc_iri = source.iri
