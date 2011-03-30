@@ -38,7 +38,7 @@
 :organization: Semagia - http://www.semagia.com/
 :license:      BSD license
 """
-from mappa_cxtm_test import create_invalid_cxtm_cases, create_valid_cxtm_cases
+from mappaext.cxtm.cxtm_test import create_invalid_cxtm_cases, create_valid_cxtm_cases
 from mio import ctm
 
 def create_deserializer():

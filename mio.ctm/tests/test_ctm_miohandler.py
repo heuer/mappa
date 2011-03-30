@@ -43,7 +43,7 @@ from StringIO import StringIO
 import codecs
 import os
 import mappa
-from mappa_cxtm_test import find_valid_cxtm_cases
+from mappaext.cxtm.cxtm_test import find_valid_cxtm_cases
 from mappa.miohandler import MappaMapHandler
 from mappa.writer.cxtm import CXTMTopicMapWriter
 from tm.mio import Source, MIOException, SUBJECT_IDENTIFIER
