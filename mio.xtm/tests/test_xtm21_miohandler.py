@@ -40,6 +40,7 @@ Tests against the XTM 2.1 MIOHandler
 :license:      BSD license
 """
 import unittest
+from mappa_cxtm_test import find_valid_cxtm_cases
 from StringIO import StringIO
 import codecs
 import os
@@ -49,7 +50,7 @@ from mappa.writer.cxtm import CXTMTopicMapWriter
 from tm.mio import Source
 from mio.xtm import create_deserializer, XTM21Handler
 
-class TestXTM21Handler(unittest.TestCase):
+class _TestXTM21Handler(unittest.TestCase):
 
     def __init__(self, file):
         unittest.TestCase.__init__(self, 'test_cxtm')
@@ -88,22 +89,19 @@ class TestXTM21Handler(unittest.TestCase):
         result = StringIO()
         c14n = CXTMTopicMapWriter(result, src.iri)
         c14n.write(self._tm)
-        res = result.getvalue()
-        if not expected == res:
+        res = unicode(result.getvalue(), 'utf-8')
+        if expected != res:
             self.fail('failed: %s.\nExpected: %s\nGot: %s\nGenerated XTM 2.1: %s' % (self.file, expected, res, out.getvalue()))
 
-def create_suite():
-    import glob
-    suite = unittest.TestSuite()
-    dir = os.path.abspath('./cxtm/xtm2/in/')
-    for filename in glob.glob(dir + '/*.xtm'):
-        testcase = TestXTM21Handler(filename)
-        suite.addTest(testcase)
-    dir = os.path.abspath('./cxtm/xtm21/in/')
-    for filename in glob.glob(dir + '/*.xtm'):
-        testcase = TestXTM21Handler(filename)
-        suite.addTest(testcase)
-    return suite
+def test_xtm_20():
+    for filename in find_valid_cxtm_cases('xtm2', 'xtm'):
+        yield _TestXTM21Handler(filename)
+
+def test_xtm_21():
+    for filename in find_valid_cxtm_cases('xtm1', 'xtm'):
+        yield _TestXTM21Handler(filename)
+
 
 if __name__ == '__main__':
-    unittest.main(defaultTest='create_suite')
+    import nose
+    nose.core.runmodule()

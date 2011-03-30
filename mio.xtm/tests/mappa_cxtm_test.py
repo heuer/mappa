@@ -38,7 +38,6 @@
 :license:      BSD license
 """
 import os
-import glob
 import codecs
 import mappa
 from StringIO import StringIO
@@ -47,19 +46,28 @@ from mappa import ModelConstraintViolation
 from mappa.writer.cxtm import CXTMTopicMapWriter
 from mappa.miohandler import MappaMapHandler
 
-def find_testcases(directory, extension, subdir, exclude=None):
+def find_cxtm_cases(directory, extension, subdir, exclude=None):
     """\
 
     """
     exclude = set(exclude or [])
     directory = os.path.abspath('./cxtm/%s/%s' % (directory, subdir))
-    file_filter = '*.' + extension
-    for filename in glob.glob(directory + '/' + file_filter):
-        if not os.path.basename(filename) in exclude:
-            yield filename
-    
+    for filename in (n for n in os.listdir(directory) if n.endswith(extension) and n not in exclude):
+        yield os.path.join(directory, filename)
 
-def create_invalid_cxtm_tests(factory, directory, extension, exclude=None):
+def find_valid_cxtm_cases(directory, extension, exclude=None):
+    """\
+
+    """
+    return find_cxtm_cases(directory, extension, 'in', exclude)
+
+def find_invalid_cxtm_cases(directory, extension, exclude=None):
+    """\
+
+    """
+    return find_cxtm_cases(directory, extension, 'invalid', exclude)
+    
+def create_invalid_cxtm_cases(factory, directory, extension, exclude=None):
     """\
     Returns a generator for invalid CXTM test cases.
 
@@ -72,10 +80,10 @@ def create_invalid_cxtm_tests(factory, directory, extension, exclude=None):
     `exclude`
         An interable of filename which should not be evaluated or ``None``.
     """
-    for filename in find_testcases(directory, extension, 'invalid', exclude):
-        yield invalid_test, factory(), filename
+    for filename in find_invalid_cxtm_cases(directory, extension, exclude):
+        yield check_invalid, factory(), filename
 
-def create_valid_cxtm_tests(factory, directory, extension, exclude=None, post_process=None):
+def create_valid_cxtm_cases(factory, directory, extension, exclude=None, post_process=None):
     """\
     Returns a generator for valid CXTM test cases.
 
@@ -90,8 +98,8 @@ def create_valid_cxtm_tests(factory, directory, extension, exclude=None, post_pr
     `post_process`
         A callable which postprocesses the topic map or ``None``.
     """
-    for filename in find_testcases(directory, extension, 'in', exclude):
-        yield valid_test, factory(), filename, post_process
+    for filename in find_valid_cxtm_cases(directory, extension, exclude):
+        yield check_valid, factory(), filename, post_process
 
 def fail(msg):
     """\
@@ -99,7 +107,7 @@ def fail(msg):
     """
     raise AssertionError(msg)
 
-def valid_test(deserializer, filename, post_process=None):
+def check_valid(deserializer, filename, post_process=None):
     conn = mappa.connect()
     tm = conn.create('http://www.semagia.com/mappa-test-tm')
     src = Source(file=open(filename, 'rb'))
@@ -116,7 +124,7 @@ def valid_test(deserializer, filename, post_process=None):
     if expected != res:
         fail(u'failed: %s.\nExpected: %s\nGot: %s' % (filename, expected, res))
 
-def invalid_test(deserializer, filename):
+def check_invalid(deserializer, filename):
     conn = mappa.connect()
     tm = conn.create('http://www.semagia.com/mappa-test-tm')
     src = Source(file=open(filename, 'rb'))
