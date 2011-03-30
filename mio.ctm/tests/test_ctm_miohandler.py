@@ -44,12 +44,13 @@ from StringIO import StringIO
 import codecs
 import os
 import mappa
+from mappa_cxtm_test import find_valid_cxtm_cases
 from mappa.miohandler import MappaMapHandler
 from mappa.writer.cxtm import CXTMTopicMapWriter
 from tm.mio import Source, MIOException, SUBJECT_IDENTIFIER
 from mio.ctm import create_deserializer, CTMHandler
 
-class TestCTMHandler(unittest.TestCase):
+class _TestCTMHandler(unittest.TestCase):
 
     def __init__(self, file):
         unittest.TestCase.__init__(self, 'test_cxtm')
@@ -91,9 +92,14 @@ class TestCTMHandler(unittest.TestCase):
         result = StringIO()
         c14n = CXTMTopicMapWriter(result, src.iri)
         c14n.write(self._tm)
-        res = result.getvalue()
-        if not expected == res:
+        res = unicode(result.getvalue(), 'utf-8')
+        if expected != res:
             self.fail('failed: %s.\nExpected: %s\nGot: %s\nGenerated CTM: %s' % (self.file, expected, res, out.getvalue()))
+
+def test_handler():
+    excluded = ['occurrence-string-multiline2.ctm', 'tm-reifier2.ctm']
+    for filename in find_valid_cxtm_cases('ctm', 'ctm', exclude=excluded):
+        yield _TestCTMHandler(filename)
 
 class TestPrefixes(unittest.TestCase):
 
@@ -228,19 +234,6 @@ class TestAdditionalInfo(unittest.TestCase):
         self.assert_("Title:    Test" in out.getvalue())
 
 
-def suite():
-    def make_test(testcls):
-        return unittest.TestLoader().loadTestsFromTestCase(testcls)
-    import glob
-    suite = unittest.TestSuite([make_test(TestPrefixes), make_test(TestAdditionalInfo)])
-    excluded = ['occurrence-string-multiline2.ctm', 'tm-reifier2.ctm']
-    dir = os.path.abspath('./cxtm/ctm/in/')
-    for filename in glob.glob(dir + '/*.ctm'):
-        if os.path.split(filename)[-1] in excluded:
-            continue
-        testcase = TestCTMHandler(filename)
-        suite.addTest(testcase)
-    return suite
-
 if __name__ == '__main__':
-    unittest.main(defaultTest='suite')
+    import nose
+    nose.core.runmodule()
