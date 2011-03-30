@@ -43,9 +43,9 @@ from StringIO import StringIO
 import codecs
 import os
 import mappa
-from mappaext.cxtm.cxtm_test import find_valid_cxtm_cases
 from mappa.miohandler import MappaMapHandler
-from mappa.writer.cxtm import CXTMTopicMapWriter
+from mappaext.cxtm.cxtm_test import find_valid_cxtm_cases
+from mappaext.cxtm import create_writer
 from tm.mio import Source, MIOException, SUBJECT_IDENTIFIER
 from mio.ctm import create_deserializer, CTMHandler
 
@@ -89,7 +89,7 @@ class _TestCTMHandler(unittest.TestCase):
         expected = f.read()
         f.close()
         result = StringIO()
-        c14n = CXTMTopicMapWriter(result, src.iri)
+        c14n = create_writer(result, src.iri)
         c14n.write(self._tm)
         res = unicode(result.getvalue(), 'utf-8')
         if expected != res:
