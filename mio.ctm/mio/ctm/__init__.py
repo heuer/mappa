@@ -36,7 +36,6 @@ Compact Topic Maps Syntax (CTM) 1.0.
 
 :author:       Lars Heuer (heuer[at]semagia.com)
 :organization: Semagia - http://www.semagia.com/
-:version:      $Rev:$ - $Date:$
 :license:      BSD license
 """
 import re
