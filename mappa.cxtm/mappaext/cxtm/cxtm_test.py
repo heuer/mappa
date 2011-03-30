@@ -43,7 +43,7 @@ import mappa
 from StringIO import StringIO
 from tm.mio import Source, MIOException
 from mappa import ModelConstraintViolation
-from mappa.writer.cxtm import CXTMTopicMapWriter
+from .cxtm1 import CXTMTopicMapWriter
 from mappa.miohandler import MappaMapHandler
 
 def find_cxtm_cases(directory, extension, subdir, exclude=None):

@@ -36,10 +36,9 @@
 
 :author:       Lars Heuer (heuer[at]semagia.com)
 :organization: Semagia - http://www.semagia.com/
-:version:      $Rev: 175 $ - $Date: 2009-06-28 15:19:25 +0200 (So, 28 Jun 2009) $
 :license:      BSD license
 """
-from cxtm1 import CXTMTopicMapWriter
+from .cxtm1 import CXTMTopicMapWriter
 
 def create_writer(out, base, version=None):
     """\
