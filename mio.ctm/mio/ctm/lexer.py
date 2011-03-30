@@ -36,7 +36,6 @@ Compact Topic Maps (CTM) lexer.
 
 :author:       Lars Heuer (heuer[at]semagia.com)
 :organization: Semagia - http://www.semagia.com/
-:version:      $Rev:$ - $Date:$
 :license:      BSD license
 """
 # For some reason pylint thinks that ply.lex and ply.yacc do not exist

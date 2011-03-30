@@ -36,7 +36,6 @@ CTM related utilities.
 
 :author:       Lars Heuer (heuer[at]semagia.com)
 :organization: Semagia - http://www.semagia.com/
-:version:      $Rev:$ - $Date:$
 :license:      BSD license
 """
 from mio.ctm import consts

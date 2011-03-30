@@ -36,7 +36,6 @@ Constants.
 
 :author:       Lars Heuer (heuer[at]semagia.com)
 :organization: Semagia - http://www.semagia.com/
-:version:      $Rev:$ - $Date:$
 :license:      BSD license
 """
 from tm.mio import ITEM_IDENTIFIER, SUBJECT_IDENTIFIER, SUBJECT_LOCATOR
