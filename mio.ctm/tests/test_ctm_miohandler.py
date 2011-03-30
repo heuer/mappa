@@ -41,10 +41,9 @@ Tests against the CTM 1.0 MIOHandler
 import unittest
 from StringIO import StringIO
 import codecs
-import os
 import mappa
 from mappa.miohandler import MappaMapHandler
-from mappaext.cxtm.cxtm_test import find_valid_cxtm_cases
+from mappaext.cxtm.cxtm_test import find_valid_cxtm_cases, get_baseline
 from mappaext.cxtm import create_writer
 from tm.mio import Source, MIOException, SUBJECT_IDENTIFIER
 from mio.ctm import create_deserializer, CTMHandler
@@ -54,7 +53,7 @@ class _TestCTMHandler(unittest.TestCase):
     def __init__(self, file):
         unittest.TestCase.__init__(self, 'test_cxtm')
         self.file = file
-        self.expected = os.path.abspath(os.path.dirname(file) + '/../baseline/%s.cxtm' % os.path.split(file)[1])
+        self.expected = get_baseline(file)
 
     def setUp(self):
         conn = mappa.connect()
