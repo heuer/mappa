@@ -40,7 +40,7 @@ Tests against the XTM 2.1 MIOHandler
 :license:      BSD license
 """
 import unittest
-from mappa_cxtm_test import find_valid_cxtm_cases
+from mappaext.cxtm.cxtm_test import find_valid_cxtm_cases
 from StringIO import StringIO
 import codecs
 import os
