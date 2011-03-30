@@ -53,11 +53,11 @@ from miohandler import CTMHandler
 
 __all__ = ['create_deserializer', 'CTMHandler']
 
-def create_deserializer(**kw): # pylint: disable-msg=W0613
+def create_deserializer(newlexer=False, **kw): # pylint: disable-msg=W0613
     """\
     
     """
-    return CTMDeserializer(newlexer=kw.get('newlexer', False))
+    return CTMDeserializer(newlexer=newlexer)
 
 _ENCODING = re.compile(r'^%encoding\s*"([^"]+)"').match
 
