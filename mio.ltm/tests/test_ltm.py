@@ -36,22 +36,23 @@
 
 :author:       Lars Heuer (heuer[at]semagia.com)
 :organization: Semagia - http://www.semagia.com/
-:version:      $Rev: 225 $ - $Date: 2009-07-23 21:52:41 +0200 (Do, 23 Jul 2009) $
 :license:      BSD license
 """
-import unittest
-import glob
-import os
-from mappa_cxtm_test import InvalidCXTMTestCase
-from mio.ltm import create_deserializer
+from mappa_cxtm_test import create_invalid_cxtm_cases, create_valid_cxtm_cases
+from mio import ltm
 
-def suite():
-    suite = unittest.TestSuite()
-    dir = os.path.abspath('./cxtm/ltm/invalid/')
-    for filename in glob.glob(dir + '/*.ltm'):
-        testcase = InvalidCXTMTestCase(create_deserializer(legacy=True), filename)
-        suite.addTest(testcase)
-    return suite
+def create_deserializer():
+    return ltm.create_deserializer(legacy=True)
+
+def test_cxtm_valid():
+    for test in create_valid_cxtm_cases(create_deserializer, 'ltm', 'ltm'):
+        yield test
+
+def test_cxtm_invalid():
+    for test in create_invalid_cxtm_cases(create_deserializer, 'ltm', 'ltm'):
+        yield test
+
 
 if __name__ == '__main__':
-    unittest.main(defaultTest='suite')
+    import nose
+    nose.core.runmodule()
