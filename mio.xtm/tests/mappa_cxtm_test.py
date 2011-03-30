@@ -35,12 +35,11 @@
 
 :author:       Lars Heuer (heuer[at]semagia.com)
 :organization: Semagia - http://www.semagia.com/
-:version:      $Rev: 169 $ - $Date: 2009-06-26 14:44:17 +0200 (Fr, 26 Jun 2009) $
 :license:      BSD license
 """
 import os
+import glob
 import codecs
-from unittest import TestCase
 import mappa
 from StringIO import StringIO
 from tm.mio import Source, MIOException
@@ -48,66 +47,84 @@ from mappa import ModelConstraintViolation
 from mappa.writer.cxtm import CXTMTopicMapWriter
 from mappa.miohandler import MappaMapHandler
 
-class CXTMTestCase(TestCase):
+def find_testcases(directory, extension, subdir, exclude=None):
     """\
 
     """
-    def __init__(self, deserializer, input, post_process=None):
-        super(CXTMTestCase, self).__init__('test_cxtm')
-        self.deserializer = deserializer
-        self.input = input
-        self.post_process = post_process
-        
-    def setUp(self):
-        conn = mappa.connect()
-        self._tm = conn.create('http://www.semagia.com/pytm')
-
-    def _make_handler(self):
-        return MappaMapHandler(self._tm)
-
-
-class ValidCXTMTestCase(CXTMTestCase):
-    """\
+    exclude = set(exclude or [])
+    directory = os.path.abspath('./cxtm/%s/%s' % (directory, subdir))
+    file_filter = '*.' + extension
+    for filename in glob.glob(directory + '/' + file_filter):
+        if not os.path.basename(filename) in exclude:
+            yield filename
     
+
+def create_invalid_cxtm_tests(factory, directory, extension, exclude=None):
+    """\
+    Returns a generator for invalid CXTM test cases.
+
+    `factory`
+        A callable which returns a IDeserializer instance.
+    `directory`
+        The main directory for the tests, i.e. 'ctm'
+    `extension`
+        The filename extension
+    `exclude`
+        An interable of filename which should not be evaluated or ``None``.
     """
-    def __init__(self, deserializer, input, post_process=None):
-        super(ValidCXTMTestCase, self).__init__(deserializer, input, post_process)
-        self.expected = os.path.abspath(os.path.dirname(input) + '/../baseline/%s.cxtm' % os.path.split(input)[1])
+    for filename in find_testcases(directory, extension, 'invalid', exclude):
+        yield invalid_test, factory(), filename
 
-    def test_cxtm(self):
-        src = Source(file=open(self.input, 'rb'))
-        self.deserializer.handler = self._make_handler()
-        try:
-            self.deserializer.parse(src)
-            if self.post_process:
-                self.post_process(self._tm)
-        except Exception, ex:
-            raise Exception(ex, u'Error in ' + self.input)
-        # CXTM is always UTF-8
-        expected = codecs.open(self.expected, 'r', encoding='utf-8').read()
-        result = StringIO()
-        c14n = CXTMTopicMapWriter(result, src.iri)
-        c14n.write(self._tm)
-        res = unicode(result.getvalue(), 'utf-8')
-        if not expected == res:
-            self.fail(u'failed: %s.\nExpected: %s\nGot: %s' % (self.input, expected, res))
+def create_valid_cxtm_tests(factory, directory, extension, exclude=None, post_process=None):
+    """\
+    Returns a generator for valid CXTM test cases.
 
+    `factory`
+        A callable which returns a IDeserializer instance.
+    `directory`
+        The main directory for the tests, i.e. 'ctm'
+    `extension`
+        The filename extension
+    `exclude`
+        An interable of filename which should not be evaluated or ``None``.
+    `post_process`
+        A callable which postprocesses the topic map or ``None``.
+    """
+    for filename in find_testcases(directory, extension, 'in', exclude):
+        yield valid_test, factory(), filename, post_process
 
-class InvalidCXTMTestCase(CXTMTestCase):
+def fail(msg):
     """\
 
     """
-    def __init__(self, deserializer, input, post_process=None):
-        super(InvalidCXTMTestCase, self).__init__(deserializer, input, post_process)
+    raise AssertionError(msg)
 
-    def test_cxtm(self):
-        src = Source(file=open(self.input, 'rb'))
-        self.deserializer.handler = self._make_handler()
-        try:
-            self.deserializer.parse(src)
-            self.fail('Expected an error in "%s"' % self.input)
-        except MIOException:
-            pass
-        except ModelConstraintViolation:
-            pass
+def valid_test(deserializer, filename, post_process=None):
+    conn = mappa.connect()
+    tm = conn.create('http://www.semagia.com/mappa-test-tm')
+    src = Source(file=open(filename, 'rb'))
+    deserializer.handler = MappaMapHandler(tm)
+    deserializer.parse(src)
+    if post_process:
+        post_process(tm)
+    reference_file = os.path.abspath(os.path.dirname(filename) + '/../baseline/%s.cxtm' % os.path.basename(filename))
+    expected = codecs.open(reference_file, 'r', encoding='utf-8').read()
+    result = StringIO()
+    c14n = CXTMTopicMapWriter(result, src.iri)
+    c14n.write(tm)
+    res = unicode(result.getvalue(), 'utf-8')
+    if expected != res:
+        fail(u'failed: %s.\nExpected: %s\nGot: %s' % (filename, expected, res))
 
+def invalid_test(deserializer, filename):
+    conn = mappa.connect()
+    tm = conn.create('http://www.semagia.com/mappa-test-tm')
+    src = Source(file=open(filename, 'rb'))
+    deserializer.handler = MappaMapHandler(tm)
+    try:
+        deserializer.parse(src)
+        fail('Expected an error in "%s"' % filename)
+    except MIOException:
+        pass
+    except ModelConstraintViolation:
+        pass

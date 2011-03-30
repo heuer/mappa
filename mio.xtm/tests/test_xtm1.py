@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2007 - 2009 -- Lars Heuer - Semagia <http://www.semagia.com/>.
+# Copyright (c) 2007 - 2011 -- Lars Heuer - Semagia <http://www.semagia.com/>.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -36,23 +36,21 @@
 
 :author:       Lars Heuer (heuer[at]semagia.com)
 :organization: Semagia - http://www.semagia.com/
-:version:      $Rev: 402 $ - $Date: 2011-01-14 16:30:38 +0100 (Fr, 14 Jan 2011) $
 :license:      BSD license
 """
-import unittest
-import glob
-import os
+from mappa_cxtm_test import create_invalid_cxtm_tests, create_valid_cxtm_tests
 from mappa.xtm1utils import convert_to_tmdm
-from mappa_cxtm_test import ValidCXTMTestCase
 from mio.xtm import create_deserializer
 
-def suite():
-    suite = unittest.TestSuite()
-    dir = os.path.abspath('./cxtm/xtm1/in/')
-    for filename in glob.glob(dir + '/*.xtm'):
-        testcase = ValidCXTMTestCase(create_deserializer(), filename, convert_to_tmdm)
-        suite.addTest(testcase)
-    return suite
+def test_cxtm_invalid():
+    for test in create_invalid_cxtm_tests(create_deserializer, 'xtm1', 'xtm'):
+        yield test
+
+def test_cxtm_valid():
+    for test in create_valid_cxtm_tests(create_deserializer, 'xtm1', 'xtm', post_process=convert_to_tmdm):
+        yield test
+
 
 if __name__ == '__main__':
-    unittest.main(defaultTest='suite')
+    import nose
+    nose.core.runmodule()

@@ -356,7 +356,7 @@ class XTM2ContentHandler(sax_handler.ContentHandler):
         if iri in self.context.loaded:
             return
         self.context.add_loaded(iri)
-        from mio.reader.xtm import create_deserializer
+        from mio.xtm import create_deserializer
         deserializer = create_deserializer()
         deserializer.context = self.context
         deserializer.handler = self.map_handler
