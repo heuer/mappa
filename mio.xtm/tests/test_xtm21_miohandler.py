@@ -46,7 +46,7 @@ import codecs
 import os
 import mappa
 from mappa.miohandler import MappaMapHandler
-from mappa.writer.cxtm import CXTMTopicMapWriter
+from mappaext.cxtm import create_writer
 from tm.mio import Source
 from mio.xtm import create_deserializer, XTM21Handler
 
@@ -87,7 +87,7 @@ class _TestXTM21Handler(unittest.TestCase):
         expected = f.read()
         f.close()
         result = StringIO()
-        c14n = CXTMTopicMapWriter(result, src.iri)
+        c14n = create_writer(result, src.iri)
         c14n.write(self._tm)
         res = unicode(result.getvalue(), 'utf-8')
         if expected != res:
