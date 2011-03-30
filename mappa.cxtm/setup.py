@@ -45,7 +45,7 @@ except ImportError:
     from setuptools import setup, find_packages
 
 setup(
-      name = 'mappaext.cxtm',
+      name = 'mappa.cxtm',
       version = '0.1.0',
       description = 'Canonical Topic Maps (CXTM) writer',
       long_description = '\n\n'.join([open('README.txt').read(), open('CHANGES.txt').read()]),
