@@ -46,6 +46,13 @@ from mappa import ModelConstraintViolation
 from .cxtm1 import CXTMTopicMapWriter
 from mappa.miohandler import MappaMapHandler
 
+
+def get_baseline(filename):
+    """\
+
+    """
+    return os.path.abspath(os.path.dirname(filename) + '/../baseline/%s.cxtm' % os.path.basename(filename))
+
 def find_cxtm_cases(directory, extension, subdir, exclude=None):
     """\
 
