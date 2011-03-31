@@ -59,25 +59,19 @@ class _TestCTMHandler(unittest.TestCase):
         conn = mappa.connect()
         self._tm = conn.create('http://www.semagia.com/test-ctm-handler')
 
-    def _make_handler(self):
-        return MappaMapHandler(self._tm)
-
-    def _make_ctmhandler(self, out):
-        return CTMHandler(out)
-
     def test_cxtm(self):
         src = Source(file=open(self.file))
         # 1. Generate CTM 1.0 via CTMHandler
         out = StringIO()
         deser = create_deserializer()
-        deser.handler = self._make_ctmhandler(out)
+        deser.handler = CTMHandler(out)
         try:
             deser.parse(src)
         except MIOException, ex:
             self.fail('failed: %s.\nError: %s' % (self.file, ex))            
         # 2. Read the generated CTM
         deser = create_deserializer()
-        deser.handler = self._make_handler()
+        deser.handler = MappaMapHandler(self._tm)
         new_src = Source(data=out.getvalue(), iri=src.iri)
         try:
             deser.parse(new_src)
