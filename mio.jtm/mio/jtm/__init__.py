@@ -38,7 +38,6 @@ JSON Topic Maps (JTM) 1.0/1.1 deserializer.
 :organization: Semagia - http://www.semagia.com/
 :license:      BSD license
 """
-from itertools import chain
 from tm import mio
 from tm.voc import XSD
 from tm.irilib import resolve_iri
