@@ -75,13 +75,12 @@ _ident_start = ur'[a-zA-Z_]|[\u00C0-\u00D6]|[\u00D8-\u00F6]' + \
                 ur'|[\u00F8-\u02FF]|[\u0370-\u037D]' + \
                 ur'|[\u037F-\u1FFF]|[\u200C-\u200D]' + \
                 ur'|[\u2070-\u218F]|[\u2C00-\u2FEF]' + \
-                ur'|[\u3001-\uD7FF][\uF900-\uFDCF]|[\uFDF0-\uFFFD]'
+                ur'|[\u3001-\uD7FF]|[\uF900-\uFDCF]|[\uFDF0-\uFFFD]'
 
-_ident_part = ur'[\-0-9]|%s|\u00B7|[\u0300-\u036F]|[\u203F-\u2040]' % _ident_start
+_ident_part = ur'%s|[\-0-9]|[\u00B7]|[\u0300-\u036F]|[\u203F-\u2040]' % _ident_start
 
 # Identifier
-_ident = ur'(?:(?:%s)+(?:\.*(?:%s)+)*)' % (_ident_start, _ident_part)
-
+_ident = ur'(%s)+(\.*(%s))*' % (_ident_start, _ident_part)
 
 _date = r'\-?[0-9]{4,}\-(0[1-9]|1[0-2])\-(0[1-9]|1[0-9]|2[0-9]|3[0-1])'
 # Timezone
@@ -270,6 +269,7 @@ ex
 http://psi.example.org/ ex:fake.''',
                  u'yippiieehhya...yeah___3..2...1...----0...boom',
                  'a123',
+                 u'ü͡ØΨ㬟͡.'
                  ]
     for data in test_data:
         lexer.input(data)
