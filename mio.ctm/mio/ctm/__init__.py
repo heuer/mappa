@@ -115,12 +115,16 @@ class CTMDeserializer(Deserializer):
         self.wildcard_counter = self.environment.wildcard_counter
 
     def _reader(self, fileobj, encoding=None):
+        found_bom = False
         encoding = encoding or 'utf-8'
         line = fileobj.readline()
         if line.startswith(codecs.BOM_UTF8):
+            found_bom = True
             encoding = 'utf-8'
             line = line[3:] # Skip BOM
         m = _ENCODING(line)
         if m:
             encoding = m.group(1)
+            if found_bom and encoding.lower() != 'utf-8':
+                raise MIOException('Found BOM, but encoding directive declares "%s"' % encoding)
         return codecs.getreader(encoding)(StringIO(''.join([line, fileobj.read()]))).read()
