@@ -49,56 +49,43 @@ from mappaext.cxtm import create_writer
 from tm.mio import Source
 from mio.xtm import create_deserializer, XTM21Handler
 
-class _TestXTM21Handler(unittest.TestCase):
+def fail(msg):
+    raise AssertionError(msg)
 
-    def __init__(self, file):
-        unittest.TestCase.__init__(self, 'test_cxtm')
-        self.file = file
-        self.expected = get_baseline(file)
-
-    def setUp(self):
-        conn = mappa.connect()
-        self._tm = conn.create('http://www.semagia.com/test-xtm21-handler')
-
-    def _make_handler(self):
-        return MappaMapHandler(self._tm)
-
-    def _make_xtmhandler(self, out):
-        return XTM21Handler(out, prettify=True)
-
-    def test_cxtm(self):
-        src = Source(file=open(self.file))
-        # 1. Generate XTM 2.1 via XTM21Handler
-        out = StringIO()
-        deser = create_deserializer()
-        deser.handler = self._make_xtmhandler(out)
-        deser.parse(src)
-        # 2. Read the generated XTM 2.1
-        deser = create_deserializer()
-        deser.handler = self._make_handler()
-        new_src = Source(data=out.getvalue(), iri=src.iri)
-        try:
-            deser.parse(new_src)
-        except Exception, ex:
-            self.fail('failed: %s.\nError: %s\nGenerated XTM 2.1: %s' % (self.file, ex, out.getvalue()))
-        # 3. Generate the CXTM
-        f = codecs.open(self.expected, encoding='utf-8')
-        expected = f.read()
-        f.close()
-        result = StringIO()
-        c14n = create_writer(result, src.iri)
-        c14n.write(self._tm)
-        res = unicode(result.getvalue(), 'utf-8')
-        if expected != res:
-            self.fail('failed: %s.\nExpected: %s\nGot: %s\nGenerated XTM 2.1: %s' % (self.file, expected, res, out.getvalue()))
+def check_handler(filename):
+    src = Source(file=open(filename))
+    # 1. Generate XTM 2.1 via XTM21Handler
+    out = StringIO()
+    deser = create_deserializer()
+    deser.handler = XTM21Handler(out, prettify=True)
+    deser.parse(src)
+    # 2. Read the generated XTM 2.1
+    tm = mappa.connect().create('http://www.semagia.com/test-xtm-handler')
+    deser = create_deserializer()
+    deser.handler = MappaMapHandler(tm)
+    new_src = Source(data=out.getvalue(), iri=src.iri)
+    try:
+        deser.parse(new_src)
+    except Exception, ex:
+        fail('failed: %s.\nError: %s\nGenerated XTM 2.1: %s' % (filename, ex, out.getvalue()))
+    # 3. Generate the CXTM
+    f = codecs.open(get_baseline(filename), encoding='utf-8')
+    expected = f.read()
+    f.close()
+    result = StringIO()
+    c14n = create_writer(result, src.iri)
+    c14n.write(tm)
+    res = unicode(result.getvalue(), 'utf-8')
+    if expected != res:
+        fail('failed: %s.\nExpected: %s\nGot: %s\nGenerated XTM 2.1: %s' % (filename, expected, res, out.getvalue()))
 
 def test_xtm_20():
     for filename in find_valid_cxtm_cases('xtm2', 'xtm'):
-        yield _TestXTM21Handler(filename)
+        yield check_handler, filename
 
 def test_xtm_21():
-    for filename in find_valid_cxtm_cases('xtm1', 'xtm'):
-        yield _TestXTM21Handler(filename)
+    for filename in find_valid_cxtm_cases('xtm21', 'xtm'):
+        yield check_handler, filename
 
 
 if __name__ == '__main__':
