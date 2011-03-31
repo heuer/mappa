@@ -86,16 +86,10 @@ _IDENTITYPREFIX2MIO = {
 }
 
 def create_deserializer(version=None, **kw): # pylint: disable-msg=W0613
-    """\
-    
-    """
     return JTMDeserializer()
 
 
 class JTMDeserializer(Deserializer):
-    """\
-
-    """
     def __init__(self, version=None):
         super(JTMDeserializer, self).__init__()
 
@@ -114,9 +108,6 @@ class JTMDeserializer(Deserializer):
         _issue_events(self.handler, source.iri, dct, version)
 
 def _issue_events(handler, base_iri, dct, version):
-    """\
-
-    """
     version = float(version)
     prefixes = dct.get('prefixes', {})
     if prefixes and not version > 1.0:
@@ -154,18 +145,12 @@ def _issue_events(handler, base_iri, dct, version):
                     _handle_association(handler, prefixes, assoc)
 
 def _resolve_topicref(prefixes, ref):
-    """\
-
-    """
     kind = _IDENTITYPREFIX2MIO.get(ref[:2], None)
     if kind is None:
         raise mio.MIOException('Unknown identity type: "%s"' % ref[:2])
     return kind, _resolve_iri(prefixes, ref[3:])
 
 def _resolve_iri(prefixes, qiri):
-    """\
-
-    """
     if qiri[0] == '[':
         if qiri[-1] != ']':
             raise mio.MIOException('Illegal QName: "%s"' % qiri)
@@ -212,9 +197,6 @@ def _handle_topic(handler, prefixes, dct, version=1.0):
     handler.endTopic()
 
 def _get_type(prefixes, dct, accept_none=False):
-    """\
-
-    """
     type_ = dct.get('type', None)
     if not type_:
         if accept_none:
@@ -224,9 +206,6 @@ def _get_type(prefixes, dct, accept_none=False):
     return _resolve_topicref(prefixes, type_)
 
 def _handle_scope(handler, prefixes, dct):
-    """\
-
-    """
     scope = dct.get('scope', _EMPTY)
     if scope:
         handler.startScope()
@@ -239,26 +218,17 @@ def _handle_iids(handler, prefixes, dct):
         handler.itemIdentifier(_resolve_iri(prefixes, iid))
 
 def _handle_reifier(handler, prefixes, dct):
-    """\
-
-    """
     reifier = dct.get('reifier', None)
     if reifier:
         handler.reifier(_resolve_topicref(prefixes, reifier))
 
 def _handle_value_datatype(handler, prefixes, dct):
-    """\
-
-    """
     value, datatype = dct['value'], _resolve_iri(prefixes, dct.get('datatype', XSD.string))
     if datatype == XSD.anyURI:
         value = _resolve_iri(prefixes, value)
     handler.value(value, datatype)
 
 def _handle_association(handler, prefixes, dct):
-    """\
-
-    """
     handler.startAssociation(_get_type(prefixes, dct))
     for role in dct.get('roles', _EMPTY):
         handler.startRole(_get_type(prefixes, role))
@@ -281,9 +251,6 @@ def _start_parent(handler, prefixes, dct):
     return False
 
 def _handle_occurrence(handler, prefixes, dct):
-    """\
-
-    """
     parent = _start_parent(handler, prefixes, dct)
     handler.startOccurrence(_get_type(prefixes, dct))
     _handle_reifier(handler, prefixes, dct)
