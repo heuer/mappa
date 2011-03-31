@@ -48,50 +48,44 @@ from mappaext.cxtm import create_writer
 from tm.mio import Source, MIOException, SUBJECT_IDENTIFIER
 from mio.ctm import create_deserializer, CTMHandler
 
-class _TestCTMHandler(unittest.TestCase):
+def fail(msg):
+    raise AssertionError(msg)
 
-    def __init__(self, file):
-        unittest.TestCase.__init__(self, 'test_cxtm')
-        self.file = file
-        self.expected = get_baseline(file)
-
-    def setUp(self):
-        conn = mappa.connect()
-        self._tm = conn.create('http://www.semagia.com/test-ctm-handler')
-
-    def test_cxtm(self):
-        src = Source(file=open(self.file))
-        # 1. Generate CTM 1.0 via CTMHandler
-        out = StringIO()
-        deser = create_deserializer()
-        deser.handler = CTMHandler(out)
-        try:
-            deser.parse(src)
-        except MIOException, ex:
-            self.fail('failed: %s.\nError: %s' % (self.file, ex))            
-        # 2. Read the generated CTM
-        deser = create_deserializer()
-        deser.handler = MappaMapHandler(self._tm)
-        new_src = Source(data=out.getvalue(), iri=src.iri)
-        try:
-            deser.parse(new_src)
-        except MIOException, ex:
-            self.fail('failed: %s.\nError: %s\nGenerated CTM: %s' % (self.file, ex, out.getvalue()))
-        # 3. Generate the CXTM
-        f = codecs.open(self.expected, encoding='utf-8')
-        expected = f.read()
-        f.close()
-        result = StringIO()
-        c14n = create_writer(result, src.iri)
-        c14n.write(self._tm)
-        res = unicode(result.getvalue(), 'utf-8')
-        if expected != res:
-            self.fail('failed: %s.\nExpected: %s\nGot: %s\nGenerated CTM: %s' % (self.file, expected, res, out.getvalue()))
+def check_handler(filename):
+    src = Source(file=open(filename))
+    # 1. Generate CTM 1.0 via CTMHandler
+    out = StringIO()
+    deser = create_deserializer()
+    deser.handler = CTMHandler(out)
+    try:
+        deser.parse(src)
+    except MIOException, ex:
+        fail('failed: %s.\nError: %s' % (filename, ex))            
+    # 2. Read the generated CTM
+    conn = mappa.connect()
+    tm = conn.create('http://www.semagia.com/test-ctm-handler')
+    deser = create_deserializer()
+    deser.handler = MappaMapHandler(tm)
+    new_src = Source(data=out.getvalue(), iri=src.iri)
+    try:
+        deser.parse(new_src)
+    except MIOException, ex:
+        self.fail('failed: %s.\nError: %s\nGenerated CTM: %s' % (filename, ex, out.getvalue()))
+    # 3. Generate the CXTM
+    f = codecs.open(get_baseline(filename), encoding='utf-8')
+    expected = f.read()
+    f.close()
+    result = StringIO()
+    c14n = create_writer(result, src.iri)
+    c14n.write(tm)
+    res = unicode(result.getvalue(), 'utf-8')
+    if expected != res:
+        fail('failed: %s.\nExpected: %s\nGot: %s\nGenerated CTM: %s' % (filename, expected, res, out.getvalue()))
 
 def test_handler():
     excluded = ['occurrence-string-multiline2.ctm', 'tm-reifier2.ctm']
     for filename in find_valid_cxtm_cases('ctm', 'ctm', exclude=excluded):
-        yield _TestCTMHandler(filename)
+        yield check_handler, filename
 
 class TestPrefixes(unittest.TestCase):
 
