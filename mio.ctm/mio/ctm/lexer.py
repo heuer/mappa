@@ -164,7 +164,7 @@ def t_directive(t):
     t.type = directive
     return t 
 
-@TOKEN(ur'%s:(\.*(%s))+' % (_ident, _ident_part))
+@TOKEN(ur'%s:(([0-9]+(%s)*)|%s)' % (_ident, _ident_part, _ident))
 def t_QNAME(t):
     t.value = tuple(t.value.split(':'))
     return t
