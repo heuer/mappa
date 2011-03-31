@@ -347,7 +347,7 @@ class TemplateContext(object):
                 kind, identity = self._make_topic_identity((kind, identity))
         if kind in (consts.IID, consts.IRI, consts.SLO):
             return kind, identity
-        raise Exception('Error: Unknown reference "(%s, %s)"' % (kind, identity))
+        raise mio.MIOException('Error: Unknown topic reference "(%s, %s)"' % (kind, identity))
 
     def _get_reference_by_variable(self, var):
         """\
