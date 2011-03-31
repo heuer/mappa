@@ -40,10 +40,15 @@ Compact Topic Maps (CTM) parser.
 """
 from tm import mio
 from mio.ctm.lexer import tokens #pylint: disable-msg=E0611, F0401, W0611
-from mio.ctm.utils import unescape_string
-from mio.ctm import consts
+from mio.ctm import utils, consts
 
 # Disable unused 'p' warnings: pylint: disable-msg=W0613
+
+def unescape_string(s):
+    try:
+        return utils.unescape_string(s)
+    except ValueError, ex:
+        raise mio.MIOException(ex)
 
 def p_noop(p): # Handles all grammar rules where the result is unimportant
     """\
