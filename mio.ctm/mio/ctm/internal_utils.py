@@ -39,7 +39,7 @@ CTM related utilities.
 :license:      BSD license
 """
 from mio.ctm import consts
-from tm import XSD
+from tm import mio, XSD
 
 _CONST2IRI = {
     consts.STRING: XSD.string,
@@ -57,7 +57,7 @@ def as_literal(lit):
     if iri is None and kind == consts.LITERAL:
         return val[0], val[1][1]
     elif not iri:
-        raise Exception('Unknown literal "%s"' % lit)
+        raise mio.MIOException('Illegal literal "%r"' % val)
     return val, iri
 
 def as_string_literal(lit):
@@ -67,7 +67,7 @@ def as_string_literal(lit):
     """
     kind, val = lit
     if not kind == consts.STRING:
-        raise TypeError('Expected a string literal, got: "%r"' % lit)
+        raise mio.MIOException('Expected a string literal, got: "(%s, %s)"' % (kind, val))
     return val, XSD.string
 
 def handle_identity(handler, ctx, identity):
@@ -91,4 +91,4 @@ def handle_identity(handler, ctx, identity):
     elif kind == consts.SLO:
         handler.subjectLocator(iri)
     else:
-        raise Exception('Unknown identity: (%s, %s)' % (kind, iri))
+        raise mio.MIOException('Unknown identity: (%s, %s)' % (kind, iri))
