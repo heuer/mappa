@@ -46,19 +46,21 @@ from tm.mio import MIOException
 from tm.mio.deserializer import Deserializer, Context
 from tm import plyutils
 # pylint: disable-msg=E0611
-from environment import Environment 
-from contenthandler import MainContentHandler
-from miohandler import CTMHandler
+from .environment import Environment 
+from .contenthandler import MainContentHandler
+from .miohandler import CTMHandler
 
 __all__ = ['create_deserializer', 'CTMHandler']
 
-def create_deserializer(newlexer=False, **kw): # pylint: disable-msg=W0613
+def create_deserializer(version=None, context=None, included_by=None, newlexer=False, **kw): # pylint: disable-msg=W0613
     """\
     
     """
-    return CTMDeserializer(newlexer=newlexer)
+    if not version in (None, '1.0'):
+        raise MIOException('Unsupported version "%s"' % version)
+    return CTMDeserializer(context=context, included_by=included_by, newlexer=newlexer, **kw)
 
-_ENCODING = re.compile(r'^%encoding\s*"([^"]+)"').match
+_ENCODING = re.compile(r'^%encoding\s*"([^"]+)"', re.UNICODE).match
 
 class CTMDeserializer(Deserializer):
     """\
@@ -67,7 +69,7 @@ class CTMDeserializer(Deserializer):
     
     version = '1.0'
     
-    def __init__(self, context=None, included_by=None, newlexer=False):
+    def __init__(self, context=None, included_by=None, wildcardcounter=0, newlexer=False, **kw):
         """\
         
         `context`
@@ -76,10 +78,10 @@ class CTMDeserializer(Deserializer):
             A set of IRIs indicating the files this CTM source was included from.
         """
         super(CTMDeserializer, self).__init__()
-        self._context = context or Context()
-        self.included_by = included_by
+        self.context = context or Context()
+        self._included_by = included_by
         self.environment = None
-        self.wildcard_counter = 0
+        self._wildcard_counter = wildcardcounter
         self._new_lexer = newlexer
 
     def _do_parse(self, source):
@@ -94,14 +96,11 @@ class CTMDeserializer(Deserializer):
             from mio.ctm import lexer
         from mio.ctm import parser
         parser = plyutils.make_parser(parser)
-        parser.content_handler = MainContentHandler(Environment(
-                                                    handler=self.handler, 
-                                                    iri=source.iri,
-                                                    subordinate=self.subordinate, 
-                                                    included_by = self.included_by,
-                                                    context=self._context,
-                                                    wildcard_counter=self.wildcard_counter))
-        self.environment = parser.content_handler.environment
+        env = Environment(handler=self.handler, iri=source.iri,
+                          subordinate=self.subordinate, included_by=self._included_by,
+                          context=self.context, wildcard_counter=self._wildcard_counter)
+        parser.content_handler = MainContentHandler(env)
+        self.environment = env
         data = source.stream
         if not data:
             try:
