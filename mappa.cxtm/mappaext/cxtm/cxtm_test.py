@@ -161,7 +161,7 @@ def check_writer(writer_factory, deser_factory, filename):
     c14n.write(tm)
     res = unicode(result.getvalue(), 'utf-8')
     if expected != res:
-        fail('failed: %s.\nExpected: %s\nGot: %s\nGenerated CTM: %s' % (filename, expected, res, out.getvalue()))
+        fail('failed: %s.\nExpected: %s\nGot: %s\nGenerated topic map: %s' % (filename, expected, res, out.getvalue()))
 
 def check_valid(deserializer, filename, post_process=None):
     conn = mappa.connect()
