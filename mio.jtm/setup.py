@@ -60,7 +60,7 @@ setup(
       zip_safe = False,
       include_package_data = True,
       package_data = {'': ['*.txt']},
-      install_requires=['tm'],
+      install_requires=['tm>=0.1.7'],
       keywords = ['Topic Maps', 'Semantic Web', 'JTM', 'JSON Topic Maps'],
       classifiers = [
                     'Intended Audience :: Developers',
