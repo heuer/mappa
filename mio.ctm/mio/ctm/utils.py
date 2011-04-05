@@ -46,34 +46,12 @@ def is_native_datatype(iri):
     """\
     Returns if the provided datatype is supported by CTM natively (the value
     can be represented without quotes).
-    
-    >>> is_native_datatype(XSD.string)
-    False
-    >>> is_native_datatype(XSD.integer)
-    True
-    >>> is_native_datatype('http://www.w3.org/2001/XMLSchema#dateTime')
-    True
-    >>> is_native_datatype('http://psi.topicmaps.org/iso13250/ctm-integer')
-    True
     """
     return iri in (XSD.decimal, XSD.integer, XSD.date, XSD.dateTime, CTM_INTEGER)
 
 def is_keyword(ident):
     """\
     Returns if the provided identifier is a CTM keyword.
-    
-    >>> is_keyword('isa')
-    True
-    >>> is_keyword('ako')
-    True
-    >>> is_keyword('def')
-    True
-    >>> is_keyword('end')
-    True
-    >>> is_keyword(u'end')
-    True
-    >>> is_keyword('isa ')
-    False
     """
     return ident in (u'isa', u'ako', u'def', u'end')
 
@@ -234,15 +212,6 @@ def is_valid_iri(iri):
     
     `iri`
         An IRI (without ``<`` ``>`` delimiters)
-    
-    >>> is_valid_iri('<http://www.semagia.com/>')
-    False
-    >>> is_valid_iri('http://www.semagia.com/')
-    True
-    >>> is_valid_iri('http://{www.semagia.com/}')
-    False
-    >>> is_valid_iri('http:// www.semagia.com/')
-    False
     """
     if not iri:
         return False
