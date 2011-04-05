@@ -15,9 +15,9 @@
 #       disclaimer in the documentation and/or other materials provided
 #       with the distribution.
 #
-#     * Neither the name 'Semagia' nor the name 'Mappa' nor the names of the
-#       contributors may be used to endorse or promote products derived from 
-#       this software without specific prior written permission.
+#     * Neither the name of the project nor the names of the contributors 
+#       may be used to endorse or promote products derived from this 
+#       software without specific prior written permission.
 #
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 # "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -38,20 +38,35 @@
 :organization: Semagia - http://www.semagia.com/
 :license:      BSD license
 """
-from mappaext.xtm import xtm1, xtm2
+from mappaext.cxtm.cxtm_test import create_writer_cxtm_cases
+from mio.xtm import create_deserializer
+from mappaext import xtm
 
-def create_writer(out, base, version=None, prettify=False, export_iids=True, **kw):
-    """\
-    
-    """
-    cls = None
-    if version in (None, 2.0, 2.1):
-        cls = xtm2.XTM2TopicMapWriter
-    elif version == 1.0:
-        cls = xtm1.XTM10TopicMapWriter
-    else:
-        raise IOError('XTM version "%s" is not supported' % str(version)) 
-    writer = cls(out, base, version=version)
-    writer.prettify = prettify
-    writer.export_iids = export_iids
-    return writer
+def create_xtm10_writer(out, base):
+    return xtm.create_writer(out, base, prettify=True, version=1.0)
+
+def create_xtm20_writer(out, base):
+    return xtm.create_writer(out, base, prettify=True, version=2.0)
+
+def create_xtm21_writer(out, base):
+    return xtm.create_writer(out, base, prettify=True, version=2.1)
+
+def test_xtm_10_writer():
+    for test in create_writer_cxtm_cases(create_xtm10_writer, create_deserializer, 'xtm1', 'xtm',
+                                         exclude=['reification-bug-1.xtm', 'reification-bug-2.xtm',
+                                                  'tm-reifier.xtm', 'instanceof-equiv.xtm',
+                                                  'association-reifier.xtm']):
+        yield test
+
+def test_xtm_20_writer():
+    for test in create_writer_cxtm_cases(create_xtm20_writer, create_deserializer, 'xtm2', 'xtm'):
+        yield test
+
+def test_xtm_21_writer():
+    for test in create_writer_cxtm_cases(create_xtm21_writer, create_deserializer, 'xtm21', 'xtm'):
+        yield test
+
+
+if __name__ == '__main__':
+    import nose
+    nose.core.runmodule()
