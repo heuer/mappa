@@ -42,12 +42,18 @@ from mappaext.cxtm.cxtm_test import create_writer_cxtm_cases
 from mio.jtm import create_deserializer
 from mappaext.jtm import create_writer
 
+def create_jtm10_writer(out, base):
+    return create_writer(out, base, version=1.0)
+
+def create_jtm11_writer(out, base):
+    return create_writer(out, base, version=1.1)
+
 def test_jtm_10_writer():
-    for test in create_writer_cxtm_cases(create_writer, create_deserializer, 'jtm', 'jtm'):
+    for test in create_writer_cxtm_cases(create_jtm10_writer, create_deserializer, 'jtm', 'jtm'):
         yield test
 
 def test_jtm_11_writer():
-    for test in create_writer_cxtm_cases(create_writer, create_deserializer, 'jtm11', 'jtm'):
+    for test in create_writer_cxtm_cases(create_jtm11_writer, create_deserializer, 'jtm11', 'jtm'):
         yield test
 
 

@@ -44,6 +44,8 @@ from mappa._internal.it import one_of, no
 from mappa.utils import is_default_name, is_default_name_type
 from ._json import JSONWriter
 
+_NS_XSD = 'http://www.w3.org/2001/XMLSchema#'
+
 class JTMTopicMapWriter(object):
     """\
     Writer for JSON Topic Maps (JTM).
@@ -176,6 +178,8 @@ class JTMTopicMapWriter(object):
         """
         dt = tmc.datatype
         if not XSD.string == dt:
+            if self.version >= 1.1 and dt.startswith(_NS_XSD):
+                dt = '[xsd:%s]' % dt.replace(_NS_XSD, '')
             self._writer.key_value('datatype', dt)
 
     def _write_iids(self, reifiable):
