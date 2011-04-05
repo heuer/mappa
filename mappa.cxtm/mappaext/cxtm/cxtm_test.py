@@ -90,7 +90,7 @@ def create_invalid_cxtm_cases(factory, directory, extension, exclude=None):
     for filename in find_invalid_cxtm_cases(directory, extension, exclude):
         yield check_invalid, factory(), filename
 
-def create_valid_cxtm_cases(factory, directory, extension, exclude=None):
+def create_valid_cxtm_cases(factory, directory, extension, post_process=None, exclude=None):
     """\
     Returns a generator for valid CXTM test cases.
 
