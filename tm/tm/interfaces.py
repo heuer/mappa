@@ -36,7 +36,6 @@ Interfaces for the PyTM package; mainly for documentation purposes.
 
 :author:       Lars Heuer (heuer[at]semagia.com)
 :organization: Semagia - http://www.semagia.com/
-:version:      $Rev: 279 $ - $Date: 2009-11-29 18:35:34 +0100 (So, 29 Nov 2009) $
 :license:      BSD license
 """
 from tm._proto import Interface, Attribute

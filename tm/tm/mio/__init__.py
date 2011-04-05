@@ -36,7 +36,6 @@ PyTM MIO package.
 
 :author:       Lars Heuer (heuer[at]semagia.com)
 :organization: Semagia - http://www.semagia.com/
-:version:      $Rev: 393 $ - $Date: 2011-01-10 11:52:54 +0100 (Mo, 10 Jan 2011) $
 :license:      BSD license
 """
 import warnings

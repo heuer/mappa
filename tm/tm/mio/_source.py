@@ -42,7 +42,6 @@ Provides Topic Maps sources.
 
 :author:       Lars Heuer (heuer[at]semagia.com)
 :organization: Semagia - http://www.semagia.com/
-:version:      $Rev: 385 $ - $Date: 2010-10-28 11:56:35 +0200 (Do, 28 Okt 2010) $
 :license:      BSD license
 """
 try:

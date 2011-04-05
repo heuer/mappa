@@ -36,7 +36,6 @@ Utilities for lexers / parsers using `Ply <http://www.dabeaz.com/ply/>`_
 
 :author:       Lars Heuer (heuer[at]semagia.com)
 :organization: Semagia - http://www.semagia.com/
-:version:      $Rev: 167 $ - $Date: 2009-06-26 14:13:53 +0200 (Fr, 26 Jun 2009) $
 :license:      BSD license
 """
 import os
