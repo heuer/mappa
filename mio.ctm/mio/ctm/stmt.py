@@ -41,7 +41,9 @@ This module translates CTM templates into Python code.
 """
 from mio.ctm import consts
 
-def make_statement(evt, arg=object()):
+_UNDEFINED = object()
+
+def make_statement(evt, arg=_UNDEFINED):
     """\
     Returns Python code for the provided event (i.e. 'startTopic').
 
