@@ -134,7 +134,7 @@ def fail(msg):
     """
     raise AssertionError(msg)
 
-def check_writer(writer_factory, deser_factory, filename):
+def check_writer(writer_factory, deser_factory, filename, post_process=None):
     conn = mappa.connect()
     tm = conn.create('http://www.semagia.com/mappa-test-tm')
     # 1. Read the source
@@ -142,6 +142,8 @@ def check_writer(writer_factory, deser_factory, filename):
     deserializer = deser_factory()
     deserializer.handler = MappaMapHandler(tm)
     deserializer.parse(src)
+    if post_process:
+        post_process(tm)
     # 2. Write the topic map
     out = StringIO()
     writer = writer_factory(out, src.iri)
@@ -152,6 +154,8 @@ def check_writer(writer_factory, deser_factory, filename):
     deserializer = deser_factory()
     deserializer.handler = MappaMapHandler(tm2)
     deserializer.parse(src2)
+    if post_process:
+        post_process(tm2)
     # 4. Generate the CXTM
     f = codecs.open(get_baseline(filename), encoding='utf-8')
     expected = f.read()
