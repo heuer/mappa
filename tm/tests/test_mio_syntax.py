@@ -36,7 +36,6 @@ Tests against the mio.syntax module.
 
 :author:       Lars Heuer (heuer[at]semagia.com)
 :organization: Semagia - http://www.semagia.com/
-:version:      $Rev: 167 $ - $Date: 2009-06-26 14:13:53 +0200 (Fr, 26 Jun 2009) $
 :license:      BSD license
 """
 from unittest import TestCase
@@ -74,5 +73,5 @@ class TestMIOSyntax(TestCase):
             self.assert_(syn is syntax.syntax_for_name(syn.name.lower()))
 
 if __name__ == '__main__':
-    from test import test_support
-    test_support.run_unittest(TestMIOSyntax)
+    import nose
+    nose.core.runmodule()

@@ -167,5 +167,5 @@ class TestIRI(TestCase):
         self.assertEquals("http://lars:@semagia.com/", normalize("http://lars:@semagia.com:"))
 
 if __name__ == '__main__':
-    from test import test_support
-    test_support.run_unittest(TestIRI)
+    import nose
+    nose.core.runmodule()
