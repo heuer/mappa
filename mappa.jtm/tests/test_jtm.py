@@ -53,6 +53,8 @@ def test_jtm_10_writer():
         yield test
 
 def test_jtm_11_writer():
+    for test in create_writer_cxtm_cases(create_jtm11_writer, create_deserializer, 'jtm', 'jtm'):
+        yield test
     for test in create_writer_cxtm_cases(create_jtm11_writer, create_deserializer, 'jtm11', 'jtm'):
         yield test
 
