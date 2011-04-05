@@ -63,6 +63,8 @@ def test_xtm_20_writer():
         yield test
 
 def test_xtm_21_writer():
+    for test in create_writer_cxtm_cases(create_xtm21_writer, create_deserializer, 'xtm2', 'xtm'):
+        yield test
     for test in create_writer_cxtm_cases(create_xtm21_writer, create_deserializer, 'xtm21', 'xtm'):
         yield test
 
