@@ -32,11 +32,10 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 """\
-This module provides either the interface package from `PyProtocols`_ or
-`Zope Interfaces`_.
-If both packages are not installed, this module provides dummy implementations.
+This module provides the interface package of `Zope Interfaces`_.
 
-.. _PyProtocols: http://peak.telecommunity.com/PyProtocols.html
+If Zope Interfaces is not installed, this module provides dummy implementations.
+
 .. _Zope Interfaces: http://www.python.org/pypi/zope.interface
    
 
@@ -47,16 +46,13 @@ If both packages are not installed, this module provides dummy implementations.
 __all__ = ['Interface', 'Attribute']
 
 try:
-    from protocols import Interface, Attribute
+    from zope.interface import Interface, Attribute
 except ImportError:
     try:
-        from zope.interface import Interface, Attribute
-    except ImportError:
-        try:
-            object()
-        except NameError:
-            class object: pass
-        class Interface(object): 
-            def __init__(self, descr): pass
-        class Attribute(object):
-            def __init__(self, descr): pass
+        object()
+    except NameError:
+        class object: pass
+    class Interface(object): 
+        def __init__(self, descr): pass
+    class Attribute(object):
+        def __init__(self, descr): pass
