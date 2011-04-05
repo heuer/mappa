@@ -252,7 +252,7 @@ def is_valid_iri(iri):
     return True
 
 
-_QUOT = {'t': '\t', 'n': '\n', 'r': '\r', '\\': '\\', '"': '"'}
+_QUOT = {u't': u'\t', u'n': u'\n', u'r': u'\r', u'\\': u'\\', u'"': u'"'}
 
 def unescape_string(s):
     """\
@@ -261,7 +261,7 @@ def unescape_string(s):
     `s`
         The string to unescape.
     """
-    backslash = s.find('\\')
+    backslash = s.find(u'\\')
     if backslash < 0:
         return s
     buff = []
@@ -275,7 +275,7 @@ def unescape_string(s):
         if c in _QUOT:
             buff.append(_QUOT[c])
             pos = backslash + 2
-        elif c == 'u': #uxxxx
+        elif c == u'u': #uxxxx
             if backslash + 5 >= length:
                 raise ValueError('Incomplete Unicode escape sequence in: "%s"' % s)
             try:
@@ -284,7 +284,7 @@ def unescape_string(s):
                 pos = backslash + 6
             except ValueError:
                 raise ValueError('Illegal Unicode escape sequence "\\u%s" in "%s"' % (xx, s))
-        elif c == 'U': #Uxxxxxx
+        elif c == u'U': #Uxxxxxx
             if backslash + 7 >= length:
                 raise ValueError('Incomplete Unicode escape sequence in: "%s"' % s)
             try:
@@ -293,9 +293,9 @@ def unescape_string(s):
                 pos = backslash + 8
             except ValueError:
                 raise ValueError('Illegal Unicode escape sequence "\\U%s" in "%s"' % (xx, s))
-        backslash = s.find('\\', pos)
+        backslash = s.find(u'\\', pos)
     buff.append(s[pos:])
-    return unicode(''.join(buff))
+    return u''.join(buff)
 
 
 if __name__ == '__main__':
