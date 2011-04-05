@@ -108,11 +108,60 @@ def create_valid_cxtm_cases(factory, directory, extension, exclude=None, post_pr
     for filename in find_valid_cxtm_cases(directory, extension, exclude):
         yield check_valid, factory(), filename, post_process
 
+def create_writer_cxtm_cases(writer_factory, deserializer_factory, directory, extension, exclude=None, post_process=None):
+    """\
+    Returns a generator for valid CXTM test cases.
+
+    `writer_factory`
+        A callable which returns a IWriter instance.
+    `deserializer_factory`
+        A callable which returns a IDeserializer instance.
+    `directory`
+        The main directory for the tests, i.e. 'ctm'
+    `extension`
+        The filename extension
+    `exclude`
+        An interable of filename which should not be evaluated or ``None``.
+    `post_process`
+        A callable which postprocesses the topic map or ``None``.
+    """
+    for filename in find_valid_cxtm_cases(directory, extension, exclude):
+        yield check_writer, writer_factory, deserializer_factory, filename
+
 def fail(msg):
     """\
 
     """
     raise AssertionError(msg)
+
+def check_writer(writer_factory, deser_factory, filename):
+    conn = mappa.connect()
+    tm = conn.create('http://www.semagia.com/mappa-test-tm')
+    # 1. Read the source
+    src = Source(file=open(filename, 'rb'))
+    deserializer = deser_factory()
+    deserializer.handler = MappaMapHandler(tm)
+    deserializer.parse(src)
+    # 2. Write the topic map
+    out = StringIO()
+    writer = writer_factory(out, src.iri)
+    writer.write(tm)
+    # 3. Read the generated topic map
+    tm2 = conn.create('http://www.semagia.com/mappa-test-tm2')
+    src2 = Source(data=out.getvalue(), iri=src.iri)
+    deserializer = deser_factory()
+    deserializer.handler = MappaMapHandler(tm2)
+    deserializer.parse(src2)
+    # 4. Generate the CXTM
+    f = codecs.open(get_baseline(filename), encoding='utf-8')
+    expected = f.read()
+    f.close()
+    result = StringIO()
+    c14n = CXTMTopicMapWriter(result, src.iri)
+    c14n.write(tm)
+    res = unicode(result.getvalue(), 'utf-8')
+    if expected != res:
+        fail('failed: %s.\nExpected: %s\nGot: %s\nGenerated CTM: %s' % (filename, expected, res, out.getvalue()))
 
 def check_valid(deserializer, filename, post_process=None):
     conn = mappa.connect()
