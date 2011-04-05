@@ -36,7 +36,6 @@ This module provides some PyTM constants.
 
 :author:       Lars Heuer (heuer[at]semagia.com)
 :organization: Semagia - http://www.semagia.com/
-:version:      $Rev: 307 $ - $Date: 2009-12-20 16:35:13 +0100 (So, 20 Dez 2009) $
 :license:      BSD license
 """
 
