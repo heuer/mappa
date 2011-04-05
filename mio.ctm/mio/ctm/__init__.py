@@ -52,13 +52,13 @@ from .miohandler import CTMHandler
 
 __all__ = ['create_deserializer', 'CTMHandler']
 
-def create_deserializer(version=None, context=None, included_by=None, newlexer=False, **kw): # pylint: disable-msg=W0613
+def create_deserializer(version=1.0, context=None, included_by=None, **kw): # pylint: disable-msg=W0613
     """\
     
     """
-    if not version in (None, '1.0'):
+    if not version in (None, 1.0):
         raise MIOException('Unsupported version "%s"' % version)
-    return CTMDeserializer(context=context, included_by=included_by, newlexer=newlexer, **kw)
+    return CTMDeserializer(context=context, included_by=included_by, **kw)
 
 _ENCODING = re.compile(r'^%encoding\s*"([^"]+)"', re.UNICODE).match
 
@@ -69,7 +69,7 @@ class CTMDeserializer(Deserializer):
     
     version = '1.0'
     
-    def __init__(self, context=None, included_by=None, wildcardcounter=0, newlexer=False, **kw):
+    def __init__(self, context=None, included_by=None, wildcardcounter=0, **kw):
         """\
         
         `context`
@@ -82,18 +82,13 @@ class CTMDeserializer(Deserializer):
         self._included_by = included_by
         self.environment = None
         self._wildcard_counter = wildcardcounter
-        self._new_lexer = newlexer
 
     def _do_parse(self, source):
         """\
         
         """
         # pylint: disable-msg=E0611, F0401
-        new_lexer = self._new_lexer
-        if new_lexer:
-            from mio.ctm.lexerng import Lexer
-        else:
-            from mio.ctm import lexer
+        from mio.ctm import lexer
         from mio.ctm import parser
         parser = plyutils.make_parser(parser)
         env = Environment(handler=self.handler, iri=source.iri,
@@ -107,10 +102,7 @@ class CTMDeserializer(Deserializer):
                 data = urlopen(source.iri)
             except IOError:
                 raise MIOException('Cannot read from "%s"' % source.iri)
-        if new_lexer:
-            parser.parse(lexer=Lexer(data, source.encoding))
-        else:
-            parser.parse(self._reader(data, source.encoding), lexer=plyutils.make_lexer(lexer))
+        parser.parse(self._reader(data, source.encoding), lexer=plyutils.make_lexer(lexer))
         self.wildcard_counter = self.environment.wildcard_counter
 
     def _reader(self, fileobj, encoding=None):
