@@ -90,7 +90,7 @@ def create_invalid_cxtm_cases(factory, directory, extension, exclude=None):
     for filename in find_invalid_cxtm_cases(directory, extension, exclude):
         yield check_invalid, factory(), filename
 
-def create_valid_cxtm_cases(factory, directory, extension, exclude=None, post_process=None):
+def create_valid_cxtm_cases(factory, directory, extension, exclude=None):
     """\
     Returns a generator for valid CXTM test cases.
 
@@ -108,7 +108,7 @@ def create_valid_cxtm_cases(factory, directory, extension, exclude=None, post_pr
     for filename in find_valid_cxtm_cases(directory, extension, exclude):
         yield check_valid, factory(), filename, post_process
 
-def create_writer_cxtm_cases(writer_factory, deserializer_factory, directory, extension, exclude=None, post_process=None):
+def create_writer_cxtm_cases(writer_factory, deserializer_factory, directory, extension, exclude=None):
     """\
     Returns a generator for valid CXTM test cases.
 
@@ -134,7 +134,7 @@ def fail(msg):
     """
     raise AssertionError(msg)
 
-def check_writer(writer_factory, deser_factory, filename, post_process=None):
+def check_writer(writer_factory, deser_factory, filename):
     conn = mappa.connect()
     tm = conn.create('http://www.semagia.com/mappa-test-tm')
     # 1. Read the source
@@ -142,8 +142,6 @@ def check_writer(writer_factory, deser_factory, filename, post_process=None):
     deserializer = deser_factory()
     deserializer.handler = MappaMapHandler(tm)
     deserializer.parse(src)
-    if post_process:
-        post_process(tm)
     # 2. Write the topic map
     out = StringIO()
     writer = writer_factory(out, src.iri)
@@ -154,8 +152,6 @@ def check_writer(writer_factory, deser_factory, filename, post_process=None):
     deserializer = deser_factory()
     deserializer.handler = MappaMapHandler(tm2)
     deserializer.parse(src2)
-    if post_process:
-        post_process(tm2)
     # 4. Generate the CXTM
     f = codecs.open(get_baseline(filename), encoding='utf-8')
     expected = f.read()
