@@ -87,5 +87,5 @@ class TestXTMDeserializer(TestCase):
 
 
 if __name__ == '__main__':
-    from test import test_support
-    test_support.run_unittest(TestXTMDeserializer)
+    import nose
+    nose.core.runmodule()
