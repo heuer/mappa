@@ -38,8 +38,7 @@ JSON Topic Maps (JTM) 1.0/1.1 deserializer.
 :organization: Semagia - http://www.semagia.com/
 :license:      BSD license
 """
-from tm import mio
-from tm.voc import XSD, TMDM
+from tm import mio, XSD, TMDM
 from tm.irilib import resolve_iri
 from tm.mio.deserializer import Deserializer
 try:
@@ -58,6 +57,7 @@ __all__ = ['create_deserializer']
 
 _EMPTY = tuple()
 
+_NS_XSD = XSD.string.replace('string', '')
 _DEFAULT_NAME_TYPE = mio.SUBJECT_IDENTIFIER, TMDM.topic_name
 
 _ITEM_TYPES_SUPPORTED = (
@@ -115,10 +115,10 @@ def _issue_events(handler, base_iri, dct, version):
         raise mio.MIOException('Prefixes are not allowed in JTM 1.0')
     prefixes[None] = base_iri
     xsd_iri = prefixes.get('xsd', None)
-    if xsd_iri and xsd_iri != XSD:
+    if xsd_iri and xsd_iri != _NS_XSD:
         raise mio.MIOException('The prefix "xsd" is predefined and cannot be bound to "%s"' % xsd_iri)
     else:
-        prefixes['xsd'] = 'http://www.w3.org/2001/XMLSchema#'
+        prefixes['xsd'] = _NS_XSD
     item_type = dct.get('item_type', '').lower()
     if item_type not in _ITEM_TYPES:
         raise mio.MIOException('Unknown item type: "%s"' % item_type)
