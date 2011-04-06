@@ -47,15 +47,16 @@ from mappaext.cxtm.cxtm_test import find_valid_cxtm_cases, get_baseline
 from mappaext.cxtm import create_writer
 from tm.mio import Source, MIOException, SUBJECT_IDENTIFIER
 from mio.ctm import create_deserializer, CTMHandler
+from mio import xtm
 
 def fail(msg):
     raise AssertionError(msg)
 
-def check_handler(filename):
+def check_handler(deserializer_factory, filename):
     src = Source(file=open(filename))
     # 1. Generate CTM 1.0 via CTMHandler
     out = StringIO()
-    deser = create_deserializer()
+    deser = deserializer_factory()
     deser.handler = CTMHandler(out)
     try:
         deser.parse(src)
@@ -82,10 +83,43 @@ def check_handler(filename):
     if expected != res:
         fail('failed: %s.\nExpected: %s\nGot: %s\nGenerated CTM: %s' % (filename, expected, res, out.getvalue()))
 
-def test_handler():
+def test_ctm():
     excluded = ['occurrence-string-multiline2.ctm', 'tm-reifier2.ctm']
     for filename in find_valid_cxtm_cases('ctm', 'ctm', exclude=excluded):
-        yield check_handler, filename
+        yield check_handler, create_deserializer, filename
+
+_EXCLUDE_XTM = [
+                # Constructs != topic which have an iid
+                "association-duplicate-iid.xtm",
+                "association-duplicate-iid2.xtm",
+                "association-duplicate-iid3.xtm",
+                "association-duplicate-reified2.xtm",
+                "association-duplicate-reified3.xtm",
+                "association-duplicate-reified4.xtm",
+                "itemid-association.xtm",
+                "itemid-name.xtm",
+                "itemid-occurrence.xtm",
+                "itemid-role.xtm",
+                "itemid-tm.xtm",
+                "itemid-variant.xtm",
+                "mergemap-itemid.xtm",
+                "name-duplicate-iid.xtm",
+                "name-duplicate-reified3.xtm",
+                "name-duplicate-reified4.xtm",
+                "occurrence-duplicate-iid.xtm",
+                "occurrence-duplicate-iid2.xtm",
+                "role-duplicate-iid.xtm",
+                "role-duplicate-iid2.xtm",
+                "variant-duplicate-iid.xtm"
+    ]
+
+def test_xtm_20():
+    for filename in find_valid_cxtm_cases('xtm2', 'xtm', exclude=_EXCLUDE_XTM):
+        yield check_handler, xtm.create_deserializer, filename
+
+def test_xtm_21():
+    for filename in find_valid_cxtm_cases('xtm21', 'xtm', exclude=_EXCLUDE_XTM):
+        yield check_handler, xtm.create_deserializer, filename
 
 class TestPrefixes(unittest.TestCase):
 
