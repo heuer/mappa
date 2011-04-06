@@ -35,17 +35,12 @@
 Setup script for deserializer.
 """
 import os
-import sys
-import re
 try:
     from setuptools import setup, find_packages
 except ImportError:
     from ez_setup import use_setuptools
     use_setuptools()
     from setuptools import setup, find_packages
-
-if sys.version_info < (2, 4):
-    raise Exception('Topic Maps requires Python 2.4 or higher')
 
 f = open(os.path.join(os.path.dirname(__file__), 'VERSION.txt'))
 VERSION = f.readline()
@@ -70,7 +65,7 @@ setup(
       zip_safe = False,
       include_package_data = True,
       package_data = {'': ['*.txt']},
-      install_requires=['tm>=0.1.7', 'ply>=3.3'],
+      install_requires=['tm>=0.1.7', 'ply>=3.3', 'mio.xtm>=0.1.0'],
       keywords = ['Topic Maps', 'Semantic Web', 'XTM'],
       classifiers = [
                     'Intended Audience :: Developers',
