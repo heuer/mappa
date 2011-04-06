@@ -48,12 +48,12 @@ import xml.sax.handler as sax_handler
 from tm.xmlutils import XMLWriter, xmlwriter_as_contenthandler, is_ncname
 from mappa import XSD
 from mappa._internal.it import one_of, no
+from mappa._internal.utils import topic_id
 from mappa.utils import is_default_name, is_default_name_type
 
 from mappa import voc
 _NS_XTM = voc.XTM
 del voc
-
 
 def _is_omitable(topic, sids, slos, iids):
     """\
@@ -66,25 +66,6 @@ def _is_omitable(topic, sids, slos, iids):
     return len(iids) + len(sids) + len(slos) <= 1 \
             and no(topic.names) \
             and no(topic.occurrences)
-
-def _get_topic_id(base, topic):
-    """\
-    Returns an identifier for the provided topic.
-    """
-    ident = None
-    for loc in chain(topic.iids, topic.sids):
-        if not loc.startswith(base) or not '#' in loc:
-            continue
-        ident = loc[loc.index('#')+1:]
-        if ident.startswith('t-'):
-            ident = None
-            continue
-        break
-    if not ident:
-        ident = topic.id
-    if ident and is_ncname(unicode(ident)):
-        return ident
-    return 't-%s' % topic.id
 
 class XTM2TopicMapWriter(object):
     """\
@@ -151,10 +132,10 @@ class XTM2TopicMapWriter(object):
         if self._version == 2.0:
             if is_default_name_type(topic) and _is_omitable(topic, sids, slos, iids):
                 return
-            self._writer.startElement('topic', {'id': _get_topic_id(self._base, topic)})
+            self._writer.startElement('topic', {'id': topic_id(self._base, topic)})
         else:
             if not sids and not slos and not iids:
-                self._writer.startElement('topic', {'id': _get_topic_id(self._base, topic)})
+                self._writer.startElement('topic', {'id': topic_id(self._base, topic)})
             else:
                 self._writer.startElement('topic')
                 force_iids = not (sids or slos)
@@ -369,7 +350,7 @@ class XTM2TopicMapWriter(object):
             if iri:
                 self._writer.emptyElement('subjectLocatorRef', href(iri))
             else:
-                iri = one_of(topic.iids) or '#%s' % _get_topic_id(self._base, topic)
+                iri = one_of(topic.iids) or '#%s' % topic_id(self._base, topic)
                 self._writer.emptyElement('topicRef', href(iri))
 
     def _write_topic_ref_xtm20(self, topic):
@@ -377,7 +358,7 @@ class XTM2TopicMapWriter(object):
         Writes a ``<topicRef href="#topic-ref"/>`` element.
         """
         href = self._href
-        self._writer.emptyElement('topicRef', href('#%s' % _get_topic_id(self._base, topic)))
+        self._writer.emptyElement('topicRef', href('#%s' % topic_id(self._base, topic)))
 
     def _reifier_xtm21(self, reifiable):
         """\
@@ -392,7 +373,7 @@ class XTM2TopicMapWriter(object):
         reifier = reifiable.reifier
         if not reifier:
             return None
-        return {'reifier': '#%s' % _get_topic_id(self._base, reifier)}
+        return {'reifier': '#%s' % topic_id(self._base, reifier)}
 
     def _href(self, iri):
         """\

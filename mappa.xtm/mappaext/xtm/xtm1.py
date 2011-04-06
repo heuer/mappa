@@ -40,9 +40,10 @@ This module provides a ``TopicMapWriter`` which writes
 :license:      BSD license
 """
 from itertools import chain
-from tm.xmlutils import XMLWriter, is_ncname
+from tm.xmlutils import XMLWriter
 from mappa.utils import is_default_name_type
 from mappa._internal.it import no
+from mappa._internal.utils import topic_id
 from mappa import XSD, voc
 _NS_XLINK = voc.XLINK
 _NS_XTM_10 = voc.XTM_10
@@ -97,7 +98,7 @@ class XTM10TopicMapWriter(object):
         sids, slos = tuple(topic.sids), tuple(topic.slos)
         if is_default_name_type(topic) and _is_omitable(topic, sids, slos):
             return
-        self._writer.startElement('topic', {'id': _get_topic_id(self._base, topic)})
+        self._writer.startElement('topic', {'id': topic_id(self._base, topic)})
         self._write_identities(topic, sids, slos)
         write_name = self._write_name
         for name in topic.names:
@@ -237,7 +238,7 @@ class XTM10TopicMapWriter(object):
         """\
         Writes a ``<topicRef xlink:href="#topic-ref"/>`` element.
         """
-        self._writer.emptyElement('topicRef', self._href('#%s' % _get_topic_id(self._base, topic)))
+        self._writer.emptyElement('topicRef', self._href('#%s' % topic_id(self._base, topic)))
 
     def _write_identities(self, topic, sids, slos):
         """\
@@ -267,7 +268,7 @@ class XTM10TopicMapWriter(object):
         return attrs
 
     def _reifiable_id(self, reifiable):
-        return 'reifier-%s' % _get_topic_id(self.base, reifiable.reifier)
+        return 'reifier-%s' % topic_id(self.base, reifiable.reifier)
 
     def _add_id(self, attrs, reifiable):
         """\
@@ -294,22 +295,3 @@ def _is_omitable(topic, sids, slos):
     return len(sids) + len(slos) <= 1 \
             and no(topic.names) \
             and no(topic.occurrences)
-
-def _get_topic_id(base, topic):
-    """\
-    Returns an identifier for the provided topic.
-    """
-    ident = None
-    for loc in chain(topic.iids, topic.sids):
-        if not loc.startswith(base) or not '#' in loc:
-            continue
-        ident = loc[loc.index('#')+1:]
-        if ident.startswith('t-'):
-            ident = None
-            continue
-        break
-    if not ident:
-        ident = topic.id
-    if ident and is_ncname(unicode(ident)):
-        return ident
-    return 't-%s' % topic.id
