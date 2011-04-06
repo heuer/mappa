@@ -53,12 +53,29 @@ def get_baseline(filename):
     """
     return os.path.abspath(os.path.dirname(filename) + '/../baseline/%s.cxtm' % os.path.basename(filename))
 
+def _download_cxtm_tests():
+    import urllib, tarfile, shutil
+    directory = os.path.abspath('./cxtm/')
+    archive_name = directory + 'cxtm-tests.tar.gz'
+    urllib.urlretrieve('http://cxtm-tests.svn.sourceforge.net/viewvc/cxtm-tests/trunk/?view=tar', archive_name)
+    archive = tarfile.open(archive_name)
+    archive.extractall(directory)
+    archive.close()
+    trunk_dir = os.path.join(directory, 'trunk')
+    for f in os.listdir(trunk_dir):
+        subdir = os.path.join(trunk_dir, f)
+        if os.path.isdir(subdir):
+            shutil.move(subdir, os.path.join(directory, f))
+    shutil.rmtree(trunk_dir)
+
 def find_cxtm_cases(directory, extension, subdir, exclude=None):
     """\
 
     """
     exclude = set(exclude or [])
     directory = os.path.abspath('./cxtm/%s/%s' % (directory, subdir))
+    if not os.path.exists(directory):
+        _download_cxtm_tests()
     for filename in (n for n in os.listdir(directory) if n.endswith(extension) and n not in exclude):
         yield os.path.join(directory, filename)
 
