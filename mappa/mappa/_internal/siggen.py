@@ -39,12 +39,6 @@
 :license:      BSD License
 """
 from mappa.predicates import cid
-try:
-    sorted
-except NameError:
-    def sorted(l):
-        l.sort()
-        return l
 
 def scoped_signature(scoped):
     return tuple(sorted(map(cid, scoped.scope)))

@@ -47,14 +47,9 @@ from mappa import ModelConstraintViolation, Literal, ANY, UCS, TMDM, XSD
 from mappa import irilib
 from mappa.utils import is_construct, is_topic
 from mappa._internal.constraints import check_not_none, check_same_topicmap
-from mappa._internal.op import attrgetter
 from mappa.backend.event import *
 from mappa.backend.evtmultiplier import EventMultiplier
 from mappa._internal import kind, it
-try:
-    set
-except NameError:
-    from sets import Set as set # pylint: disable-msg=W0611
 
 __all__ = ('TopicMapStub',
            'TopicStub', 'AssociationStub', 'RoleStub',

@@ -39,8 +39,8 @@ Supports filters for Topic Maps construct properties.
 :license:      BSD License
 """
 from itertools import ifilter
+from functools import partial
 from mappa import ANY
-from mappa._internal.ft import partial
 from mappa.utils import has_type, has_scope
 from mappa.predicates import parent
 
