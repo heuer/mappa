@@ -40,7 +40,7 @@ Memory backend.
 """
 import cPickle as pickle
 from mappa import UCS
-from mappa._internal.idgen import random_id
+from mappa._internal.utils import random_id
 from mappa.backend.stub import *
 from mappa.utils import is_topic
 from mappa.backend.identityman import IdentityManager
