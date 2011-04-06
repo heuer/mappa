@@ -52,10 +52,10 @@ def create_xtm21_writer(out, base):
     return xtm.create_writer(out, base, prettify=True, version=2.1)
 
 def test_xtm_10_writer():
+    exclude = ['reification-bug-1.xtm', 'reification-bug-2.xtm', 'tm-reifier.xtm',
+              'instanceof-equiv.xtm', 'association-reifier.xtm']
     for test in create_writer_cxtm_cases(create_xtm10_writer, create_deserializer, 'xtm1', 'xtm',
-                                         exclude=['reification-bug-1.xtm', 'reification-bug-2.xtm',
-                                                  'tm-reifier.xtm', 'instanceof-equiv.xtm',
-                                                  'association-reifier.xtm']):
+                                         exclude=exclude):
         yield test
 
 def test_xtm_20_writer():
