@@ -40,36 +40,69 @@ and `XML Topic Maps (XTM) 2.1 <http://www.isotopicmaps.org/sam/sam-xtm/2009-11-1
 :organization: Semagia - http://www.semagia.com/
 :license:      BSD license
 """
+from itertools import chain
 from cStringIO import StringIO
 from xml.sax import make_parser
 from xml.sax.xmlreader import InputSource
 import xml.sax.handler as sax_handler
-from tm.xmlutils import XMLWriter, xmlwriter_as_contenthandler
+from tm.xmlutils import XMLWriter, xmlwriter_as_contenthandler, is_ncname
 from mappa import XSD
-from mappa._internal.it import one_of
-from mappa._internal.writer import AbstractTopicMapWriter
-from mappa.utils import is_default_name
+from mappa._internal.it import one_of, no
+from mappa.utils import is_default_name, is_default_name_type
 
 from mappa import voc
 _NS_XTM = voc.XTM
 del voc
 
 
-class XTM2TopicMapWriter(AbstractTopicMapWriter):
+def _is_omitable(topic, sids, slos, iids):
+    """\
+    Returns if the `topic` has just one identity and no further 
+    characteristics (occurrences, names).
+    """
+    # No need to check 'roles played' and 'reified' here since
+    # the reified statement refers to the topic already and
+    # the roles played are serialized through the associations
+    return len(iids) + len(sids) + len(slos) <= 1 \
+            and no(topic.names) \
+            and no(topic.occurrences)
+
+def _get_topic_id(base, topic):
+    """\
+    Returns an identifier for the provided topic.
+    """
+    ident = None
+    for loc in chain(topic.iids, topic.sids):
+        if not loc.startswith(base) or not '#' in loc:
+            continue
+        ident = loc[loc.index('#')+1:]
+        if ident.startswith('t-'):
+            ident = None
+            continue
+        break
+    if not ident:
+        ident = topic.id
+    if ident and is_ncname(unicode(ident)):
+        return ident
+    return 't-%s' % topic.id
+
+class XTM2TopicMapWriter(object):
     """\
     The XTM 2.0 / 2.1 writer.
     """
     def __init__(self, out, base, encoding='utf-8', version=None):
-        super(XTM2TopicMapWriter, self).__init__(base)
         if not out:
             raise TypeError('"out" is not specified')
         if version and version not in (2.0, 2.1):
             raise ValueError('Unexpected version number: "%s"' % str(version))
+        if not base:
+            raise TypeError('"base" is not specified')
         self._version = version or 2.0
         self._parser = None    # SAX parser used to serialize occurrence / variants values of datatype xs:anyType
         self._writer = None    # XMLWriter instance to serialize a topic map
         self._out = out
         self._encoding = encoding
+        self._base = base
         self.export_iids = True
         self.prettify = False
         if self._version == 2.0:
@@ -112,17 +145,16 @@ class XTM2TopicMapWriter(AbstractTopicMapWriter):
             The topic to serialize
         """
         force_iids = False
+        sids = tuple(topic.sids)
+        slos = tuple(topic.slos)
+        iids = tuple(topic.iids)
         if self._version == 2.0:
-            self._writer.startElement('topic', {'id': self._id(topic)})
-            sids = topic.sids
-            slos = topic.slos
-            iids = topic.iids
+            if is_default_name_type(topic) and _is_omitable(topic, sids, slos, iids):
+                return
+            self._writer.startElement('topic', {'id': _get_topic_id(self._base, topic)})
         else:
-            sids = tuple(topic.sids)
-            slos = tuple(topic.slos)
-            iids = tuple(topic.iids)
             if not sids and not slos and not iids:
-                self._writer.startElement('topic', {'id': self._id(topic)})
+                self._writer.startElement('topic', {'id': _get_topic_id(self._base, topic)})
             else:
                 self._writer.startElement('topic')
                 force_iids = not (sids or slos)
@@ -337,7 +369,7 @@ class XTM2TopicMapWriter(AbstractTopicMapWriter):
             if iri:
                 self._writer.emptyElement('subjectLocatorRef', href(iri))
             else:
-                iri = one_of(topic.iids) or '#%s' % self._id(topic)
+                iri = one_of(topic.iids) or '#%s' % _get_topic_id(self._base, topic)
                 self._writer.emptyElement('topicRef', href(iri))
 
     def _write_topic_ref_xtm20(self, topic):
@@ -345,7 +377,7 @@ class XTM2TopicMapWriter(AbstractTopicMapWriter):
         Writes a ``<topicRef href="#topic-ref"/>`` element.
         """
         href = self._href
-        self._writer.emptyElement('topicRef', href('#%s' % self._id(topic)))
+        self._writer.emptyElement('topicRef', href('#%s' % _get_topic_id(self._base, topic)))
 
     def _reifier_xtm21(self, reifiable):
         """\
@@ -360,7 +392,7 @@ class XTM2TopicMapWriter(AbstractTopicMapWriter):
         reifier = reifiable.reifier
         if not reifier:
             return None
-        return {'reifier': '#%s' % self._id(reifier)}
+        return {'reifier': '#%s' % _get_topic_id(self._base, reifier)}
 
     def _href(self, iri):
         """\
@@ -404,3 +436,4 @@ class AnyTypeContentHandler(sax_handler.ContentHandler):
 
     def processingInstruction(self, target, data):
         self._handler.processingInstruction(target, data)
+

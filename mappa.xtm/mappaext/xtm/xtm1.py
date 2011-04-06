@@ -39,30 +39,32 @@ This module provides a ``TopicMapWriter`` which writes
 :organization: Semagia - http://www.semagia.com/
 :license:      BSD license
 """
-from tm.xmlutils import XMLWriter
-from mappa import XSD
-from mappa._internal.writer import AbstractTopicMapWriter
-
-from mappa import voc
+from itertools import chain
+from tm.xmlutils import XMLWriter, is_ncname
+from mappa.utils import is_default_name_type
+from mappa._internal.it import no
+from mappa import XSD, voc
 _NS_XLINK = voc.XLINK
 _NS_XTM_10 = voc.XTM_10
 del voc
 
-class XTM10TopicMapWriter(AbstractTopicMapWriter):
+class XTM10TopicMapWriter(object):
     """\
     The XTM 1.0 writer.
     """
     def __init__(self, out, base, encoding='utf-8', version=None):
-        super(XTM10TopicMapWriter, self).__init__(base)
         if not out:
             raise TypeError('"out" is not specified')
         if version and version != 1.0:
             raise ValueError('Unexpected version number: "%s"' % str(version))
+        if not base:
+            raise TypeError('"base" is not specified')
         self._writer = None    # XMLWriter instance to serialize a topic map
         self._out = out
         self._encoding = encoding
         self.export_iids = True
         self.prettify = False
+        self._base = base
 
     def write(self, topicmap):
         """\
@@ -92,8 +94,11 @@ class XTM10TopicMapWriter(AbstractTopicMapWriter):
         `topic`
             The topic to serialize
         """
-        self._writer.startElement('topic', {'id': self._id(topic)})
-        self._write_identities(topic)
+        sids, slos = tuple(topic.sids), tuple(topic.slos)
+        if is_default_name_type(topic) and _is_omitable(topic, sids, slos):
+            return
+        self._writer.startElement('topic', {'id': _get_topic_id(self._base, topic)})
+        self._write_identities(topic, sids, slos)
         write_name = self._write_name
         for name in topic.names:
             write_name(name)
@@ -232,13 +237,12 @@ class XTM10TopicMapWriter(AbstractTopicMapWriter):
         """\
         Writes a ``<topicRef xlink:href="#topic-ref"/>`` element.
         """
-        self._writer.emptyElement('topicRef', self._href('#%s' % self._id(topic)))
+        self._writer.emptyElement('topicRef', self._href('#%s' % _get_topic_id(self._base, topic)))
 
-    def _write_identities(self, topic):
+    def _write_identities(self, topic, sids, slos):
         """\
         
         """
-        sids, slos = tuple(topic.sids), tuple(topic.slos)
         reifiable = topic.reified
         if not reifiable and not sids and not slos:
             return
@@ -263,7 +267,7 @@ class XTM10TopicMapWriter(AbstractTopicMapWriter):
         return attrs
 
     def _reifiable_id(self, reifiable):
-        return 'reifier-%s' % self._id(reifiable.reifier)
+        return 'reifier-%s' % _get_topic_id(self.base, reifiable.reifier)
 
     def _add_id(self, attrs, reifiable):
         """\
@@ -277,3 +281,35 @@ class XTM10TopicMapWriter(AbstractTopicMapWriter):
         Returns a ``{'xlink:href': iri}`` `dict`.
         """
         return {'xlink:href': iri}
+
+
+def _is_omitable(topic, sids, slos):
+    """\
+    Returns if the `topic` has just one identity and no further 
+    characteristics (occurrences, names).
+    """
+    # No need to check 'roles played' and 'reified' here since
+    # the reified statement refers to the topic already and
+    # the roles played are serialized through the associations
+    return len(sids) + len(slos) <= 1 \
+            and no(topic.names) \
+            and no(topic.occurrences)
+
+def _get_topic_id(base, topic):
+    """\
+    Returns an identifier for the provided topic.
+    """
+    ident = None
+    for loc in chain(topic.iids, topic.sids):
+        if not loc.startswith(base) or not '#' in loc:
+            continue
+        ident = loc[loc.index('#')+1:]
+        if ident.startswith('t-'):
+            ident = None
+            continue
+        break
+    if not ident:
+        ident = topic.id
+    if ident and is_ncname(unicode(ident)):
+        return ident
+    return 't-%s' % topic.id
