@@ -56,7 +56,7 @@ def get_baseline(filename):
 def _download_cxtm_tests():
     import urllib, tarfile, shutil
     directory = os.path.abspath('./cxtm/')
-    archive_name = directory + 'cxtm-tests.tar.gz'
+    archive_name = os.path.join(directory, 'cxtm-tests.tar.gz')
     urllib.urlretrieve('http://cxtm-tests.svn.sourceforge.net/viewvc/cxtm-tests/trunk/?view=tar', archive_name)
     archive = tarfile.open(archive_name)
     archive.extractall(directory)
