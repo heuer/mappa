@@ -92,6 +92,18 @@ def test_ctm():
     except ImportError:
         pass
 
+def test_jtm():
+    exclude = [
+               ]
+    try:
+        from mio import jtm
+        for filename in find_valid_cxtm_cases('jtm', 'jtm', exclude=exclude):
+            yield check_handler, jtm.create_deserializer, filename
+        for filename in find_valid_cxtm_cases('jtm11', 'jtm', exclude=exclude):
+            yield check_handler, jtm.create_deserializer, filename
+    except ImportError:
+        pass
+
 def test_xtm_20():
     for filename in find_valid_cxtm_cases('xtm2', 'xtm'):
         yield check_handler, create_deserializer, filename
