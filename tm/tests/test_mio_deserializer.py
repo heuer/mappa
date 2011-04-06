@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2007 - 2009 -- Lars Heuer - Semagia <http://www.semagia.com/>.
+# Copyright (c) 2007 - 2011 -- Lars Heuer - Semagia <http://www.semagia.com/>.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -88,10 +88,11 @@ class TestDeserializer(TestCase):
             pass
 
     def test_register_deserializer(self):
-        self.assert_(None is mio.create_deserializer(format='xtm'))
+        format = 'not_yet_invented_topic_maps_syntax'
+        self.assert_(None is mio.create_deserializer(format=format))
         deser_class = Deserializer
-        mio.register_deserializer(deser_class, format='xtm')
-        deser = mio.create_deserializer(format='xtm')
+        mio.register_deserializer(deser_class, syn=format)
+        deser = mio.create_deserializer(format=format)
         self.assert_(deser)
         self.assert_(isinstance(deser, deser_class))
         deser = mio.create_deserializer(format='xTm')
