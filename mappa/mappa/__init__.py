@@ -58,8 +58,6 @@ __all__ = ['Literal', '__version__', '__version_info__',
            'connect',
            'ModelConstraintViolation', 'IdentityViolation']
 
-
-
 def connect(**kw):
     """\
     Creates / returns a connection with the specified configuration.
