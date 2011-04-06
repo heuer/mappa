@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2007 - 2010 -- Lars Heuer - Semagia <http://www.semagia.com/>.
+# Copyright (c) 2007 - 2011 -- Lars Heuer - Semagia <http://www.semagia.com/>.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -187,6 +187,35 @@ def xmlwriter_as_contenthandler(writer):
     """
     # pylint: disable-msg=W0212
     return XMLGenerator(writer._out, writer._encoding)
+
+#
+# Taken from RDFLib <http://rdflib.net/>
+# License: BSD
+#
+from unicodedata import category, decomposition
+
+NAME_START_CATEGORIES = ["Ll", "Lu", "Lo", "Lt", "Nl"]
+NAME_CATEGORIES = NAME_START_CATEGORIES + ["Mc", "Me", "Mn", "Lm", "Nd"]
+ALLOWED_NAME_CHARS = [u"\u00B7", u"\u0387", u"-", u".", u"_"]
+
+#
+# http://www.w3.org/TR/REC-xml-names/#NT-NCName
+#  [4] NCName ::= (Letter | '_') (NCNameChar)* /* An XML Name, minus
+#      the ":" */
+#  [5] NCNameChar ::= Letter | Digit | '.' | '-' | '_' | CombiningChar
+#      | Extender
+
+def is_ncname(name):
+    first = name[0]
+    if first == '_' or category(first) in NAME_START_CATEGORIES:
+        for i in xrange(1, len(name)):
+            c = name[i]
+            if not category(c) in NAME_CATEGORIES:
+                if c in ALLOWED_NAME_CHARS:
+                    continue
+                return False
+        return True
+    return False
 
 import sys
 if sys.platform[:4] == 'java':
