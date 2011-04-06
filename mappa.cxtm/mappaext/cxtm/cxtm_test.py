@@ -158,7 +158,7 @@ def check_writer(writer_factory, deser_factory, filename):
     f.close()
     result = StringIO()
     c14n = CXTMTopicMapWriter(result, src.iri)
-    c14n.write(tm)
+    c14n.write(tm2)
     res = unicode(result.getvalue(), 'utf-8')
     if expected != res:
         fail('failed: %s.\nExpected: %s\nGot: %s\nGenerated topic map: %s' % (filename, expected, res, out.getvalue()))
