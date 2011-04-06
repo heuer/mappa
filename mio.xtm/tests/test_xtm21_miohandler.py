@@ -52,11 +52,11 @@ from mio.xtm import create_deserializer, XTM21Handler
 def fail(msg):
     raise AssertionError(msg)
 
-def check_handler(filename):
+def check_handler(deserializer_factory, filename):
     src = Source(file=open(filename))
     # 1. Generate XTM 2.1 via XTM21Handler
     out = StringIO()
-    deser = create_deserializer()
+    deser = deserializer_factory()
     deser.handler = XTM21Handler(out, prettify=True)
     deser.parse(src)
     # 2. Read the generated XTM 2.1
@@ -79,13 +79,26 @@ def check_handler(filename):
     if expected != res:
         fail('failed: %s.\nExpected: %s\nGot: %s\nGenerated XTM 2.1: %s' % (filename, expected, res, out.getvalue()))
 
+def test_ctm():
+    exclude = ["occurrence-string-multiline2.ctm",
+               "string-escape.ctm",
+               # Topic is serialized in advance of the tm reifier
+               "tm-reifier2.ctm",
+               ]
+    try:
+        from mio import ctm
+        for filename in find_valid_cxtm_cases('ctm', 'ctm', exclude=exclude):
+            yield check_handler, ctm.create_deserializer, filename
+    except ImportError:
+        pass
+
 def test_xtm_20():
     for filename in find_valid_cxtm_cases('xtm2', 'xtm'):
-        yield check_handler, filename
+        yield check_handler, create_deserializer, filename
 
 def test_xtm_21():
     for filename in find_valid_cxtm_cases('xtm21', 'xtm'):
-        yield check_handler, filename
+        yield check_handler, create_deserializer, filename
 
 
 if __name__ == '__main__':
