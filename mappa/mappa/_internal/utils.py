@@ -32,18 +32,34 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 """\
-Axes.
+Mappa's internal utilities.
 
 :author:       Lars Heuer (heuer[at]semagia.com)
 :organization: Semagia - <http://www.semagia.com/>
 :license:      BSD License
 """
-CHARACTERISTIC = 1
-OCCURRENCE = 2
-NAME = 3
-ROLE_PLAYED = 4
-ROLE_TYPES = 5
-TYPE = 6
-INSTANCE = 7
-SUPERTYPE = 8
-SUBTYPE = 9
+from itertools import chain
+from uuid import uuid4
+from tm.xmlutils import is_ncname
+
+def random_id():
+    return uuid4().int
+
+def topic_id(base, topic):
+    """\
+    Returns an identifier for the provided topic.
+    """
+    ident = None
+    for loc in chain(topic.iids, topic.sids):
+        if not loc.startswith(base) or not '#' in loc:
+            continue
+        ident = loc[loc.index('#')+1:]
+        if ident.startswith('t-'):
+            ident = None
+            continue
+        break
+    if not ident:
+        ident = topic.id
+    if ident and is_ncname(unicode(ident)):
+        return ident
+    return 't-%s' % topic.id
