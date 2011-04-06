@@ -45,7 +45,7 @@ from cStringIO import StringIO
 from xml.sax import make_parser
 from xml.sax.xmlreader import InputSource
 import xml.sax.handler as sax_handler
-from tm.xmlutils import XMLWriter, xmlwriter_as_contenthandler, is_ncname
+from tm.xmlutils import XMLWriter, xmlwriter_as_contenthandler
 from mappa import XSD
 from mappa._internal.it import one_of, no
 from mappa._internal.utils import topic_id
