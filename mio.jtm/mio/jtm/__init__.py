@@ -39,7 +39,7 @@ JSON Topic Maps (JTM) 1.0/1.1 deserializer.
 :license:      BSD license
 """
 from tm import mio
-from tm.voc import XSD
+from tm.voc import XSD, TMDM
 from tm.irilib import resolve_iri
 from tm.mio.deserializer import Deserializer
 try:
@@ -53,9 +53,12 @@ except ImportError:
             from django.utils import simplejson as json
         except ImportError:
             pass #TODO: Exception?
+
 __all__ = ['create_deserializer']
 
 _EMPTY = tuple()
+
+_DEFAULT_NAME_TYPE = mio.SUBJECT_IDENTIFIER, TMDM.topic_name
 
 _ITEM_TYPES_SUPPORTED = (
     'topicmap',
@@ -86,7 +89,6 @@ _IDENTITYPREFIX2MIO = {
 
 def create_deserializer(version=None, **kw): # pylint: disable-msg=W0613
     return JTMDeserializer()
-
 
 class JTMDeserializer(Deserializer):
     def __init__(self, version=None):
@@ -131,10 +133,9 @@ def _issue_events(handler, base_iri, dct, version):
     elif item_type == 'name':
         _handle_name(handler, prefixes, dct)
     else:
-        for k, v in ((k, v) for k, v in dct.iteritems() if k not in ('version', 'prefixes', 'item_type')):
-            if k == 'reifier':
-                _handle_reifier(handler, prefixes, dct)
-            elif k == 'item_identifiers':
+        _handle_reifier(handler, prefixes, dct)
+        for k, v in ((k, v) for k, v in dct.iteritems() if k not in ('version', 'prefixes', 'item_type', 'reifier')):
+            if k == 'item_identifiers':
                 _handle_iids(handler, prefixes, dct)
             elif k == 'topics':
                 for topic in v:
@@ -195,13 +196,12 @@ def _handle_topic(handler, prefixes, dct, version=1.0):
         _handle_name(handler, prefixes, name)
     handler.endTopic()
 
-def _get_type(prefixes, dct, accept_none=False):
+def _get_type(prefixes, dct, default=None):
     type_ = dct.get('type', None)
     if not type_:
-        if accept_none:
-            return None
-        else:
-            raise mio.MIOException('Expected a type')
+        if default:
+            return default
+        raise mio.MIOException('Expected a type')
     return _resolve_topicref(prefixes, type_)
 
 def _handle_scope(handler, prefixes, dct):
@@ -262,7 +262,7 @@ def _handle_occurrence(handler, prefixes, dct):
 
 def _handle_name(handler, prefixes, dct):
     parent = _start_parent(handler, prefixes, dct)
-    handler.startName(_get_type(prefixes, dct, accept_none=True))
+    handler.startName(_get_type(prefixes, dct, default=_DEFAULT_NAME_TYPE))
     _handle_reifier(handler, prefixes, dct)
     _handle_scope(handler, prefixes, dct)
     handler.value(dct['value'])
