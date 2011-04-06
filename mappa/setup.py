@@ -41,9 +41,6 @@ except ImportError:
     use_setuptools()
     from setuptools import setup, find_packages
 
-if sys.version_info < (2, 4):
-    raise Exception('Requires Python 2.4 or higher')
-
 setup(
       name = 'Mappa',
       version = '0.1.7',
