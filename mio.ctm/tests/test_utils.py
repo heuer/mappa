@@ -32,7 +32,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 """\
-
+Tests against mio.ctm.utils
 
 :author:       Lars Heuer (heuer[at]semagia.com)
 :organization: Semagia - http://www.semagia.com/
@@ -68,6 +68,66 @@ def test_iri_invalid():
             'http:// www.semagia.com/',)
     for iri in data:
         eq_(False, is_valid_iri(iri))
+
+def test_valid_id_start():
+    data = ('_', 'A', 'a', u'ü', u'ä')
+    for c in data:
+        eq_(True, is_valid_id_start(c))
+
+def test_invalid_id_start():
+    data = ('0', '-', '.')
+    for c in data:
+        eq_(False, is_valid_id_start(c))
+
+def test_valid_localid_start():
+    data = ('0', u'ü',)
+    for c in data:
+        eq_(True, is_valid_localid_start(c))
+
+def test_invalid_localid_start():
+    data = ('.', '-')
+    for c in data:
+        eq_(False, is_valid_localid_start(c))
+
+def test_valid_id_part():
+    data = ('-', '.', '0', 'a', u'ä', u'ö', u'ü', u'_')
+    for c in data:
+        eq_(True, is_valid_id_part(c))
+
+def test_invalid_id_part():
+    data = (' ',)
+    for c in data:
+        eq_(False, is_valid_id_part(c))
+
+def test_valid_id():
+    data = ('ident', '_ident', 'ident.ifier', 'a1976-09-19', 'isa', u'öüä')
+    for c in data:
+        eq_(True, is_valid_id(c))
+
+def test_invalid_id():
+    data = ('ident.', '-ident', '2ident.ifier', '.isa')
+    for c in data:
+        eq_(False, is_valid_id(c))
+
+def test_valid_local_part():
+    data = ('1976-09-19', '1semagia')
+    for c in data:
+        eq_(True, is_valid_local_part(c))
+
+def test_invalid_local_part():
+    data = ('1976-09-19.', '-semagia', '.semagia', '.1semagia')
+    for c in data:
+        eq_(False, is_valid_local_part(c))
+
+def test_valid_iri_part():
+    data = ('a', ')')
+    for c in data:
+        eq_(True, is_valid_iri_part(c))
+
+def test_invalid_iri_part():
+    data = (' ', '"')
+    for c in data:
+        eq_(False, is_valid_iri_part(c))
 
 if __name__ == '__main__':
     import nose
