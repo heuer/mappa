@@ -64,7 +64,7 @@ def _download_cxtm_tests():
     trunk_dir = os.path.join(directory, 'trunk')
     for f in os.listdir(trunk_dir):
         subdir = os.path.join(trunk_dir, f)
-        if os.path.isdir(subdir):
+        if os.path.isdir(subdir) and f != 'web':
             shutil.move(subdir, os.path.join(directory, f))
     shutil.rmtree(trunk_dir)
 
