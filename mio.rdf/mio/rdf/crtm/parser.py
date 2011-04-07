@@ -72,30 +72,19 @@ def p_noop(p): # Handles all grammar rules where the result is unimportant
                 | in_scope_statements in_scope_statement
     occurrence  : KW_OCC opt_char_body
                 | char_body
+    directive   : prefix_directive
     """
     p[0] = None
 
 
-def p_directive(p):
-    """\
-    directive   : prefix_directive
-                | DIR_INCLUDE IRI               { include($2); }
-                | DIR_LANG2SCOPE bool           { setConvertLanguageToScope($2); }
-    """
-
 def p_directive_include(p):
     """\
-    directive   : DIR_INCLUDE_IRI
+    directive   : DIR_INCLUDE IRI
     """
 
 def p_directive_lang2scope(p):
     """\
     directive   : DIR_LANG2SCOPE bool
-    """
-
-def p_directive_prefix(p):
-    """\
-    directive   : prefix_directive
     """
 
 def p_prefix_directive(p):
