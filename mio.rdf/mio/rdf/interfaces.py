@@ -38,7 +38,7 @@
 :organization: Semagia - http://www.semagia.com/
 :license:      BSD license
 """
-from ._proto import Interface, Attribute
+from tm.proto import Interface, Attribute
 
 class IMapper(Interface):
     """\
