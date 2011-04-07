@@ -40,6 +40,8 @@
 """
 from tm import mio, XSD, TMDM
 
+__all__ = ['MappingHandler']
+
 _TYPE_INSTANCE = mio.SUBJECT_IDENTIFIER, TMDM.type_instance
 _TYPE_INSTANCE_TYPE = mio.SUBJECT_IDENTIFIER, TMDM.type
 _TYPE_INSTANCE_INSTANCE = mio.SUBJECT_IDENTIFIER, TMDM.instance
@@ -169,9 +171,9 @@ class AssociationMapper(AbstractScopeTypeAwareMapper):
         """
         super(AssociationMapper, self).__init__('rtm:association', scope=scope, type=type)
         if not subject_role:
-            raise ValueError('The subject role must be provided')
+            raise mio.MIOException('The subject role must be provided')
         if not object_role:
-            raise ValueError('The object role must be provided')
+            raise mio.MIOException('The object role must be provided')
         self._subject_role = subject_role
         self._object_role = object_role
 
@@ -324,23 +326,24 @@ class MappingHandler(object):
     def handlePrefix(self, prefix, iri):
         pass
 
-    def handleAssociation(self, predicate, subject_role, object_role, scope, type):
-        if not subject_role:
-            raise mio.MIOException('The subject role must be provided')
-        if not object_role:
-            raise mio.MIOException('The object role must be provided')
-        self.mapping[predicate] = AssociationMapper(_sid(subject_role), _sid(object_role), scope=_sids(scope), type=_sid(type))
+    def handleAssociation(self, predicate, subject_role, object_role, scope=None, type=None):
+        self.mapping[predicate] = AssociationMapper(subject_role=_sid(subject_role),
+                                                    object_role=_sid(object_role),
+                                                    scope=_sids(scope), type=_sid(type))
 
-    def handleOccurrence(self, predicate, scope, type, lang2scope=False):
+    def handleOccurrence(self, predicate, scope=None, type=None, lang2scope=False):
         self.mapping[predicate] = OccurrenceMapper(scope=_sids(scope), type=_sid(type), lang2scope=lang2scope)
 
-    def handleName(self, predicate, scope, type, lang2scope=False):
+    def handleName(self, predicate, scope=None, type=None, lang2scope=False):
         self.mapping[predicate] = NameMapper(scope=_sids(scope), type=_sid(type), lang2scope=lang2scope)
 
-    def handleInstanceOf(self, predicate, scope):
-        self.mapping[predicate] = TypeInstanceMapper() if not scope else TypeInstanceScopedMapper(scope=_sids(scope))
+    def handleInstanceOf(self, predicate, scope=None):
+        if not scope:
+            self.mapping[predicate] = TypeInstanceMapper()
+        else:
+            self.mapping[predicate] = TypeInstanceScopedMapper(scope=_sids(scope))
 
-    def handleSubtypeOf(self, predicate, scope):
+    def handleSubtypeOf(self, predicate, scope=None):
         self.mapping[predicate] = SupertypeSubtypeMapper(scope=_sids(scope))
 
     def handleSubjectIdentifier(self, predicate):
@@ -353,8 +356,12 @@ class MappingHandler(object):
         self.mapping[predicate] = IdentityMapper(mio.ITEM_IDENTIFIER)
 
 def _sids(iris):
-    return None if not iris else [(mio.SUBJECT_IDENTIFIER, iri) for iri in iris]
+    if not iris:
+        return None
+    return [(mio.SUBJECT_IDENTIFIER, iri) for iri in iris]
 
 def _sid(iri):
-    return mio.SUBJECT_IDENTIFIER, iri if iri else None
+    if not iri:
+        return None
+    return mio.SUBJECT_IDENTIFIER, iri
 
