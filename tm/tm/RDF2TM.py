@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2007 - 2009 -- Lars Heuer - Semagia <http://www.semagia.com/>.
+# Copyright (c) 2007 - 2011 -- Lars Heuer - Semagia <http://www.semagia.com/>.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -32,74 +32,34 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 """\
-Vocabularies.
+RDF to Topic Maps (RTM) standard PSIs.
+
+This module provides the standard PSIs used in RTM. If you need one 
+of the standard PSIs, you should use this module, rather than the `RDF2TM`
+namespace provided by the ``tm.voc`` module to avoid typos. By convention,
+the hyphen (``-``) in the PSIs is replaced by an underscore character (``_``)
 
 :author:       Lars Heuer (heuer[at]semagia.com)
 :organization: Semagia - http://www.semagia.com/
 :license:      BSD license
 """
-from tm.namespace import Namespace
+from tm.voc import RDF2TM
 
-#pylint: disable-msg=W0105
+__all__ = () # Avoid to expose something that pollutes the namespace, i.e. `type`
 
-XSD = Namespace('http://www.w3.org/2001/XMLSchema#')
-"""\
-Namespace for the XML Schema Datatypes
-"""
+#pylint: disable-msg=W0622
 
-TMDM = Namespace('http://psi.topicmaps.org/iso13250/model/')
-"""\
-Namespace for the Topic Maps -- Data Model
-"""
+maps_to = RDF2TM['maps-to']
+type = RDF2TM['type']
+in_scope = RDF2TM['in-scope']
+subject_role = RDF2TM['subject-role']
+object_role = RDF2TM['object-role']
+basename = RDF2TM['basename']
+occurrence = RDF2TM['occurrence']
+association = RDF2TM['association']
+instance_of = RDF2TM['instance-of']
+subject_identifier = RDF2TM['subject-identifier']
+subject_locator = RDF2TM['subject-locator']
+source_locator = RDF2TM['source-locator']
 
-TMCL = Namespace('http://psi.topicmaps.org/tmcl/')
-"""\
-Namespace for the Topic Maps - Constraint Language
-"""
-
-TMQL = Namespace('http://psi.topicmaps.org/tmql/1.0/')
-"""\
-Namespace for Topic Maps - Query Language
-"""
-
-XTM_10 = Namespace('http://www.topicmaps.org/xtm/1.0/')
-"""\
-XML Topic Maps 1.0 namespace.
-"""
-
-XTM = Namespace('http://www.topicmaps.org/xtm/')
-"""\
-XML Topic Maps 2.0 namespace.
-"""
-
-DC = Namespace('http://purl.org/dc/elements/1.1/')
-"""\
-Dublin Core namespace.
-"""
-
-XLINK = Namespace('http://www.w3.org/1999/xlink')
-"""\
-XLink namespace.
-"""
-
-TMXML = Namespace('http://psi.ontopia.net/xml/tm-xml/')
-"""\
-TM/XML namespace.
-"""
-
-FOAF = Namespace('http://xmlns.com/foaf/0.1/')
-"""\
-Friend of a Friend namespace.
-"""
-
-SIOC = Namespace('http://rdfs.org/sioc/ns#')
-"""\
-SIOC (Semantically-Interlinked Online Communities) core namespace.
-"""
-
-RDF2TM = Namespace('http://psi.ontopia.net/rdf2tm/#')
-"""\
-RDF to Topic Maps (RTM) namespace.
-"""
-
-del Namespace
+del RDF2TM
