@@ -53,7 +53,7 @@ try:
     __version__ = pkg_resources.get_distribution('mappa').version
 except Exception:
     __version__ = 'unknown'
-__all__ = ['Literal', '__version__', '__version_info__', 
+__all__ = ['Literal', '__version__',
            'Namespace', 'voc', 'ANY', 'UCS', 'XSD', 'TMDM', 'irilib',    # from PyTM
            'connect',
            'ModelConstraintViolation', 'IdentityViolation']
