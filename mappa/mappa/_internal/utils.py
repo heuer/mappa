@@ -63,3 +63,28 @@ def topic_id(base, topic):
     if ident and is_ncname(unicode(ident)):
         return ident
     return 't-%s' % topic.id
+
+def is_slo(string):
+    """\
+    Returns if the string represents a subject locator.
+    Subject locators start with "="
+    """
+    return string[0] == '='
+
+def strip_slo_prefix(string):
+    """\
+    
+    """
+    return string[1:].strip()
+
+def is_uri(string):
+    """\
+    Returns if the string represents a URI.
+    
+    Note that this function just checks if a colon ``:`` is present.
+    """
+    return ':' in string
+
+def make_locator(base, frag):
+    from mappa import irilib
+    return irilib.resolve_iri(base, '#' + frag)
