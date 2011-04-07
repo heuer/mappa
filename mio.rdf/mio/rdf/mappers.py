@@ -92,7 +92,7 @@ class AbstractScopeTypeAwareMapper(AbstractMapper):
         `type`
             The type.
         """
-        super(name)
+        super(AbstractScopeTypeAwareMapper, self).__init__(name)
         self._scope = scope if scope else None
         self._type = type
 
@@ -353,7 +353,7 @@ class MappingHandler(object):
         self.mapping[predicate] = IdentityMapper(mio.ITEM_IDENTIFIER)
 
 def _sids(iris):
-    return None if not iris else [(mio.SUBJECT_IDENTIFIER, iri) for iri in coll]
+    return None if not iris else [(mio.SUBJECT_IDENTIFIER, iri) for iri in iris]
 
 def _sid(iri):
     return mio.SUBJECT_IDENTIFIER, iri if iri else None
