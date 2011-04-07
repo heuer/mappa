@@ -332,7 +332,7 @@ class MappingHandler(object):
         self.mapping[predicate] = AssociationMapper(_sid(subject_role), _sid(object_role), scope=_sids(scope), type=_sid(type))
 
     def handleOccurrence(self, predicate, scope, type, lang2scope=False):
-        self.mapping[predicate] = OccurreneMapper(scope=_sids(scope), type=_sid(type), lang2scope=lang2scope)
+        self.mapping[predicate] = OccurrenceMapper(scope=_sids(scope), type=_sid(type), lang2scope=lang2scope)
 
     def handleName(self, predicate, scope, type, lang2scope=False):
         self.mapping[predicate] = NameMapper(scope=_sids(scope), type=_sid(type), lang2scope=lang2scope)
