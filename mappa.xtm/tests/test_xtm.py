@@ -41,6 +41,7 @@
 from mappaext.cxtm.cxtm_test import create_writer_cxtm_cases
 from mio.xtm import create_deserializer
 from mappaext import xtm
+from mappa.xtm1utils import convert_to_tmdm
 
 def create_xtm10_writer(out, base):
     return xtm.create_writer(out, base, prettify=True, version=1.0)
@@ -55,7 +56,6 @@ def create_xtm21_writer(out, base):
  # Either the writer adds an iid or it exports not enough iids
 _EXCLUDE_XTM_10 = [
                 "eliots-xtm-test.xtm",
-                "association-reifier.xtm",
                 "association-untyped.xtm",
                 "bug-53.xtm",
                 "bug-55.xtm",
@@ -82,11 +82,8 @@ _EXCLUDE_XTM_10 = [
                 "name-scope-duplicate-merged.xtm",
                 "occurrence-scope-duplicate-merged.xtm",
                 "occurrences.xtm",
-                "reification-bug-1.xtm",
-                "reification-bug-2.xtm",
                 "resourcedata.xtm",
                 "subjectindref.xtm",
-                "tm-reifier.xtm",
                 "topic-as-subj-ind-1.xtm",
                 "topic-as-subj-ind-2.xtm",
                 "whitespace.xtm",
@@ -112,7 +109,7 @@ _EXCLUDE_XTM_20 = [
     ]
 
 def test_xtm_10_writer():
-    for test in create_writer_cxtm_cases(create_xtm10_writer, create_deserializer, 'xtm1', 'xtm',
+    for test in create_writer_cxtm_cases(create_xtm10_writer, create_deserializer, 'xtm1', 'xtm', post_process=convert_to_tmdm,
                                          exclude=_EXCLUDE_XTM_10):
         yield test
 
@@ -122,10 +119,7 @@ def test_xtm_20_writer():
         yield test
 
 def test_xtm_21_writer():
-    for test in create_writer_cxtm_cases(create_xtm21_writer, create_deserializer, 'xtm1', 'xtm',
-                                         exclude=['tm-reifier.xtm',  'instanceof-equiv.xtm',
-                                                  'association-reifier.xtm', 'reification-bug-1.xtm',
-                                                  'reification-bug-2.xtm']):
+    for test in create_writer_cxtm_cases(create_xtm21_writer, create_deserializer, 'xtm1', 'xtm', post_process=convert_to_tmdm):
         yield test
     for test in create_writer_cxtm_cases(create_xtm21_writer, create_deserializer, 'xtm2', 'xtm'):
         yield test
