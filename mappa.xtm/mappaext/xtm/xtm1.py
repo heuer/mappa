@@ -268,7 +268,7 @@ class XTM10TopicMapWriter(object):
         return attrs
 
     def _reifiable_id(self, reifiable):
-        return 'reifier-%s' % topic_id(self.base, reifiable.reifier)
+        return 'reifier-%s' % topic_id(self._base, reifiable.reifier)
 
     def _add_id(self, attrs, reifiable):
         """\
