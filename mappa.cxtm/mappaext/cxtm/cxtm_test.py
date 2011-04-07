@@ -32,6 +32,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 """\
+Utility functions to run CXTM tests.
 
 :author:       Lars Heuer (heuer[at]semagia.com)
 :organization: Semagia - http://www.semagia.com/
@@ -49,7 +50,7 @@ from mappa.miohandler import MappaMapHandler
 
 def get_baseline(filename):
     """\
-
+    Returns the CXTM baseline path for the provided filename.
     """
     return os.path.abspath(os.path.dirname(filename) + '/../baseline/%s.cxtm' % os.path.basename(filename))
 
@@ -125,7 +126,7 @@ def create_valid_cxtm_cases(factory, directory, extension, post_process=None, ex
     for filename in find_valid_cxtm_cases(directory, extension, exclude):
         yield check_valid, factory(), filename, post_process
 
-def create_writer_cxtm_cases(writer_factory, deserializer_factory, directory, extension, exclude=None):
+def create_writer_cxtm_cases(writer_factory, deserializer_factory, directory, extension, post_process=None, exclude=None):
     """\
     Returns a generator for valid CXTM test cases.
 
@@ -143,7 +144,7 @@ def create_writer_cxtm_cases(writer_factory, deserializer_factory, directory, ex
         A callable which postprocesses the topic map or ``None``.
     """
     for filename in find_valid_cxtm_cases(directory, extension, exclude):
-        yield check_writer, writer_factory, deserializer_factory, filename
+        yield check_writer, writer_factory, deserializer_factory, filename, post_process
 
 def fail(msg):
     """\
@@ -151,7 +152,7 @@ def fail(msg):
     """
     raise AssertionError(msg)
 
-def check_writer(writer_factory, deser_factory, filename):
+def check_writer(writer_factory, deser_factory, filename, post_process):
     conn = mappa.connect()
     tm = conn.create('http://www.semagia.com/mappa-test-tm')
     # 1. Read the source
@@ -159,6 +160,8 @@ def check_writer(writer_factory, deser_factory, filename):
     deserializer = deser_factory()
     deserializer.handler = MappaMapHandler(tm)
     deserializer.parse(src)
+    if post_process:
+        post_process(tm)
     # 2. Write the topic map
     out = StringIO()
     writer = writer_factory(out, src.iri)
@@ -169,6 +172,8 @@ def check_writer(writer_factory, deser_factory, filename):
     deserializer = deser_factory()
     deserializer.handler = MappaMapHandler(tm2)
     deserializer.parse(src2)
+    if post_process:
+        post_process(tm2)
     # 4. Generate the CXTM
     f = codecs.open(get_baseline(filename), encoding='utf-8')
     expected = f.read()
