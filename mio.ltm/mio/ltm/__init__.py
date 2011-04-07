@@ -54,11 +54,11 @@ except NameError:
 
 __all__ = ['create_deserializer']
 
-def create_deserializer(**kw):
+def create_deserializer(legacy=False, **kw):
     """\
     
     """
-    return LTMDeserializer(legacy=kw.get('legacy', False))
+    return LTMDeserializer(legacy=legacy)
 
 _ENCODING = re.compile(r'^@"([^"]+)"').match
 
