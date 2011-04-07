@@ -37,7 +37,6 @@ This module provides classes to read
 
 :author:       Lars Heuer (heuer[at]semagia.com)
 :organization: Semagia - http://www.semagia.com/
-:version:      $Rev: 358 $ - $Date: 2010-01-28 20:36:00 +0100 (Do, 28 Jan 2010) $
 :license:      BSD license
 """
 import xml.sax as sax

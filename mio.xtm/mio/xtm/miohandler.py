@@ -37,7 +37,6 @@ translates events into XML Topic Maps (XTM) syntax.
 
 :author:       Lars Heuer (heuer[at]semagia.com)
 :organization: Semagia - http://www.semagia.com/
-:version:      $Rev:$ - $Date:$
 :license:      BSD license
 """
 import logging
