@@ -50,10 +50,10 @@ from .index import IndexManager
 
 class Connection(object):
 
-    def __init__(self, **kw):
+    def __init__(self, file=None, persistent=False, **kw):
         self._iri2tm = {}
-        self._persistent = kw.get('persistent', False)
-        self._file = kw.get('file', None)
+        self._persistent = persistent
+        self._file = file
         self.closed = False
 
     def create(self, iri):
@@ -74,12 +74,9 @@ class Connection(object):
 
     def commit(self):
         if self._persistent:
-            self._persistent_commit()
-
-    def _persistent_commit(self):
-        out = open(self._file, 'wb')
-        pickle.dump(self, out)
-        out.close()
+            out = open(self._file, 'wb')
+            pickle.dump(self, out)
+            out.close()
 
     def abort(self):
         pass

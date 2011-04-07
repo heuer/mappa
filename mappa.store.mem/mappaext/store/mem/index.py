@@ -38,9 +38,9 @@
 :organization: Semagia - <http://www.semagia.com/>
 :license:      BSD License
 """
-from mappa.utils import is_association, is_role, is_occurrence, is_name
+from collections import defaultdict
+from mappa.utils import is_association, is_role, is_occurrence, is_name, is_literal
 from mappa.backend.event import *
-from mappa.utils import is_literal
 from mappa import XSD, TMDM, Literal
 
 class IndexManager(object):
@@ -236,17 +236,16 @@ def _unregister_scope(dct, scoped, scope):
 
 def _filter(dct, scope, exact):
     raise NotImplementedError()
-    candidates = dct.get()
 
 class TypeInstanceIndex(Index):
 
     def __init__(self, dispatcher):
         super(TypeInstanceIndex, self).__init__()
-        self._type2topic = {}
-        self._type2assoc = {}
-        self._type2role = {}
-        self._type2occ = {}
-        self._type2name = {}
+        self._type2topic = defaultdict(list)
+        self._type2assoc = defaultdict(list)
+        self._type2role = defaultdict(list)
+        self._type2occ = defaultdict(list)
+        self._type2name = defaultdict(list)
         self.subscribe(dispatcher)
 
     def subscribe(self, dispatcher):
@@ -318,41 +317,38 @@ class TypeInstanceIndex(Index):
         _unregister_type(self._type2name, evt.old, evt.old.type)
 
     def topics(self, type):
-        return self._type2topic.get(type) or ()
+        return self._type2topic[type]
 
     def topic_types(self):
-        return self._type2topic.keys()
+        return self._type2topic.iterkeys()
 
     def associations(self, type):
-        return self._type2assoc.get(type) or ()
+        return self._type2assoc[type]
 
     def association_types(self):
-        return self._type2assoc.keys()
+        return self._type2assoc.iterkeys()
 
     def roles(self, type):
-        return self._type2role.get(type) or ()
+        return self._type2role[type]
 
     def role_types(self):
-        return self._type2role.keys()
+        return self._type2role.iterkeys()
 
     def occurrences(self, type):
-        return self._type2occ.get(type) or ()
+        return self._type2occ[type]
 
     def occurrence_types(self):
-        return self._type2occ.keys()
+        return self._type2occ.iterkeys()
 
     def names(self, type):
-        return self._type2name.get(type) or ()
+        return self._type2name[type]
 
     def name_types(self):
-        return self._type2name.keys()
+        return self._type2name.iterkeys()
 
 def _register_type(dct, typed, type):
-    if type not in dct:
-        dct[type] = []
     dct[type].append(typed)
 
 def _unregister_type(dct, typed, type):
-    l = dct.get(type)
-    if l and typed in l:
-        l.remove(typed)
+    if typed in dct:
+        dct[type].remove(typed)
