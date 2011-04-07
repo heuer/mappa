@@ -34,9 +34,7 @@
 """\
 Setup script for tm.
 """
-import os
 import sys
-import re
 try:
     from setuptools import setup, find_packages
 except ImportError:
@@ -47,17 +45,9 @@ except ImportError:
 if sys.version_info < (2, 3):
     raise Exception('Topic Maps requires Python 2.3 or higher')
 
-v = file(os.path.join(os.path.dirname(__file__), 'tm', '__init__.py'))
-m = re.compile(r'.*__version_info__\s*\=\s*\(([0-9]+)\s*,\s*([0-9]+)\s*,\s*([0-9]+)\s*,\s*(?:\'|")([A-Za-z0-9]*)(?:\'|")\s*\)', re.S).match(v.read())
-if not m:
-    raise Exception("TM's author has done something wrong")
-major, minor, micro, level = m.groups()
-VERSION = '%s.%s.%s%s' % (major, minor, micro, level and '.%s' % level or '')
-v.close()
-
 setup(
       name = 'tm',
-      version = VERSION,
+      version = '0.1.7',
       description = 'Topic Maps utilities',
       long_description = '\n\n'.join([open('README.txt').read(), open('CHANGES.txt').read()]),
       author = 'Lars Heuer',
