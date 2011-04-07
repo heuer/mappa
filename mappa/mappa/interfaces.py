@@ -48,7 +48,7 @@ These interfaces exist for documentation purposes.
 :organization: Semagia - <http://www.semagia.com/>
 :license:      BSD License
 """
-from mappa._proto import Interface, Attribute
+from tm.proto import Interface, Attribute
 from mappa import UCS, ANY
 
 # pylint: disable-msg=E0213, E0211, W0622
