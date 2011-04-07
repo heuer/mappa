@@ -42,8 +42,7 @@ from itertools import ifilter, imap
 from mappa import TMDM, UCS
 from mappa.utils import is_binary, involved_associations
 from mappa.predicates import parent
-from .helper import is_slo, is_uri, make_locator, strip_slo_prefix
-from .utils import random_id
+from .utils import is_slo, is_uri, make_locator, strip_slo_prefix, random_id
 
 def get_topic(tm, key):
     """\

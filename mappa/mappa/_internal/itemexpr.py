@@ -42,7 +42,7 @@ by using a dict-alike notation like topic['-'] = 'My Topic'.
 from itertools import chain
 from mappa import ANY, UCS, TMDM
 from mappa.utils import is_topic
-from mappa._internal.helper import is_slo, is_uri, make_locator
+from mappa._internal.utils import is_slo, is_uri, make_locator
 
 _AXIS_CHILD = 1
 _AXIS_NAME = 2
