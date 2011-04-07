@@ -32,7 +32,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 """\
-
+Tests against the XTM writers.
 
 :author:       Lars Heuer (heuer[at]semagia.com)
 :organization: Semagia - http://www.semagia.com/
@@ -53,7 +53,7 @@ def create_xtm21_writer(out, base):
     return xtm.create_writer(out, base, prettify=True, version=2.1)
 
 # Excluding these tms since they cause problems with iids
- # Either the writer adds an iid or it exports not enough iids
+# Either the writer adds an iid or it exports not enough iids
 _EXCLUDE_XTM_10 = [
                 "eliots-xtm-test.xtm",
                 "association-untyped.xtm",
@@ -114,6 +114,9 @@ def test_xtm_10_writer():
         yield test
 
 def test_xtm_20_writer():
+    for test in create_writer_cxtm_cases(create_xtm20_writer, create_deserializer, 'xtm1', 'xtm', post_process=convert_to_tmdm,
+                                         exclude=_EXCLUDE_XTM_10):
+        yield test
     for test in create_writer_cxtm_cases(create_xtm20_writer, create_deserializer, 'xtm2', 'xtm',
                                          exclude=_EXCLUDE_XTM_20):
         yield test
