@@ -32,26 +32,20 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 """\
-This module provides the interface package of `Zope Interfaces`_.
-
-If Zope Interfaces is not installed, this module provides dummy implementations.
+This module tries to provide the interface definitions of `Zope Interfaces`_.
+If the package is not available, this module provides dummy implementations.
 
 .. _Zope Interfaces: http://www.python.org/pypi/zope.interface
    
 
 :author:       Lars Heuer (heuer[at]semagia.com)
-:organization: Semagia - http://www.semagia.com/
-:license:      BSD license
+:organization: Semagia - <http://www.semagia.com/>
+:license:      BSD License
 """
 __all__ = ['Interface', 'Attribute']
-
 try:
     from zope.interface import Interface, Attribute
 except ImportError:
-    try:
-        object()
-    except NameError:
-        class object: pass
     class Interface(object): 
         def __init__(self, descr): pass
     class Attribute(object):
