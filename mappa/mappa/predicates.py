@@ -45,7 +45,7 @@ Those predicates take as input typically one value and produce ``1..n`` values.
 :organization: Semagia - <http://www.semagia.com/>
 :license:      BSD License
 """
-from mappa._internal.op import attrgetter
+from operator import attrgetter
 
 # pylint: disable-msg=W0105
 

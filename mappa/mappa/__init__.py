@@ -48,7 +48,7 @@ from _internal.exceptions import ModelConstraintViolation, IdentityViolation, In
 from tm.namespace import Namespace
 from tm import voc, ANY, UCS, XSD, TMDM
 from tm import irilib
-from _internal.lit import Literal
+from ._internal.lit import Literal
 try:
     __version__ = pkg_resources.get_distribution('mappa').version
 except Exception:

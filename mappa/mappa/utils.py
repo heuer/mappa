@@ -44,17 +44,13 @@ Utilities.
 :license:      BSD License
 """
 import sys
+from functools import partial
 from operator import eq
 from itertools import chain, imap
 from tm import ANY, TMDM, XSD
 import mappa.predicates as pred
-from mappa._internal.ft import partial
 from mappa._internal import it
 from mappa._internal import kind
-try:
-    set()
-except NameError:
-    from sets import Set as set, ImmutableSet as frozenset
 
 def atomify(tmc, ctx=ANY):
     """\
