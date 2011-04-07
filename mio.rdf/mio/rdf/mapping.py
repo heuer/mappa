@@ -307,6 +307,7 @@ class IdentityMapper(AbstractMapper):
             else:
                 handler.itemIdentifier(obj)
 
+
 class MappingHandler(object):
     """\
     Default IMappingHandler implementation that keeps the mapping in-memory.
