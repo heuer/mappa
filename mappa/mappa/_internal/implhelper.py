@@ -40,10 +40,10 @@ Provides some helper functions to ease the implementation of a backend.
 """
 from itertools import ifilter, imap
 from mappa import TMDM, UCS
-from mappa._internal.helper import is_slo, is_uri, make_locator, strip_slo_prefix
-from mappa._internal.idgen import random_id
 from mappa.utils import is_binary, involved_associations
 from mappa.predicates import parent
+from .helper import is_slo, is_uri, make_locator, strip_slo_prefix
+from .utils import random_id
 
 def get_topic(tm, key):
     """\
