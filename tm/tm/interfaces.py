@@ -38,7 +38,7 @@ Interfaces for the PyTM package; mainly for documentation purposes.
 :organization: Semagia - http://www.semagia.com/
 :license:      BSD license
 """
-from tm._proto import Interface, Attribute
+from tm.proto import Interface, Attribute
 
 # Get rid of missing 'self' as first arg errors
 #pylint: disable-msg=E0213
