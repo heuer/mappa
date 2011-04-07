@@ -38,16 +38,10 @@ The Mappa Topic Maps engine. :)
 :organization: Semagia - <http://www.semagia.com/>
 :license:      BSD License
 """
-try:
-    import psyco
-    psyco.full()
-except ImportError:
-    pass
 import pkg_resources
 from _internal.exceptions import ModelConstraintViolation, IdentityViolation, InternalError
 from tm.namespace import Namespace
-from tm import voc, ANY, UCS, XSD, TMDM
-from tm import irilib
+from tm import voc, ANY, UCS, XSD, TMDM, irilib
 from ._internal.lit import Literal
 try:
     __version__ = pkg_resources.get_distribution('mappa').version
@@ -58,7 +52,7 @@ __all__ = ['Literal', '__version__',
            'connect',
            'ModelConstraintViolation', 'IdentityViolation']
 
-def connect(**kw):
+def connect(backend='mem', **kw):
     """\
     Creates / returns a connection with the specified configuration.
     If no configuration is provided, an in-memory connection will be created.
@@ -83,7 +77,7 @@ def connect(**kw):
         >>> tm2.iri == 'http://www.semagia.com/another-map'
         True
     """
-    store_name = kw.get('backend', 'mem')
+    store_name = backend
     store = None
     for ep in pkg_resources.iter_entry_points('mappa.store'):
         if ep.name == store_name:

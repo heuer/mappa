@@ -43,8 +43,7 @@ These stubs are useful for an `OO`_ view on the `TMDM`_.
 :organization: Semagia - <http://www.semagia.com/>
 :license:      BSD License
 """
-from mappa import ModelConstraintViolation, Literal, ANY, UCS, TMDM, XSD
-from mappa import irilib
+from mappa import irilib, ModelConstraintViolation, Literal, ANY, UCS, TMDM, XSD
 from mappa.utils import is_construct, is_topic
 from mappa._internal.constraints import check_not_none, check_same_topicmap
 from mappa.backend.event import *
@@ -309,7 +308,6 @@ class TopicStub(TopicMapsConstructStub):
     def __init__(self, tm):
         TopicMapsConstructStub.__init__(self, tm)
         self._reified = None
-
         self.sids = self._create_sids()
         self.slos = self._create_slos()
         self.roles_played = self._create_roles_played()
