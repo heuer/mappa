@@ -15,9 +15,9 @@
 #       disclaimer in the documentation and/or other materials provided
 #       with the distribution.
 #
-#     * Neither the name 'Semagia' nor the name 'Mappa' nor the names of the
-#       contributors may be used to endorse or promote products derived from 
-#       this software without specific prior written permission.
+#     * Neither the name of the project nor the names of the contributors 
+#       may be used to endorse or promote products derived from this 
+#       software without specific prior written permission.
 #
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 # "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -32,20 +32,36 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 """\
-Utility class to generate attach / detach events for children if the parent
-is attached / detached.
+This module defines a simple event dispatcher / handling mechanism and the
+Mappa standard events (altough the events may not be available / used in every 
+implementation).
 
 :author:       Lars Heuer (heuer[at]semagia.com)
 :organization: Semagia - <http://www.semagia.com/>
 :license:      BSD License
 """
-from mappa.backend.event import AddTopic, RemoveTopic, \
-                                AddAssociation, RemoveAssociation, \
-                                AddRole, RemoveRole, \
-                                AddOccurrence, RemoveOccurrence, \
-                                AddName, RemoveName, \
-                                AddVariant, RemoveVariant
+from operator import itemgetter
+from collections import defaultdict
 
+class EventDispatcher(object):
+    """\
+    
+    """
+    def __init__(self):
+        self._handlers = defaultdict(set)
+
+    def subscribe(self, event_type, handler):
+        """\
+        Subscribes the `handler` to the specified `event_type`.
+        """
+        self._handlers[event_type].add(handler)
+
+    def dispatch(self, event):
+        """\
+        Dispatches the specified `event` to the subscribed handlers.
+        """
+        for handler in self._handlers.get(type(event), ()):
+            handler(event)
 
 class EventMultiplier(object):
     """\
@@ -67,8 +83,6 @@ class EventMultiplier(object):
         dispatcher.subscribe(RemoveTopic, self._remove_topic)
         dispatcher.subscribe(AddAssociation, self._add_assoc)
         dispatcher.subscribe(RemoveAssociation, self._remove_assoc)
-#        dispatcher.subscribe(AddRole, self._add_role)
-#        dispatcher.subscribe(RemoveRole, self._remove_role)
         dispatcher.subscribe(AddName, self._add_name)
         dispatcher.subscribe(RemoveName, self._remove_name)
 
@@ -116,24 +130,6 @@ class EventMultiplier(object):
         for role in assoc:
             dispatcher.dispatch(RemoveRole(assoc, role))
 
-#    def _add_role(self, evt):
-#        """\
-#        Called if a role is added.
-#        """
-#        role = evt.new
-#        dispatcher = self._dispatcher
-#        dispatcher.dispatch(AddType(role, role.type))
-#        dispatcher.dispatch(AddPlayer(role, role.player))
-#
-#    def _remove_role(self, evt):
-#        """\
-#        Called if a role is removed.
-#        """
-#        role = evt.old
-#        dispatcher = self._dispatcher
-#        dispatcher.dispatch(RemoveType(role, role.type))
-#        dispatcher.dispatch(RemovePlayer(role, role.player))
-
     def _add_name(self, evt):
         """\
         Called if a name is added and generates `AddVariant` events for 
@@ -153,3 +149,55 @@ class EventMultiplier(object):
         dispatcher = self._dispatcher
         for var in name:
             dispatcher.dispatch(RemoveVariant(name, var))
+
+
+class Event(tuple):
+    """\
+    Base class for all events. This class is not meant to be used directly.
+    """
+    __slots__ = ()
+
+    def __new__(cls, source, old, new):
+        return tuple.__new__(cls, (source, old, new))
+
+    source = property(itemgetter(0))
+    old = property(itemgetter(1))
+    new = property(itemgetter(2))
+
+class AddEvent(Event):
+    def __new__(cls, source, new):
+        return Event.__new__(cls, source, None, new)
+
+class RemoveEvent(Event):
+    def __new__(cls, source, old):
+        return Event.__new__(cls, source, old, None)
+
+class ChangeEvent(Event):
+    def __new__(cls, source, old, new):
+        return Event.__new__(cls, source, old, new)
+
+class AddTopic(AddEvent): pass
+class RemoveTopic(RemoveEvent): pass
+class AddAssociation(AddEvent): pass
+class RemoveAssociation(RemoveEvent): pass
+class AddRole(AddEvent): pass
+class RemoveRole(RemoveEvent): pass
+class AddOccurrence(AddEvent): pass
+class RemoveOccurrence(RemoveEvent): pass
+class AddName(AddEvent): pass
+class RemoveName(RemoveEvent): pass
+class AddVariant(AddEvent): pass
+class RemoveVariant(RemoveEvent): pass
+class AddItemIdentifier(AddEvent): pass
+class RemoveItemIdentifier(RemoveEvent): pass
+class AddSubjectIdentifier(AddEvent): pass
+class RemoveSubjectIdentifier(RemoveEvent): pass
+class AddSubjectLocator(AddEvent): pass
+class RemoveSubjectLocator(RemoveEvent): pass
+class AddType(AddEvent): pass
+class RemoveType(RemoveEvent): pass
+
+class SetType(ChangeEvent): pass
+class SetReifier(ChangeEvent): pass
+class SetScope(ChangeEvent): pass
+class SetValue(ChangeEvent): pass

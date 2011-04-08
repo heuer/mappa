@@ -15,9 +15,9 @@
 #       disclaimer in the documentation and/or other materials provided
 #       with the distribution.
 #
-#     * Neither the name 'Semagia' nor the name 'Mappa' nor the names of the
-#       contributors may be used to endorse or promote products derived from 
-#       this software without specific prior written permission.
+#     * Neither the name of the project nor the names of the contributors 
+#       may be used to endorse or promote products derived from this 
+#       software without specific prior written permission.
 #
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 # "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -43,12 +43,13 @@ These stubs are useful for an `OO`_ view on the `TMDM`_.
 :organization: Semagia - <http://www.semagia.com/>
 :license:      BSD License
 """
+from operator import attrgetter
 from mappa import irilib, ModelConstraintViolation, Literal, ANY, UCS, TMDM, XSD
 from mappa.utils import is_construct, is_topic
-from mappa._internal.constraints import check_not_none, check_same_topicmap
-from mappa.backend.event import *
-from mappa.backend.evtmultiplier import EventMultiplier
 from mappa._internal import kind, it
+from mappa._internal.constraints import check_not_none, check_same_topicmap
+from mappa.backend.events import *
+
 
 __all__ = ('TopicMapStub',
            'TopicStub', 'AssociationStub', 'RoleStub',
@@ -205,10 +206,6 @@ class TopicMapStub(TopicMapsConstructStub, ReifiableConstructStub,
 
         self.topics = self._create_topics()
         self.associations = self._create_associations()
-
-#    def __setstate__(self, dct):
-#        self.__dict__.update(dct)
-#        self._event_multiplier.subscribe(self)
 
     def dispatch(self, evt):
         if is_construct(evt.new):
