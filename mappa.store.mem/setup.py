@@ -60,7 +60,6 @@ setup(
       zip_safe = False,
       include_package_data = True,
       package_data = {'': ['*.txt']},
-      install_requires=['Mappa>=0.1.7'],
       keywords = ['Topic Maps', 'Semantic Web', 'TMDM'],
       classifiers = [
                     'Intended Audience :: Developers',
