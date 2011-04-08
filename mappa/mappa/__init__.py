@@ -42,7 +42,6 @@ import pkg_resources
 from tm.namespace import Namespace
 from tm import voc, ANY, UCS, XSD, TMDM, irilib
 from mappa._internal.lit import Literal
-from mappa._internal.exceptions import ModelConstraintViolation, IdentityViolation, InternalError
 try:
     __version__ = pkg_resources.get_distribution('mappa').version
 except Exception:
@@ -87,6 +86,49 @@ def connect(backend='mem', **kw):
         raise Exception('Cannot find the store "%s"' % store_name)
     return store.create_connection(**kw)
 
+
+class ModelConstraintViolation(Exception):
+    """\
+    Generic exception that indicates that some Topic Maps constraint has
+    been violated.
+    
+    The object which has raised this exception can be accessed by ``reporter``
+    (can be ``None``).
+    """
+    def __init__(self, msg, reporter=None):
+        super(ModelConstraintException, self).__init__(msg)
+        self.reporter = reporter
+
+class IdentityViolation(ModelConstraintViolation):
+    """\
+    Exception that is raised if a uniqueness constraint is violated.
+    
+    I.e. trying to add a subject identifier to a topic that is already
+    assigned to another topic.
+    
+    The object which has raised this exception can be accessed with 
+    ``reporter``, the existing Topic Maps construct (the one with the
+    identity) can be accessed by ``existing``.
+    
+    >>> t1 = tm.create_topic(sid='http://de.wikipedia.org/wiki/John_Lennon')
+    >>> t2 = tm.create_topic(sid='http://a.non.existing.psi.for/John_Lennon')
+    >>> try:
+    ...     t2.add_sid('http://de.wikipedia.org/wiki/John_Lennon')
+    ... except IdentityViolation, ex:
+            ex.reporter is t2 # True
+            ex.existing is t1 # True
+    """
+    def __init__(self, msg, reporter, existing):
+        super(IdentityViolation, self).__init__(msg, reporter)
+        self.existing = existing
+
+
+class InternalError(Exception):
+    """\
+    Exception thrown in case of an internal error.
+    """
+    def __init__(self, msg):
+        super(InternalError, self).__init__('INTERNAL ERROR: %s' % msg)
 
 if __name__ == '__main__':
     import doctest
