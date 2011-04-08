@@ -32,11 +32,8 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 """\
-Setup script for deserializer.
+Setup script
 """
-import os
-import sys
-import re
 try:
     from setuptools import setup, find_packages
 except ImportError:
