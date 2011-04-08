@@ -15,9 +15,9 @@
 #       disclaimer in the documentation and/or other materials provided
 #       with the distribution.
 #
-#     * Neither the name 'Semagia' nor the name 'Mappa' nor the names of the
-#       contributors may be used to endorse or promote products derived from 
-#       this software without specific prior written permission.
+#     * Neither the name of the project nor the names of the contributors 
+#       may be used to endorse or promote products derived from this 
+#       software without specific prior written permission.
 #
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 # "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -59,8 +59,7 @@ from tm.literalutils import normalize_literal
 from operator import itemgetter
 from datetime import date, time, datetime
 from time import strptime
-from mappa import XSD
-from mappa import irilib
+from mappa import XSD, irilib
 from mappa._internal import kind
 
 __all__ = ['Literal']
@@ -89,6 +88,7 @@ class Literal(tuple):
     AttributeError: can't set attribute
     """
     _kind = kind.LITERAL
+    __slots__ = ()
 
     def __new__(cls, value, datatype=None):
         if isinstance(value, Literal):
