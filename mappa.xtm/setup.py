@@ -34,9 +34,6 @@
 """\
 Setup script.
 """
-import os
-import sys
-import re
 try:
     from setuptools import setup, find_packages
 except ImportError:
@@ -44,14 +41,9 @@ except ImportError:
     use_setuptools()
     from setuptools import setup, find_packages
 
-
-f = open(os.path.join(os.path.dirname(__file__), 'VERSION.txt'))
-VERSION = f.readline()
-f.close()
-
 setup(
       name = 'mappa.xtm',
-      version = VERSION,
+      version = '0.1.0',
       description = 'XML Topic Maps (XTM) 1.0 and 2.0 / 2.1 writer',
       long_description = '\n\n'.join([open('README.txt').read(), open('CHANGES.txt').read()]),
       author = 'Lars Heuer',
