@@ -40,7 +40,7 @@
 """
 from collections import defaultdict
 from mappa.utils import is_association, is_role, is_occurrence, is_name, is_literal
-from mappa.backend.event import *
+from mappa.backend.events import *
 from mappa import XSD, TMDM, Literal
 
 class IndexManager(object):
