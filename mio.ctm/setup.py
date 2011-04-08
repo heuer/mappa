@@ -60,7 +60,7 @@ setup(
       zip_safe = False,
       include_package_data = True,
       package_data = {'': ['*.txt']},
-      install_requires=['tm>=0.1.7', 'ply>=3.3', 'mio.xtm>=0.1.0'],
+      install_requires=['tm>=0.1.7', 'ply>=3.3', 'mio.xtm>=0.1.7'],
       keywords = ['Topic Maps', 'Semantic Web', 'XTM'],
       classifiers = [
                     'Intended Audience :: Developers',
