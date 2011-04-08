@@ -57,7 +57,9 @@ def check_handler(deserializer_factory, filename):
     # 1. Generate CTM 1.0 via CTMHandler
     out = StringIO()
     deser = deserializer_factory()
-    deser.handler = CTMHandler(out)
+    handler = CTMHandler(out)
+    handler.add_prefix('_', src.iri + '#')
+    deser.handler = handler
     try:
         deser.parse(src)
     except MIOException, ex:
