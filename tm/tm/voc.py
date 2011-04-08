@@ -69,7 +69,7 @@ XML Topic Maps 1.0 namespace.
 
 XTM = Namespace('http://www.topicmaps.org/xtm/')
 """\
-XML Topic Maps 2.0 namespace.
+XML Topic Maps 2.0/2.1 namespace.
 """
 
 DC = Namespace('http://purl.org/dc/elements/1.1/')
