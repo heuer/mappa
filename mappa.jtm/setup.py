@@ -34,9 +34,6 @@
 """\
 Setup script.
 """
-import os
-import sys
-import re
 try:
     from setuptools import setup, find_packages
 except ImportError:
@@ -45,13 +42,9 @@ except ImportError:
     from setuptools import setup, find_packages
 
 
-f = open(os.path.join(os.path.dirname(__file__), 'VERSION.txt'))
-VERSION = f.readline()
-f.close()
-
 setup(
       name = 'mappa.jtm',
-      version = VERSION,
+      version = '0.1.0',
       description = 'JSON Topic Maps (JTM) 1.0 and 1.1 writer',
       long_description = '\n\n'.join([open('README.txt').read(), open('CHANGES.txt').read()]),
       author = 'Lars Heuer',
