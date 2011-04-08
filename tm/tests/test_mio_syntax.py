@@ -55,6 +55,7 @@ class TestMIOSyntax(TestCase):
         self.assert_(syntax.XTM is syntax.syntax_for_extension('.XTm'))
         self.assert_(syntax.CTM is syntax.syntax_for_extension('ctm'))
         self.assert_(syntax.CTM is syntax.syntax_for_extension('.ctm'))
+        self.assert_(syntax.CTM is syntax.syntax_for_extension('.tmcl'))
         self.assert_(syntax.LTM is syntax.syntax_for_extension('ltm'))
         self.assert_(syntax.LTM is syntax.syntax_for_extension('.ltm'))
         self.assert_(syntax.CXTM is syntax.syntax_for_extension('cxtm'))
@@ -68,6 +69,7 @@ class TestMIOSyntax(TestCase):
 
     def test_discovery_by_name(self):
         for syn in self._syntaxes():
+            print syn
             self.assert_(syn is syntax.syntax_for_name(syn.name))
             self.assert_(syn is syntax.syntax_for_name(syn.name.upper()))
             self.assert_(syn is syntax.syntax_for_name(syn.name.lower()))

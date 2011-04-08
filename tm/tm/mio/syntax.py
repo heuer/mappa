@@ -79,7 +79,7 @@ ASTMA = Syntax('AsTMa', ('application/x-tm+astma', 'text/plain'), ('atm', 'astma
 BTM = Syntax('BTM', 'application/x-tm+btm', 'btm')
 
 # Compact Topic Maps syntax (CTM).
-CTM = Syntax('CTM', ('application/x-tm+ctm', 'text/plain'), 'ctm')
+CTM = Syntax('CTM', ('application/x-tm+ctm', 'text/plain'), ('ctm', 'tmcl'))
 
 # Canonical XML Topic Maps (CXTM).
 CXTM = Syntax('CXTM', ('application/x-tm+cxtm', 'application/xml'), 'cxtm')
