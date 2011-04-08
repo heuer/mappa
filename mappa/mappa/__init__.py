@@ -15,9 +15,9 @@
 #       disclaimer in the documentation and/or other materials provided
 #       with the distribution.
 #
-#     * Neither the name 'Semagia' nor the name 'Mappa' nor the names of the
-#       contributors may be used to endorse or promote products derived from 
-#       this software without specific prior written permission.
+#     * Neither the name of the project nor the names of the contributors 
+#       may be used to endorse or promote products derived from this 
+#       software without specific prior written permission.
 #
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 # "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -39,10 +39,10 @@ The Mappa Topic Maps engine. :)
 :license:      BSD License
 """
 import pkg_resources
-from _internal.exceptions import ModelConstraintViolation, IdentityViolation, InternalError
 from tm.namespace import Namespace
-from tm import voc, ANY, UCS, XSD, TMDM, irilib
-from ._internal.lit import Literal
+from mappa import voc, ANY, UCS, XSD, TMDM, irilib
+from mappa._internal.lit import Literal
+from mappa._internal.exceptions import ModelConstraintViolation, IdentityViolation, InternalError
 try:
     __version__ = pkg_resources.get_distribution('mappa').version
 except Exception:

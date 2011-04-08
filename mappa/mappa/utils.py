@@ -15,9 +15,9 @@
 #       disclaimer in the documentation and/or other materials provided
 #       with the distribution.
 #
-#     * Neither the name 'Semagia' nor the name 'Mappa' nor the names of the
-#       contributors may be used to endorse or promote products derived from 
-#       this software without specific prior written permission.
+#     * Neither the name of the project nor the names of the contributors 
+#       may be used to endorse or promote products derived from this 
+#       software without specific prior written permission.
 #
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 # "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -47,8 +47,7 @@ import sys
 from functools import partial
 from operator import eq
 from itertools import chain, imap
-from tm import ANY, TMDM, XSD
-import mappa.predicates as pred
+from mappa import ANY, TMDM, XSD, predicates as pred
 from mappa._internal import it, kind
 
 def atomify(tmc, ctx=ANY):

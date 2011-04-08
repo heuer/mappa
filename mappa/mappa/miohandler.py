@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2007 - 2009 -- Lars Heuer - Semagia <http://www.semagia.com/>.
+# Copyright (c) 2007 - 2011 -- Lars Heuer - Semagia <http://www.semagia.com/>.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -15,9 +15,9 @@
 #       disclaimer in the documentation and/or other materials provided
 #       with the distribution.
 #
-#     * Neither the name 'Semagia' nor the name 'Mappa' nor the names of the
-#       contributors may be used to endorse or promote products derived from 
-#       this software without specific prior written permission.
+#     * Neither the name of the project nor the names of the contributors 
+#       may be used to endorse or promote products derived from this 
+#       software without specific prior written permission.
 #
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 # "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
