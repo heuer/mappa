@@ -40,7 +40,7 @@ The Mappa Topic Maps engine. :)
 """
 import pkg_resources
 from tm.namespace import Namespace
-from mappa import voc, ANY, UCS, XSD, TMDM, irilib
+from tm import voc, ANY, UCS, XSD, TMDM, irilib
 from mappa._internal.lit import Literal
 from mappa._internal.exceptions import ModelConstraintViolation, IdentityViolation, InternalError
 try:
