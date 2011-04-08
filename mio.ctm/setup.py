@@ -34,7 +34,6 @@
 """\
 Setup script for deserializer.
 """
-import os
 try:
     from setuptools import setup, find_packages
 except ImportError:
@@ -42,13 +41,9 @@ except ImportError:
     use_setuptools()
     from setuptools import setup, find_packages
 
-f = open(os.path.join(os.path.dirname(__file__), 'VERSION.txt'))
-VERSION = f.readline()
-f.close()
-
 setup(
       name = 'mio.ctm',
-      version = VERSION,
+      version = '0.1.3',
       description = 'Compact Topic Maps Syntax (CTM) 1.0 reader',
       long_description = '\n\n'.join([open('README.txt').read(), open('CHANGES.txt').read()]),
       author = 'Lars Heuer',
