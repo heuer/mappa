@@ -96,7 +96,7 @@ class ModelConstraintViolation(Exception):
     (can be ``None``).
     """
     def __init__(self, msg, reporter=None):
-        super(ModelConstraintException, self).__init__(msg)
+        super(ModelConstraintViolation, self).__init__(msg)
         self.reporter = reporter
 
 class IdentityViolation(ModelConstraintViolation):
