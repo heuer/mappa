@@ -352,14 +352,6 @@ class CTMHandler(mio_handler.HamsterMapHandler):
             self._out.write('^ ')
         self._write_uri(iri)
 
-    def _write_iids(self, iids):
-        write_iid = self._write_iid
-        for iid in iids:
-            write_iid(iid)
-
-    def _write_iid(self, iid):
-        self._out.emptyElement('itemIdentity', {'href': iid})
-
     def _write_string(self, value):
         write = self._out.write
         if '"' in value and value[-1] != '"':
@@ -378,9 +370,9 @@ class CTMHandler(mio_handler.HamsterMapHandler):
             write('"')
 
     def _write_uri(self, uri):
-        for prefix, iri in self._prefixes.items():
+        for prefix, iri in self._prefixes.iteritems():
             if uri.startswith(iri):
-                lp = uri.lstrip(iri)
+                lp = uri[len(iri):]
                 if is_valid_local_part(lp):
                     self._out.write(':'.join((prefix, lp)))
                     return
