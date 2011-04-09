@@ -380,7 +380,7 @@ class CTMHandler(mio_handler.HamsterMapHandler):
     def _write_uri(self, uri):
         for prefix, iri in self._prefixes.items():
             if uri.startswith(iri):
-                lp = uri.replace(iri, '')
+                lp = uri.lstrip(iri)
                 if is_valid_local_part(lp):
                     self._out.write(':'.join((prefix, lp)))
                     return
