@@ -44,7 +44,7 @@ import logging
 from tm import XSD
 from tm.mio import SUBJECT_IDENTIFIER, SUBJECT_LOCATOR, ITEM_IDENTIFIER, MIOException
 import tm.mio.handler as mio_handler
-from utils import is_valid_id, is_valid_local_part, is_valid_iri, is_native_datatype
+from .utils import is_valid_id, is_valid_local_part, is_valid_iri, is_native_datatype
 
 __all__ = ['CTMHandler']
 

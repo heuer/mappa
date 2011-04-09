@@ -38,8 +38,8 @@ CTM related utilities.
 :organization: Semagia - http://www.semagia.com/
 :license:      BSD license
 """
-from mio.ctm import consts
 from tm import mio, XSD
+from . import consts
 
 _CONST2IRI = {
     consts.STRING: XSD.string,

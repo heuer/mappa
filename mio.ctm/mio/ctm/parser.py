@@ -39,8 +39,8 @@ Compact Topic Maps (CTM) parser.
 :license:      BSD license
 """
 from tm import mio
-from mio.ctm.lexer import tokens #pylint: disable-msg=E0611, F0401, W0611
-from mio.ctm import utils, consts
+from . import utils, consts
+from .lexer import tokens #pylint: disable-msg=E0611, F0401, W0611
 
 # Disable unused 'p' warnings: pylint: disable-msg=W0613
 

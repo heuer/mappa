@@ -39,7 +39,7 @@ This module translates CTM templates into Python code.
 :version:      $Rev:$ - $Date:$
 :license:      BSD license
 """
-from mio.ctm import consts
+from . import consts
 
 _UNDEFINED = object()
 
