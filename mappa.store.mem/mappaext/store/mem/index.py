@@ -320,35 +320,36 @@ class TypeInstanceIndex(Index):
         return self._type2topic[type]
 
     def topic_types(self):
-        return self._type2topic.iterkeys()
+        return self._type2topic.keys()
 
     def associations(self, type):
         return self._type2assoc[type]
 
     def association_types(self):
-        return self._type2assoc.iterkeys()
+        return self._type2assoc.keys()
 
     def roles(self, type):
         return self._type2role[type]
 
     def role_types(self):
-        return self._type2role.iterkeys()
+        return self._type2role.keys()
 
     def occurrences(self, type):
         return self._type2occ[type]
 
     def occurrence_types(self):
-        return self._type2occ.iterkeys()
+        return self._type2occ.keys()
 
     def names(self, type):
         return self._type2name[type]
 
     def name_types(self):
-        return self._type2name.iterkeys()
+        return self._type2name.keys()
 
 def _register_type(dct, typed, type):
     dct[type].append(typed)
 
 def _unregister_type(dct, typed, type):
-    if typed in dct:
-        dct[type].remove(typed)
+    l = dct.get(type)
+    if l and typed in l:
+        l.remove(typed)
