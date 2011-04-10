@@ -71,7 +71,7 @@ class XMLWriter(object):
         """\
         Writes the <?xml version="1.0" ... ?> declaration.
         """
-        self._out.write('<?xml version="1.0" encoding="%s" standalone="yes"?>' % self._encoding)
+        self._out.write(u'<?xml version="1.0" encoding="%s" standalone="yes"?>' % self._encoding)
         if not self.prettify:
             self._newline()
         self._depth = 0
@@ -88,9 +88,9 @@ class XMLWriter(object):
         Writes a start tag with the optional attributes (a dict).
         """
         self._indent()
-        self._out.write('<%s' % name)
+        self._out.write(u'<%s' % name)
         self._write_attributes(attrs)
-        self._out.write('>')
+        self._out.write(u'>')
         self._depth+=1
     
     def endElement(self, name, indent=True):
@@ -105,7 +105,7 @@ class XMLWriter(object):
         self._depth-=1
         if indent:
             self._indent()
-        self._out.write('</%s>' % name)
+        self._out.write(u'</%s>' % name)
     
     def dataElement(self, name, data, attrs=None):
         """\
@@ -121,9 +121,9 @@ class XMLWriter(object):
         """
         self._indent()
         out = self._out
-        out.write('<%s' % name)
+        out.write(u'<%s' % name)
         self._write_attributes(attrs)
-        out.write('/>')
+        out.write(u'/>')
     
     def characters(self, content):
         """\
@@ -136,11 +136,11 @@ class XMLWriter(object):
         Writes a processing instruction.
         """
         write = self._out.write
-        write('<?')
+        write(u'<?')
         write(target)
-        write(' ')
+        write(u' ')
         write(data)
-        write('?>')
+        write(u'?>')
 
     def comment(self, comment):
         """\
@@ -148,9 +148,9 @@ class XMLWriter(object):
         """
         write = self._out.write
         self._indent()
-        write('<!-- ')
+        write(u'<!-- ')
         self.characters(comment)
-        write(' -->')
+        write(u' -->')
         if not self.prettify:
             self._newline()
 
@@ -161,7 +161,7 @@ class XMLWriter(object):
         if attrs:
             write = self._out.write
             for k, v in attrs.items():
-                write(' %s=%s' % (k, quoteattr(v)))
+                write(u' %s=%s' % (k, quoteattr(v)))
 
     def _indent(self):
         """\
@@ -169,13 +169,13 @@ class XMLWriter(object):
         """
         if self.prettify:
             self._newline()
-            self._out.write(' ' * self._depth * 2)
+            self._out.write(u' ' * self._depth * 2)
 
     def _newline(self):
         """\
         Writes a newline character.
         """
-        self._out.write('\n')
+        self._out.write(u'\n')
 
 
 def xmlwriter_as_contenthandler(writer):
