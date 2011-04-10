@@ -40,7 +40,7 @@ Environment.
 """
 from tm import mio, irilib
 from tm.mio.deserializer import Context
-from mio.ctm import consts, tpl
+from . import consts, tpl
 
 _IRI2SYNTAX = {
     'http://psi.topicmaps.org/iso13250/ctm': 'ctm',
