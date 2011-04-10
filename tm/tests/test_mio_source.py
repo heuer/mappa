@@ -42,6 +42,7 @@ from unittest import TestCase
 from urllib import pathname2url
 from urlparse import urljoin
 from tm.mio import Source
+from tm import irilib
 
 class TestSource(TestCase):
 
@@ -50,7 +51,7 @@ class TestSource(TestCase):
         src = Source(file=f)
         self.assert_(src.stream)
         self.assert_(src.encoding is None)
-        url = urljoin('file:', pathname2url(f.name))
+        url = irilib.normalize(urljoin('file:', pathname2url(f.name)))
         self.assertEqual(url, src.iri)
 
     def test_file_iri(self):
