@@ -72,9 +72,7 @@ def as_string_literal(lit):
 
 def handle_identity(handler, ctx, identity):
     """\
-    Issues a ``subjectIdentifier``, ``subjectLocator`` or ``itemIdentifier``
-    event. Which event is issued depends on the value to which the variable 
-    ``identity`` is bound to.
+    Issues a ``subjectIdentifier`` event.
     
     `handler`
         An IMapHandler instance.
@@ -84,11 +82,6 @@ def handle_identity(handler, ctx, identity):
         A tuple (VARIABLE, name)
     """
     kind, iri = ctx.get_topic_reference(identity)
-    if kind == consts.IID:
-        handler.itemIdentifier(iri)
-    elif kind == consts.SID:
-        handler.subjectIdentifier(iri)
-    elif kind == consts.SLO:
-        handler.subjectLocator(iri)
-    else:
-        raise mio.MIOException('Unknown identity: (%s, %s)' % (kind, iri))
+    if not kind == consts.IRI:
+        raise mio.MIOException('Expected an IRI, got: (%s, %s)' % (kind, iri))
+    handler.subjectIdentifier(iri)
