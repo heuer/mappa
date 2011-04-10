@@ -44,6 +44,8 @@ from tm.mio.handler import MapHandler, simplify
 from tm.mio.deserializer import Deserializer
 from tm.mio import syntax
 
+_TEST_SYNTAX = syntax.Syntax('Test-Syntax', 'application/something', 'blub')
+
 class _MapHandler(MapHandler):
     pass
 
@@ -71,36 +73,13 @@ class TestDeserializer(TestCase):
         self.assert_(deser.handler is simplify(deser.handler))
 
     def test_create_deserializer_unknown_syntax(self):
-        try:
-            mio.create_deserializer(format='xy')
-            self.fail('Expected an exception for format "xy"')
-        except mio.MIOException:
-            pass
-        try:
-            mio.create_deserializer(mimetype='xy')
-            self.fail('Expected an exception for mimetype "xy"')
-        except mio.MIOException:
-            pass
-        try:
-            mio.create_deserializer(extension='xy')
-            self.fail('Expected an exception for extension "xy"')
-        except mio.MIOException:
-            pass
+        self.assert_(None is mio.create_deserializer(format='xy'))
+        self.assert_(None is mio.create_deserializer(mimetype='xy'))
+        self.assert_(None is mio.create_deserializer(extension='xy'))
 
-    def test_register_deserializer(self):
-        format = 'not_yet_invented_topic_maps_syntax'
-        self.assert_(None is mio.create_deserializer(format=format))
-        deser_class = Deserializer
-        mio.register_deserializer(deser_class, syn=format)
-        deser = mio.create_deserializer(format=format)
-        self.assert_(deser)
-        self.assert_(isinstance(deser, deser_class))
-        deser = mio.create_deserializer(format='xTm')
-        self.assert_(deser)
-        self.assert_(isinstance(deser, deser_class))
+    def test_deserializer_discovery(self):
         deser = mio.create_deserializer(mimetype=syntax.XTM.mimetypes[0])
         self.assert_(deser)
-        self.assert_(isinstance(deser, deser_class))
         for ext in syntax.XTM.extensions:
             deser = mio.create_deserializer(extension=ext)
             self.assert_(deser)
@@ -111,17 +90,17 @@ class TestDeserializer(TestCase):
             deser = mio.create_deserializer(extension='.%s' % ext.upper())
             self.assert_(deser)
 
-    def test_register_deserializer_invalid(self):
-        try:
-            mio.register_deserializer('not_callable', format='xtm')
-            self.fail('register_deserializer accepts a non callable factory')
-        except mio.MIOException:
-            pass
-        try:
-            mio.register_deserializer(Deserializer, format='xy')
-            self.fail('register_deserializer accepts an unknown syntax')
-        except mio.MIOException:
-            pass
+    def test_register_deserializer(self):
+        self.assert_(None is mio.create_deserializer(_TEST_SYNTAX))
+        self.assert_(None is mio.create_deserializer(format='Test-Syntax'))
+        self.assert_(None is mio.create_deserializer(extension=_TEST_SYNTAX.extensions[0]))
+        self.assert_(None is mio.create_deserializer(mimetype=_TEST_SYNTAX.mimetypes[0]))
+        mio.register_deserializer('mio.xtm', _TEST_SYNTAX)
+        self.assert_(mio.create_deserializer(_TEST_SYNTAX))
+        self.assert_(mio.create_deserializer(format='Test-Syntax'))
+        self.assert_(mio.create_deserializer(extension=_TEST_SYNTAX.extensions[0]))
+        self.assert_(mio.create_deserializer(mimetype=_TEST_SYNTAX.mimetypes[0]))
+
 
 if __name__ == '__main__':
     import nose
