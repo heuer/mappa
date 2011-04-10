@@ -34,16 +34,12 @@
 """\
 Setup script for tm.
 """
-import sys
 try:
     from setuptools import setup, find_packages
 except ImportError:
     from ez_setup import use_setuptools
     use_setuptools()
     from setuptools import setup, find_packages
-
-if sys.version_info < (2, 3):
-    raise Exception('Topic Maps requires Python 2.3 or higher')
 
 setup(
       name = 'tm',
