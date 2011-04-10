@@ -39,6 +39,9 @@ default_port = {
     'snntp': 563,
 }
 
+_WIN_FILE_PATTERN = re.compile(r'^(/[A-Za-z]*)(%7C)')
+_MAILTO_HOST_PATTERN = re.compile(r'(@.+)')
+
 def normalize(url):
     """Normalize a URL."""
 
@@ -61,12 +64,13 @@ def normalize(url):
         else:
             string=unquote(string)
         return unicodedata.normalize('NFC',string).encode('utf-8')
-    #LH: added | to the safe characters, iff scheme is 'file' to avoid 
-    # %C7 encoding under Win for URLs like file:///C|/file.txt
+    path = quote(clean(path),"~:/?#[]@!$&'()*+,;=")
+    #LH: Replace '|' after drive letter
     if scheme == 'file':
-        path=quote(clean(path),"~:/?#[]@!$&'()*+,;=|")
-    else:
-        path=quote(clean(path),"~:/?#[]@!$&'()*+,;=")
+        path = _WIN_FILE_PATTERN.sub(r'\1:', path)
+    elif scheme == 'mailto':
+        #LH: Normalize the host part of e-mail addresses
+        path = _MAILTO_HOST_PATTERN.sub(lambda m: m.group(1).lower(), path)
     fragment=quote(clean(fragment),"~")
 
     # note care must be taken to only encode & and = characters as values
@@ -110,7 +114,8 @@ def normalize(url):
     if port: auth+=":"+port
     if url.endswith("#") and query=="" and fragment=="": path+="#"
     #LH: Keeping empty query
-    if url.endswith('?'): path+='?'
+    if url.endswith('?'):
+        path+='?'
     return urlparse.urlunsplit((scheme,auth,path,query,fragment))
 
 if __name__ == "__main__":
@@ -205,7 +210,7 @@ if __name__ == "__main__":
         '-':                             '-',
     }
 
-    def testcase(original,normalized):
+    def testcase(original, normalized):
         class test(unittest.TestCase):
             def runTest(self):
                 assert normalize(original)==normalized, \
