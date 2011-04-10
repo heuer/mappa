@@ -38,11 +38,8 @@ Provides constants for commonly known syntaxes and discovery of syntaxes.
 :organization: Semagia - http://www.semagia.com/
 :license:      BSD license
 """
-try:
-    from operator import itemgetter
-except ImportError: # Python < 2.4
-    def itemgetter(item):
-        return lambda x: x[item]
+from __future__ import absolute_import
+from operator import itemgetter
 
 _SYNTAXES = {}
 

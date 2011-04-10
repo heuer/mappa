@@ -38,13 +38,10 @@ Literal Utilities.
 :organization: Semagia - http://www.semagia.com/
 :license:      BSD license
 """
+from __future__ import absolute_import
 import re
+from decimal import Decimal, InvalidOperation
 from tm import XSD
-try:
-    from decimal import Decimal, InvalidOperation
-except ImportError: # Python < 2.4
-    Decimal = float
-    InvalidOperation = ValueError
 
 def normalize_literal(value, datatype):
     """\
