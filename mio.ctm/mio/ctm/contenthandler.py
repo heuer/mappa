@@ -60,8 +60,12 @@ class ContentHandler(object):
     """\
     Base class for all content handlers.
     """
-    #TODO: Remove me?!?
-    pass
+    def handle_role(self, type, player, reifier):
+        self.startRole(type)
+        self.player(player)
+        if reifier:
+            self.reifier(reifier)
+        self.endRole()
 
 class GlobalScopeContentHandler(ContentHandler):
     """\
