@@ -38,10 +38,13 @@ PyTM MIO package.
 :organization: Semagia - http://www.semagia.com/
 :license:      BSD license
 """
+from operator import attrgetter
 import warnings
-from tm.mio._exceptions import MIOException, MIOParseException
+from StringIO import StringIO
+from urllib import pathname2url
+from xml.sax import SAXException
 from tm.mio import syntax 
-from tm.mio._source import Source
+from tm import irilib
 
 __all__ = ('SUBJECT_IDENTIFIER', 'SUBJECT_LOCATOR', 'ITEM_IDENTIFIER',
            'MIOException', 'MIOParseException', 'Source', 'create_deserializer')
@@ -62,6 +65,84 @@ SUBJECT_LOCATOR = 3
 """\
 Constant for a subject locator reference.
 """
+
+#
+# Exceptions
+#
+class MIOException(SAXException, Exception):
+    """\
+    Common MIO exception which is thrown if an irrevocable error occurs.
+    """
+    pass
+
+class MIOParseException(MIOException):
+    """\
+    MIO exception that provides optional line/column information.
+    """
+    def __init__(self, msg, exception=None, line=-1, column=-1):
+        MIOException.__init__(self, msg, exception)
+        self._line = line
+        self._column = column
+
+    def __str__(self):
+        return 'MIOParseException at line "%s", column "%s": %s' % (self._line != -1 and self._line or '?', self._line != -1 and self._column or '?', self.getMessage())
+
+    line = property(lambda self: self._line, doc='Returns the line number where the error occurred or -1 if the line is unknown')
+    column = property(lambda self: self._column, doc='Returns the column number where the error occurred or -1 if the column is unknown')
+
+
+class Source(object):
+    """\
+    Represents an immutable source to read a topic map from.
+    
+    A `Source` is similar to an `xml.sax.InputSource` except that it is 
+    immutable.
+    """
+    def __init__(self, iri=None, file=None, data=None, encoding=None): #pylint: disable-msg=W0622
+        """\
+        
+        `iri`
+            Either an IRI from which a topic map should be read from or
+            the base IRI if i.e. source is represented by ``data``.
+        `file`
+            A file object. If the `iri` is not provided, the base IRI is 
+            constructed from the ``file.name``.
+        `data`
+            A string object. If this is used, the `iri` argument is required.
+        `encoding`
+            A string which represents the encoding.
+        """
+        self._stream = None
+        self._encoding = encoding
+        if file:
+            self._stream = file
+            iri = iri or 'file:' + pathname2url(file.name)
+        elif data:
+            if hasattr(data, 'read'):
+                self._stream = data
+            else:
+                if isinstance(data, unicode):
+                    data = data.encode('utf-8')
+                self._stream = StringIO(data)
+            if not iri:
+                raise Exception('An IRI is required if "data" is specified')
+        if not iri:
+            raise Exception('Base IRI information is missing')
+        self._iri = irilib.normalize(iri)
+
+    iri = property(attrgetter('_iri'))
+    """\
+    The base IRI which should be used to resolve IRIs of the source against.
+    """
+    stream = property(attrgetter('_stream'))
+    """\
+    Returns the byte stream or ``None`` if no byte stream is provided.
+    """
+    encoding = property(attrgetter('_encoding'))
+    """\
+    Returns the encoding of the source or ``None`` if no encoding is provided.
+    """
+
 
 #
 # Deserializer registration / discovery
@@ -118,7 +199,7 @@ def create_deserializer(format=None, mimetype=None, extension=None, **kw):
     """
     syntax_ = _find_syntax(format, mimetype, extension)
     if not syntax_:
-        raise MIOException('Unknown syntax for format="%s", mimetype="%s", extension="%s"' % (format, mimetype, extension))
+        return None
     name = _get_deserializer(syntax_)
     if name:
         factory = __import__(name, globals(), globals(), ['__name__'])
