@@ -39,17 +39,10 @@ implementations.
 :organization: Semagia - http://www.semagia.com/
 :license:      BSD license
 """
+from operator import attrgetter
 from tm.mio import MIOException
 from tm.mio.handler import simplify
-try:
-    from operator import attrgetter
-except ImportError:
-    def attrgetter(attr):
-        return lambda x: getattr(x, attr)
-try:
-    set
-except NameError:
-    from sets import Set as set, ImmutableSet as frozenset # pylint: disable-msg=W0622
+
 
 class Context(object):
     """\
@@ -73,6 +66,7 @@ class Context(object):
         return frozenset(self._loaded)
 
     loaded = property(_get_loaded)
+
 
 class Deserializer(object):
     """\
