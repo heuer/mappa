@@ -38,7 +38,7 @@ Utilities for lexers / parsers using `Ply <http://www.dabeaz.com/ply/>`_
 :organization: Semagia - http://www.semagia.com/
 :license:      BSD license
 """
-from __future__ import absolute_imports
+from __future__ import absolute_import
 import os
 import sys
 import ply.yacc as yacc
