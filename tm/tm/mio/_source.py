@@ -51,6 +51,7 @@ except ImportError:
         return lambda x: getattr(x, attr)
 from StringIO import StringIO
 from urllib import pathname2url
+from tm import irilib
 
 class Source(object):
     """\
@@ -89,7 +90,7 @@ class Source(object):
                 raise Exception('An IRI is required if "data" is specified')
         if not iri:
             raise Exception('Base IRI information is missing')
-        self._iri = iri
+        self._iri = irilib.normalize(iri)
 
     iri = property(attrgetter('_iri'))
     """\
