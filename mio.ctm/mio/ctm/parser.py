@@ -131,9 +131,9 @@ def p_version_directive(p):
 
 def p_prefix_directive(p):
     """\
-    prefix_directive : DIR_PREFIX IDENT qiri 
+    prefix_directive : DIR_PREFIX IDENT IRI
     """
-    _env(p).add_prefix(p[2], p[3][1])
+    _env(p).add_prefix(p[2], p[3])
 
 def p_mergemap_directive(p):
     """\
