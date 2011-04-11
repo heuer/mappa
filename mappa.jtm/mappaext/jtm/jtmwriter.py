@@ -39,10 +39,10 @@ a `JSON Topic Maps (JTM) <http://www.cerny-online.com/jtm/>`_ representation.
 :organization: Semagia - http://www.semagia.com/
 :license:      BSD license
 """
+from mio.jtm.json import JSONWriter
 from mappa import XSD
 from mappa._internal.it import one_of, no
 from mappa.utils import is_default_name, is_default_name_type
-from ._json import JSONWriter
 
 _NS_XSD = 'http://www.w3.org/2001/XMLSchema#'
 
