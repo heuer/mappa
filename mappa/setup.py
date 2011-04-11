@@ -55,7 +55,7 @@ setup(
       zip_safe = False,
       include_package_data = True,
       package_data = {'': ['*.txt']},
-      install_requires=['tm',
+      install_requires=['tm>=0.1.7',
                         'mio.xtm>=0.1.7',
                         'mio.ctm>=0.1.3',
                         'mappa.xtm>=0.1.0',
