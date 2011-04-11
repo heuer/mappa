@@ -38,7 +38,7 @@ Vocabularies.
 :organization: Semagia - http://www.semagia.com/
 :license:      BSD license
 """
-from tm.namespace import Namespace
+from tm import Namespace
 
 #pylint: disable-msg=W0105
 
