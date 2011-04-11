@@ -38,20 +38,11 @@ JSON Topic Maps (JTM) 1.0/1.1 deserializer.
 :organization: Semagia - http://www.semagia.com/
 :license:      BSD license
 """
+from __future__ import absolute_import
 from tm import mio, XSD, TMDM
 from tm.irilib import resolve_iri
 from tm.mio.deserializer import Deserializer
-try:
-    import simplejson as json
-except ImportError:
-    try:
-        import json
-    except ImportError:
-        try:
-            # Google Appengine offers simplejson via django
-            from django.utils import simplejson as json
-        except ImportError:
-            pass #TODO: Exception?
+from . import json
 
 __all__ = ['create_deserializer']
 
