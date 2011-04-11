@@ -38,13 +38,13 @@ Environment.
 :organization: Semagia - http://www.semagia.com/
 :license:      BSD license
 """
-from tm import mio, irilib
+from tm import mio, irilib, TM
 from tm.mio.deserializer import Context
 from . import consts, tpl
 
 _IRI2SYNTAX = {
-    'http://psi.topicmaps.org/iso13250/ctm': 'ctm',
-    'http://psi.topicmaps.org/iso13250/xtm': 'xtm'
+    TM.ctm: 'ctm',
+    TM.xtm: 'xtm'
     }
 
 class Environment(object):

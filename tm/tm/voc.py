@@ -47,6 +47,11 @@ XSD = Namespace('http://www.w3.org/2001/XMLSchema#')
 Namespace for the XML Schema Datatypes
 """
 
+TM = Namespace('http://psi.topicmaps.org/iso13250/')
+"""\
+Namespace for Topic Maps
+"""
+
 TMDM = Namespace('http://psi.topicmaps.org/iso13250/model/')
 """\
 Namespace for the Topic Maps -- Data Model
