@@ -39,12 +39,10 @@ a `JSON Topic Maps (JTM) <http://www.cerny-online.com/jtm/>`_ representation.
 :organization: Semagia - http://www.semagia.com/
 :license:      BSD license
 """
+from tm.voc import XSD
 from mio.jtm.json import JSONWriter
-from mappa import XSD
 from mappa._internal.it import one_of, no
 from mappa.utils import is_default_name, is_default_name_type
-
-_NS_XSD = 'http://www.w3.org/2001/XMLSchema#'
 
 class JTMTopicMapWriter(object):
     """\
@@ -178,8 +176,8 @@ class JTMTopicMapWriter(object):
         """
         dt = tmc.datatype
         if not XSD.string == dt:
-            if self.version >= 1.1 and dt.startswith(_NS_XSD):
-                dt = '[xsd:%s]' % dt.replace(_NS_XSD, '')
+            if self.version >= 1.1 and dt.startswith(XSD):
+                dt = '[xsd:%s]' % dt.replace(XSD, '')
             self._writer.key_value('datatype', dt)
 
     def _write_iids(self, reifiable):
