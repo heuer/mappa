@@ -41,7 +41,6 @@ except ImportError:
     use_setuptools()
     from setuptools import setup, find_packages
 
-
 setup(
       name = 'mappa.jtm',
       version = '0.1.0',
@@ -61,6 +60,7 @@ setup(
       zip_safe = False,
       include_package_data = True,
       package_data = {'': ['*.txt']},
+      install_requires=['mio.jtm>=0.1.0'],
       keywords = ['Topic Maps', 'Semantic Web', 'JTM'],
       classifiers = [
                     'Intended Audience :: Developers',
