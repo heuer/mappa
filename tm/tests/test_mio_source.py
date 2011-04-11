@@ -77,21 +77,21 @@ class TestSource(TestCase):
         try:
             Source(encoding='utf-8')
             self.fail('Expected an exception, only the encoding is provided')
-        except Exception:
+        except ValueError:
             pass
 
     def test_invalid_no_args(self):
         try:
             Source()
             self.fail('Expected an exception: No args are provided')
-        except Exception:
+        except ValueError:
             pass
 
     def test_data_invalid(self):
         try:
             Source(data='Semagia')
             self.fail('Expected an exception, only the data is provided, no IRI')
-        except Exception:
+        except ValueError:
             pass
 
     def test_immutable(self):

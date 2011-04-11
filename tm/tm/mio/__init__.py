@@ -125,9 +125,9 @@ class Source(object):
                     data = data.encode('utf-8')
                 self._stream = StringIO(data)
             if not iri:
-                raise Exception('An IRI is required if "data" is specified')
+                raise ValueError('An IRI is required if "data" is specified')
         if not iri:
-            raise Exception('Base IRI information is missing')
+            raise ValueError('Base IRI information is missing')
         self._iri = irilib.normalize(iri)
 
     iri = property(attrgetter('_iri'))
