@@ -13,6 +13,7 @@ Changes
   (RDF to Topic Maps mapping (RTM))
 * Changed entry point for syntax readers from ``tm.reader`` to
   ``mio.reader``
+* Removed support for Ply < 3.3 in plyutils (under Java)
 
 
 0.1.6 - 2010-10-28
