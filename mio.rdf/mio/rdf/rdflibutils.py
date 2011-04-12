@@ -41,6 +41,7 @@
 import collections
 from rdflib.store import Store
 from tm import mio, RDF2TM
+from tm.voc import RDF2TM as NS_RDF2TM
 
 _ASSOC = 1
 _OCC = 2
@@ -69,7 +70,7 @@ class RDFMappingReader(Store):
         self._mappings = collections.defaultdict(_Mapping)
 
     def add(self, (subject, predicate, obj), context, quoted=False):
-        if not predicate.startswith('http://psi.ontopia.net/rdf2tm/#'):
+        if not predicate.startswith(NS_RDF2TM):
             return
         if RDF2TM.maps_to == predicate:
             if obj in _OBJ2KIND:
