@@ -1,0 +1,19 @@
+=======
+Changes
+=======
+
+0.3.0 - 2011-mm-dd
+------------------
+* Moved package from mio.reader.tmxml to mio.tmxml
+
+
+0.2.0 - 2009-10-27
+------------------
+* The reader used a wrong namespace for untyped topics, fixed.
+* The reader interpreted association role players as role types 
+  and vice-versa. Fixed.
+
+
+0.1.0 - 2009-06-28
+------------------
+* Initial release
