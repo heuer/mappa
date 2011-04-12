@@ -39,8 +39,7 @@ The Mappa Topic Maps engine. :)
 :license:      BSD License
 """
 import pkg_resources
-from tm.namespace import Namespace
-from tm import voc, ANY, UCS, XSD, TMDM, irilib
+from tm import Namespace, voc, ANY, UCS, XSD, TMDM, irilib
 from mappa._internal.lit import Literal
 try:
     __version__ = pkg_resources.get_distribution('mappa').version

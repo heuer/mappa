@@ -38,7 +38,11 @@ Some utility functions to check (internal) model constraints.
 :organization: Semagia - <http://www.semagia.com/>
 :license:      BSD License
 """
-from mappa import ModelConstraintViolation
+from functools import wraps
+from tm import irilib
+from . import kind
+from mappa.utils import is_topic
+from mappa import ModelConstraintViolation, IdentityViolation
 
 def check_not_none(obj):
     """\
@@ -64,3 +68,99 @@ def check_reification_allowed(reifiable, new_reifier):
         return # Setting the reifier to the same value or to None causes no problems
     if new_reifier.reified:
         raise ModelConstraintViolation('The topic reifies another Topic Maps construct.', reporter=reifiable)
+
+def _check_topic(tmc, topic, attr):
+    if getattr(topic, 'kind', None) != kind.TOPIC:
+        raise ModelConstraintViolation('The %s must be a topic' % attr)
+    check_same_topic_map(tmc, topic)
+
+def _not_none(obj, name):
+    if obj is None:
+        raise ModelConstraintViolation('The %s must not be None' % name)
+
+def type_constraint(f):
+    @wraps(f)
+    def check(typed, type):
+        _check_topic(typed, type, 'type')
+        return f(typed, type)
+    return check
+
+def player_constraint(f):
+    @wraps(f)
+    def check(role, player):
+        _check_topic(role, player, 'player')
+        return f(role, player)
+    return check
+
+def scope_constraint(f):
+    @wraps(f)
+    def check(scoped, theme):
+        _check_topic(scoped, theme, 'theme')
+        return f(scoped, theme)
+    return check
+
+def iid_constraint(f):
+    @wraps(f)
+    def check(tmc, iid):
+        _not_none(iid, 'item identifier')
+        iid = irilib.normalize(iid)
+        tm = tmc.tm
+        existing = tm.construct_by_iid(iid)
+        if existing:
+            if tmc != existing:
+                raise IdentityViolation('A Topic Maps construct with the same item identifier "%s" exists' % iid, tmc, existing)
+            else:
+                return
+        if is_topic(tmc):
+            existing = tm.topic_by_sid(iid)
+            if existing:
+                if existing != tmc:
+                    raise IdentityViolation('A topic with the same subject identifier "%s" exists' % iid, tmc, existing)
+                else:
+                    return
+        return f(tmc, iid)
+    return check
+
+def sid_constraint(f):
+    @wraps(f)
+    def check(topic, sid):
+        _not_none(sid, 'subject identifier')
+        sid = irilib.normalize(sid)
+        tm = topic.tm
+        existing = tm.topic_by_sid(sid)
+        if existing:
+            if topic != existing:
+                raise IdentityViolation('A topic with the same subject identifier exists', topic, existing)
+            else:
+                return
+        existing = tm.topic_by_iid(sid)
+        if existing:
+            if topic != existing:
+                raise IdentityViolation('A topic with the same item identifier exists', topic, existing)
+            else:
+                return
+        return f(topic, sid)
+    return check
+
+def slo_constraint(f):
+    @wraps(f)
+    def check(topic, slo):
+        _not_none(slo, 'subject locator')
+        slo = irilib.normalize(slo)
+        existing = topic.tm.topic_by_slo(slo)
+        if existing:
+            if topic != existing:
+                raise IdentityViolation('A topic with the same subject locator exists', topic, existing)
+            else:
+                return
+        return f(topic, slo)
+    return check
+
+def reifier_constraint(f):
+    @wraps(f)
+    def check(reifiable, reifier):
+        if reifier:
+            _check_topic(reifiable, reifier, 'reifier')
+        check_reification_allowed(reifiable, reifier)
+        return f(reifiable, reifier)
+    return check

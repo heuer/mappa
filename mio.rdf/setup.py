@@ -54,7 +54,10 @@ setup(
       namespace_packages = ['mio'],
       entry_points = """
       [mio.reader]
-      rdf = mio.rdf
+      n3 = mio.rdf.n3
+      n-triples = mio.rdf.nt
+      [mio.rdf.mappingreader]
+      crtm = mio.rdf.crtm
       """,
       platforms = 'any',
       zip_safe = False,

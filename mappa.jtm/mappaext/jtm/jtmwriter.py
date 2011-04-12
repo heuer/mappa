@@ -48,7 +48,8 @@ class JTMTopicMapWriter(object):
     """\
     Writer for JSON Topic Maps (JTM).
     """
-    __slots__ = ['_writer', '_base', 'prettify', 'export_iids', 'omit_loners', 'version']
+    __slots__ = ['_writer', '_base', 'prettify', 'export_iids',
+                 'omit_loners', 'version', 'prefixes']
 
     def __init__(self, out, base, version=1.0):
         if not out:
@@ -61,6 +62,12 @@ class JTMTopicMapWriter(object):
         self.export_iids = True
         self.version = version
         self.omit_loners = False
+        self.prefixes = {}
+
+    def add_prefix(self, ident, iri):
+        """\
+
+        """
 
     def write(self, topicmap):
         """\
