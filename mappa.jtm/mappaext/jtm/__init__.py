@@ -41,13 +41,14 @@ A ``TopicMapWriter`` implementation that serializes a topic map into
 """
 from mappaext.jtm import jtmwriter
 
-def create_writer(out, base, version=1.1, prettify=False, export_iids=True, omit_loners=False, **kw):
+def create_writer(out, base, version=1.1, prettify=False,
+                  export_iids=True, omit_loners=False, prefixes=None, **kw):
     """\
     
     """
     if version and version not in (1.0, 1.1):
         raise IOError('JTM version "%s" is not supported' % str(version))
-    writer = jtmwriter.JTMTopicMapWriter(out, base, version=version or 1.1)
+    writer = jtmwriter.JTMTopicMapWriter(out, base, version=version or 1.1, prefixes=prefixes)
     writer.prettify = prettify
     writer.export_iids = export_iids
     writer.omit_loners = omit_loners
