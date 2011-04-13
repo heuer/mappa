@@ -88,9 +88,8 @@ class CTMDeserializer(Deserializer):
         
         """
         # pylint: disable-msg=E0611, F0401
-        from mio.ctm import lexer
-        from mio.ctm import parser
-        parser = plyutils.make_parser(parser)
+        from mio.ctm import lexer as lexer_mod, parser as parser_mod
+        parser = plyutils.make_parser(parser_mod)
         env = Environment(handler=self.handler, iri=source.iri,
                           subordinate=self.subordinate, included_by=self._included_by,
                           context=self.context, wildcard_counter=self._wildcard_counter)
@@ -102,7 +101,7 @@ class CTMDeserializer(Deserializer):
                 data = urlopen(source.iri)
             except IOError:
                 raise MIOException('Cannot read from "%s"' % source.iri)
-        parser.parse(self._reader(data, source.encoding), lexer=plyutils.make_lexer(lexer))
+        parser.parse(self._reader(data, source.encoding), lexer=plyutils.make_lexer(lexer_mod))
         self.wildcard_counter = self.environment.wildcard_counter
 
     def _reader(self, fileobj, encoding=None):
