@@ -178,6 +178,36 @@ class XMLWriter(object):
         self._out.write(u'\n')
 
 
+class SimpleXMLWriter(XMLWriter):
+    """\
+    XMLWriter which remembers the names of started elements and provides
+    a simple `pop` method to close the last element.
+    """
+    def __init__(self, out, encoding='utf-8', prettify=False):
+        """\
+        
+        """
+        super(SimpleXMLWriter, self).__init__(out, encoding=encoding, prettify=prettify)
+        self._elements = []
+
+    def startElement(self, name, attrs=None):
+        super(SimpleXMLWriter, self).startElement(name, attrs)
+        self._elements.append(name)
+
+    def endElement(self, name, indent=True):
+        super(SimpleXMLWriter, self).endElement(name, indent)
+        self._elements.pop()
+
+    def pop(self, indent=True):
+        """\
+        Closes the last started element.
+
+        `indent`
+            Indicating if whitespaces in front of the element are allowed.
+        """
+        self.endElement(self._elements[-1], indent)
+
+
 def xmlwriter_as_contenthandler(writer):
     """\
     Returns a ContentHandler which serializes the events.
