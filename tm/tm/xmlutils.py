@@ -60,7 +60,13 @@ class XMLWriter(object):
     
     def __init__(self, out, encoding='utf-8', prettify=False):
         """\
-        
+
+        `out`
+            A file object
+        `encoding`
+            An encoding (default: UTF-8)
+        `prettify`
+            Indicates if the XML should be prettified (default: False)
         """
         self._out = codecs.getwriter(encoding)(out)
         self._encoding = encoding
@@ -185,7 +191,13 @@ class SimpleXMLWriter(XMLWriter):
     """
     def __init__(self, out, encoding='utf-8', prettify=False):
         """\
-        
+
+        `out`
+            A file object
+        `encoding`
+            An encoding (default: UTF-8)
+        `prettify`
+            Indicates if the XML should be prettified (default: False)
         """
         super(SimpleXMLWriter, self).__init__(out, encoding=encoding, prettify=prettify)
         self._elements = []
