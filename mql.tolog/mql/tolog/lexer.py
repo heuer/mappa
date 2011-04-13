@@ -55,6 +55,12 @@ _TZ = r'Z|((\+|\-)[0-9]{2}:[0-9]{2})'
 # Time
 _TIME = r'[0-9]{2}:[0-9]{2}:[0-9]{2}(\.[0-9]+)?(%s)?' % _TZ
 
+_DIRECTIVES = {
+    # tolog extensions
+    '%version': 'DIR_VERSION',
+    '%prefix': 'DIR_PREFIX',
+}
+
 reserved = {
     'select': 'KW_SELECT',
     'from': 'KW_FROM',
@@ -77,7 +83,7 @@ reserved = {
     'insert': 'KW_INSERT',
     }
 
-tokens = tuple(reserved.values()) + (
+tokens = tuple(reserved.values()) + tuple(_DIRECTIVES.values()) + (
     'IDENT',
     'SID',
     'SLO',
@@ -130,6 +136,9 @@ t_IMPLIES   = r':-'
 t_COLON     = r':'
 t_PIPE_PIPE = r'\|{2}'
 t_PIPE      = r'\|'
+
+t_DIR_VERSION = r'%version'
+t_DIR_PREFIX = r'%prefix'
 
 states = (
    ('tm','exclusive'),
