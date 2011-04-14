@@ -296,6 +296,7 @@ not(located-in($PLACE : containee, italy : container))?''',
                  '1976-09-19T24:24:24',
                  '1 -1  +1',
                  '1.1 +1.1 -1.1 .12',
+                 'opera:influenced-by($COMPOSER, $INFLUENCE)',
                  ]
     import ply.lex as lex
     def make_lexer():
