@@ -115,8 +115,6 @@ tokens = tuple(reserved.values()) + tuple(_DIRECTIVES.values()) + (
 
 t_ignore = ' \t'
 
-t_PARAM     = r'%' + _IDENT + r'%'
-
 t_EQ        = r'='
 t_NE        = r'/='
 t_LE        = r'<='
@@ -177,6 +175,11 @@ def t_IRI(t):
 @TOKEN(r'\$' + _IDENT)
 def t_VARIABLE(t):
     t.value = t.value[1:]
+    return t
+
+@TOKEN(r'%' + _IDENT + r'%')
+def t_PARAM(t):
+    t.value = t.value[1:-1]
     return t
 
 @TOKEN(r'@' + _IDENT)
@@ -297,6 +300,7 @@ not(located-in($PLACE : containee, italy : container))?''',
                  '1 -1  +1',
                  '1.1 +1.1 -1.1 .12',
                  'opera:influenced-by($COMPOSER, $INFLUENCE)',
+                 'a %param% here'
                  ]
     import ply.lex as lex
     def make_lexer():
