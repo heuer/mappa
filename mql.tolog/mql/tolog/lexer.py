@@ -36,7 +36,6 @@ tolog lexer.
 
 :author:       Lars Heuer (heuer[at]semagia.com)
 :organization: Semagia - <http://www.semagia.com/>
-:version:      $Rev: 342 $ - $Date: 2010-01-23 21:19:25 +0100 (Sa, 23 Jan 2010) $
 :license:      BSD License
 """
 import re
@@ -182,7 +181,7 @@ def t_PARAM(t):
     t.value = t.value[1:-1]
     return t
 
-@TOKEN(r'@' + _IDENT)
+@TOKEN(r'@([0-9]+|[0-9]*' + _IDENT + ')')
 def t_OID(t):
     t.value = t.value[1:]
     return t
@@ -299,7 +298,10 @@ not(located-in($PLACE : containee, italy : container))?''',
                  '1 -1  +1',
                  '1.1 +1.1 -1.1 .12',
                  'opera:influenced-by($COMPOSER, $INFLUENCE)',
-                 'a %param% here'
+                 'a %param% here',
+                 'update value(@2312, "Ontopia")',
+                 'update value(@2312heresom3thing3ls3, "Ontopia")',
+                 'update value(@tritratrullala, "Ontopia")',
                  ]
     import ply.lex as lex
     def make_lexer():
