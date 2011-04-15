@@ -36,7 +36,6 @@ Linear Topic Maps Notation (LTM) 1.3 runtime environment.
 
 :author:       Lars Heuer (heuer[at]semagia.com)
 :organization: Semagia - http://www.semagia.com/
-:version:      $Rev: 374 $ - $Date: 2010-05-12 10:52:18 +0200 (Mi, 12 Mai 2010) $
 :license:      BSD license
 """
 from tm import mio
