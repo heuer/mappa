@@ -204,7 +204,6 @@ def t_IID(t):
 
 @TOKEN(r':'.join([_IDENT, r'[_\w\.-]+']))
 def t_QNAME(t):
-    t.value = t.value.split(':', 1)
     return t
 
 @TOKEN(_IDENT)
