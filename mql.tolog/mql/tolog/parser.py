@@ -44,7 +44,7 @@ from mql.tolog.utils import is_builtin_predicate
 
 tokens = lexer.tokens # Just to get rid of unused import warnings
 
-def initialize_parser(parser, handler, resolve_qnames=False):
+def initialize_parser(parser, handler, resolve_qnames=False, tolog_plus=False):
     """\
     Initializes the parser.
 
@@ -54,6 +54,7 @@ def initialize_parser(parser, handler, resolve_qnames=False):
     parser.handler = handler
     parser.prefixes = {}
     parser.resolve_qnames = resolve_qnames
+    parser.tolog_plus = tolog_plus
 
 
 def p_noop(p): # Handles all grammar rules where the result is not of interest
@@ -439,9 +440,25 @@ def p_clause_assoc_predicate(p):
     """
     _handler(p).endAssociationPredicate()
 
+# Correct grammar for roles/pairs:
+#
+#   pair ::= expr COLON ref
+#
+# Switched to more lenient grammar for tolog+ where
+# the type/player tuple is reversed
+#
+# Correct tolog 1.2:
+#
+#     premiere($OPERA : opera, $THEATRE : place)
+#
+# tolog+:
+#
+#     premiere(opera: $OPERA, place: $THEATRE)
+# 
+
 def p__first_pair(p): # Inline action
     """\
-    _first_pair     : expr COLON ref
+    _first_pair     : expr COLON expr
     """
     handler = _handler(p)
     handler.startAssociationPredicate()
@@ -450,17 +467,17 @@ def p__first_pair(p): # Inline action
     handler.endName()
     _handle_pair(p, p[1], p[3])
 
+def p_pair(p):
+    """\
+    pair            : expr COLON expr
+    """
+    _handle_pair(p, p[1], p[3])
+
 def p_predclause(p):
     """\
     predclause      : ref LPAREN arguments RPAREN
     """
     p[0] = p[1], p[3]
-
-def p_pair(p):
-    """\
-    pair            : expr COLON ref
-    """
-    _handle_pair(p, p[1], p[3])
 
 def p_arguments(p):
     """\
@@ -618,7 +635,11 @@ def _handler(p):
 def _resolve_qnames(p):
     return p.parser.resolve_qnames
 
-def _handle_pair(p, player, type):
+def _handle_pair(p, first, second):
+    if p.parser.tolog_plus:
+        type, player = first, second
+    else:
+        player, type = first, second
     handler = _handler(p)
     handler.startPair()
     handler.startType()
@@ -798,12 +819,6 @@ instance-of($OPERA, opera),
   instance-of($THEATRE, theatre) }?
 ''',
     )
-    class DummyHandler(object):
-        def __getattr__(self, name):
-            def dummy(*arg): 
-                print(name, arg)
-            return dummy
-
     from StringIO import StringIO
     from ply import yacc
     from tm import plyutils
