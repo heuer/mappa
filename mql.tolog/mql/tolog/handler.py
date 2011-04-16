@@ -91,11 +91,27 @@ _NAME_ELS = ('count', 'variable', 'parameter', 'ascending', 'descending')
 # Elements which have a value attribute
 _VALUE_ELS = ('string', 'iri', 'identifier', 'integer', 'limit', 'offset', 'qname', 'objectid')
 
+# Namespace 'kind' to name mapping
+_NSKIND2NAME = {
+    consts.SID: 'subject-identifier',
+    consts.SLO: 'subject-locator',
+    consts.IID: 'item-identifier',
+}
+
 class XMLHandler(TologHandler):
     """\
-
+    TologHandler which translates the events to XML.
     """
     def __init__(self, out, encoding='utf-8', prettify=False):
+        """\
+
+        `out`
+            File-like object
+        `encoding`
+            The encoding (default: utf-8)
+        `prettify`
+            Indicates if the XML should be prettified (default: False)
+        """
         self._writer = SimpleXMLWriter(out, encoding=encoding, prettify=prettify)
 
     def start(self):
@@ -150,14 +166,8 @@ class XMLHandler(TologHandler):
         self._writer.dataElement('content', fragment)
 
     def namespace(self, identifier, iri, kind):
-        def kind_as_str():
-            if kind == consts.SID:
-                return 'subject-identifier'
-            elif kind == consts.SLO:
-                return 'subject-locator'
-            elif kind == consts.IID:
-                return 'item-identifier'
+        kind_name = _NSKIND2NAME[kind] # A KeyError is intentional
         self._writer.emptyElement('namespace', {'identifier': identifier,
                                                 'iri': iri,
-                                                'kind': kind_as_str()})
+                                                'kind': kind_name})
 
