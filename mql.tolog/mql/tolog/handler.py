@@ -165,9 +165,10 @@ class XMLHandler(TologHandler):
     def fragmentContent(self, fragment):
         self._writer.dataElement('content', fragment)
 
-    def namespace(self, identifier, iri, kind):
-        kind_name = _NSKIND2NAME[kind] # A KeyError is intentional
-        self._writer.emptyElement('namespace', {'identifier': identifier,
-                                                'iri': iri,
-                                                'kind': kind_name})
+    def namespace(self, identifier, iri, kind=None):
+        attrs = {'identifier': identifier, 'iri': iri}
+        if kind:
+            kind_name = _NSKIND2NAME[kind] # KeyError is intentional
+            attrs.update({'kind': kind_name})
+        self._writer.emptyElement('namespace', attrs)
 

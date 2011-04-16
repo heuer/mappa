@@ -40,6 +40,7 @@ tolog lexer.
 """
 import re
 from ply.lex import TOKEN #pylint: disable-msg=F0401, E0611
+from tm.mql import SyntaxQueryError
 
 # We allow something like INSERT from . from . from tolog-predicate
 # for the time being although the tolog spec. says that it is an error since
@@ -145,7 +146,7 @@ states = (
 #pylint: disable-msg=W0613, W0622
 
 def t_error(t):
-    raise Exception('Invalid tolog syntax: %r' % t) #TODO
+    raise SyntaxQueryError('Invalid tolog syntax: %r' % t) #TODO
 
 def t_comment(t):
     r'/\*[^\*/]*\*/'
@@ -167,7 +168,7 @@ def t_STRING(t):
     return t
 
 def t_IRI(t):
-    '<[^<>\"\{\}\`\\ ]+>'
+    r'<[^<>\"\{\}\`\\ ]+>'
     t.value = t.value[1:-1]
     return t
 
@@ -302,6 +303,7 @@ not(located-in($PLACE : containee, italy : container))?''',
                  'update value(@2312, "Ontopia")',
                  'update value(@2312heresom3thing3ls3, "Ontopia")',
                  'update value(@tritratrullala, "Ontopia")',
+                 '%prefix bla <http://www.semagia.com/>',
                  ]
     import ply.lex as lex
     def make_lexer():
