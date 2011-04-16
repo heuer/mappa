@@ -56,14 +56,36 @@ def parse(data, handler=None):
 def fail(msg):
     raise AssertionError(msg)
 
-def test_duplicate_using():
-    try:
-        parse('''using x for i"http://www.semagia.com/test
+def test_duplicate_prefixes_invalid():
+    def check(data):
+        try:
+            parse(data)
+            fail('Expected an error since x is bound to different IRIs')
+        except InvalidQueryError:
+            pass
+    data = ('''using x for i"http://www.semagia.com/test"
 using x for i"http://www.example.org/"
-''')
-        fail('Expected an error since x is bound to different IRIs')
-    except InvalidQueryError:
-        pass
+''',
+            '''%prefix x <http://www.semagia.com/>
+%prefix x <http://www.example.org/>
+''',
+            '''using x for i"http://www.semagia.com/test"
+%prefix x <http://www.semagia.com/>''',
+            )
+    for d in data:
+        yield check, d
+
+def test_duplicate_prefixes():
+    data = ('''%prefix x <http://www.semagia.com/>
+%prefix x <http://www.semagia.com/>
+''',
+            # Probably rejected by Ontopia
+            '''using x for i"http://www.semagia.com/test"
+using x for i"http://www.semagia.com/test"
+''',
+            )
+    for d in data:
+        yield parse, d
 
 
 if __name__ == '__main__':
