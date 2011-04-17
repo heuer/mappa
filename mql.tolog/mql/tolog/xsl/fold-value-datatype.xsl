@@ -42,12 +42,12 @@
     </xsl:copy>
   </xsl:template>
 
-  <xsl:template match="tl:builtin-predicate[@name='value' or @name='value-like']">
+  <xsl:template match="tl:builtin-predicate[@name='value' or @name='value-like'][tl:*[1][local-name(.)='variable']]">
     <!--** Matches all value(-like) predicates which contain a variable 
            at the first position (the object part) 
     -->
     <xsl:variable name="parent" select=".."/>
-    <xsl:variable name="datatype-pred" select="key('datatypes', tl:*[1][local-name(.)='variable']/@name)[..=$parent]"/>
+    <xsl:variable name="datatype-pred" select="key('datatypes', tl:*[1]/@name)[..=$parent]"/>
     <xsl:choose>
       <xsl:when test="count($datatype-pred) = 1">
         <!--@ Check if a corresponding datatype predicate exists -->
@@ -68,10 +68,10 @@
     </xsl:choose>
   </xsl:template>
 
-  <xsl:template match="tl:builtin-predicate[@name='datatype']">
+  <xsl:template match="tl:builtin-predicate[@name='datatype'][tl:*[1][local-name(.)='variable']]">
     <!--** Matches all datatype predicates which start with a variable -->
     <xsl:variable name="parent" select=".."/>
-    <xsl:if test="not(key('values', tl:*[1][local-name(.)='variable']/@name)[..=$parent])">
+    <xsl:if test="not(key('values', tl:*[1]/@name)[..=$parent])">
       <!--@ If this predicate has been folded into a literal(-like) predicate, omit it, 
             otherwise it is kept unchanged.
       -->
