@@ -263,7 +263,8 @@ def p_import_directive(p):
     """\
     import_directive : KW_IMPORT iri_or_string KW_AS IDENT
     """
-    # Unimplmented, raise an exception?
+    _handle_prefix(p.parser, p[4], p[2], consts.MODULE)
+    #TODO: Import 
 
 def p_select_query(p):
     """\
@@ -301,7 +302,7 @@ def p_iri_or_string(p):
     iri_or_string   : IRI
                     | STRING
     """
-    p[0] = consts.IRI, p[1]
+    p[0] = p[1]
 
 def p_ref_IDENT(p):
     """\
@@ -864,6 +865,9 @@ b($A, 2011-02-23T23:00:00)?
 ''',
 '''
 b($A, "Tritra"^^<http://www.example.org/>)?
+''',
+'''
+base-locator("http://www.semagia.com/")?
 '''
     )
     from StringIO import StringIO

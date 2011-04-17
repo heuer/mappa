@@ -57,6 +57,7 @@ STRING = 14
 INTEGER = 15
 DECIMAL = 16
 LITERAL = 17
+MODULE = 18
 
 _CONST2NAME = {
     VARIABLE: 'variable',
@@ -66,6 +67,7 @@ _CONST2NAME = {
     PARAM: 'parameter',
     OID: 'objectid',
     QNAME: 'qname',
+    MODULE: 'module',
     SID: 'iri',
     SLO: 'subjectlocator',
     IID: 'itemidentifier',

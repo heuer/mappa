@@ -98,6 +98,7 @@ _NSKIND2NAME = {
     consts.SID: 'subject-identifier',
     consts.SLO: 'subject-locator',
     consts.IID: 'item-identifier',
+    consts.MODULE: 'module',
 }
 
 class XMLHandler(TologHandler):
