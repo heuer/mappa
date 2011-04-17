@@ -74,6 +74,7 @@ _DIRECTIVES = {
 reserved = {
     'select': 'KW_SELECT',
     'from': 'KW_FROM',
+    'where': 'KW_FROM',
     'count': 'KW_COUNT',
     'not': 'KW_NOT',
     'limit': 'KW_LIMIT',
@@ -93,7 +94,7 @@ reserved = {
     'insert': 'KW_INSERT',
     }
 
-tokens = tuple(reserved.values()) + tuple(_DIRECTIVES.values()) + (
+tokens = tuple(set(reserved.values())) + tuple(_DIRECTIVES.values()) + (
     'IDENT',
     'SID',
     'SLO',
@@ -318,6 +319,7 @@ not(located-in($PLACE : containee, italy : container))?''',
                  '%prefix bla <http://www.semagia.com/>',
                  ' ^<http://www.semagia.com/>',
                  ' "x"^^<http://www.semagia.com/>',
+                 ' select $x where bla($blub)?',
                  ]
     import ply.lex as lex
     def make_lexer():
