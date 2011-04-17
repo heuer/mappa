@@ -45,7 +45,7 @@ from mql.tolog.utils import is_builtin_predicate
 
 tokens = lexer.tokens # Just to get rid of unused import warnings
 
-def initialize_parser(parser, handler, resolve_qnames=False, tolog_plus=False):
+def initialize_parser(parser, handler, tolog_plus=False):
     """\
     Initializes the parser.
 
@@ -54,7 +54,7 @@ def initialize_parser(parser, handler, resolve_qnames=False, tolog_plus=False):
     """
     parser.handler = handler
     parser.prefixes = {}
-    parser.resolve_qnames = resolve_qnames
+    parser.rule_names = []
     parser.tolog_plus = tolog_plus
 
 
@@ -97,12 +97,14 @@ def p_noop(p): # Handles all grammar rules where the result is not of interest
     select_elements : select_element
                     | select_elements COMMA select_element
     select_element  : count_clause
-    clause_query    : clauselist opt_tail QM
+    clause_query    : clauselist opt_tail opt_qm
     clauselist      : clause
                     | clauselist COMMA clause
     clause          : orclause
                     | notclause
                     | opclause
+    opt_qm          :
+                    | QM  
     delete_element  : function_call
                     | paramlist
     paramlist       : param
@@ -268,7 +270,7 @@ def p_import_directive(p):
 
 def p_select_query(p):
     """\
-    select_query    : KW_SELECT _start_select select_elements from_clause opt_tail QM
+    select_query    : KW_SELECT _start_select select_elements from_clause opt_tail opt_qm
     """
     _handler(p).endSelect()
 
@@ -434,7 +436,12 @@ def p__start_rule(p): # Inline action
     params = make_variables(args)
     if len(params) != len(args):
         raise InvalidQueryError('The rule head of "%s" contains a non-variable parameter' % name)
+    p.parser.rule_names.append(name)
     _handler(p).startRule(name, params)
+
+
+_PREDICATE = 'Predicate'
+_OCC_PREDICATE = 'Occurrence' + _PREDICATE
 
 def p_clause_predcause(p):
     """\
@@ -447,12 +454,23 @@ def p_clause_predcause(p):
         _arguments_to_events(handler, args)
         handler.endBuiltinPredicate()
     else:
-        handler.startPredicate()
+        predicate_kind = None
+        arity = len(args)
+        if arity == 2 and kind == consts.IDENT and name not in p.parser.rule_names:
+            predicate_kind = _OCC_PREDICATE
+        elif kind == consts.QNAME:
+            prefix = name.split(':')[0]
+            binding_kind = p.parser.prefixes[prefix][0]
+            if binding_kind != consts.MODULE:
+                predicate_kind = _OCC_PREDICATE
+        if predicate_kind is None:
+            predicate_kind = _PREDICATE
+        getattr(handler, 'start' + predicate_kind)()
         handler.startName()
         _to_event(handler, (kind, name))
         handler.endName()
         _arguments_to_events(handler, args)
-        handler.endPredicate()
+        getattr(handler, 'end' + predicate_kind)()
 
 def p_clause_assoc_predicate(p):
     """\
@@ -868,6 +886,9 @@ b($A, "Tritra"^^<http://www.example.org/>)?
 ''',
 '''
 base-locator("http://www.semagia.com/")?
+''',
+'''
+select $x where bla($blub)
 '''
     )
     from StringIO import StringIO

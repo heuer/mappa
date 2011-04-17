@@ -161,6 +161,9 @@ class XMLHandler(TologHandler):
     def startBuiltinPredicate(self, name):
         self._writer.startElement('builtin-predicate', {'name': name})
 
+    def startOccurrencePredicate(self):
+        self._writer.startElement('occurrence-predicate')
+
     def startAssociationPredicate(self):
         self._writer.startElement('association-predicate')
 
