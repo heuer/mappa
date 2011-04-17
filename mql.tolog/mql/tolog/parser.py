@@ -442,6 +442,8 @@ def p__start_rule(p): # Inline action
 
 _PREDICATE = 'Predicate'
 _OCC_PREDICATE = 'Occurrence' + _PREDICATE
+_WANT_IRI = ('base-locator', 'datatype', 'item-identifier',
+             'subject-locator', 'subject-identifier', 'resource')
 
 def p_clause_predcause(p):
     """\
@@ -451,7 +453,7 @@ def p_clause_predcause(p):
     handler = _handler(p)
     if kind == consts.IDENT and is_builtin_predicate(name):
         handler.startBuiltinPredicate(name)
-        _arguments_to_events(handler, args)
+        _arguments_to_events(handler, args, stringtoiri=name in _WANT_IRI)
         handler.endBuiltinPredicate()
     else:
         predicate_kind = None
@@ -694,17 +696,19 @@ def _handle_prefix(parser, ident, iri, kind=None):
         parser.handler.namespace(ident, iri, kind)
                    
 
-def _to_event(handler, arg):
+def _to_event(handler, arg, stringtoiri=False):
     kind, name = arg
     meth = consts.get_name(kind)
     if not meth:
         print 'unhandled', kind #TODO
         return
+    if stringtoiri and meth == 'string':
+        meth = 'iri'
     getattr(handler, meth)(name)
 
-def _arguments_to_events(handler, args):
+def _arguments_to_events(handler, args, stringtoiri=False):
     for kind, name in args:
-        _to_event(handler, (kind, name))
+        _to_event(handler, (kind, name), stringtoiri)
 
 if __name__ == '__main__':
     test_input = (
