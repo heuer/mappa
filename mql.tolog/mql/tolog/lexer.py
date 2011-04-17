@@ -128,7 +128,7 @@ tokens = tuple(set(reserved.values())) + tuple(_DIRECTIVES.values()) + (
 t_ignore = ' \t'
 
 t_EQ        = r'='
-t_NE        = r'/='
+t_NE        = r'(/|!)='
 t_LE        = r'<='
 t_LT        = r'<'
 t_GE        = r'>='
@@ -320,6 +320,7 @@ not(located-in($PLACE : containee, italy : container))?''',
                  ' ^<http://www.semagia.com/>',
                  ' "x"^^<http://www.semagia.com/>',
                  ' select $x where bla($blub)?',
+                 ' != /= ',
                  ]
     import ply.lex as lex
     def make_lexer():
