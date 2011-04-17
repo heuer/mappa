@@ -58,7 +58,7 @@ setup(
       zip_safe = False,
       include_package_data = True,
       package_data = {'': ['*.txt', '*.xsl']},
-      install_requires=['tm>=0.1.7', 'lxml>=2.3'],
+      install_requires=['tm>=0.1.7', 'lxml>=2.1'],
       keywords = ['Topic Maps', 'Semantic Web', 'tolog'],
       classifiers = [
                     'Intended Audience :: Developers',
