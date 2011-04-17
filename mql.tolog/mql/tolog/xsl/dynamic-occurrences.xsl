@@ -11,14 +11,7 @@
     homepage($A, $VALUE)
 
 
-  CAUTION: This needs more work/tests. Queries like
-
-
-    select $O from occurrence($A, $O), type($O, homepage), value($O, $VALUE)?
-    
-  will fail because the query becomes:
-  
-    select $O from homepage($A, $VALUE)
+  CAUTION: This needs more work/tests.
 
 
   Copyright (c) 2010 - 2011, Semagia - Lars Heuer <http://www.semagia.com/>
@@ -33,6 +26,15 @@
                 exclude-result-prefixes="tl">
 
   <xsl:output method="xml" encoding="utf-8" standalone="yes"/>
+
+  <xsl:key name="variables"
+           match="tl:select/tl:variable
+                  |tl:insert/tl:fragment/tl:variable
+                  |tl:update/tl:function/tl:variable
+                  |tl:delete/tl:variable
+                  |tl:delete/tl:function/tl:variable
+                  |tl:merge/tl:variable"
+           use="@name"/>
 
   <xsl:key name="stmts1" 
             match="tl:builtin-predicate[@name='occurrence'
@@ -54,19 +56,25 @@
             use="tl:*[1]/@name"/>
 
 
+
+  <!-- Indicates if this optimization is allowed -->
+  <xsl:variable name="allowed" select="count(/tl:query/tl:*/tl:where)=1"/>
+
+
   <xsl:template match="@*|node()">
     <xsl:copy>
       <xsl:apply-templates select="@*|node()"/>
     </xsl:copy>
   </xsl:template>
 
-  <xsl:template match="tl:builtin-predicate[@name='occurrence'][tl:*[2][local-name(.)='variable']]">
+  <xsl:template match="tl:builtin-predicate[@name='occurrence'][tl:*[2][local-name(.)='variable' and $allowed]]">
     <xsl:variable name="parent" select=".."/>
     <xsl:variable name="key" select="tl:*[2]/@name"/>
     <xsl:variable name="types" select="key('types', $key)[..=$parent]"/>
     <xsl:variable name="values" select="key('values', $key)[..=$parent]"/>
+    <xsl:variable name="variables" select="key('variables', $key)"/>
     <xsl:choose>
-      <xsl:when test="count($types) = 1 and count($values) = 1">
+      <xsl:when test="count($types) = 1 and count($values) = 1 and count($variables) = 0">
         <occurrence-predicate>
           <name>
             <xsl:copy-of select="$types/tl:*[2]"/>
@@ -82,13 +90,14 @@
   </xsl:template>
 
   <xsl:template match="tl:builtin-predicate[@name='type'
-                                            or @name='value'][tl:*[1][local-name(.)='variable']]">
+                                            or @name='value'][tl:*[1][local-name(.)='variable' and $allowed]]">
     <xsl:variable name="parent" select=".."/>
     <xsl:variable name="key" select="tl:*[1]/@name"/>
     <xsl:variable name="stmts" select="key('stmts1', $key)[..=$parent]|key('stmts2', $key)[..=$parent]"/>
     <xsl:variable name="types" select="key('types', $key)[..=$parent]"/>
     <xsl:variable name="values" select="key('values', $key)[..=$parent]"/>
-    <xsl:if test="count($stmts) > 1 or count($types) + count($values) != 2">
+    <xsl:variable name="variables" select="key('variables', $key)"/>
+    <xsl:if test="count($stmts) > 1 or count($types) + count($values) + count($variables) != 2">
       <xsl:copy-of select="."/>       
     </xsl:if>
   </xsl:template>
