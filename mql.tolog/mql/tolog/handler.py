@@ -91,7 +91,7 @@ _NAME_ELS = ('count', 'variable', 'parameter', 'ascending', 'descending')
 # Elements which have a value attribute
 _VALUE_ELS = ('string', 'iri', 'itemidentifier', 'subjectlocator',
               'identifier', 'integer', 'limit', 'offset', 'qname',
-              'objectid')
+              'objectid', 'date', 'datetime', 'integer', 'decimal')
 
 # Namespace 'kind' to name mapping
 _NSKIND2NAME = {

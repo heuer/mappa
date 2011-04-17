@@ -854,6 +854,18 @@ occurrence($A, $O), type($O, rekkefolge), value($O, $VALUE)?
 ''',
 '''
 b($A, ^<http://www.semagia.com/>)?
+''',
+'''
+b($A, 2011-02-23)?
+''',
+'''
+b($A, 1)?
+''',
+'''
+b($A, 1.2)?
+''',
+'''
+b($A, 2011-02-23T23:00:00)?
 '''
     )
     from StringIO import StringIO
