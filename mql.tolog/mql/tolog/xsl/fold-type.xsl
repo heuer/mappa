@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Merges role-player($x, x), type($x, z) into role-player($x, x z) and
+  Merges role-player($x, x), type($x, z) into role-player($x, x, z) and
   occurrence(t, $x), type($x, z) into occurrence(t, $x, z)
   and topic-name(t, $x), type($x, z) into topic-name(t, $x, z)
 
