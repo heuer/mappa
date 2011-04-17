@@ -56,6 +56,7 @@ DATE_TIME = 13
 STRING = 14
 INTEGER = 15
 DECIMAL = 16
+LITERAL = 17
 
 _CONST2NAME = {
     VARIABLE: 'variable',
@@ -71,6 +72,7 @@ _CONST2NAME = {
     DATE: 'date',
     DATE_TIME: 'datetime',
     STRING: 'string',
+    LITERAL: 'literal',
     ASC: 'ascending',
     DESC: 'descending',
 }

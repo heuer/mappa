@@ -307,6 +307,7 @@ not(located-in($PLACE : containee, italy : container))?''',
                  'update value(@tritratrullala, "Ontopia")',
                  '%prefix bla <http://www.semagia.com/>',
                  ' ^<http://www.semagia.com/>',
+                 ' "x"^^<http://www.semagia.com/>',
                  ]
     import ply.lex as lex
     def make_lexer():

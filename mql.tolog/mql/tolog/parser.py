@@ -595,17 +595,12 @@ def p_value_literal_iri(p):
     """\
     value           : STRING DOUBLE_CIRCUMFLEX datatype
     """
-    p[0] = p[1], p[2]
+    p[0] = consts.LITERAL, (p[1], p[3])
 
 def p_datatype_iri(p):
     """\
     datatype        : STRING
-    """
-    p[0] = consts.IRI, p[1]
-
-def p_datatype_qiri(p):
-    """\
-    datatype        : qiri
+                    | IRI
     """
     p[0] = p[1]
 
@@ -866,6 +861,9 @@ b($A, 1.2)?
 ''',
 '''
 b($A, 2011-02-23T23:00:00)?
+''',
+'''
+b($A, "Tritra"^^<http://www.example.org/>)?
 '''
     )
     from StringIO import StringIO

@@ -152,6 +152,11 @@ class XMLHandler(TologHandler):
         self._writer.pop() # body
         self._writer.pop() # rule
 
+    def literal(self, lit):
+        value, datatype = lit
+        self._writer.emptyElement('literal', {'value': value,
+                                              'datatype': datatype})
+
     def startBuiltinPredicate(self, name):
         self._writer.startElement('builtin-predicate', {'name': name})
 
