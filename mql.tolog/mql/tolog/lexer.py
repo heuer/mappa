@@ -107,6 +107,7 @@ tokens = tuple(reserved.values()) + tuple(_DIRECTIVES.values()) + (
     'COMMA', 'COLON', 'PIPE', 'PIPE_PIPE', 'QM',
     'IMPLIES', 'DOT',
     # Non-standard tolog
+    'CIRCUMFLEX',
     'DOUBLE_CIRCUMFLEX',
     
     # Keeping (unparsed) topic map content. Not really a token, though
@@ -129,6 +130,7 @@ t_LCURLY    = r'\{'
 t_RCURLY    = r'\}'
 t_COMMA     = r','
 t_DOT       = r'\.'
+t_CIRCUMFLEX = r'\^'
 t_DOUBLE_CIRCUMFLEX = r'\^\^'
 t_IMPLIES   = r':-'
 t_COLON     = r':'
@@ -304,6 +306,7 @@ not(located-in($PLACE : containee, italy : container))?''',
                  'update value(@2312heresom3thing3ls3, "Ontopia")',
                  'update value(@tritratrullala, "Ontopia")',
                  '%prefix bla <http://www.semagia.com/>',
+                 ' ^<http://www.semagia.com/>',
                  ]
     import ply.lex as lex
     def make_lexer():

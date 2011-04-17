@@ -348,14 +348,16 @@ def p_sid_qiri(p):
 def p_uri_ref_slo(p):
     """\
     uri_ref         : SLO
+                    | EQ IRI
     """
-    p[0] = consts.SLO, p[1]
+    p[0] = consts.SLO, p[len(p)-1]
 
 def p_uri_ref_iid(p):
     """\
     uri_ref         : IID
+                    | CIRCUMFLEX IRI
     """
-    p[0] = consts.IID, p[1]
+    p[0] = consts.IID, p[len(p)-1]
 
 def p_count_clause(p):
     """\
@@ -835,6 +837,24 @@ instance-of($OPERA, opera),
 { premiere($OPERA : opera, $THEATRE : place), 
   instance-of($THEATRE, theatre) }?
 ''',
+'''
+value($x, "semagia"), datatype($x, xsd:string), value($y, "Semagia"), { datatype($y, xsd:string) }?
+''',
+'''
+scope($occ, a), scope($occ, b), { scope($occ, c) }, scope($occ, d), scope($name, e) ?
+''',
+'''
+association($a), type($a, x)?
+''',
+'''
+association($a), reifies(x, $a)?
+''',
+'''
+occurrence($A, $O), type($O, rekkefolge), value($O, $VALUE)?
+''',
+'''
+b($A, ^<http://www.semagia.com/>)?
+'''
     )
     from StringIO import StringIO
     from ply import yacc
@@ -844,7 +864,7 @@ instance-of($OPERA, opera),
     def make_handler(out):
         return XMLHandler(out, prettify=True)
     def parse(data, handler):
-        parser = yacc.yacc()
+        parser = yacc.yacc(debug=True)
         initialize_parser(parser, handler)
         handler.start()
         parser.parse(data, lexer=plyutils.make_lexer(lexer_mod))

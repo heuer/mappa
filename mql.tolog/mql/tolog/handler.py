@@ -89,7 +89,9 @@ _SIMPLE_ELS = ('select', 'insert', 'update', 'delete', 'merge', 'predicate',
 _NAME_ELS = ('count', 'variable', 'parameter', 'ascending', 'descending')
 
 # Elements which have a value attribute
-_VALUE_ELS = ('string', 'iri', 'identifier', 'integer', 'limit', 'offset', 'qname', 'objectid')
+_VALUE_ELS = ('string', 'iri', 'itemidentifier', 'subjectlocator',
+              'identifier', 'integer', 'limit', 'offset', 'qname',
+              'objectid')
 
 # Namespace 'kind' to name mapping
 _NSKIND2NAME = {
