@@ -107,8 +107,6 @@ def p_noop(p): # Handles all grammar rules where the result is not of interest
                     | QM  
     delete_element  : function_call
                     | paramlist
-    paramlist       : param
-                    | paramlist COMMA param
     opt_from_clause : 
                     | from_clause
     opt_tail        : 
@@ -141,35 +139,44 @@ def p__start_delete(p): # Inline action
     """
     _handler(p).startDelete()
 
+
+_IRI_FUNCTIONS = ('subject-identifier', 'subject-locator',
+                  'item-identifier', 'resource')
+
 def p_function_call(p):
     """\
-    function_call   : IDENT _start_function LPAREN paramlist RPAREN
+    function_call   : IDENT LPAREN paramlist RPAREN
     """
-    _handler(p).endFunction()
+    handler = _handler(p)
+    name = p[1]
+    handler.startFunction(name)
+    _arguments_to_events(handler, p[3], stringtoiri=name in _IRI_FUNCTIONS)
+    handler.endFunction()
 
-def p__start_function(p):
+def p_paramlist(p):
     """\
-    _start_function : 
+    paramlist       : param
+                    | paramlist COMMA param
     """
-    _handler(p).startFunction(p[-1])
+    if len(p) == 2:
+        p[0] = [p[1]]
+    else:
+        p[0] = p[1]
+        p[0].append(p[3])
 
-def p_param_string(p):
+def p_param(p):
+    """\
+    param           : variable
+                    | ref
+    """
+    p[0] = p[1]
+
+def p_param_STRING(p):
     """\
     param           : STRING
     """
-    _handler(p).string(p[1])
-
-def p_param_variable(p):
-    """\
-    param           : VARIABLE
-    """
-    _handler(p).variable(p[1])
-
-def p_param_ref(p):
-    """\
-    param           : ref
-    """
-    _to_event(_handler(p), p[1])
+    p[0] = consts.STRING, p[1]
+    
 
 def p_insert(p):
     """\
@@ -442,7 +449,7 @@ def p__start_rule(p): # Inline action
 
 _PREDICATE = 'Predicate'
 _OCC_PREDICATE = 'Occurrence' + _PREDICATE
-_WANT_IRI = ('base-locator', 'datatype', 'item-identifier',
+_IRI_PREDICATES = ('base-locator', 'datatype', 'item-identifier',
              'subject-locator', 'subject-identifier', 'resource')
 
 def p_clause_predcause(p):
@@ -453,7 +460,7 @@ def p_clause_predcause(p):
     handler = _handler(p)
     if kind == consts.IDENT and is_builtin_predicate(name):
         handler.startBuiltinPredicate(name)
-        _arguments_to_events(handler, args, stringtoiri=name in _WANT_IRI)
+        _arguments_to_events(handler, args, stringtoiri=name in _IRI_PREDICATES)
         handler.endBuiltinPredicate()
     else:
         predicate_kind = None
@@ -893,6 +900,9 @@ base-locator("http://www.semagia.com/")?
 ''',
 '''
 select $x where bla($blub)
+''',
+'''
+update resource(@2312, "http://www.semagia.com/") where bla($blub)
 '''
     )
     from StringIO import StringIO
