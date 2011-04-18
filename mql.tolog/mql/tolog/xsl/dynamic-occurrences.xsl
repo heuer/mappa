@@ -67,38 +67,48 @@
   </xsl:template>
 
   <xsl:template match="tl:builtin-predicate[@name='occurrence'][tl:*[2][local-name(.)='variable']]">
-    <xsl:variable name="parent" select=".."/>
-    <xsl:variable name="key" select="tl:*[2]/@name"/>
-    <xsl:variable name="types" select="key('types', $key)[..=$parent]"/>
-    <xsl:variable name="values" select="key('values', $key)[..=$parent]"/>
-    <xsl:variable name="variables" select="key('variables', $key)"/>
     <xsl:choose>
-      <xsl:when test="$allowed and count($types) = 1 and count($values) = 1 and count($variables) = 0">
-        <occurrence-predicate>
-          <name>
-            <xsl:copy-of select="$types/tl:*[2]"/>
-          </name>
-          <xsl:copy-of select="tl:*[1]"/>
-          <xsl:copy-of select="$values/tl:*[2]"/>
-        </occurrence-predicate>
+      <xsl:when test="$allowed">
+        <xsl:variable name="parent" select=".."/>
+        <xsl:variable name="key" select="tl:*[2]/@name"/>
+        <xsl:variable name="types" select="key('types', $key)[..=$parent]"/>
+        <xsl:variable name="values" select="key('values', $key)[..=$parent]"/>
+        <xsl:variable name="variables" select="key('variables', $key)"/>
+        <xsl:choose>
+          <xsl:when test="count($types) = 1 and count($values) = 1 and count($variables) = 0">
+            <occurrence-predicate>
+              <name>
+                <xsl:copy-of select="$types/tl:*[2]"/>
+              </name>
+              <xsl:copy-of select="tl:*[1]"/>
+              <xsl:copy-of select="$values/tl:*[2]"/>
+            </occurrence-predicate>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:copy-of select="."/>
+          </xsl:otherwise>
+        </xsl:choose>
       </xsl:when>
-      <xsl:otherwise>
-        <xsl:copy-of select="."/>
-      </xsl:otherwise>
+      <xsl:otherwise><xsl:copy-of select="."/></xsl:otherwise>
     </xsl:choose>
   </xsl:template>
 
   <xsl:template match="tl:builtin-predicate[@name='type'
                                             or @name='value'][tl:*[1][local-name(.)='variable']]">
-    <xsl:variable name="parent" select=".."/>
-    <xsl:variable name="key" select="tl:*[1]/@name"/>
-    <xsl:variable name="stmts" select="key('stmts1', $key)[..=$parent]|key('stmts2', $key)[..=$parent]"/>
-    <xsl:variable name="types" select="key('types', $key)[..=$parent]"/>
-    <xsl:variable name="values" select="key('values', $key)[..=$parent]"/>
-    <xsl:variable name="variables" select="key('variables', $key)"/>
-    <xsl:if test="$allowed and count($stmts) > 1 or count($types) + count($values) + count($variables) != 2">
-      <xsl:copy-of select="."/>
-    </xsl:if>
+    <xsl:choose>
+      <xsl:when test="$allowed">
+        <xsl:variable name="parent" select=".."/>
+        <xsl:variable name="key" select="tl:*[1]/@name"/>
+        <xsl:variable name="stmts" select="key('stmts1', $key)[..=$parent]|key('stmts2', $key)[..=$parent]"/>
+        <xsl:variable name="types" select="key('types', $key)[..=$parent]"/>
+        <xsl:variable name="values" select="key('values', $key)[..=$parent]"/>
+        <xsl:variable name="variables" select="key('variables', $key)"/>
+        <xsl:if test="count($stmts) > 1 or count($types) + count($values) + count($variables) != 2">
+          <xsl:copy-of select="."/>
+        </xsl:if>
+      </xsl:when>
+      <xsl:otherwise><xsl:copy-of select="."/></xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
 
 </xsl:stylesheet>
