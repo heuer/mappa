@@ -60,21 +60,20 @@
   <!-- Indicates if this optimization is allowed -->
   <xsl:variable name="allowed" select="count(/tl:query/tl:*/tl:where)=1"/>
 
-
   <xsl:template match="@*|node()">
     <xsl:copy>
       <xsl:apply-templates select="@*|node()"/>
     </xsl:copy>
   </xsl:template>
 
-  <xsl:template match="tl:builtin-predicate[@name='occurrence'][tl:*[2][local-name(.)='variable' and $allowed]]">
+  <xsl:template match="tl:builtin-predicate[@name='occurrence'][tl:*[2][local-name(.)='variable']]">
     <xsl:variable name="parent" select=".."/>
     <xsl:variable name="key" select="tl:*[2]/@name"/>
     <xsl:variable name="types" select="key('types', $key)[..=$parent]"/>
     <xsl:variable name="values" select="key('values', $key)[..=$parent]"/>
     <xsl:variable name="variables" select="key('variables', $key)"/>
     <xsl:choose>
-      <xsl:when test="count($types) = 1 and count($values) = 1 and count($variables) = 0">
+      <xsl:when test="$allowed and count($types) = 1 and count($values) = 1 and count($variables) = 0">
         <occurrence-predicate>
           <name>
             <xsl:copy-of select="$types/tl:*[2]"/>
@@ -90,15 +89,15 @@
   </xsl:template>
 
   <xsl:template match="tl:builtin-predicate[@name='type'
-                                            or @name='value'][tl:*[1][local-name(.)='variable' and $allowed]]">
+                                            or @name='value'][tl:*[1][local-name(.)='variable']]">
     <xsl:variable name="parent" select=".."/>
     <xsl:variable name="key" select="tl:*[1]/@name"/>
     <xsl:variable name="stmts" select="key('stmts1', $key)[..=$parent]|key('stmts2', $key)[..=$parent]"/>
     <xsl:variable name="types" select="key('types', $key)[..=$parent]"/>
     <xsl:variable name="values" select="key('values', $key)[..=$parent]"/>
     <xsl:variable name="variables" select="key('variables', $key)"/>
-    <xsl:if test="count($stmts) > 1 or count($types) + count($values) + count($variables) != 2">
-      <xsl:copy-of select="."/>       
+    <xsl:if test="$allowed and count($stmts) > 1 or count($types) + count($values) + count($variables) != 2">
+      <xsl:copy-of select="."/>
     </xsl:if>
   </xsl:template>
 
