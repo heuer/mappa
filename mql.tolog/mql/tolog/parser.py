@@ -567,14 +567,10 @@ def p_opclause(p):
     """
     handler = _handler(p)
     name = _OP2NAME[p[2]]
-    handler.startComparison(name)
-    handler.startLeft()
+    handler.startInfixPredicate(name)
     _to_event(handler, p[1])
-    handler.endLeft()
-    handler.startRight()
     _to_event(handler, p[3])
-    handler.endRight()
-    handler.endComparison()
+    handler.endInfixPredicate()
 
 def p_orclause(p):
     """\

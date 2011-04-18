@@ -162,10 +162,10 @@ class XMLHandler(TologHandler):
         self._writer.startElement('association-predicate')
 
     def startFunction(self, name):
-        self._writer.startElement('function', {'name': name})
+        self._writer.startElement('function-call', {'name': name})
 
-    def startComparison(self, name):
-        self._writer.startElement('comparison', {'name': name})
+    def startInfixPredicate(self, name):
+        self._writer.startElement('infix-predicate', {'name': name})
 
     def fragmentContent(self, fragment):
         self._writer.dataElement('content', fragment)
