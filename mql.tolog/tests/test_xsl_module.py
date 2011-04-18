@@ -44,7 +44,7 @@ from mql.tolog import xsl
 def test_get_transformator():
     def check(name):
         ok_(xsl.get_transformator(name) is not None)
-    for n in xsl._STYLESHEETS:
+    for n in xsl.get_transformator_names():
         yield check, n
 
 

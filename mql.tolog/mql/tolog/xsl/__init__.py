@@ -56,10 +56,17 @@ def _compile(name):
 
     """
     return etree.XSLT(etree.parse(open(os.path.join(_PATH, name + '.xsl'))))    
+
+def get_transformator_names():
+    """\
+    Returns an iterable of available transformator names (which can be
+    used to retrieve a transformator via `get_transformator`.
+    """
+    return _STYLESHEETS.keys()
     
 def get_transformator(name):
     """\
-
+    Returns a function to transform an etree.Element
     """
     t = _STYLESHEETS.get(name, _NOT_FOUND)
     if t is _NOT_FOUND:
