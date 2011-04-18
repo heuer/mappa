@@ -41,6 +41,26 @@ XML Utilities.
 import codecs
 from xml.sax.saxutils import escape, quoteattr, XMLGenerator
 from xml.sax.xmlreader import InputSource
+try:
+    from lxml import etree
+except ImportError:
+    try:
+        # Python 2.5
+        import xml.etree.cElementTree as etree
+    except ImportError:
+        try:
+            # Python 2.5
+            import xml.etree.ElementTree as etree
+        except ImportError:
+            try:
+                # normal cElementTree install
+                import cElementTree as etree
+            except ImportError:
+                try:
+                    # normal ElementTree install
+                    import elementtree.ElementTree as etree
+                except ImportError:
+                    pass
 
 def as_inputsource(source):
     """\
@@ -51,6 +71,7 @@ def as_inputsource(source):
     input_source.setByteStream(source.stream)
     input_source.setEncoding(source.encoding)
     return input_source
+
 
 class XMLWriter(object):
     """\
@@ -219,6 +240,133 @@ class SimpleXMLWriter(XMLWriter):
         """
         self.endElement(self._elements[-1], indent)
 
+
+#
+# The EtreeXMLWriter borrows code of the xml.etree.ElementTree
+# module of Python 2.7
+#
+# Copyright (c) 1999-2008 by Fredrik Lundh.  All rights reserved.
+#
+# Licensed to PSF under a Contributor Agreement.
+# See http://www.python.org/psf/license for licensing details.
+#
+class EtreeXMLWriter(object):
+    """\
+    Simple SAX alike XML writer which generates an Etree.
+    """
+    def __init__(self):
+        """\
+
+        """
+        self._data = []
+        self._elem = []
+        self._last = None
+        self._tail = None
+
+    def getroot(self):
+        """\
+        Returns the root element.
+
+        This method should be called *after* the endDocument() method.
+        """
+        return self._last
+
+    def _flush(self):
+        if self._data:
+            if self._last is not None:
+                text = "".join(self._data)
+                if self._tail:
+                    assert self._last.tail is None, "internal error (tail)"
+                    self._last.tail = text
+                else:
+                    assert self._last.text is None, "internal error (text)"
+                    self._last.text = text
+            self._data = []
+
+    #
+    # SimpleXMLWriter method
+    #
+    def pop(self, indent=True):
+        """\
+        Closes the last started element.
+
+        `indent`
+            ignored
+        """
+        self.endElement(self._elem[-1].tag)
+
+    #
+    # XMLWriter methods
+    #
+    def startDocument(self):
+        """\
+        Writes the <?xml version="1.0" ... ?> declaration.
+        """
+        pass
+    
+    def endDocument(self):
+        """\
+        Flushes to the output.
+        """
+        return self._last
+    
+    def startElement(self, name, attrs=None):
+        """\
+        Writes a start tag with the optional attributes (a dict).
+        """
+        self._flush()
+        self._last = elem = etree.Element(name, attrs)
+        if self._elem:
+            self._elem[-1].append(elem)
+        self._elem.append(elem)
+        self._tail = 0
+        
+    def endElement(self, name, indent=True):
+        """\
+        Writes an end tag. 
+        
+        `name`
+            The name of the tag.
+        `indent`
+            Ignored
+        """
+        self._flush()
+        self._last = self._elem.pop()
+        assert self._last.tag == name,\
+               "end tag mismatch (expected %s, got %s)" % (
+                   self._last.tag, name)
+        self._tail = 1
+    
+    def dataElement(self, name, data, attrs=None):
+        """\
+        Writes a start tag, the data and an end tag.
+        """
+        self.startElement(name, attrs)
+        self.characters(data)
+        self.endElement(name)
+
+    def emptyElement(self, name, attrs=None):
+        """\
+        Writes ``<name att1="attr-val1" attr2="attr-val2"/>``
+        """
+        self.startElement(name, attrs)
+        self.pop()
+    
+    def characters(self, content):
+        """\
+        Writes an escaped value.
+        """
+        self._data.append(content)
+
+    def processingInstruction(self, target, data):
+        """\
+        Writes a processing instruction (unsupported)
+        """
+
+    def comment(self, comment):
+        """\
+        Writes a comment (unsupported).
+        """
 
 def xmlwriter_as_contenthandler(writer):
     """\
