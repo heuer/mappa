@@ -40,7 +40,6 @@ tolog handler implementations.
 """
 import logging
 from . import consts
-from tm.xmlutils import SimpleXMLWriter
 
 class TologHandler(object):
     """\
@@ -105,17 +104,13 @@ class XMLHandler(TologHandler):
     """\
     TologHandler which translates the events to XML.
     """
-    def __init__(self, out, encoding='utf-8', prettify=False):
+    def __init__(self, writer):
         """\
 
-        `out`
-            File-like object
-        `encoding`
-            The encoding (default: utf-8)
-        `prettify`
-            Indicates if the XML should be prettified (default: False)
+        `writer`
+            An object which implements the methods of the ``tm.xmlutils.SimpleXMLWriter` class
         """
-        self._writer = SimpleXMLWriter(out, encoding=encoding, prettify=prettify)
+        self._writer = writer
 
     def start(self):
         writer = self._writer

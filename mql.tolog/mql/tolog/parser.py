@@ -903,15 +903,29 @@ select $x where bla($blub)
 ''',
 '''
 update resource(@2312, "http://www.semagia.com/") where bla($blub)
+''',
 '''
+association($a), association-role($a, $r)
+''',
+'''
+topic($t), {subject-identifier($t, <jjj>)}, type($x, $t)
+''',
+'''
+role-player($x, bla), type($x, $t)
+''',
+'''
+select $TYPE, $VALUE from
+  occurrence(topic, $OCC),
+  type($OCC, $TYPE),
+  { resource($OCC, $VALUE) | value($OCC, $VALUE) }?
+''',
     )
-    from StringIO import StringIO
     from ply import yacc
     from tm import plyutils
+    from tm.xmlutils import EtreeXMLWriter
     from mql.tolog import lexer as lexer_mod
     from mql.tolog.handler import XMLHandler
-    def make_handler(out):
-        return XMLHandler(out, prettify=True)
+    from lxml import etree
     def parse(data, handler):
         parser = yacc.yacc(debug=True)
         initialize_parser(parser, handler)
@@ -922,9 +936,9 @@ update resource(@2312, "http://www.semagia.com/") where bla($blub)
         print(cnt)
         print(data)
         try:
-            out = StringIO()
-            parse(data, make_handler(out))
-            print out.getvalue()
+            writer = EtreeXMLWriter()
+            parse(data, XMLHandler(writer))
+            print etree.tostring(writer.getroot(), pretty_print=True)
         except Exception, ex:
             print data
             raise ex

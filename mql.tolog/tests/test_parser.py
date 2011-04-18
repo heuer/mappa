@@ -38,20 +38,14 @@ Tests against the parser.
 :organization: Semagia - <http://www.semagia.com/>
 :license:      BSD License
 """
-from tm import plyutils
 from tm.mql import InvalidQueryError
-from mql.tolog import parser as parser_mod, lexer as lexer_mod
+import mql.tolog as tolog
 from mql.tolog.handler import NoopHandler
 
 def parse(data, handler=None):
-    lexer = plyutils.make_lexer(lexer_mod)
-    parser = plyutils.make_parser(parser_mod)
     if not handler:
         handler = NoopHandler()
-    parser_mod.initialize_parser(parser, handler)
-    handler.start()
-    parser.parse(data, lexer=lexer)
-    handler.end()
+    tolog.parse(data, handler)
 
 def fail(msg):
     raise AssertionError(msg)
