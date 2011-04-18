@@ -150,8 +150,7 @@ class XMLHandler(TologHandler):
 
     def literal(self, lit):
         value, datatype = lit
-        self._writer.emptyElement('literal', {'value': value,
-                                              'datatype': datatype})
+        self._writer.emptyElement('literal', {'value': value, 'datatype': datatype})
 
     def startBuiltinPredicate(self, name):
         self._writer.startElement('builtin-predicate', {'name': name})
