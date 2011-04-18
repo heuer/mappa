@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2007 - 2011 -- Lars Heuer - Semagia <http://www.semagia.com/>.
+# Copyright (c) 2010 - 2011 -- Lars Heuer - Semagia <http://www.semagia.com/>.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -32,42 +32,22 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 """\
-Module for XSLT stylesheets.
+Tests against the mql.tolog.xsl module
 
 :author:       Lars Heuer (heuer[at]semagia.com)
-:organization: Semagia - http://www.semagia.com/
-:license:      BSD license
+:organization: Semagia - <http://www.semagia.com/>
+:license:      BSD License
 """
-import os
-import glob
-from lxml import etree
+from nose.tools import ok_
+from mql.tolog import xsl
 
-_PATH = None
-_NOT_FOUND = object()
-_STYLESHEETS = None
+def test_get_transformator():
+    def check(name):
+        ok_(xsl.get_transformator(name) is not None)
+    for n in xsl._STYLESHEETS:
+        yield check, n
 
-def _init():
-    global _PATH, _STYLESHEETS
-    _PATH = os.path.split(__file__)[0]
-    _STYLESHEETS = dict((os.path.basename(f)[:-4], None) for f in glob.glob(_PATH + '/*.xsl'))
-
-def _compile(name):
-    """\
-
-    """
-    return etree.XSLT(etree.parse(open(os.path.join(_PATH, name + '.xsl'))))    
-    
-def get_transformator(name):
-    """\
-
-    """
-    t = _STYLESHEETS.get(name, _NOT_FOUND)
-    if t is _NOT_FOUND:
-        raise ValueError('%s is not available' % name)
-    elif t is None:
-        t = _compile(name)
-        _STYLESHEETS[name] = t
-    return t
-
-_init()
+if __name__ == '__main__':
+    import nose
+    nose.core.runmodule()
 
