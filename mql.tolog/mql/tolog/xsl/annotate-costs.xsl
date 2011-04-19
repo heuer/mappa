@@ -115,6 +115,47 @@
     </xsl:call-template>
   </xsl:template>
 
+  <xsl:template match="tl:builtin-predicate[@name='role-player']
+                                            [tl:*[1][local-name(.)='variable']]
+                                            [tl:*[2][local-name(.)!='variable']]">
+    <!--** Matches those (binary) built-in predicates where the first part is unbound and the 
+           second part is bound and which produce a medium result.
+
+           * role-player
+     -->
+    <xsl:call-template name="annotate">
+      <xsl:with-param name="cost" select="$MEDIUM_RESULT"/>
+    </xsl:call-template>
+  </xsl:template>
+
+  <xsl:template match="tl:builtin-predicate[@name='type']
+                                            [tl:*[1][local-name(.)='variable']]
+                                            [tl:*[2][local-name(.)!='variable']]">
+    <!--** Matches those (binary) built-in predicates where the first part is unbound and the 
+           second part is bound and which produce a big result.
+
+           * type
+     -->
+    <xsl:call-template name="annotate">
+      <xsl:with-param name="cost" select="$BIG_RESULT"/>
+    </xsl:call-template>
+  </xsl:template>
+
+  <xsl:template match="tl:builtin-predicate[@name='role-player'
+                                            or @name='type']
+                                            [tl:*[1][local-name(.)!='variable']]
+                                            [tl:*[2][local-name(.)='variable']]">
+    <!--** Matches those (binary) built-in predicates where the first part is bound and the 
+           second part is unbound and which produce a single result.
+
+           * role-player
+           * type
+     -->
+    <xsl:call-template name="annotate">
+      <xsl:with-param name="cost" select="$SINGLE_RESULT"/>
+    </xsl:call-template>
+  </xsl:template>
+
   <xsl:template match="tl:infix-predicate">
     <!--** Generic match all infix predicates (=, /=, >, >=, <, <=) -->
     <xsl:call-template name="annotate">
