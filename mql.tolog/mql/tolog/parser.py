@@ -472,7 +472,7 @@ def p_clause_predcause(p):
         arity = len(args)
         if arity == 2 and kind == consts.IDENT and name not in p.parser.rule_names:
             predicate_kind = _OCC_PREDICATE
-        elif kind == consts.QNAME:
+        elif kind in (consts.QNAME, consts.CURIE):
             prefix = name.split(':')[0]
             binding_kind = p.parser.prefixes[prefix][0]
             if binding_kind != consts.MODULE:
