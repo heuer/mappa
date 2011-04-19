@@ -103,6 +103,7 @@ tokens = tuple(set(reserved.values())) + tuple(_DIRECTIVES.values()) + (
     'VARIABLE',
     'PARAM',
     'QNAME',
+    'CURIE',
 
     # Operators
     # = /= >= > <= <
@@ -215,6 +216,11 @@ def t_IID(t):
     t.value = t.value[2:-1]
     return t
 
+@TOKEN(r'\[[^\]]+\]')
+def t_CURIE(t):
+    t.value = t.value[1:-1]
+    return t
+
 @TOKEN(r':'.join([_IDENT, r'[_\w\.-]+']))
 def t_QNAME(t):
     return t
@@ -321,12 +327,11 @@ not(located-in($PLACE : containee, italy : container))?''',
                  ' "x"^^<http://www.semagia.com/>',
                  ' select $x where bla($blub)?',
                  ' != /= ',
+                 '[CU:RIE] [c:/ddjdjjdjdjdd]',
                  ]
     import ply.lex as lex
-    def make_lexer():
-        return lex.lex()
     for data in test_data:
-        lexer = make_lexer()
+        lexer = lex.lex()
         lexer.input(data)
         while True:
             tok = lexer.token()

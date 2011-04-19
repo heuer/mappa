@@ -334,6 +334,7 @@ def p_variable(p):
 def p_qname(p):
     """\
     qname           : QNAME
+                    | CURIE
     """
     p[0] = consts.QNAME, p[1]
 
