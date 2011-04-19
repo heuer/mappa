@@ -54,9 +54,8 @@
     </xsl:call-template>
   </xsl:template>
 
-  <xsl:template match="tl:builtin-predicate[@name='association'
-                                            or @name='topic'][count(tl:variable)=0]">
-    <!--** Match for association and topic where all variables are bound -->
+  <xsl:template match="tl:builtin-predicate|tl:infix-predicate[count(tl:variable)=0]">
+    <!--** Match for all built-in predicates and infix predicates where all variables are bound -->
     <xsl:call-template name="annotate">
       <xsl:with-param name="cost" select="$FILTER_RESULT"/>
     </xsl:call-template>
@@ -66,13 +65,6 @@
     <!--** Generic match all infix predicates (=, /=, >, >=, <, <=) -->
     <xsl:call-template name="annotate">
       <xsl:with-param name="cost" select="$INFINITE_RESULT"/>
-    </xsl:call-template>
-  </xsl:template>
-
-  <xsl:template match="tl:infix-predicate[count(tl:variable)=0]">
-    <!--** Generic match infix predicates where all variables are bound -->
-    <xsl:call-template name="annotate">
-      <xsl:with-param name="cost" select="$FILTER_RESULT"/>
     </xsl:call-template>
   </xsl:template>
 
