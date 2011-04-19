@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
 
+  This stylesheet calculates the costs of the query predicates and adds
+  a "cost" attribute to the predicates.
+
 
   Copyright (c) 2010 - 2011, Semagia - Lars Heuer <http://www.semagia.com/>
   All rights reserved.
