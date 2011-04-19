@@ -46,15 +46,15 @@
     </xsl:call-template>
   </xsl:template>
 
-  <xsl:template match="tl:builtin-predicate[@name='association'
-                                            or @name='topic']">
+  <xsl:template match="tl:builtin-predicate[@name='association' or @name='topic']">
     <!--** Generic match for association and topic -->
     <xsl:call-template name="annotate">
       <xsl:with-param name="cost" select="$WHOLE_TM_RESULT"/>
     </xsl:call-template>
   </xsl:template>
 
-  <xsl:template match="tl:builtin-predicate|tl:infix-predicate[count(tl:variable)=0]">
+  <xsl:template match="tl:*[local-name(.) = 'builtin-predicate'
+                            or local-name(.) = 'infix-predicate'][count(tl:variable)=0]">
     <!--** Match for all built-in predicates and infix predicates where all variables are bound -->
     <xsl:call-template name="annotate">
       <xsl:with-param name="cost" select="$FILTER_RESULT"/>
