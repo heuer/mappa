@@ -120,14 +120,10 @@
         <xsl:choose>
         <!--@ Check if all variables are bound -->
           <xsl:when test="$bound = $pair-count"><xsl:value-of select="$FILTER_RESULT"/></xsl:when>
-          <xsl:otherwise>
-            <xsl:choose>
-              <!--@ Check if all variables are unbound -->
-              <xsl:when test="$bound = 0"><xsl:value-of select="$BIG_RESULT"/></xsl:when>
-              <!--@ Some variables are bound -->
-              <xsl:otherwise><xsl:value-of select="$MEDIUM_RESULT - $bound"/></xsl:otherwise>
-            </xsl:choose>
-          </xsl:otherwise>
+          <!--@ Check if all variables are unbound -->
+          <xsl:when test="$bound = 0"><xsl:value-of select="$BIG_RESULT"/></xsl:when>
+          <!--@ Some variables are bound -->
+          <xsl:otherwise><xsl:value-of select="$MEDIUM_RESULT - $bound"/></xsl:otherwise>
         </xsl:choose>
        </xsl:with-param>
     </xsl:call-template>
