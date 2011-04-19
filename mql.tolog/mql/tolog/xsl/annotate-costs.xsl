@@ -54,8 +54,10 @@
   </xsl:template>
 
   <xsl:template match="tl:*[local-name(.) = 'builtin-predicate'
-                            or local-name(.) = 'infix-predicate'][count(tl:variable)=0]">
-    <!--** Match for all built-in predicates and infix predicates where all variables are bound -->
+                            or local-name(.) = 'infix-predicate'
+                            or local-name(.) = 'occurrence-predicate'][count(tl:variable)=0]">
+    <!--** Match for all built-in predicates, infix predicates, and 
+           (dynamic) occurrence predicates where all variables are bound -->
     <xsl:call-template name="annotate">
       <xsl:with-param name="cost" select="$FILTER_RESULT"/>
     </xsl:call-template>
@@ -87,7 +89,9 @@
                                             or @name='association-role'
                                             or @name='topic-name'
                                             or @name='occurrence'
-                                            or @name='variant']
+                                            or @name='variant'
+                                            or @name='reifies'
+                                            or @name='object-id']
                                             [tl:*[1][local-name(.)='variable']]
                                             [tl:*[2][local-name(.)!='variable']]">
     <!--** Matches those (binary) built-in predicates where the first part is unbound and the 
@@ -100,6 +104,8 @@
            * topic-name
            * occurrence
            * variant
+           * reifies
+           * object-id
      -->
     <xsl:call-template name="annotate">
       <xsl:with-param name="cost" select="$SINGLE_RESULT"/>
@@ -112,7 +118,10 @@
                                             or @name='association-role'
                                             or @name='topic-name'
                                             or @name='occurrence'
-                                            or @name='variant']
+                                            or @name='variant'
+                                            or @name='instance-of'
+                                            or @name='direct-instance-of'
+                                            or @name='scope']
                                             [tl:*[1][local-name(.)!='variable']]
                                             [tl:*[2][local-name(.)='variable']]">
     <!--** Matches those (binary) built-in predicates where the first part is bound and the 
@@ -125,6 +134,9 @@
            * topic-name
            * occurrence
            * variant
+           * instance-of
+           * direct-instance-of
+           * scope
      -->
     <xsl:call-template name="annotate">
       <xsl:with-param name="cost" select="$SMALL_RESULT"/>
@@ -144,13 +156,19 @@
     </xsl:call-template>
   </xsl:template>
 
-  <xsl:template match="tl:builtin-predicate[@name='type']
+  <xsl:template match="tl:builtin-predicate[@name='type'
+                                            or @name='instance-of'
+                                            or @name='direct-instance-of'
+                                            or @name='scope']
                                             [tl:*[1][local-name(.)='variable']]
                                             [tl:*[2][local-name(.)!='variable']]">
     <!--** Matches those (binary) built-in predicates where the first part is unbound and the 
            second part is bound and which produce a big result.
 
            * type
+           * instance-of
+           * direct-instance-of
+           * scope
      -->
     <xsl:call-template name="annotate">
       <xsl:with-param name="cost" select="$BIG_RESULT"/>
@@ -158,7 +176,9 @@
   </xsl:template>
 
   <xsl:template match="tl:builtin-predicate[@name='role-player'
-                                            or @name='type']
+                                            or @name='type'
+                                            or @name='reifies'
+                                            or @name='object-id']
                                             [tl:*[1][local-name(.)!='variable']]
                                             [tl:*[2][local-name(.)='variable']]">
     <!--** Matches those (binary) built-in predicates where the first part is bound and the 
@@ -166,6 +186,8 @@
 
            * role-player
            * type
+           * reifies
+           * object-id
      -->
     <xsl:call-template name="annotate">
       <xsl:with-param name="cost" select="$SINGLE_RESULT"/>
@@ -200,10 +222,11 @@
     </xsl:call-template>
   </xsl:template>
 
-  <xsl:template match="tl:occurrence-predicate">
-    <!--** Generic match for dynamic occurrence predicates, i.e. homepage($T, $H) -->
+  <xsl:template match="tl:occurrence-predicate[count(tl:variable)=1]">
+    <!--** Matches dynamic occurrence predicates where one variable is bound
+    -->
     <xsl:call-template name="annotate">
-      <xsl:with-param name="cost" select="$BIG_RESULT"/>
+      <xsl:with-param name="cost" select="$SMALL_RESULT"/>
     </xsl:call-template>
   </xsl:template>
 
