@@ -296,7 +296,6 @@ def p_select_element(p):
 def p_ref(p):
     """\
     ref             : uri_ref
-                    | qname
     """
     p[0] = p[1]
 
