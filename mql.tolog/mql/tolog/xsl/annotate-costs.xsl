@@ -71,11 +71,22 @@
 
   <xsl:template match="tl:builtin-predicate[@name='subject-identifier'
                                             or @name='subject-locator'
-                                            or @name='item-identifier']
+                                            or @name='item-identifier'
+                                            or @name='association-role'
+                                            or @name='topic-name'
+                                            or @name='occurrence']
                                             [tl:*[1][local-name(.)='variable']]
                                             [tl:*[2][local-name(.)!='variable']]">
-    <!--** Matches subject-identifier, subject-locator, and item-identifier 
-           where the object part is unbound and the IRI is bound -->
+    <!--** Matches those (binary) built-in predicates where the first part is unbound and the 
+           second part is bound and which produce a single result.
+
+           * subject-identifier
+           * subject-locator
+           * item-identifier
+           * association-role
+           * topic-name
+           * occurrence
+     -->
     <xsl:call-template name="annotate">
       <xsl:with-param name="cost" select="$SINGLE_RESULT"/>
     </xsl:call-template>
@@ -83,11 +94,22 @@
 
   <xsl:template match="tl:builtin-predicate[@name='subject-identifier'
                                             or @name='subject-locator'
-                                            or @name='item-identifier']
+                                            or @name='item-identifier'
+                                            or @name='association-role'
+                                            or @name='topic-name'
+                                            or @name='occurrence']
                                             [tl:*[1][local-name(.)!='variable']]
                                             [tl:*[2][local-name(.)='variable']]">
-    <!--** Matches subject-identifier, subject-locator, and item-identifier 
-           where the object part is bound and the IRI is unbound -->
+    <!--** Matches those (binary) built-in predicates where the first part is bound and the 
+           second part is unbound and which produce a small result.
+
+           * subject-identifier
+           * subject-locator
+           * item-identifier
+           * association-role
+           * topic-name
+           * occurrence
+     -->
     <xsl:call-template name="annotate">
       <xsl:with-param name="cost" select="$SMALL_RESULT"/>
     </xsl:call-template>
