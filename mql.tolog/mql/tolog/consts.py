@@ -45,19 +45,20 @@ SID = 4
 SLO = 5
 IRI = SID
 QNAME = 7
-PARAM = 8
-VARIABLE = 9
+CURIE = 8
+PARAM = 9
+VARIABLE = 10
 
-DESC = 10
-ASC  = 11
+DESC = 11
+ASC  = 12
 
-DATE = 12
-DATE_TIME = 13
-STRING = 14
-INTEGER = 15
-DECIMAL = 16
-LITERAL = 17
-MODULE = 18
+DATE = 13
+DATE_TIME = 14
+STRING = 15
+INTEGER = 16
+DECIMAL = 17
+LITERAL = 18
+MODULE = 19
 
 _CONST2NAME = {
     VARIABLE: 'variable',
@@ -67,6 +68,7 @@ _CONST2NAME = {
     PARAM: 'parameter',
     OID: 'objectid',
     QNAME: 'qname',
+    CURIE: 'curie',
     MODULE: 'module',
     SID: 'iri',
     SLO: 'subjectlocator',

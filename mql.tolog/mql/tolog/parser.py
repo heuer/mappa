@@ -331,12 +331,17 @@ def p_variable(p):
     """
     p[0] = consts.VARIABLE, p[1]
 
-def p_qname(p):
+def p_qname_QNAME(p):
     """\
     qname           : QNAME
-                    | CURIE
     """
     p[0] = consts.QNAME, p[1]
+
+def p_qname_CURIE(p):
+    """\
+    qname           : CURIE
+    """
+    p[0] = consts.CURIE, p[1]
 
 def p_uri_ref(p):
     """\
@@ -916,6 +921,11 @@ select $TYPE, $VALUE from
   type($OCC, $TYPE),
   { resource($OCC, $VALUE) | value($OCC, $VALUE) }?
 ''',
+'''
+%prefix ex <http://psi.example.org/>
+
+[ex:/onto/homepage]($T, $V)
+'''
     )
     from ply import yacc
     from tm import plyutils

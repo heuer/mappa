@@ -88,7 +88,7 @@ _SIMPLE_ELS = ('select', 'insert', 'update', 'delete', 'merge', 'predicate',
 _NAME_ELS = ('count', 'variable', 'parameter', 'ascending', 'descending')
 
 # Elements which have a value attribute
-_VALUE_ELS = ('string', 'iri', 'itemidentifier', 'subjectlocator',
+_VALUE_ELS = ('string', 'iri', 'itemidentifier', 'subjectlocator', 'curie',
               'identifier', 'integer', 'limit', 'offset', 'qname',
               'objectid', 'date', 'datetime', 'integer', 'decimal')
 
