@@ -46,8 +46,8 @@
     </xsl:call-template>
   </xsl:template>
 
-  <xsl:template match="tl:builtin-predicate[@name='association' or @name='topic']">
-    <!--** Generic match for association and topic -->
+  <xsl:template match="tl:builtin-predicate">
+    <!--** Generic match for all built-in predicates (worst case, assuming that the whole TM is returned) -->
     <xsl:call-template name="annotate">
       <xsl:with-param name="cost" select="$WHOLE_TM_RESULT"/>
     </xsl:call-template>
@@ -58,6 +58,38 @@
     <!--** Match for all built-in predicates and infix predicates where all variables are bound -->
     <xsl:call-template name="annotate">
       <xsl:with-param name="cost" select="$FILTER_RESULT"/>
+    </xsl:call-template>
+  </xsl:template>
+
+  <xsl:template match="tl:builtin-predicate[@name='subject-identifier'
+                                            or @name='subject-locator'][count(tl:variable)=2]">
+    <!--** Matches subject-identifier and subject-locator where all variables are unbound -->
+    <xsl:call-template name="annotate">
+      <xsl:with-param name="cost" select="$BIG_RESULT"/>
+    </xsl:call-template>
+  </xsl:template>
+
+  <xsl:template match="tl:builtin-predicate[@name='subject-identifier'
+                                            or @name='subject-locator'
+                                            or @name='item-identifier']
+                                            [tl:*[1][local-name(.)='variable']]
+                                            [tl:*[2][local-name(.)!='variable']]">
+    <!--** Matches subject-identifier, subject-locator, and item-identifier 
+           where the object part is unbound and the IRI is bound -->
+    <xsl:call-template name="annotate">
+      <xsl:with-param name="cost" select="$SINGLE_RESULT"/>
+    </xsl:call-template>
+  </xsl:template>
+
+  <xsl:template match="tl:builtin-predicate[@name='subject-identifier'
+                                            or @name='subject-locator'
+                                            or @name='item-identifier']
+                                            [tl:*[1][local-name(.)!='variable']]
+                                            [tl:*[2][local-name(.)='variable']]">
+    <!--** Matches subject-identifier, subject-locator, and item-identifier 
+           where the object part is bound and the IRI is unbound -->
+    <xsl:call-template name="annotate">
+      <xsl:with-param name="cost" select="$SMALL_RESULT"/>
     </xsl:call-template>
   </xsl:template>
 
