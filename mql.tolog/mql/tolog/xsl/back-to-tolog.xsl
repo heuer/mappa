@@ -49,9 +49,9 @@
       </xsl:when>
       <xsl:otherwise>
         <xsl:value-of select="concat('using ', @identifier, ' for ')"/>
-        <xsl:if test="@kind='subject-identifier'"><xsl:text>i</xsl:text></xsl:if>
-        <xsl:if test="@kind='subject-locator'"><xsl:text>a</xsl:text></xsl:if>
-        <xsl:if test="@kind='item-identifier'"><xsl:text>s</xsl:text></xsl:if>
+        <xsl:if test="@kind='iri'"><xsl:text>i</xsl:text></xsl:if>
+        <xsl:if test="@kind='subjectlocator'"><xsl:text>a</xsl:text></xsl:if>
+        <xsl:if test="@kind='itemidentifier'"><xsl:text>s</xsl:text></xsl:if>
         <xsl:value-of select="concat('&quot;', @iri, '&quot;&#xA;')"/>
       </xsl:otherwise>
     </xsl:choose>
@@ -216,8 +216,8 @@
   </xsl:template>
 
   <xsl:template match="tl:curie|tl:qname">
-    <xsl:if test="@kind='itemidentifier'">^ </xsl:if>
-    <xsl:if test="@kind='subjectlocator'">= </xsl:if>
+    <xsl:if test="$tolog-plus and @kind='item-identifier'">^ </xsl:if>
+    <xsl:if test="$tolog-plus and @kind='subject-locator'">= </xsl:if>
     <xsl:if test="local-name(.)='curie'">[</xsl:if>
     <xsl:value-of select="@value"/>
     <xsl:if test="local-name(.)='curie'">]</xsl:if>
