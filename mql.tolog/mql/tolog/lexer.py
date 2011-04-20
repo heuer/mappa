@@ -67,7 +67,6 @@ _TIME = r'[0-9]{2}:[0-9]{2}:[0-9]{2}(\.[0-9]+)?(%s)?' % _TZ
 
 _DIRECTIVES = {
     # tolog extensions
-    '%version': 'DIR_VERSION',
     '%prefix': 'DIR_PREFIX',
 }
 
@@ -149,7 +148,6 @@ t_COLON     = r':'
 t_PIPE_PIPE = r'\|{2}'
 t_PIPE      = r'\|'
 
-t_DIR_VERSION = r'%version'
 t_DIR_PREFIX = r'%prefix'
 
 states = (
