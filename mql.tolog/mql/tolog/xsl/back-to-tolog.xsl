@@ -24,6 +24,7 @@
     <xsl:apply-templates select="tl:*/tl:orderby|tl:orderby"/>
     <xsl:apply-templates select="tl:*/tl:pagination|tl:pagination"/>
     <xsl:if test="not($tolog-plus) and not(tl:merge|tl:delete|tl:update|tl:insert)"><xsl:text>?</xsl:text></xsl:if>
+    <xsl:text>&#xA;</xsl:text>
   </xsl:template>
 
   <xsl:template match="tl:select|tl:merge|tl:delete|tl:update">
@@ -42,11 +43,18 @@
   </xsl:template>
 
   <xsl:template match="tl:namespace[@kind!='module']">
-    <xsl:value-of select="concat('using ', @identifier, ' for ')"/>
-    <xsl:if test="@kind='subject-identifier'"><xsl:text>i</xsl:text></xsl:if>
-    <xsl:if test="@kind='subject-locator'"><xsl:text>a</xsl:text></xsl:if>
-    <xsl:if test="@kind='item-identifier'"><xsl:text>s</xsl:text></xsl:if>
-    <xsl:value-of select="concat('&quot;', @iri, '&quot;&#xA;')"/>
+    <xsl:choose>
+      <xsl:when test="$tolog-plus">
+        <xsl:value-of select="concat('%prefix ', @identifier, ' &lt;', @iri,'&gt;&#xA;')"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:value-of select="concat('using ', @identifier, ' for ')"/>
+        <xsl:if test="@kind='subject-identifier'"><xsl:text>i</xsl:text></xsl:if>
+        <xsl:if test="@kind='subject-locator'"><xsl:text>a</xsl:text></xsl:if>
+        <xsl:if test="@kind='item-identifier'"><xsl:text>s</xsl:text></xsl:if>
+        <xsl:value-of select="concat('&quot;', @iri, '&quot;&#xA;')"/>
+      </xsl:otherwise>
+    </xsl:choose>
     <xsl:if test="position() = last()"><xsl:text>&#xA;</xsl:text></xsl:if>
   </xsl:template>
 
@@ -75,31 +83,29 @@
 
   <xsl:template match="tl:rule">
     <xsl:value-of select="concat(@name, '(')"/>
-    <xsl:for-each select="tl:variable">
-      <xsl:apply-templates select="."/>
-      <xsl:if test="position() != last()"><xsl:text>, </xsl:text></xsl:if>
-    </xsl:for-each>
+    <xsl:call-template name="parameters">
+      <xsl:with-param name="items" select="tl:variable"/>
+    </xsl:call-template>
     <xsl:text>) :-&#xA;    </xsl:text>
     <xsl:apply-templates select="tl:body/*"/>
-    <xsl:text>&#xA;.&#xA;</xsl:text>
+    <xsl:text>&#xA;.&#xA;&#xA;</xsl:text>
   </xsl:template>
 
   <xsl:template match="tl:association-predicate">
     <xsl:value-of select="tl:name/tl:*/@value"/>
     <xsl:text>(</xsl:text>
-  <xsl:for-each select="tl:pair">
+    <xsl:for-each select="tl:pair">
       <xsl:apply-templates select="."/>
       <xsl:if test="position() != last()"><xsl:text>, </xsl:text></xsl:if>
-  </xsl:for-each>
+    </xsl:for-each>
     <xsl:text>)</xsl:text>
   </xsl:template>
 
   <xsl:template match="tl:builtin-predicate|tl:function">
     <xsl:value-of select="concat(@name, '(')"/>
-    <xsl:for-each select="*">
-      <xsl:apply-templates select="."/>
-      <xsl:if test="position() != last()"><xsl:text>, </xsl:text></xsl:if>
-    </xsl:for-each>
+    <xsl:call-template name="parameters">
+      <xsl:with-param name="items" select="tl:*"/>
+    </xsl:call-template>
     <xsl:text>)</xsl:text>
   </xsl:template>
 
@@ -112,8 +118,8 @@
     <xsl:text>)</xsl:text>
   </xsl:template>
 
-  <xsl:template match="tl:comparison">
-    <xsl:apply-templates select="tl:left/*"/>
+  <xsl:template match="tl:infix-predicate">
+    <xsl:apply-templates select="tl:*[1]"/>
     <xsl:text> </xsl:text>
     <xsl:if test="@name='ne' and not($tolog-plus)"><xsl:text>/=</xsl:text></xsl:if>
     <xsl:if test="@name='ne' and $tolog-plus"><xsl:text>!=</xsl:text></xsl:if>
@@ -123,7 +129,7 @@
     <xsl:if test="@name='le'"><xsl:text>&lt;=</xsl:text></xsl:if>
     <xsl:if test="@name='ge'"><xsl:text>&gt;=</xsl:text></xsl:if>
     <xsl:text> </xsl:text>
-    <xsl:apply-templates select="tl:right/*"/>
+    <xsl:apply-templates select="tl:*[2]"/>
   </xsl:template>
 
   <xsl:template match="tl:not">
@@ -209,8 +215,22 @@
     <xsl:value-of select="@value"/>
   </xsl:template>
 
+  <xsl:template match="tl:curie">
+    <xsl:value-of select="concat('[', @value, ']')"/>
+  </xsl:template>
+
   <xsl:template match="tl:literal">
     <xsl:value-of select="concat('&quot;', @value, '&quot;^^', '&lt;', @datatype, '&gt;')"/>
+  </xsl:template>
+
+  <xsl:template match="tl:subject-locator">
+    <xsl:text>= </xsl:text>
+    <xsl:call-template name="iri"><xsl:with-param name="iri" select="@value"/></xsl:call-template>
+  </xsl:template>
+
+  <xsl:template match="tl:item-identifier">
+    <xsl:text>^ </xsl:text>
+    <xsl:call-template name="iri"><xsl:with-param name="iri" select="@value"/></xsl:call-template>
   </xsl:template>
 
   <xsl:template match="tl:count">
