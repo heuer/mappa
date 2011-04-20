@@ -162,7 +162,8 @@
   <xsl:template match="tl:builtin-predicate[@name='type'
                                             or @name='instance-of'
                                             or @name='direct-instance-of'
-                                            or @name='scope']
+                                            or @name='scope'
+                                            or @name='datatype']
                                             [tl:*[1][local-name(.)='variable']]
                                             [tl:*[2][local-name(.)!='variable']]">
     <!--** Matches those (binary) built-in predicates where the first part is unbound and the 
@@ -172,6 +173,7 @@
            * instance-of
            * direct-instance-of
            * scope
+           * datatype
      -->
     <xsl:call-template name="annotate">
       <xsl:with-param name="cost" select="$BIG_RESULT"/>
@@ -181,7 +183,8 @@
   <xsl:template match="tl:builtin-predicate[@name='role-player'
                                             or @name='type'
                                             or @name='reifies'
-                                            or @name='object-id']
+                                            or @name='object-id'
+                                            or @name='datatype']
                                             [tl:*[1][local-name(.)!='variable']]
                                             [tl:*[2][local-name(.)='variable']]">
     <!--** Matches those (binary) built-in predicates where the first part is bound and the 
@@ -191,6 +194,7 @@
            * type
            * reifies
            * object-id
+           * datatype
      -->
     <xsl:call-template name="annotate">
       <xsl:with-param name="cost" select="$SINGLE_RESULT"/>
