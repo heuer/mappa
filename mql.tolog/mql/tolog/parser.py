@@ -86,7 +86,6 @@ def p_noop(p): # Handles all grammar rules where the result is not of interest
     directive       : using_directive
                     | prefix_directive
                     | import_directive
-                    | version_directive
     statement       : query
                     | insert
                     | merge
@@ -263,11 +262,6 @@ def p_prefix_directive(p):
     """
     _handle_prefix(p.parser, p[2], p[3])
 
-def p_version_directive(p):
-    """\
-    version_directive : DIR_VERSION INTEGER
-    """
-
 def p_import_directive(p):
     """\
     import_directive : KW_IMPORT iri_or_string KW_AS IDENT
@@ -334,13 +328,21 @@ def p_qname_QNAME(p):
     """\
     qname           : QNAME
     """
-    p[0] = consts.QNAME, (consts.IRI, p[1])
+    prefix = p[1].split(':')[0]
+    res = p.parser.prefixes.get(prefix)
+    if not res:
+        raise InvalidQueryError('The prefix "%s" is not defined' % prefix)
+    p[0] = consts.QNAME, (res[0], p[1])
 
 def p_qname_CURIE(p):
     """\
     qname           : CURIE
     """
-    p[0] = consts.CURIE, (consts.IRI, p[1])
+    prefix = p[1].split(':')[0]
+    res = p.parser.prefixes.get(prefix)
+    if not res:
+        raise InvalidQueryError('The prefix "%s" is not defined' % prefix)
+    p[0] = consts.CURIE, (res[0], p[1])
 
 def p_uri_ref(p):
     """\
@@ -710,6 +712,7 @@ def _handle_pair(p, first, second):
     handler.endPair()
 
 def _handle_prefix(parser, ident, iri, kind=None):
+    kind = kind or consts.IRI
     existing = parser.prefixes.get(ident)
     if existing:
         existing_kind, existing_iri = existing
@@ -730,7 +733,7 @@ def _to_event(handler, arg, stringtoiri=False):
         meth = 'iri'
     method = getattr(handler, meth)
     if kind in (consts.QNAME, consts.CURIE):
-        method(consts.get_name(name[0]), name[1])
+        method(name[0], name[1])
     else:
         method(name)
 
@@ -884,6 +887,7 @@ instance-of($OPERA, opera),
   instance-of($THEATRE, theatre) }?
 ''',
 '''
+%prefix xsd <http://www.bla.com/>
 value($x, "semagia"), datatype($x, xsd:string), value($y, "Semagia"), { datatype($y, xsd:string) }?
 ''',
 '''
@@ -947,6 +951,14 @@ select $TYPE, $VALUE from
 ^[ex:/onto/homepage]($T, $V),
 =ex:xnxnx($T, $V),
 ^ex:ddkdk($T, $V)
+''',
+'''
+using x for a"http://www.bla.com"
+using y for s"http://www.blub.com"
+using z for i"http://www.blabla.com"
+import "http://blablub.com" as a
+
+x:x($x), y:y($y), z:z($z), a:a($a), [x:x]($x), [y:y]($y), [z:z]($z), [a:a]($a)
 '''
     )
     from ply import yacc

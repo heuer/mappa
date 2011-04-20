@@ -92,8 +92,8 @@ _VALUE_ELS = ('string', 'iri', 'itemidentifier', 'subjectlocator',
               'identifier', 'integer', 'limit', 'offset',
               'objectid', 'date', 'datetime', 'integer', 'decimal')
 
-# Namespace 'kind' to name mapping
-_NSKIND2NAME = {
+# Prefix 'kind' to name mapping
+_PREFIXKIND2NAME = {
     consts.SID: 'subject-identifier',
     consts.SLO: 'subject-locator',
     consts.IID: 'item-identifier',
@@ -153,10 +153,10 @@ class XMLHandler(TologHandler):
         self._writer.emptyElement('literal', {'value': value, 'datatype': datatype})
 
     def curie(self, kind, name):
-        self._writer.emptyElement('curie', {'kind': kind, 'value': name})
+        self._writer.emptyElement('curie', {'kind': _PREFIXKIND2NAME[kind], 'value': name})
 
     def qname(self, kind, name):
-        self._writer.emptyElement('qname', {'kind': kind, 'value': name})
+        self._writer.emptyElement('qname', {'kind': _PREFIXKIND2NAME[kind], 'value': name})
 
     def startBuiltinPredicate(self, name):
         self._writer.startElement('builtin-predicate', {'name': name})
@@ -176,10 +176,10 @@ class XMLHandler(TologHandler):
     def fragmentContent(self, fragment):
         self._writer.dataElement('content', fragment)
 
-    def namespace(self, identifier, iri, kind=None):
-        attrs = {'identifier': identifier, 'iri': iri}
-        if kind:
-            kind_name = _NSKIND2NAME[kind] # KeyError is intentional
-            attrs.update({'kind': kind_name})
+    def namespace(self, identifier, iri, kind):
+        attrs = {'identifier': identifier,
+                 'iri': iri,
+                 'kind': _PREFIXKIND2NAME[kind] # KeyError is intentional
+                 }
         self._writer.emptyElement('namespace', attrs)
 
