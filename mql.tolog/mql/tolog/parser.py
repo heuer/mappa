@@ -383,7 +383,6 @@ def p_iid(p):
     """
     p[0] = consts.IID, p[len(p)-1]
 
-
 def p_iid_QNAME(p):
     """\
     iid            : CIRCUMFLEX qname
