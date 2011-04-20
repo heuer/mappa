@@ -129,6 +129,22 @@ def test_invalid_iri_part():
     for c in data:
         eq_(False, is_valid_iri_part(c))
 
+def test_find_variables():
+    def check(expected, res):
+        eq_(expected, res)
+    data = "$a, $b, djddjd, $c, $______-d"
+    res = ('$a', '$b', '$c', '$______-d')
+    for i, v in enumerate(find_variables(data)):
+        yield check, res[i], v
+
+def test_find_variables_omit_dollar():
+    def check(expected, res):
+        eq_(expected, res)
+    data = "$a, $b, djddjd, $c, $______-d"
+    res = ('a', 'b', 'c', '______-d')
+    for i, v in enumerate(find_variables(data, True)):
+        yield check, res[i], v
+
 if __name__ == '__main__':
     import nose
     nose.core.runmodule()

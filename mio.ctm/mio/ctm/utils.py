@@ -38,7 +38,9 @@ CTM utility functions.
 :organization: Semagia - http://www.semagia.com/
 :license:      BSD license
 """
+import re
 from tm import XSD
+from .lexer import VARIABLE
 
 CTM_INTEGER = u'http://psi.topicmaps.org/iso13250/ctm-integer'
 
@@ -180,6 +182,21 @@ def unescape_string(s):
     buff.append(s[pos:])
     return u''.join(buff)
 
+
+_FIND_VARS = re.compile(VARIABLE).finditer
+
+def find_variables(data, omit_dollar=False):
+    """\
+    Returns all CTM variables from the provided data.
+
+    `data`
+        A string
+    `omit_dollar`
+        Indicates if the dollar sign (``$``) should be omitted (default: ``False``)
+    """
+    for m in _FIND_VARS(data):
+        yield m.group()[1:] if omit_dollar else m.group()
+   
 
 if __name__ == '__main__':
     import doctest

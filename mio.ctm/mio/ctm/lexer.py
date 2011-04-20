@@ -88,6 +88,8 @@ _tz = r'Z|((\+|\-)[0-9]{2}:[0-9]{2})'
 # Time
 _time = r'[0-9]{2}:[0-9]{2}:[0-9]{2}(\.[0-9]+)?(%s)?' % _tz
 
+VARIABLE = r'(\$%s)' % _ident
+
 t_WILDCARD = r'\?'
 t_LPAREN = r'\('
 t_RPAREN = r'\)'
@@ -174,7 +176,7 @@ def t_IDENT(t):
     t.type = _KEYWORDS.get(t.value, 'IDENT')
     return t
 
-@TOKEN(ur'\$%s' % _ident)
+@TOKEN(VARIABLE)
 def t_VARIABLE(t):
     t.value = t.value[1:]
     return t
