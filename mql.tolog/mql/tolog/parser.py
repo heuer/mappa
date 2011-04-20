@@ -334,17 +334,19 @@ def p_qname_QNAME(p):
     """\
     qname           : QNAME
     """
-    p[0] = consts.QNAME, p[1]
+    p[0] = consts.QNAME, (consts.IRI, p[1])
 
 def p_qname_CURIE(p):
     """\
     qname           : CURIE
     """
-    p[0] = consts.CURIE, p[1]
+    p[0] = consts.CURIE, (consts.IRI, p[1])
 
 def p_uri_ref(p):
     """\
     uri_ref         : sid
+                    | slo
+                    | iid
     """
     p[0] = p[1]
 
@@ -360,19 +362,34 @@ def p_sid_qiri(p):
     """
     p[0] = p[1]
 
-def p_uri_ref_slo(p):
+def p_slo(p):
     """\
-    uri_ref         : SLO
+    slo             : SLO
                     | EQ IRI
     """
     p[0] = consts.SLO, p[len(p)-1]
 
-def p_uri_ref_iid(p):
+def p_slo_QNAME(p):
     """\
-    uri_ref         : IID
+    slo         : EQ qname
+    """
+    kind, (k, value) = p[2]
+    p[0] = kind, (consts.SLO, value)
+
+def p_iid(p):
+    """\
+    iid             : IID
                     | CIRCUMFLEX IRI
     """
     p[0] = consts.IID, p[len(p)-1]
+
+
+def p_iid_QNAME(p):
+    """\
+    iid            : CIRCUMFLEX qname
+    """
+    kind, (k, value) = p[2]
+    p[0] = kind, (consts.IID, value)    
 
 def p_count_clause(p):
     """\
@@ -473,7 +490,9 @@ def p_clause_predcause(p):
         if arity == 2 and kind == consts.IDENT and name not in p.parser.rule_names:
             predicate_kind = _OCC_PREDICATE
         elif kind in (consts.QNAME, consts.CURIE):
-            prefix = name.split(':')[0]
+            print name
+            prefix = name[1].split(':')[0]
+            print '-..................', prefix
             binding_kind = p.parser.prefixes[prefix][0]
             if binding_kind != consts.MODULE:
                 predicate_kind = _OCC_PREDICATE
@@ -712,7 +731,11 @@ def _to_event(handler, arg, stringtoiri=False):
         return
     if stringtoiri and meth == 'string':
         meth = 'iri'
-    getattr(handler, meth)(name)
+    method = getattr(handler, meth)
+    if kind in (consts.QNAME, consts.CURIE):
+        method(consts.get_name(name[0]), name[1])
+    else:
+        method(name)
 
 def _arguments_to_events(handler, args, stringtoiri=False):
     for kind, name in args:
@@ -923,7 +946,10 @@ select $TYPE, $VALUE from
 '''
 %prefix ex <http://psi.example.org/>
 
-[ex:/onto/homepage]($T, $V)
+=[ex:/onto/homepage]($T, $V),
+^[ex:/onto/homepage]($T, $V),
+=ex:xnxnx($T, $V),
+^ex:ddkdk($T, $V)
 '''
     )
     from ply import yacc

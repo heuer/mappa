@@ -88,8 +88,8 @@ _SIMPLE_ELS = ('select', 'insert', 'update', 'delete', 'merge', 'predicate',
 _NAME_ELS = ('count', 'variable', 'parameter', 'ascending', 'descending')
 
 # Elements which have a value attribute
-_VALUE_ELS = ('string', 'iri', 'itemidentifier', 'subjectlocator', 'curie',
-              'identifier', 'integer', 'limit', 'offset', 'qname',
+_VALUE_ELS = ('string', 'iri', 'itemidentifier', 'subjectlocator',
+              'identifier', 'integer', 'limit', 'offset',
               'objectid', 'date', 'datetime', 'integer', 'decimal')
 
 # Namespace 'kind' to name mapping
@@ -151,6 +151,12 @@ class XMLHandler(TologHandler):
     def literal(self, lit):
         value, datatype = lit
         self._writer.emptyElement('literal', {'value': value, 'datatype': datatype})
+
+    def curie(self, kind, name):
+        self._writer.emptyElement('curie', {'kind': kind, 'value': name})
+
+    def qname(self, kind, name):
+        self._writer.emptyElement('qname', {'kind': kind, 'value': name})
 
     def startBuiltinPredicate(self, name):
         self._writer.startElement('builtin-predicate', {'name': name})
