@@ -162,9 +162,12 @@ states = (
 def t_error(t):
     raise SyntaxQueryError('Invalid tolog syntax: %r' % t) #TODO
 
-def t_comment(t):
+def t_mlcomment(t):
     r'/\*[^\*/]*\*/'
     t.lexer.lineno += t.value.count('\n')
+
+def t_comment(t):
+    r'\#[^\r\n]*'
 
 def t_newline(t):
     r'[\r\n]'
