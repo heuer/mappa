@@ -38,7 +38,6 @@ tolog parser.
 :organization: Semagia - <http://www.semagia.com/>
 :license:      BSD License
 """
-import re
 from tm.mql import InvalidQueryError
 from mql.tolog import consts, lexer
 from mql.tolog.utils import is_builtin_predicate
@@ -56,23 +55,6 @@ def initialize_parser(parser, handler, tolog_plus=False):
     parser.prefixes = {}
     parser.rule_names = []
     parser.tolog_plus = tolog_plus
-
-
-# Taken from mio.ctm
-
-# Start of an identifier
-_ident_start = ur'[a-zA-Z_]|[\u00C0-\u00D6]|[\u00D8-\u00F6]' + \
-                ur'|[\u00F8-\u02FF]|[\u0370-\u037D]' + \
-                ur'|[\u037F-\u1FFF]|[\u200C-\u200D]' + \
-                ur'|[\u2070-\u218F]|[\u2C00-\u2FEF]' + \
-                ur'|[\u3001-\uD7FF]|[\uF900-\uFDCF]|[\uFDF0-\uFFFD]'
-
-_ident_part = ur'%s|[\-0-9]|[\u00B7]|[\u0300-\u036F]|[\u203F-\u2040]' % _ident_start
-
-_variable = ur'\$((?:%s)+(?:\.*(?:%s))*)' % (_ident_start, _ident_part)
-
-find_ctm_variables = re.compile(_variable).findall
-
 
 def p_noop(p): # Handles all grammar rules where the result is not of interest
     """\
@@ -193,11 +175,12 @@ def p_fragment(p):
     """\
     fragment        : TM_FRAGMENT
     """
+    import mio.ctm.utils as ctm_utils
     fragment = p[1]
     handler = _handler(p)
     handler.startFragment()
     handler.fragmentContent(fragment)
-    for var in find_ctm_variables(fragment):    
+    for var in ctm_utils.find_variables(fragment, omit_dollar=True):
         handler.variable(var)
     handler.endFragment()
 
