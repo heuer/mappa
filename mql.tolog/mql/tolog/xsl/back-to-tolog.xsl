@@ -211,12 +211,16 @@
     <xsl:call-template name="iri"><xsl:with-param name="iri" select="@value"/></xsl:call-template>
   </xsl:template>
 
-  <xsl:template match="tl:integer|tl:decimal|tl:identifier|tl:qname">
+  <xsl:template match="tl:integer|tl:decimal|tl:identifier">
     <xsl:value-of select="@value"/>
   </xsl:template>
 
-  <xsl:template match="tl:curie">
-    <xsl:value-of select="concat('[', @value, ']')"/>
+  <xsl:template match="tl:curie|tl:qname">
+    <xsl:if test="@kind='itemidentifier'">^ </xsl:if>
+    <xsl:if test="@kind='subjectlocator'">= </xsl:if>
+    <xsl:if test="local-name(.)='curie'">[</xsl:if>
+    <xsl:value-of select="@value"/>
+    <xsl:if test="local-name(.)='curie'">]</xsl:if>
   </xsl:template>
 
   <xsl:template match="tl:literal">
