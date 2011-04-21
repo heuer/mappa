@@ -43,9 +43,7 @@ import mql.tolog as tolog
 from mql.tolog.handler import NoopParserHandler
 
 def parse(data, handler=None):
-    if not handler:
-        handler = NoopParserHandler()
-    tolog.parse(data, handler)
+    tolog.parse(data, handler or NoopParserHandler())
 
 def fail(msg):
     raise AssertionError(msg)
