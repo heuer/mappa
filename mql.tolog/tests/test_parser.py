@@ -40,11 +40,11 @@ Tests against the parser.
 """
 from tm.mql import InvalidQueryError
 import mql.tolog as tolog
-from mql.tolog.handler import NoopHandler
+from mql.tolog.handler import NoopParserHandler
 
 def parse(data, handler=None):
     if not handler:
-        handler = NoopHandler()
+        handler = NoopParserHandler()
     tolog.parse(data, handler)
 
 def fail(msg):
