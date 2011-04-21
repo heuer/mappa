@@ -948,7 +948,7 @@ x:x($x), y:y($y), z:z($z), a:a($a), [x:x]($x), [y:y]($y), [z:z]($z), [a:a]($a)
     from tm import plyutils
     from tm.xmlutils import EtreeXMLWriter
     from mql.tolog import lexer as lexer_mod
-    from mql.tolog.handler import XMLHandler
+    from mql.tolog.handler import XMLParserHandler
     from lxml import etree
     def parse(data, handler):
         parser = yacc.yacc(debug=True)
@@ -961,7 +961,7 @@ x:x($x), y:y($y), z:z($z), a:a($a), [x:x]($x), [y:y]($y), [z:z]($z), [a:a]($a)
         print(data)
         try:
             writer = EtreeXMLWriter()
-            parse(data, XMLHandler(writer))
+            parse(data, XMLParserHandler(writer))
             print etree.tostring(writer.getroot(), pretty_print=True)
         except Exception, ex:
             print data

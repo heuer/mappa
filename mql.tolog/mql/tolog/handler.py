@@ -41,13 +41,13 @@ tolog handler implementations.
 import logging
 from . import consts
 
-class TologHandler(object):
+class ParserHandler(object):
     """\
     Common superclass of tolog handlers.
     """
     pass
 
-class NoopHandler(TologHandler):
+class NoopParserHandler(ParserHandler):
     """\
     A TologHandler which does nothing.
     """
@@ -55,7 +55,7 @@ class NoopHandler(TologHandler):
         def noop(*args): pass
         return noop
 
-class LoggingHandler(TologHandler):
+class LoggingParserHandler(ParserHandler):
     """\
     A TologHandler which loggs all events and delegates the events to
     an underlying TologHandler instance.
@@ -100,7 +100,7 @@ _PREFIXKIND2NAME = {
     consts.MODULE: 'module',
 }
 
-class XMLHandler(TologHandler):
+class XMLParserHandler(ParserHandler):
     """\
     TologHandler which translates the events to XML.
     """
