@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2007 - 2009 -- Lars Heuer - Semagia <http://www.semagia.com/>.
+# Copyright (c) 2007 - 2011 -- Lars Heuer - Semagia <http://www.semagia.com/>.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -36,7 +36,6 @@ Tests against the XTM content handler.
 
 :author:       Lars Heuer (heuer[at]semagia.com)
 :organization: Semagia - http://www.semagia.com/
-:version:      $Rev: 402 $ - $Date: 2011-01-14 16:30:38 +0100 (Fr, 14 Jan 2011) $
 :license:      BSD license
 """
 from unittest import TestCase
@@ -84,6 +83,14 @@ class TestXTMDeserializer(TestCase):
     def test_xtm20_detection2(self):
         deser = self._parse('<topicMap xmlns="http://www.topicmaps.org/xtm/" version="2.0"></topicMap>')
         self.assert_('2.0' == deser.version)
+
+    def test_xtm21_detection1(self):
+        deser = self._parse('<topicMap version="2.1"></topicMap>')
+        self.assert_('2.1' == deser.version)
+
+    def test_xtm21_detection2(self):
+        deser = self._parse('<topicMap xmlns="http://www.topicmaps.org/xtm/" version="2.1"></topicMap>')
+        self.assert_('2.1' == deser.version)
 
 
 if __name__ == '__main__':
