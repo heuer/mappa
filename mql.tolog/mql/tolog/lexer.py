@@ -217,7 +217,7 @@ def t_IID(t):
     t.value = t.value[2:-1]
     return t
 
-@TOKEN(r'\[[^\]]+\]')
+@TOKEN(r'\[%s:[^<>\"\{\}\`\\\] ]+\]' % _IDENT)
 def t_CURIE(t):
     t.value = t.value[1:-1]
     return t
