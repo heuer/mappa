@@ -36,10 +36,11 @@ CTM utility functions.
 
 :author:       Lars Heuer (heuer[at]semagia.com)
 :organization: Semagia - http://www.semagia.com/
-:version:      $Rev:$ - $Date:$
 :license:      BSD license
 """
+import re
 from tm import XSD
+from .lexer import VARIABLE
 
 CTM_INTEGER = u'http://psi.topicmaps.org/iso13250/ctm-integer'
 
@@ -47,57 +48,18 @@ def is_native_datatype(iri):
     """\
     Returns if the provided datatype is supported by CTM natively (the value
     can be represented without quotes).
-    
-    >>> is_native_datatype(XSD.string)
-    False
-    >>> is_native_datatype(XSD.integer)
-    True
-    >>> is_native_datatype('http://www.w3.org/2001/XMLSchema#dateTime')
-    True
-    >>> is_native_datatype('http://psi.topicmaps.org/iso13250/ctm-integer')
-    True
     """
     return iri in (XSD.decimal, XSD.integer, XSD.date, XSD.dateTime, CTM_INTEGER)
 
 def is_keyword(ident):
     """\
     Returns if the provided identifier is a CTM keyword.
-    
-    >>> is_keyword('isa')
-    True
-    >>> is_keyword('ako')
-    True
-    >>> is_keyword('def')
-    True
-    >>> is_keyword('end')
-    True
-    >>> is_keyword(u'end')
-    True
-    >>> is_keyword('isa ')
-    False
     """
     return ident in (u'isa', u'ako', u'def', u'end')
 
 def is_valid_id_start(c):
-    u"""\
+    """\
     Returns if the provided character is a valid CTM identifier start char.
-    
-    >>> is_valid_id_start('_')
-    True
-    >>> is_valid_id_start('A')
-    True
-    >>> is_valid_id_start('.')
-    False
-    >>> is_valid_id_start('a')
-    True
-    >>> is_valid_id_start(u'ü')
-    True
-    >>> is_valid_id_start(u'ä')
-    True
-    >>> is_valid_id_start('-')
-    False
-    >>> is_valid_id_start('0')
-    False
     """
     return c == u'_' \
             or u'A' <= c <= u'Z' \
@@ -119,38 +81,12 @@ def is_valid_localid_start(c):
     """\
     Returns if the provided character is valid start of the local part of 
     a CTM QName.
-    
-    >>> is_valid_localid_start('0')
-    True
-    >>> is_valid_localid_start('.')
-    False
-    >>> is_valid_localid_start('-')
-    False
-    >>> is_valid_localid_start(u'ü')
-    True
     """
     return c.isdigit() or is_valid_id_start(c)
 
 def is_valid_id_part(c):
-    u"""\
+    """\
     Returns if the provided character is a valid CTM part char.
-    
-    >>> is_valid_id_part('-')
-    True
-    >>> is_valid_id_part('.')
-    True
-    >>> is_valid_id_part('0')
-    True
-    >>> is_valid_id_part('a')
-    True
-    >>> is_valid_id_part(u'ä')
-    True
-    >>> is_valid_id_part(u'ö')
-    True
-    >>> is_valid_id_part(u'ü')
-    True
-    >>> is_valid_id_part(u'_')
-    True
     """
     return is_valid_id_start(c) \
             or u'0' <= c <= u'9' \
@@ -159,29 +95,8 @@ def is_valid_id_part(c):
             or u'\u203F' <= c <= u'\u2040'
 
 def is_valid_id(ident):
-    u"""\
+    """\
     Returns if the provided identifier is a valid CTM identifier.
-    
-    >>> is_valid_id('ident')
-    True
-    >>> is_valid_id('ident.')
-    False
-    >>> is_valid_id('-ident')
-    False
-    >>> is_valid_id('_ident')
-    True
-    >>> is_valid_id('ident.ifier')
-    True
-    >>> is_valid_id('2ident.ifier')
-    False
-    >>> is_valid_id('a1976-09-19')
-    True
-    >>> is_valid_id('.isa')
-    False
-    >>> is_valid_id('isa')
-    True
-    >>> is_valid_id(u'öüä')
-    True
     """
     if not ident or ident[-1] == u'.' or not is_valid_id_start(ident[0]):
         return False
@@ -191,21 +106,8 @@ def is_valid_id(ident):
     return True
 
 def is_valid_local_part(ident):
-    u"""\
+    """\
     Returns if the identifier is a valid local part of a CTM QName.
-    
-    >>> is_valid_local_part('1976-09-19')
-    True
-    >>> is_valid_local_part('1976-09-19.')
-    False
-    >>> is_valid_local_part('-semagia')
-    False
-    >>> is_valid_local_part('.semagia')
-    False
-    >>> is_valid_local_part('1semagia')
-    True
-    >>> is_valid_local_part('.1semagia')
-    False
     """
     if not ident or ident[-1] == u'.' or not is_valid_localid_start(ident[0]):
         return False
@@ -217,15 +119,6 @@ def is_valid_local_part(ident):
 def is_valid_iri_part(c):
     """\
     Returns if the provided character is valid within an ``<IRI>``.
-    
-    >>> is_valid_iri_part(' ')
-    False
-    >>> is_valid_iri_part('a')
-    True
-    >>> is_valid_iri_part('"')
-    False
-    >>> is_valid_iri_part(')')
-    True
     """
     return c not in u' \n\r\t\f<>"`{}\\'
 
@@ -235,15 +128,6 @@ def is_valid_iri(iri):
     
     `iri`
         An IRI (without ``<`` ``>`` delimiters)
-    
-    >>> is_valid_iri('<http://www.semagia.com/>')
-    False
-    >>> is_valid_iri('http://www.semagia.com/')
-    True
-    >>> is_valid_iri('http://{www.semagia.com/}')
-    False
-    >>> is_valid_iri('http:// www.semagia.com/')
-    False
     """
     if not iri:
         return False
@@ -253,7 +137,7 @@ def is_valid_iri(iri):
     return True
 
 
-_QUOT = {'t': '\t', 'n': '\n', 'r': '\r', '\\': '\\', '"': '"'}
+_QUOT = {u't': u'\t', u'n': u'\n', u'r': u'\r', u'\\': u'\\', u'"': u'"'}
 
 def unescape_string(s):
     """\
@@ -262,7 +146,7 @@ def unescape_string(s):
     `s`
         The string to unescape.
     """
-    backslash = s.find('\\')
+    backslash = s.find(u'\\')
     if backslash < 0:
         return s
     buff = []
@@ -276,7 +160,7 @@ def unescape_string(s):
         if c in _QUOT:
             buff.append(_QUOT[c])
             pos = backslash + 2
-        elif c == 'u': #uxxxx
+        elif c == u'u': #uxxxx
             if backslash + 5 >= length:
                 raise ValueError('Incomplete Unicode escape sequence in: "%s"' % s)
             try:
@@ -285,7 +169,7 @@ def unescape_string(s):
                 pos = backslash + 6
             except ValueError:
                 raise ValueError('Illegal Unicode escape sequence "\\u%s" in "%s"' % (xx, s))
-        elif c == 'U': #Uxxxxxx
+        elif c == u'U': #Uxxxxxx
             if backslash + 7 >= length:
                 raise ValueError('Incomplete Unicode escape sequence in: "%s"' % s)
             try:
@@ -294,10 +178,25 @@ def unescape_string(s):
                 pos = backslash + 8
             except ValueError:
                 raise ValueError('Illegal Unicode escape sequence "\\U%s" in "%s"' % (xx, s))
-        backslash = s.find('\\', pos)
+        backslash = s.find(u'\\', pos)
     buff.append(s[pos:])
-    return unicode(''.join(buff))
+    return u''.join(buff)
 
+
+_FIND_VARS = re.compile(VARIABLE).finditer
+
+def find_variables(data, omit_dollar=False):
+    """\
+    Returns all CTM variables from the provided data.
+
+    `data`
+        A string
+    `omit_dollar`
+        Indicates if the dollar sign (``$``) should be omitted (default: ``False``)
+    """
+    for m in _FIND_VARS(data):
+        yield m.group()[1:] if omit_dollar else m.group()
+   
 
 if __name__ == '__main__':
     import doctest

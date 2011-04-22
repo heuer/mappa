@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2007 - 2009 -- Lars Heuer - Semagia <http://www.semagia.com/>.
+# Copyright (c) 2007 - 2011 -- Lars Heuer - Semagia <http://www.semagia.com/>.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -36,15 +36,19 @@ Compact Topic Maps (CTM) parser.
 
 :author:       Lars Heuer (heuer[at]semagia.com)
 :organization: Semagia - http://www.semagia.com/
-:version:      $Rev:$ - $Date:$
 :license:      BSD license
 """
 from tm import mio
-from mio.ctm.lexer import tokens #pylint: disable-msg=E0611, F0401, W0611
-from mio.ctm.utils import unescape_string
-from mio.ctm import consts
+from . import utils, consts
+from .lexer import tokens #pylint: disable-msg=E0611, F0401, W0611
 
 # Disable unused 'p' warnings: pylint: disable-msg=W0613
+
+def unescape_string(s):
+    try:
+        return utils.unescape_string(s)
+    except ValueError, ex:
+        raise mio.MIOException(ex)
 
 def p_noop(p): # Handles all grammar rules where the result is unimportant
     """\
@@ -127,9 +131,9 @@ def p_version_directive(p):
 
 def p_prefix_directive(p):
     """\
-    prefix_directive : DIR_PREFIX IDENT qiri 
+    prefix_directive : DIR_PREFIX IDENT IRI
     """
-    _env(p).add_prefix(p[2], p[3][1])
+    _env(p).add_prefix(p[2], p[3])
 
 def p_mergemap_directive(p):
     """\
@@ -348,7 +352,7 @@ def p__start_variant(p): # Inline action
 def p_association(p):
     """\
     association     : topic_ref_no_ident LPAREN _start_assoc1 roles RPAREN opt_scope opt_reifier
-                    | tpl_call_or_assoc_start COLON _start_assoc2 role_player opt_reifier _end_role opt_more_roles RPAREN opt_scope opt_reifier
+                    | tpl_call_or_assoc_start COLON topic_ref opt_role_reifier _start_assoc2 opt_more_roles RPAREN opt_scope opt_reifier
     """
     _ctx(p).endAssociation()
 
@@ -362,17 +366,12 @@ def p__start_assoc2(p): # Inline action
     """\
     _start_assoc2   : 
     """
-    assoc_type, role_type = p[-2]
+    assoc_type, role_type = p[-4]
+    player, reifier = p[-2], p[-1]
     ctx = _ctx(p)
     assoc_type = consts.IID, _ctx(p).resolve_ident(assoc_type)
     ctx.startAssociation(assoc_type)
-    ctx.startRole(role_type)
-
-def p__end_role(p): # Inline action
-    """\
-    _end_role       : 
-    """
-    _ctx(p).endRole()
+    ctx.handle_role(role_type, player, reifier)
 
 def p_tpl_call_or_assoc_start(p):
     """\
@@ -382,21 +381,19 @@ def p_tpl_call_or_assoc_start(p):
 
 def p_role(p):
     """\
-    role            : role_type COLON role_player opt_reifier
+    role            : topic_ref COLON topic_ref opt_role_reifier
     """
-    _ctx(p).endRole()
+    _ctx(p).handle_role(p[1], p[3], p[4])
 
-def p_role_type(p):
+def p_opt_role_reifier(p):
     """\
-    role_type       : topic_ref
+    opt_role_reifier :
+                     | TILDE topic_ref
     """
-    _ctx(p).startRole(p[1])
-
-def p_role_player(p):
-    """\
-    role_player     : topic_ref
-    """
-    _ctx(p).player(p[1])
+    if len(p) == 3:
+        p[0] = p[2]
+    else:
+        p[0] = None
 
 def p_scope(p):
     """\

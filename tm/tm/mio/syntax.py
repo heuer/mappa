@@ -36,14 +36,10 @@ Provides constants for commonly known syntaxes and discovery of syntaxes.
 
 :author:       Lars Heuer (heuer[at]semagia.com)
 :organization: Semagia - http://www.semagia.com/
-:version:      $Rev: 167 $ - $Date: 2009-06-26 14:13:53 +0200 (Fr, 26 Jun 2009) $
 :license:      BSD license
 """
-try:
-    from operator import itemgetter
-except ImportError: # Python < 2.4
-    def itemgetter(item):
-        return lambda x: x[item]
+from __future__ import absolute_import
+from operator import itemgetter
 
 _SYNTAXES = {}
 
@@ -80,7 +76,7 @@ ASTMA = Syntax('AsTMa', ('application/x-tm+astma', 'text/plain'), ('atm', 'astma
 BTM = Syntax('BTM', 'application/x-tm+btm', 'btm')
 
 # Compact Topic Maps syntax (CTM).
-CTM = Syntax('CTM', ('application/x-tm+ctm', 'text/plain'), 'ctm')
+CTM = Syntax('CTM', ('application/x-tm+ctm', 'text/plain'), ('ctm', 'tmcl'))
 
 # Canonical XML Topic Maps (CXTM).
 CXTM = Syntax('CXTM', ('application/x-tm+cxtm', 'application/xml'), 'cxtm')

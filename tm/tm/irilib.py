@@ -36,11 +36,10 @@ Constants and functions that may be useful to operate upon IRIs.
 
 :author:       Lars Heuer (heuer[at]semagia.com)
 :organization: Semagia - http://www.semagia.com/
-:version:      $Rev: 167 $ - $Date: 2009-06-26 14:13:53 +0200 (Fr, 26 Jun 2009) $
 :license:      BSD license
 """
 from urlparse import urljoin
-from _urlutils import normalize
+from tm._urlutils import normalize
 
 def resolve_iri(base, reference):
     """\

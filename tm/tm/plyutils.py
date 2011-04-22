@@ -36,20 +36,17 @@ Utilities for lexers / parsers using `Ply <http://www.dabeaz.com/ply/>`_
 
 :author:       Lars Heuer (heuer[at]semagia.com)
 :organization: Semagia - http://www.semagia.com/
-:version:      $Rev: 167 $ - $Date: 2009-06-26 14:13:53 +0200 (Fr, 26 Jun 2009) $
 :license:      BSD license
 """
+from __future__ import absolute_import
 import os
 import sys
 import ply.yacc as yacc
 import ply.lex as lex
-_yacc_pickle = False
-if sys.platform[:4] == 'java' and yacc.__version__ != 'PLY_WITH_PICKLABLE_YACC':
-    # Work-around for parsers which create a big parsetab file
-    # Import would result in:
-    #   java.lang.ClassFormatError: Invalid method Code length <number-here>
-    import tm._picklable_yacc as yacc # TODO: Remove this hack once a Ply version with this function is released
-    _yacc_pickle = True
+# Work-around for parsers which create a big parsetab file
+# Import would result in:
+#   java.lang.ClassFormatError: Invalid method Code length <number-here>
+_yacc_pickle = sys.platform[:4] == 'java'
 del sys
 # For some reason pylint thinks that ply.lex and ply.yacc do not exist
 # pylint: disable-msg=F0401, E0611

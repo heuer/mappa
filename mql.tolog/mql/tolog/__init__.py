@@ -36,9 +36,14 @@
 
 :author:       Lars Heuer (heuer[at]semagia.com)
 :organization: Semagia - http://www.semagia.com/
-:version:      $Rev: 342 $  - $Date: 2010-01-23 21:19:25 +0100 (Sa, 23 Jan 2010) $
 :license:      BSD license
 """
 from tm import plyutils
 
-
+def parse(query, handler, tolog_plus=False):
+    from mql.tolog import lexer as lexer_mod, parser as parser_mod
+    parser = plyutils.make_parser(parser_mod)
+    parser_mod.initialize_parser(parser, handler, tolog_plus)
+    handler.start()
+    parser.parse(query, lexer=plyutils.make_lexer(lexer_mod))
+    handler.end()

@@ -37,11 +37,10 @@ translates events into XML Topic Maps (XTM) syntax.
 
 :author:       Lars Heuer (heuer[at]semagia.com)
 :organization: Semagia - http://www.semagia.com/
-:version:      $Rev:$ - $Date:$
 :license:      BSD license
 """
 import logging
-from tm import XSD
+from tm import voc, XSD
 from tm.mio import SUBJECT_IDENTIFIER, SUBJECT_LOCATOR, ITEM_IDENTIFIER
 from tm.xmlutils import XMLWriter
 import tm.mio.handler as mio_handler
@@ -122,7 +121,7 @@ class XTM21Handler(mio_handler.HamsterMapHandler):
         super(XTM21Handler, self).startTopicMap()
         out = self._out
         out.startDocument()
-        out.startElement('topicMap', {'xmlns': 'http://www.topicmaps.org/xtm/', 'version': '2.1'})
+        out.startElement('topicMap', {'xmlns': voc.XTM, 'version': '2.1'})
         self._state = _STATE_INITIAL
 
     def endTopicMap(self):

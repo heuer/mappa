@@ -38,7 +38,6 @@ This is more or less a straight port of the Java MIO package to Python.
 
 :author:       Lars Heuer (heuer[at]semagia.com)
 :organization: Semagia - http://www.semagia.com/
-:version:      $Rev: 376 $ - $Date: 2010-06-11 14:26:40 +0200 (Fr, 11 Jun 2010) $
 :license:      BSD license
 """
 from tm import mio, TMDM

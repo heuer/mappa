@@ -36,7 +36,6 @@ Provides deserialization of TM/XML topic maps.
 
 :author:       Lars Heuer (heuer[at]semagia.com)
 :organization: Semagia - http://www.semagia.com/
-:version:      $Rev: 257 $ - $Date: 2009-10-27 17:55:39 +0100 (Di, 27 Okt 2009) $
 :license:      BSD license
 """
 from xml.sax import handler as sax_handler

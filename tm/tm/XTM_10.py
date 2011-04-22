@@ -38,7 +38,6 @@ These PSIs can be used to work with topic maps which assume a XTM 1.0 model.
 
 :author:       Lars Heuer (heuer[at]semagia.com)
 :organization: Semagia - http://www.semagia.com/
-:version:      $Rev: 167 $ - $Date: 2009-06-26 14:13:53 +0200 (Fr, 26 Jun 2009) $
 :license:      BSD license
 """
 from tm.voc import XTM_10

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2007 - 2010 -- Lars Heuer - Semagia <http://www.semagia.com/>.
+# Copyright (c) 2007 - 2011 -- Lars Heuer - Semagia <http://www.semagia.com/>.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -36,12 +36,31 @@ XML Utilities.
 
 :author:       Lars Heuer (heuer[at]semagia.com)
 :organization: Semagia - http://www.semagia.com/
-:version:      $Rev: 279 $ - $Date: 2009-11-29 18:35:34 +0100 (So, 29 Nov 2009) $
 :license:      BSD license
 """
 import codecs
 from xml.sax.saxutils import escape, quoteattr, XMLGenerator
 from xml.sax.xmlreader import InputSource
+try:
+    from lxml import etree
+except ImportError:
+    try:
+        # Python 2.5
+        import xml.etree.cElementTree as etree
+    except ImportError:
+        try:
+            # Python 2.5
+            import xml.etree.ElementTree as etree
+        except ImportError:
+            try:
+                # normal cElementTree install
+                import cElementTree as etree
+            except ImportError:
+                try:
+                    # normal ElementTree install
+                    import elementtree.ElementTree as etree
+                except ImportError:
+                    pass
 
 def as_inputsource(source):
     """\
@@ -53,6 +72,7 @@ def as_inputsource(source):
     input_source.setEncoding(source.encoding)
     return input_source
 
+
 class XMLWriter(object):
     """\
     Simple SAX alike XML writer
@@ -61,7 +81,13 @@ class XMLWriter(object):
     
     def __init__(self, out, encoding='utf-8', prettify=False):
         """\
-        
+
+        `out`
+            A file object
+        `encoding`
+            An encoding (default: UTF-8)
+        `prettify`
+            Indicates if the XML should be prettified (default: False)
         """
         self._out = codecs.getwriter(encoding)(out)
         self._encoding = encoding
@@ -72,7 +98,7 @@ class XMLWriter(object):
         """\
         Writes the <?xml version="1.0" ... ?> declaration.
         """
-        self._out.write('<?xml version="1.0" encoding="%s" standalone="yes"?>' % self._encoding)
+        self._out.write(u'<?xml version="1.0" encoding="%s" standalone="yes"?>' % self._encoding)
         if not self.prettify:
             self._newline()
         self._depth = 0
@@ -89,9 +115,9 @@ class XMLWriter(object):
         Writes a start tag with the optional attributes (a dict).
         """
         self._indent()
-        self._out.write('<%s' % name)
+        self._out.write(u'<%s' % name)
         self._write_attributes(attrs)
-        self._out.write('>')
+        self._out.write(u'>')
         self._depth+=1
     
     def endElement(self, name, indent=True):
@@ -106,7 +132,7 @@ class XMLWriter(object):
         self._depth-=1
         if indent:
             self._indent()
-        self._out.write('</%s>' % name)
+        self._out.write(u'</%s>' % name)
     
     def dataElement(self, name, data, attrs=None):
         """\
@@ -122,9 +148,9 @@ class XMLWriter(object):
         """
         self._indent()
         out = self._out
-        out.write('<%s' % name)
+        out.write(u'<%s' % name)
         self._write_attributes(attrs)
-        out.write('/>')
+        out.write(u'/>')
     
     def characters(self, content):
         """\
@@ -137,11 +163,11 @@ class XMLWriter(object):
         Writes a processing instruction.
         """
         write = self._out.write
-        write('<?')
+        write(u'<?')
         write(target)
-        write(' ')
+        write(u' ')
         write(data)
-        write('?>')
+        write(u'?>')
 
     def comment(self, comment):
         """\
@@ -149,9 +175,9 @@ class XMLWriter(object):
         """
         write = self._out.write
         self._indent()
-        write('<!-- ')
+        write(u'<!-- ')
         self.characters(comment)
-        write(' -->')
+        write(u' -->')
         if not self.prettify:
             self._newline()
 
@@ -162,7 +188,7 @@ class XMLWriter(object):
         if attrs:
             write = self._out.write
             for k, v in attrs.items():
-                write(' %s=%s' % (k, quoteattr(v)))
+                write(u' %s=%s' % (k, quoteattr(v)))
 
     def _indent(self):
         """\
@@ -170,14 +196,177 @@ class XMLWriter(object):
         """
         if self.prettify:
             self._newline()
-            self._out.write(' ' * self._depth * 2)
+            self._out.write(u' ' * self._depth * 2)
 
     def _newline(self):
         """\
         Writes a newline character.
         """
-        self._out.write('\n')
+        self._out.write(u'\n')
 
+
+class SimpleXMLWriter(XMLWriter):
+    """\
+    XMLWriter which remembers the names of started elements and provides
+    a simple `pop` method to close the last element.
+    """
+    def __init__(self, out, encoding='utf-8', prettify=False):
+        """\
+
+        `out`
+            A file object
+        `encoding`
+            An encoding (default: UTF-8)
+        `prettify`
+            Indicates if the XML should be prettified (default: False)
+        """
+        super(SimpleXMLWriter, self).__init__(out, encoding=encoding, prettify=prettify)
+        self._elements = []
+
+    def startElement(self, name, attrs=None):
+        super(SimpleXMLWriter, self).startElement(name, attrs)
+        self._elements.append(name)
+
+    def endElement(self, name, indent=True):
+        super(SimpleXMLWriter, self).endElement(name, indent)
+        self._elements.pop()
+
+    def pop(self, indent=True):
+        """\
+        Closes the last started element.
+
+        `indent`
+            Indicating if whitespaces in front of the element are allowed.
+        """
+        self.endElement(self._elements[-1], indent)
+
+
+#
+# The EtreeXMLWriter borrows code of the xml.etree.ElementTree
+# module of Python 2.7
+#
+# Copyright (c) 1999-2008 by Fredrik Lundh.  All rights reserved.
+#
+# Licensed to PSF under a Contributor Agreement.
+# See http://www.python.org/psf/license for licensing details.
+#
+class EtreeXMLWriter(object):
+    """\
+    Simple SAX alike XML writer which generates an Etree.
+    """
+    def __init__(self):
+        """\
+
+        """
+        self._data = []
+        self._elem = []
+        self._last = None
+        self._tail = None
+
+    def getroot(self):
+        """\
+        Returns the root element.
+
+        This method should be called *after* the endDocument() method.
+        """
+        return self._last
+
+    def _flush(self):
+        if self._data:
+            if self._last is not None:
+                text = "".join(self._data)
+                if self._tail:
+                    assert self._last.tail is None, "internal error (tail)"
+                    self._last.tail = text
+                else:
+                    assert self._last.text is None, "internal error (text)"
+                    self._last.text = text
+            self._data = []
+
+    #
+    # SimpleXMLWriter method
+    #
+    def pop(self, indent=True):
+        """\
+        Closes the last started element.
+
+        `indent`
+            ignored
+        """
+        self.endElement(self._elem[-1].tag)
+
+    #
+    # XMLWriter methods
+    #
+    def startDocument(self):
+        """\
+        Writes the <?xml version="1.0" ... ?> declaration.
+        """
+        pass
+    
+    def endDocument(self):
+        """\
+        Flushes to the output.
+        """
+        return self._last
+    
+    def startElement(self, name, attrs=None):
+        """\
+        Writes a start tag with the optional attributes (a dict).
+        """
+        self._flush()
+        self._last = elem = etree.Element(name, attrs)
+        if self._elem:
+            self._elem[-1].append(elem)
+        self._elem.append(elem)
+        self._tail = 0
+        
+    def endElement(self, name, indent=True):
+        """\
+        Writes an end tag. 
+        
+        `name`
+            The name of the tag.
+        `indent`
+            Ignored
+        """
+        self._flush()
+        self._last = self._elem.pop()
+        assert self._last.tag == name,\
+               "end tag mismatch (expected %s, got %s)" % (
+                   self._last.tag, name)
+        self._tail = 1
+    
+    def dataElement(self, name, data, attrs=None):
+        """\
+        Writes a start tag, the data and an end tag.
+        """
+        self.startElement(name, attrs)
+        self.characters(data)
+        self.endElement(name)
+
+    def emptyElement(self, name, attrs=None):
+        """\
+        Writes ``<name att1="attr-val1" attr2="attr-val2"/>``
+        """
+        self.startElement(name, attrs)
+        self.pop()
+    
+    def characters(self, content):
+        """\
+        Writes an escaped value.
+        """
+        self._data.append(content)
+
+    def processingInstruction(self, target, data):
+        """\
+        Writes a processing instruction (unsupported)
+        """
+
+    def comment(self, comment):
+        """\
+        Writes a comment (unsupported).
+        """
 
 def xmlwriter_as_contenthandler(writer):
     """\
@@ -188,6 +377,35 @@ def xmlwriter_as_contenthandler(writer):
     """
     # pylint: disable-msg=W0212
     return XMLGenerator(writer._out, writer._encoding)
+
+#
+# Taken from RDFLib <http://rdflib.net/>
+# License: BSD
+#
+from unicodedata import category, decomposition
+
+NAME_START_CATEGORIES = ["Ll", "Lu", "Lo", "Lt", "Nl"]
+NAME_CATEGORIES = NAME_START_CATEGORIES + ["Mc", "Me", "Mn", "Lm", "Nd"]
+ALLOWED_NAME_CHARS = [u"\u00B7", u"\u0387", u"-", u".", u"_"]
+
+#
+# http://www.w3.org/TR/REC-xml-names/#NT-NCName
+#  [4] NCName ::= (Letter | '_') (NCNameChar)* /* An XML Name, minus
+#      the ":" */
+#  [5] NCNameChar ::= Letter | Digit | '.' | '-' | '_' | CombiningChar
+#      | Extender
+
+def is_ncname(name):
+    first = name[0]
+    if first == '_' or category(first) in NAME_START_CATEGORIES:
+        for i in xrange(1, len(name)):
+            c = name[i]
+            if not category(c) in NAME_CATEGORIES:
+                if c in ALLOWED_NAME_CHARS:
+                    continue
+                return False
+        return True
+    return False
 
 import sys
 if sys.platform[:4] == 'java':

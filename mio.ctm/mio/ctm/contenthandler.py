@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2007 - 2010 -- Lars Heuer - Semagia <http://www.semagia.com/>.
+# Copyright (c) 2007 - 2011 -- Lars Heuer - Semagia <http://www.semagia.com/>.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -36,7 +36,6 @@ Content handlers.
 
 :author:       Lars Heuer (heuer[at]semagia.com)
 :organization: Semagia - http://www.semagia.com/
-:version:      $Rev:$ - $Date:$
 :license:      BSD license
 """
 from tm import mio
@@ -61,8 +60,12 @@ class ContentHandler(object):
     """\
     Base class for all content handlers.
     """
-    #TODO: Remove me?!?
-    pass
+    def handle_role(self, type, player, reifier):
+        self.startRole(type)
+        self.player(player)
+        if reifier:
+            self.reifier(reifier)
+        self.endRole()
 
 class GlobalScopeContentHandler(ContentHandler):
     """\

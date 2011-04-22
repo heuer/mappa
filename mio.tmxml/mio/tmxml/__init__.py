@@ -36,13 +36,13 @@
 
 :author:       Lars Heuer (heuer[at]semagia.com)
 :organization: Semagia - http://www.semagia.com/
-:version:      $Rev: 169 $ - $Date: 2009-06-26 14:44:17 +0200 (Fr, 26 Jun 2009) $
 :license:      BSD license
 """
 import xml.sax.handler as sax_handler
 import xml.sax as sax
 from tm.mio.deserializer import Deserializer
-from tm.mio.xmlutils import as_inputsource
+from tm.xmlutils import as_inputsource
+from .handler import TMXMLContentHandler
 
 __all__ = ['create_deserializer']
 
@@ -64,7 +64,6 @@ class TMXMLDeserializer(Deserializer):
         """\
         
         """
-        from mio.tmxml.handler import TMXMLContentHandler
         content_handler = TMXMLContentHandler()
         content_handler.map_handler = self.handler
         content_handler.doc_iri = source.iri

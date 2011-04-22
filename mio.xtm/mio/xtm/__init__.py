@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2007 - 2009 -- Lars Heuer - Semagia <http://www.semagia.com/>.
+# Copyright (c) 2007 - 2011 -- Lars Heuer - Semagia <http://www.semagia.com/>.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -34,20 +34,17 @@
 """\
 Provides deserialization of XML 1.0/2.0/2.1 topic maps.
 
-Port of the Java ``com.semagio.mio.xtm`` package to Python.
-
 :author:       Lars Heuer (heuer[at]semagia.com)
 :organization: Semagia - http://www.semagia.com/
-:version:      $Rev: 372 $ - $Date: 2010-05-09 18:27:41 +0200 (So, 09 Mai 2010) $
 :license:      BSD license
 """
 import xml.sax.handler as sax_handler
 import xml.sax as sax
 from tm.mio.deserializer import Deserializer, Context
 from tm.xmlutils import as_inputsource, attributes
-from xtm1 import XTM10ContentHandler, NS_XTM as NS_XTM_10
-from xtm2 import XTM2ContentHandler, NS_XTM as NS_XTM_2
-from miohandler import XTM21Handler
+from mio.xtm.xtm1 import XTM10ContentHandler, NS_XTM as NS_XTM_10
+from mio.xtm.xtm2 import XTM2ContentHandler, NS_XTM as NS_XTM_2
+from mio.xtm.miohandler import XTM21Handler
 
 __all__ = ['create_deserializer', 'XTM21Handler']
 
@@ -56,8 +53,8 @@ _CONTENT_HANDLERS = {'1.0': XTM10ContentHandler,
                      '2.1': XTM2ContentHandler
                      }
 
-def create_deserializer(**kw):
-    return XTMDeserializer(version=kw.get('version'), strict=kw.get('strict', True))
+def create_deserializer(version=None, strict=True, **kw):
+    return XTMDeserializer(version=version, strict=strict)
 
 
 class XTMDeserializer(Deserializer):
@@ -94,7 +91,7 @@ class XTMDeserializer(Deserializer):
 
 class XTMContentHandler(sax_handler.ContentHandler):
     """\
-    Content handler that can handle XTM 1.0 and XTM 2.0 / 2.1 topic maps.
+    Content handler that can handle XTM 1.0 and XTM 2.0/2.1 topic maps.
     """
     def __init__(self):
         sax_handler.ContentHandler.__init__(self)

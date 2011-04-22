@@ -34,9 +34,6 @@
 """\
 Setup script for deserializer.
 """
-import os
-import sys
-import re
 try:
     from setuptools import setup, find_packages
 except ImportError:
@@ -44,16 +41,9 @@ except ImportError:
     use_setuptools()
     from setuptools import setup, find_packages
 
-if sys.version_info < (2, 3):
-    raise Exception('Topic Maps requires Python 2.3 or higher')
-
-f = open(os.path.join(os.path.dirname(__file__), 'VERSION.txt'))
-VERSION = f.readline()
-f.close()
-
 setup(
       name = 'mio.ltm',
-      version = VERSION,
+      version = '0.1.5',
       description = 'Linear Topic Maps (LTM) syntax reader',
       long_description = '\n\n'.join([open('README.txt').read(), open('CHANGES.txt').read()]),
       author = 'Lars Heuer',
@@ -70,7 +60,7 @@ setup(
       zip_safe = False,
       include_package_data = True,
       package_data = {'': ['*.txt']},
-      install_requires=['tm>=0.1.5', 'ply>=3.3'],
+      install_requires=['tm>=0.1.7', 'ply>=3.3'],
       keywords = ['Topic Maps', 'Semantic Web', 'LTM'],
       classifiers = [
                     'Intended Audience :: Developers',

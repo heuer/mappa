@@ -36,16 +36,17 @@ This module provides some PyTM constants.
 
 :author:       Lars Heuer (heuer[at]semagia.com)
 :organization: Semagia - http://www.semagia.com/
-:version:      $Rev: 307 $ - $Date: 2009-12-20 16:35:13 +0100 (So, 20 Dez 2009) $
 :license:      BSD license
 """
+from . namespace import Namespace
 
-__all__ = ['UCS', 'ANY']
+__all__ = ['UCS', 'ANY', 'Namespace']
 
-# major, minor, micro, releaselevel
-__version_info__ = (0, 1, 7, '')
-
-__version__ = '%s%s' % ('.'.join(map(str, __version_info__[:3])), __version_info__[3] and '.%s' % __version_info__[3] or '')
+try:
+    import pkg_resources
+    __version__ = pkg_resources.get_distribution('tm').version
+except Exception:
+    __version__ = 'unknown'
 
 UCS = ()
 """\

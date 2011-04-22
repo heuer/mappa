@@ -41,7 +41,6 @@ different serializations.
 
 :author:       Lars Heuer (heuer[at]semagia.com)
 :organization: Semagia - http://www.semagia.com/
-:version:      $Rev: 251 $ - $Date: 2009-08-12 14:52:04 +0200 (Mi, 12 Aug 2009) $
 :license:      BSD license
 """
 import codecs

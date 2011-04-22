@@ -36,7 +36,6 @@ Linear Topic Maps Notation (LTM) 1.3 lexer.
 
 :author:       Lars Heuer (heuer[at]semagia.com)
 :organization: Semagia - http://www.semagia.com/
-:version:      $Rev: 315 $ - $Date: 2009-12-25 15:01:14 +0100 (Fr, 25 Dez 2009) $
 :license:      BSD license
 """
 from tm.mio import MIOException

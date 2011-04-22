@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2007 - 2010 -- Lars Heuer - Semagia <http://www.semagia.com/>.
+# Copyright (c) 2007 - 2011 -- Lars Heuer - Semagia <http://www.semagia.com/>.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -38,13 +38,12 @@ and `XML Topic Maps (XTM) 2.1 <http://www.isotopicmaps.org/sam/sam-xtm/2009-11-1
 
 :author:       Lars Heuer (heuer[at]semagia.com)
 :organization: Semagia - http://www.semagia.com/
-:version:      $Rev: 168 $ - $Date: 2009-06-26 14:22:56 +0200 (Fr, 26 Jun 2009) $
 :license:      BSD license
 """
 from StringIO import StringIO
 import xml.sax.handler as sax_handler
 from xml.sax.saxutils import XMLGenerator
-from tm import TMDM, XSD, mio
+from tm import TMDM, XSD, mio, voc
 from tm.mio.deserializer import Context
 from tm.xmlutils import attributes
 from tm.irilib import resolve_iri
@@ -52,7 +51,7 @@ from tm.irilib import resolve_iri
 __all__ = ['XTM2ContentHandler']
 
 # XTM 2.0 namespace
-NS_XTM = 'http://www.topicmaps.org/xtm/'
+NS_XTM = voc.XTM
 
 # Constants for XTM elements.
 MERGE_MAP = 'mergeMap'
@@ -356,7 +355,7 @@ class XTM2ContentHandler(sax_handler.ContentHandler):
         if iri in self.context.loaded:
             return
         self.context.add_loaded(iri)
-        from mio.reader.xtm import create_deserializer
+        from mio.xtm import create_deserializer
         deserializer = create_deserializer()
         deserializer.context = self.context
         deserializer.handler = self.map_handler

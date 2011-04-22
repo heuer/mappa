@@ -36,28 +36,44 @@ tolog lexer.
 
 :author:       Lars Heuer (heuer[at]semagia.com)
 :organization: Semagia - <http://www.semagia.com/>
-:version:      $Rev: 342 $ - $Date: 2010-01-23 21:19:25 +0100 (Sa, 23 Jan 2010) $
 :license:      BSD License
 """
 import re
 from ply.lex import TOKEN #pylint: disable-msg=F0401, E0611
+from tm.mql import SyntaxQueryError
 
 # We allow something like INSERT from . from . from tolog-predicate
 # for the time being although the tolog spec. says that it is an error since
 # 'from' is a tolog keyword.
 _END_OF_FRAGMENT = re.compile(r'$|\s+(?=from\s+(?!(.*?("|\.|\#))))', re.IGNORECASE).search
 
-_IDENT = r'[_a-zA-Z][_\w\.-]*'
+# Start of an identifier
+_IDENT_START = ur'[a-zA-Z_]|[\u00C0-\u00D6]|[\u00D8-\u00F6]' + \
+                ur'|[\u00F8-\u02FF]|[\u0370-\u037D]' + \
+                ur'|[\u037F-\u1FFF]|[\u200C-\u200D]' + \
+                ur'|[\u2070-\u218F]|[\u2C00-\u2FEF]' + \
+                ur'|[\u3001-\uD7FF]|[\uF900-\uFDCF]|[\uFDF0-\uFFFD]'
 
-_DATE = r'\-?[0-9]{4,}\-(0[1-9]|1[1-2])\-(0[1-9]|1[0-9]|2[0-9]|3[0-1])'
+_IDENT_PART = ur'%s|[\.\-0-9]|[\u00B7]|[\u0300-\u036F]|[\u203F-\u2040]' % _IDENT_START
+
+# Identifier
+_IDENT = ur'(%s)+(%s)*' % (_IDENT_START, _IDENT_PART)
+
+_DATE = r'\-?(000[1-9]|00[1-9][0-9]|0[1-9][0-9][0-9]|[1-9][0-9][0-9][0-9]+)\-(0[1-9]|1[0-2])\-(0[1-9]|1[0-9]|2[0-9]|3[0-1])'
 # Timezone
 _TZ = r'Z|((\+|\-)[0-9]{2}:[0-9]{2})'
 # Time
 _TIME = r'[0-9]{2}:[0-9]{2}:[0-9]{2}(\.[0-9]+)?(%s)?' % _TZ
 
+_DIRECTIVES = {
+    # tolog extensions
+    '%prefix': 'DIR_PREFIX',
+}
+
 reserved = {
     'select': 'KW_SELECT',
     'from': 'KW_FROM',
+    'where': 'KW_FROM',
     'count': 'KW_COUNT',
     'not': 'KW_NOT',
     'limit': 'KW_LIMIT',
@@ -77,7 +93,7 @@ reserved = {
     'insert': 'KW_INSERT',
     }
 
-tokens = tuple(reserved.values()) + (
+tokens = tuple(set(reserved.values())) + tuple(_DIRECTIVES.values()) + (
     'IDENT',
     'SID',
     'SLO',
@@ -86,6 +102,7 @@ tokens = tuple(reserved.values()) + (
     'VARIABLE',
     'PARAM',
     'QNAME',
+    'CURIE',
 
     # Operators
     # = /= >= > <= <
@@ -101,6 +118,7 @@ tokens = tuple(reserved.values()) + (
     'COMMA', 'COLON', 'PIPE', 'PIPE_PIPE', 'QM',
     'IMPLIES', 'DOT',
     # Non-standard tolog
+    'CIRCUMFLEX',
     'DOUBLE_CIRCUMFLEX',
     
     # Keeping (unparsed) topic map content. Not really a token, though
@@ -109,10 +127,8 @@ tokens = tuple(reserved.values()) + (
 
 t_ignore = ' \t'
 
-t_PARAM     = r'%' + _IDENT + r'%'
-
 t_EQ        = r'='
-t_NE        = r'/='
+t_NE        = r'(/|!)='
 t_LE        = r'<='
 t_LT        = r'<'
 t_GE        = r'>='
@@ -125,11 +141,14 @@ t_LCURLY    = r'\{'
 t_RCURLY    = r'\}'
 t_COMMA     = r','
 t_DOT       = r'\.'
+t_CIRCUMFLEX = r'\^'
 t_DOUBLE_CIRCUMFLEX = r'\^\^'
 t_IMPLIES   = r':-'
 t_COLON     = r':'
 t_PIPE_PIPE = r'\|{2}'
 t_PIPE      = r'\|'
+
+t_DIR_PREFIX = r'%prefix'
 
 states = (
    ('tm','exclusive'),
@@ -139,11 +158,14 @@ states = (
 #pylint: disable-msg=W0613, W0622
 
 def t_error(t):
-    raise Exception('Invalid tolog syntax: %r' % t) #TODO
+    raise SyntaxQueryError('Invalid tolog syntax: %r' % t) #TODO
 
-def t_comment(t):
+def t_mlcomment(t):
     r'/\*[^\*/]*\*/'
     t.lexer.lineno += t.value.count('\n')
+
+def t_comment(t):
+    r'\#[^\r\n]*'
 
 def t_newline(t):
     r'[\r\n]'
@@ -161,7 +183,7 @@ def t_STRING(t):
     return t
 
 def t_IRI(t):
-    '<[^<>\"\{\}\`\\ ]+>'
+    r'<[^<>\"\{\}\`\\ ]+>'
     t.value = t.value[1:-1]
     return t
 
@@ -170,7 +192,12 @@ def t_VARIABLE(t):
     t.value = t.value[1:]
     return t
 
-@TOKEN(r'@' + _IDENT)
+@TOKEN(r'%' + _IDENT + r'%')
+def t_PARAM(t):
+    t.value = t.value[1:-1]
+    return t
+
+@TOKEN(r'@([0-9]+|[0-9]*' + _IDENT + ')')
 def t_OID(t):
     t.value = t.value[1:]
     return t
@@ -190,9 +217,13 @@ def t_IID(t):
     t.value = t.value[2:-1]
     return t
 
+@TOKEN(r'\[%s:[^<>\"\{\}\`\\\] ]+\]' % _IDENT)
+def t_CURIE(t):
+    t.value = t.value[1:-1]
+    return t
+
 @TOKEN(r':'.join([_IDENT, r'[_\w\.-]+']))
 def t_QNAME(t):
-    t.value = t.value.split(':', 1)
     return t
 
 @TOKEN(_IDENT)
@@ -244,7 +275,6 @@ def t_tm_error(t):
     raise Exception() #TODO
 
 if __name__ == '__main__':
-    from tmql.tolog import make_lexer
     test_data = [
                  'select $x from instance-of($x, $y)?',
                  'homepage($t, "http://www.semagia.com/")?',
@@ -288,10 +318,21 @@ not(located-in($PLACE : containee, italy : container))?''',
                  '1976-09-19T24:24:24',
                  '1 -1  +1',
                  '1.1 +1.1 -1.1 .12',
+                 'opera:influenced-by($COMPOSER, $INFLUENCE)',
+                 'a %param% here',
+                 'update value(@2312, "Ontopia")',
+                 'update value(@2312heresom3thing3ls3, "Ontopia")',
+                 'update value(@tritratrullala, "Ontopia")',
+                 '%prefix bla <http://www.semagia.com/>',
+                 ' ^<http://www.semagia.com/>',
+                 ' "x"^^<http://www.semagia.com/>',
+                 ' select $x where bla($blub)?',
+                 ' != /= ',
+                 '[CU:RIE] [c:/ddjdjjdjdjdd]',
                  ]
-    
+    import ply.lex as lex
     for data in test_data:
-        lexer = make_lexer()
+        lexer = lex.lex()
         lexer.input(data)
         while True:
             tok = lexer.token()

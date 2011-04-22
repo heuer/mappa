@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2007 - 2010 -- Lars Heuer - Semagia <http://www.semagia.com/>.
+# Copyright (c) 2007 - 2011 -- Lars Heuer - Semagia <http://www.semagia.com/>.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -36,16 +36,15 @@ Environment.
 
 :author:       Lars Heuer (heuer[at]semagia.com)
 :organization: Semagia - http://www.semagia.com/
-:version:      $Rev:$ - $Date:$
 :license:      BSD license
 """
-from tm import mio, irilib
+from tm import mio, irilib, TM
 from tm.mio.deserializer import Context
-from mio.ctm import consts, tpl
+from . import consts, tpl
 
 _IRI2SYNTAX = {
-    'http://psi.topicmaps.org/iso13250/ctm': 'ctm',
-    'http://psi.topicmaps.org/iso13250/xtm': 'xtm'
+    TM.ctm: 'ctm',
+    TM.xtm: 'xtm'
     }
 
 class Environment(object):
@@ -348,7 +347,7 @@ class TemplateContext(object):
                 kind, identity = self._make_topic_identity((kind, identity))
         if kind in (consts.IID, consts.IRI, consts.SLO):
             return kind, identity
-        raise Exception('Error: Unknown reference "(%s, %s)"' % (kind, identity))
+        raise mio.MIOException('Error: Unknown topic reference "(%s, %s)"' % (kind, identity))
 
     def _get_reference_by_variable(self, var):
         """\

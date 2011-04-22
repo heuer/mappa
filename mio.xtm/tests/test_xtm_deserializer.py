@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2007 - 2009 -- Lars Heuer - Semagia <http://www.semagia.com/>.
+# Copyright (c) 2007 - 2011 -- Lars Heuer - Semagia <http://www.semagia.com/>.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -36,7 +36,6 @@ Tests against the XTM content handler.
 
 :author:       Lars Heuer (heuer[at]semagia.com)
 :organization: Semagia - http://www.semagia.com/
-:version:      $Rev: 402 $ - $Date: 2011-01-14 16:30:38 +0100 (Fr, 14 Jan 2011) $
 :license:      BSD license
 """
 from unittest import TestCase
@@ -95,5 +94,5 @@ class TestXTMDeserializer(TestCase):
 
 
 if __name__ == '__main__':
-    from test import test_support
-    test_support.run_unittest(TestXTMDeserializer)
+    import nose
+    nose.core.runmodule()

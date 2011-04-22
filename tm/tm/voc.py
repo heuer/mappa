@@ -36,16 +36,20 @@ Vocabularies.
 
 :author:       Lars Heuer (heuer[at]semagia.com)
 :organization: Semagia - http://www.semagia.com/
-:version:      $Rev: 279 $ - $Date: 2009-11-29 18:35:34 +0100 (So, 29 Nov 2009) $
 :license:      BSD license
 """
-from tm.namespace import Namespace
+from tm import Namespace
 
 #pylint: disable-msg=W0105
 
 XSD = Namespace('http://www.w3.org/2001/XMLSchema#')
 """\
 Namespace for the XML Schema Datatypes
+"""
+
+TM = Namespace('http://psi.topicmaps.org/iso13250/')
+"""\
+Namespace for Topic Maps
 """
 
 TMDM = Namespace('http://psi.topicmaps.org/iso13250/model/')
@@ -70,7 +74,7 @@ XML Topic Maps 1.0 namespace.
 
 XTM = Namespace('http://www.topicmaps.org/xtm/')
 """\
-XML Topic Maps 2.0 namespace.
+XML Topic Maps 2.0/2.1 namespace.
 """
 
 DC = Namespace('http://purl.org/dc/elements/1.1/')
@@ -96,6 +100,11 @@ Friend of a Friend namespace.
 SIOC = Namespace('http://rdfs.org/sioc/ns#')
 """\
 SIOC (Semantically-Interlinked Online Communities) core namespace.
+"""
+
+RDF2TM = Namespace('http://psi.ontopia.net/rdf2tm/#')
+"""\
+RDF to Topic Maps (RTM) namespace.
 """
 
 del Namespace

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2007 - 2010 -- Lars Heuer - Semagia <http://www.semagia.com/>.
+# Copyright (c) 2007 - 2011 -- Lars Heuer - Semagia <http://www.semagia.com/>.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -36,7 +36,6 @@ Compact Topic Maps (CTM) lexer.
 
 :author:       Lars Heuer (heuer[at]semagia.com)
 :organization: Semagia - http://www.semagia.com/
-:version:      $Rev:$ - $Date:$
 :license:      BSD license
 """
 # For some reason pylint thinks that ply.lex and ply.yacc do not exist
@@ -76,19 +75,20 @@ _ident_start = ur'[a-zA-Z_]|[\u00C0-\u00D6]|[\u00D8-\u00F6]' + \
                 ur'|[\u00F8-\u02FF]|[\u0370-\u037D]' + \
                 ur'|[\u037F-\u1FFF]|[\u200C-\u200D]' + \
                 ur'|[\u2070-\u218F]|[\u2C00-\u2FEF]' + \
-                ur'|[\u3001-\uD7FF][\uF900-\uFDCF]|[\uFDF0-\uFFFD]'
+                ur'|[\u3001-\uD7FF]|[\uF900-\uFDCF]|[\uFDF0-\uFFFD]'
 
-_ident_part = ur'[\-0-9]|%s|\u00B7|[\u0300-\u036F]|[\u203F-\u2040]' % _ident_start
+_ident_part = ur'%s|[\-0-9]|[\u00B7]|[\u0300-\u036F]|[\u203F-\u2040]' % _ident_start
 
 # Identifier
-_ident = ur'(?:(?:%s)+(?:\.*(?:%s)+)*)' % (_ident_start, _ident_part)
+_ident = ur'(%s)+(\.*(%s))*' % (_ident_start, _ident_part)
 
-
-_date = r'\-?[0-9]{4,}\-(0[1-9]|1[0-2])\-(0[1-9]|1[0-9]|2[0-9]|3[0-1])'
+_date = r'\-?(000[1-9]|00[1-9][0-9]|0[1-9][0-9][0-9]|[1-9][0-9][0-9][0-9]+)\-(0[1-9]|1[0-2])\-(0[1-9]|1[0-9]|2[0-9]|3[0-1])'
 # Timezone
 _tz = r'Z|((\+|\-)[0-9]{2}:[0-9]{2})'
 # Time
 _time = r'[0-9]{2}:[0-9]{2}:[0-9]{2}(\.[0-9]+)?(%s)?' % _tz
+
+VARIABLE = r'(\$%s)' % _ident
 
 t_WILDCARD = r'\?'
 t_LPAREN = r'\('
@@ -166,7 +166,7 @@ def t_directive(t):
     t.type = directive
     return t 
 
-@TOKEN(ur'%s:(\.*(%s))+' % (_ident, _ident_part))
+@TOKEN(ur'%s:(([0-9]+(%s)*)|%s)' % (_ident, _ident_part, _ident))
 def t_QNAME(t):
     t.value = tuple(t.value.split(':'))
     return t
@@ -176,7 +176,7 @@ def t_IDENT(t):
     t.type = _KEYWORDS.get(t.value, 'IDENT')
     return t
 
-@TOKEN(ur'\$%s' % _ident)
+@TOKEN(VARIABLE)
 def t_VARIABLE(t):
     t.value = t.value[1:]
     return t
@@ -271,6 +271,7 @@ ex
 http://psi.example.org/ ex:fake.''',
                  u'yippiieehhya...yeah___3..2...1...----0...boom',
                  'a123',
+                 u'ü͡ØΨ㬟͡.'
                  ]
     for data in test_data:
         lexer.input(data)

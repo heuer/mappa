@@ -36,13 +36,13 @@ Tests against ``tm.mio.Source``.
 
 :author:       Lars Heuer (heuer[at]semagia.com)
 :organization: Semagia - http://www.semagia.com/
-:version:      $Rev: 167 $ - $Date: 2009-06-26 14:13:53 +0200 (Fr, 26 Jun 2009) $
 :license:      BSD license
 """
 from unittest import TestCase
 from urllib import pathname2url
 from urlparse import urljoin
 from tm.mio import Source
+from tm import irilib
 
 class TestSource(TestCase):
 
@@ -51,7 +51,7 @@ class TestSource(TestCase):
         src = Source(file=f)
         self.assert_(src.stream)
         self.assert_(src.encoding is None)
-        url = urljoin('file:', pathname2url(f.name))
+        url = irilib.normalize(urljoin('file:', pathname2url(f.name)))
         self.assertEqual(url, src.iri)
 
     def test_file_iri(self):
@@ -77,21 +77,21 @@ class TestSource(TestCase):
         try:
             Source(encoding='utf-8')
             self.fail('Expected an exception, only the encoding is provided')
-        except Exception:
+        except ValueError:
             pass
 
     def test_invalid_no_args(self):
         try:
             Source()
             self.fail('Expected an exception: No args are provided')
-        except Exception:
+        except ValueError:
             pass
 
     def test_data_invalid(self):
         try:
             Source(data='Semagia')
             self.fail('Expected an exception, only the data is provided, no IRI')
-        except Exception:
+        except ValueError:
             pass
 
     def test_immutable(self):
@@ -113,5 +113,5 @@ class TestSource(TestCase):
             pass
 
 if __name__ == '__main__':
-    from test import test_support
-    test_support.run_unittest(TestSource)
+    import nose
+    nose.core.runmodule()

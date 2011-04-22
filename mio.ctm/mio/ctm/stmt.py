@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2007 - 2009 -- Lars Heuer - Semagia <http://www.semagia.com/>.
+# Copyright (c) 2007 - 2011 -- Lars Heuer - Semagia <http://www.semagia.com/>.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -39,9 +39,11 @@ This module translates CTM templates into Python code.
 :version:      $Rev:$ - $Date:$
 :license:      BSD license
 """
-from mio.ctm import consts
+from . import consts
 
-def make_statement(evt, arg=object()):
+_UNDEFINED = object()
+
+def make_statement(evt, arg=_UNDEFINED):
     """\
     Returns Python code for the provided event (i.e. 'startTopic').
 

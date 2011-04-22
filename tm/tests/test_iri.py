@@ -36,9 +36,9 @@ Tests against the ``tm.irilib``.
 
 :author:       Lars Heuer (heuer[at]semagia.com)
 :organization: Semagia - http://www.semagia.com/
-:version:      $Rev: 167 $ - $Date: 2009-06-26 14:13:53 +0200 (Fr, 26 Jun 2009) $
 :license:      BSD license
 """
+from nose.tools import eq_
 from unittest import TestCase
 from tm.irilib import normalize, resolve_iri
 
@@ -61,9 +61,7 @@ class TestIRI(TestCase):
                 ("g", "http://a/b/c/g"),
                 ("./g", "http://a/b/c/g"),
                 ("/g", "http://a/g"),
-                # Original: //g -> http://g
-                # Changed to avoid problems with trailing slash normalizations
-                ("//g/x", "http://g/x"),
+                ('//g', 'http://g'),
                 # Moved into sadlyfail for the time being
                 #("?y", "http://a/b/c/d;p?y"),
                 ("g?y", "http://a/b/c/g?y"),
@@ -167,6 +165,10 @@ class TestIRI(TestCase):
         self.assertEquals("http://lars:xyz@semagia.com/", normalize("http://lars:xyz@semagia.com:80/"))
         self.assertEquals("http://lars:@semagia.com/", normalize("http://lars:@semagia.com:"))
 
+def test_windows_normalization():
+    eq_('file:///E:/somewhere/bla.ctm', normalize('file:///E|/somewhere/bla.ctm'))
+    eq_('file://localhost/E:/somewhere/bla.ctm', normalize('file://localhost/E|/somewhere/bla.ctm'))
+
 if __name__ == '__main__':
-    from test import test_support
-    test_support.run_unittest(TestIRI)
+    import nose
+    nose.core.runmodule()

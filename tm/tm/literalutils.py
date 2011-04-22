@@ -36,16 +36,12 @@ Literal Utilities.
 
 :author:       Lars Heuer (heuer[at]semagia.com)
 :organization: Semagia - http://www.semagia.com/
-:version:      $Rev: 279 $ - $Date: 2009-11-29 18:35:34 +0100 (So, 29 Nov 2009) $
 :license:      BSD license
 """
+from __future__ import absolute_import
 import re
+from decimal import Decimal, InvalidOperation
 from tm import XSD
-try:
-    from decimal import Decimal, InvalidOperation
-except ImportError: # Python < 2.4
-    Decimal = float
-    InvalidOperation = ValueError
 
 def normalize_literal(value, datatype):
     """\
@@ -126,7 +122,7 @@ def normalize_decimal(val):
     ValueError: Illegal xsd:decimal: "A.b"
     """
     try:
-        res = str(Decimal(val))
+        res = str(Decimal(val.strip()))
     except InvalidOperation:
         raise ValueError('Illegal xsd:decimal: "%s"' % val)
     dot_idx = res.find('.')

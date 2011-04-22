@@ -5,9 +5,15 @@ Changes
 0.1.7 - 2011-mm-dd
 ------------------
 * Added MIOParseException
-* literalutils to normalize literals like xsd:decimal, xsd:integer
+* Added literalutils to normalize literals like xsd:decimal, xsd:integer
 * Removed deprecated ``tm.mio.plyutils`` module.
 * Removed deprecated ``tm.mio.xmlutils`` module.
+* Removed support for Python <= 2.4
+* Added RDF2TM module and the namespace to the .voc module
+  (RDF to Topic Maps mapping (RTM))
+* Changed entry point for syntax readers from ``tm.reader`` to
+  ``mio.reader``
+* Removed support for Ply < 3.3 in plyutils (under Java)
 
 
 0.1.6 - 2010-10-28

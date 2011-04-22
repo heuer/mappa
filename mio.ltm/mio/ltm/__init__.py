@@ -36,7 +36,6 @@ Linear Topic Maps Notation (LTM) 1.3.
 
 :author:       Lars Heuer (heuer[at]semagia.com)
 :organization: Semagia - http://www.semagia.com/
-:version:      $Rev: 304 $ - $Date: 2009-12-20 16:20:24 +0100 (So, 20 Dez 2009) $
 :license:      BSD license
 """
 import re
@@ -54,11 +53,11 @@ except NameError:
 
 __all__ = ['create_deserializer']
 
-def create_deserializer(**kw):
+def create_deserializer(legacy=False, **kw):
     """\
     
     """
-    return LTMDeserializer(legacy=kw.get('legacy', False))
+    return LTMDeserializer(legacy=legacy)
 
 _ENCODING = re.compile(r'^@"([^"]+)"').match
 

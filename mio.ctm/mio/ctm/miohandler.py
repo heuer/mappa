@@ -37,7 +37,6 @@ translates events into Compact Topic Maps (CTM) syntax.
 
 :author:       Lars Heuer (heuer[at]semagia.com)
 :organization: Semagia - http://www.semagia.com/
-:version:      $Rev:$ - $Date:$
 :license:      BSD license
 """
 import codecs
@@ -45,7 +44,7 @@ import logging
 from tm import XSD
 from tm.mio import SUBJECT_IDENTIFIER, SUBJECT_LOCATOR, ITEM_IDENTIFIER, MIOException
 import tm.mio.handler as mio_handler
-from utils import is_valid_id, is_valid_local_part, is_valid_iri, is_native_datatype
+from .utils import is_valid_id, is_valid_local_part, is_valid_iri, is_native_datatype
 
 __all__ = ['CTMHandler']
 
@@ -53,8 +52,8 @@ from tm import TMDM
 _DEFAULT_NAME_TYPE = SUBJECT_IDENTIFIER, TMDM.topic_name
 del TMDM
 
-_NL = '\n'
-_END_OF_STATEMENT = ';\n'
+_NL = u'\n'
+_END_OF_STATEMENT = u';\n'
 
 class CTMHandler(mio_handler.HamsterMapHandler):
     """\
@@ -136,7 +135,7 @@ class CTMHandler(mio_handler.HamsterMapHandler):
     def endTopicMap(self):
         super(CTMHandler, self).endTopicMap()
         self._finish_pending_topic()
-        self._out.write('\n')
+        self._out.write(u'\n')
         self._out.flush()
 
     def startTopic(self, identity):
@@ -157,7 +156,7 @@ class CTMHandler(mio_handler.HamsterMapHandler):
 
     def _handle_type_instance(self, instance, type):
         self._start_topic(instance)
-        self._out.write(self._indent + 'isa ')
+        self._out.write(self._indent + u'isa ')
         self._write_topic_ref(type)
         self._out.write(_END_OF_STATEMENT)
 
@@ -199,18 +198,18 @@ class CTMHandler(mio_handler.HamsterMapHandler):
         self._finish_pending_topic()
         write(_NL)
         write_topic_ref(type)
-        write('(')
+        write(u'(')
         for i, role in enumerate(roles):
             if i > 0:
-                write(', ')
+                write(u', ')
             if i > 3:
                 write(_NL)
                 write(self._indent * 2)
             write_topic_ref(role.type)
-            write(': ')
+            write(u': ')
             write_topic_ref(role.player)
             write_reifier(role.reifier)
-        write(')')
+        write(u')')
         self._write_scope(scope)
         write_reifier(reifier)
         write(_NL)
@@ -220,7 +219,7 @@ class CTMHandler(mio_handler.HamsterMapHandler):
         self._start_topic(parent)
         write(self._indent)
         self._write_topic_ref(type)
-        write(': ')
+        write(u': ')
         self._write_value_datatype(value, datatype)
         self._write_scope(scope)
         self._write_reifier(reifier)
@@ -230,21 +229,21 @@ class CTMHandler(mio_handler.HamsterMapHandler):
         write = self._out.write
         self._start_topic(parent)
         write(self._indent)
-        write('- ')
+        write(u'- ')
         if _DEFAULT_NAME_TYPE != type:
             self._write_topic_ref(type)
-            write(': ')
+            write(u': ')
         self._write_string(value)
         self._write_scope(scope)
         self._write_reifier(reifier)
         for variant in variants:
             write(_NL)
             write(self._indent * 2)
-            write('(')
+            write(u'(')
             self._write_value_datatype(variant.value, variant.datatype)
             self._write_scope(variant.scope)
             self._write_reifier(variant.reifier)
-            write(')')
+            write(u')')
         write(_END_OF_STATEMENT)
 
     #
@@ -277,42 +276,37 @@ class CTMHandler(mio_handler.HamsterMapHandler):
         self._header_written = True
         write = self._out.write
         if self._encoding != 'utf-8':
-            write('%%encoding "%s"%s' % (self._encoding, _NL))
+            write(u'%%encoding "%s"%s' % (self._encoding, _NL))
         if self.title or self.author or self.license or self.comment:
-            write('#(%s' % _NL)
+            write(u'#(%s' % _NL)
             if self.title:
-                write('Title:    %s%s' % (self.title, _NL))
+                write(u'Title:    %s%s' % (self.title, _NL))
             if self.author:
-                write('Author:   %s%s' % (self.author, _NL))
+                write(u'Author:   %s%s' % (self.author, _NL))
             if self.license:
-                write('License:  %s%s' % (self.license, _NL))
+                write(u'License:  %s%s' % (self.license, _NL))
             if self.comment:
-                write('%s%s%s' & (_NL, self.comment, _NL))
-            write('%s)#%s' % (_NL, _NL))
+                write(u'%s%s%s' & (_NL, self.comment, _NL))
+            write(u'%s)#%s' % (_NL, _NL))
         write(_NL)
         for prefix in sorted(self._prefixes.keys()):
             self._write_prefix(prefix, self._prefixes[prefix])
 
     def _write_prefix(self, prefix, iri):
-        self._out.write('%%prefix %s <%s>%s' % (prefix, iri, _NL))
+        self._out.write(u'%%prefix %s <%s>%s' % (prefix, iri, _NL))
 
     def _write_reifier(self, reifier):
         if reifier:
             self._out.write(' ~ ')
             self._write_topic_ref(reifier)
 
-    def _write_type(self, type):
-        self._out.startElement('type')
-        self._write_topic_ref(type)
-        self._out.endElement('type')
-
     def _write_scope(self, scope):
         if scope:
             write, write_topic_ref = self._out.write, self._write_topic_ref
-            write(' @')
+            write(u' @')
             for i, theme in enumerate(scope):
                 if i > 0:
-                    write(', ')
+                    write(u', ')
                 write_topic_ref(theme)
 
     def _write_topic_identity(self, main_identity, identity):
@@ -353,39 +347,31 @@ class CTMHandler(mio_handler.HamsterMapHandler):
             self._out.write('^ ')
         self._write_uri(iri)
 
-    def _write_iids(self, iids):
-        write_iid = self._write_iid
-        for iid in iids:
-            write_iid(iid)
-
-    def _write_iid(self, iid):
-        self._out.emptyElement('itemIdentity', {'href': iid})
-
     def _write_string(self, value):
         write = self._out.write
         if '"' in value and value[-1] != '"':
-            write('"""')
+            write(u'"""')
             for c in value:
-                if c == '\\':
-                    write('\\')
+                if c == u'\\':
+                    write(u'\\')
                 write(c)
-            write('"""')
+            write(u'"""')
         else:
-            write('"')
+            write(u'"')
             for c in value:
-                if c in '"\\':
-                    write('\\')
+                if c in u'"\\':
+                    write(u'\\')
                 write(c)
-            write('"')
+            write(u'"')
 
     def _write_uri(self, uri):
-        for prefix, iri in self._prefixes.items():
-            if iri.startswith(uri):
-                lp = iri[len(uri):]
+        for prefix, iri in self._prefixes.iteritems():
+            if uri.startswith(iri):
+                lp = uri[len(iri):]
                 if is_valid_local_part(lp):
-                    self._out.write(':'.join((prefix, lp)))
+                    self._out.write(u':'.join((prefix, lp)))
                     return
-        self._out.write('<%s>' % uri)
+        self._out.write(u'<%s>' % uri)
 
     def _write_value_datatype(self, value, datatype):
         if XSD.anyURI == datatype:
@@ -396,7 +382,7 @@ class CTMHandler(mio_handler.HamsterMapHandler):
             self._out.write(value)
         else:
             self._write_string(value)
-            self._out.write('^^')
+            self._out.write(u'^^')
             self._write_uri(datatype)
 
 class _Topic(object):
