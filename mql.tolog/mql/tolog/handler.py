@@ -161,8 +161,8 @@ class XMLParserHandler(ParserHandler):
     def startBuiltinPredicate(self, name):
         self._writer.startElement('builtin-predicate', {'name': name})
 
-    def startOccurrencePredicate(self):
-        self._writer.startElement('occurrence-predicate')
+    def startDynamicPredicate(self):
+        self._writer.startElement('dynamic-predicate')
 
     def startAssociationPredicate(self):
         self._writer.startElement('association-predicate')
@@ -177,9 +177,9 @@ class XMLParserHandler(ParserHandler):
         self._writer.dataElement('content', fragment)
 
     def namespace(self, identifier, iri, kind):
-        attrs = {'identifier': identifier,
-                 'iri': iri,
-                 'kind': _PREFIXKIND2NAME[kind] # KeyError is intentional
-                 }
-        self._writer.emptyElement('namespace', attrs)
+        self._writer.emptyElement('namespace', {'identifier': identifier,
+                                                 'iri': iri,
+                                                 'kind': _PREFIXKIND2NAME[kind] # KeyError is intentional
+                                                }
+                                  )
 

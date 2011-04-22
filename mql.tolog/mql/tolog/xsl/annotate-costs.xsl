@@ -58,7 +58,7 @@
 
   <xsl:template match="tl:*[local-name(.) = 'builtin-predicate'
                             or local-name(.) = 'infix-predicate'
-                            or local-name(.) = 'occurrence-predicate'][count(tl:variable)=0]">
+                            or local-name(.) = 'dynamic-predicate'][count(tl:variable)=0]">
     <!--** Match for all built-in predicates, infix predicates, and 
            (dynamic) occurrence predicates where all variables are bound -->
     <xsl:call-template name="annotate">
@@ -229,7 +229,7 @@
     </xsl:call-template>
   </xsl:template>
 
-  <xsl:template match="tl:occurrence-predicate[count(tl:variable)=1]">
+  <xsl:template match="tl:dynamic-predicate[count(tl:variable)=1]">
     <!--** Matches dynamic occurrence predicates where one variable is bound
     -->
     <xsl:call-template name="annotate">
@@ -237,7 +237,7 @@
     </xsl:call-template>
   </xsl:template>
 
-  <xsl:template match="tl:occurrence-predicate[count(tl:variable)=2]">
+  <xsl:template match="tl:dynamic-predicate[count(tl:variable)=2]">
     <!--** Matches dynamic occurrence predicates where all variables are unbound -->
     <xsl:call-template name="annotate">
       <xsl:with-param name="cost" select="$WHOLE_TM_RESULT"/>

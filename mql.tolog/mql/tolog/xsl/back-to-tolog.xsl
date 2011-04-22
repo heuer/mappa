@@ -109,7 +109,7 @@
     <xsl:text>)</xsl:text>
   </xsl:template>
 
-  <xsl:template match="tl:predicate|tl:occurrence-predicate">
+  <xsl:template match="tl:predicate|tl:dynamic-predicate">
     <xsl:apply-templates select="tl:name/*"/>
     <xsl:text>(</xsl:text>
     <xsl:call-template name="parameters">

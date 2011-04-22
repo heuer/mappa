@@ -454,7 +454,7 @@ def p__start_rule(p): # Inline action
 
 
 _PREDICATE = 'Predicate'
-_OCC_PREDICATE = 'Occurrence' + _PREDICATE
+_DYN_PREDICATE = 'Dynamic' + _PREDICATE
 _IRI_PREDICATES = ('base-locator', 'datatype', 'item-identifier',
              'subject-locator', 'subject-identifier', 'resource')
 
@@ -472,12 +472,12 @@ def p_clause_predcause(p):
         predicate_kind = None
         arity = len(args)
         if arity == 2 and kind == consts.IDENT and name not in p.parser.rule_names:
-            predicate_kind = _OCC_PREDICATE
+            predicate_kind = _DYN_PREDICATE
         elif kind in (consts.QNAME, consts.CURIE):
             prefix = name[1].split(':')[0]
             binding_kind = p.parser.prefixes[prefix][0]
             if binding_kind != consts.MODULE:
-                predicate_kind = _OCC_PREDICATE
+                predicate_kind = _DYN_PREDICATE
         if predicate_kind is None:
             predicate_kind = _PREDICATE
         getattr(handler, 'start' + predicate_kind)()
