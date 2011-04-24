@@ -38,27 +38,31 @@
 :organization: Semagia - <http://www.semagia.com/>
 :license:      BSD License
 """
-IDENT = 1
-OID = 2
-IID = 3
-SID = 4
-SLO = 5
+from tm import mio
+
+IID = mio.ITEM_IDENTIFIER
+SID = mio.SUBJECT_IDENTIFIER
+SLO = mio.SUBJECT_LOCATOR
+
 IRI = SID
-QNAME = 7
-CURIE = 8
-PARAM = 9
-VARIABLE = 10
 
-DESC = 11
-ASC  = 12
+IDENT = 100
+OID = 101
+QNAME = 102
+CURIE = 103
+PARAM = 104
+VARIABLE = 105
 
-DATE = 13
-DATE_TIME = 14
-STRING = 15
-INTEGER = 16
-DECIMAL = 17
-LITERAL = 18
-MODULE = 19
+DESC = 106
+ASC  = 107
+
+DATE = 108
+DATE_TIME = 109
+STRING = 110
+INTEGER = 111
+DECIMAL = 112
+LITERAL = 113
+MODULE = 114
 
 _CONST2NAME = {
     VARIABLE: 'variable',
