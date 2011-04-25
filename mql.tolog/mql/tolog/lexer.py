@@ -45,7 +45,7 @@ from tm.mql import SyntaxQueryError
 # We allow something like INSERT from . from . from tolog-predicate
 # for the time being although the tolog spec. says that it is an error since
 # 'from' is a tolog keyword.
-_END_OF_FRAGMENT = re.compile(r'$|\s+(?=from\s+(?!(.*?("|\.|\#))))', re.IGNORECASE).search
+_END_OF_FRAGMENT = re.compile(r'$|\s+(?=(from|where)\s+(?!(.*?("|\.|\#))))', re.IGNORECASE).search
 
 # Start of an identifier
 _IDENT_START = ur'[a-zA-Z_]|[\u00C0-\u00D6]|[\u00D8-\u00F6]' + \
@@ -310,6 +310,14 @@ not(located-in($PLACE : containee, italy : container))?''',
   from . from . from article-about($topic, $psi)''',
 '''INSERT
   from .''',
+'''INSERT where-are-you - "Where are you".''',
+'''INSERT #( where )# a. b. c. where tolog-predicate($x)''',
+'''INSERT
+  where . where article-about($topic, $psi)''',
+'''INSERT
+  where . where . where article-about($topic, $psi)''',
+'''INSERT
+  where .''',
 '''schau an, ein <http://iri.here>''',
 '''do-you-recognise-the-lt<here?''',
 '''"oh ein"^^xsd:string''',
