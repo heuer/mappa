@@ -276,65 +276,6 @@ def t_tm_error(t):
 
 if __name__ == '__main__':
     test_data = [
-                 'select $x from instance-of($x, $y)?',
-                 'homepage($t, "http://www.semagia.com/")?',
-                 'homepage($t, "http://www.semagia.com/")? Ignore this text, please',
-                 '''INSERT
-  tolog-updates isa update-language;
-    - "tolog updates".''',
-                 '''import "http://psi.ontopia.net/tolog/string/" as str
-  insert $topic $psi . from
-  article-about($topic, $psi),
-  str:starts-with($psi, "http://en.wikipedia.org/wiki/")''',
-                '''update value($TN, "Ontopia") from
-  topic-name(oks, $TN)''',
-                    '''merge $T1, $T2 from
-  email($T1, $EMAIL),
-  email($T2, $EMAIL)''',
-                '''influenced-by($A, $B) :- {
-  pupil-of($A : pupil, $B : teacher) |
-  composed-by($OPERA : opera, $A : composer),
-  based-on($OPERA : result, $WORK : source),
-  written-by($WORK : work, $B : writer)
-}.
-
-instance-of($COMPOSER, composer),
-influenced-by($COMPOSER, $INFLUENCE),
-born-in($INFLUENCE : person, $PLACE : place),
-not(located-in($PLACE : containee, italy : container))?''',
-'''INSERT
-  from . from article-about($topic, $psi)''',
-'''INSERT
-  from . from . from article-about($topic, $psi)''',
-'''INSERT
-  from .''',
-'''INSERT where-are-you - "Where are you".''',
-'''INSERT #( where )# a. b. c. where tolog-predicate($x)''',
-'''INSERT
-  where . where article-about($topic, $psi)''',
-'''INSERT
-  where . where . where article-about($topic, $psi)''',
-'''INSERT
-  where .''',
-'''schau an, ein <http://iri.here>''',
-'''do-you-recognise-the-lt<here?''',
-'''"oh ein"^^xsd:string''',
-                 '-1976-09-19',
-                 '1976-09-19',
-                 '1976-09-19T24:24:24',
-                 '1 -1  +1',
-                 '1.1 +1.1 -1.1 .12',
-                 'opera:influenced-by($COMPOSER, $INFLUENCE)',
-                 'a %param% here',
-                 'update value(@2312, "Ontopia")',
-                 'update value(@2312heresom3thing3ls3, "Ontopia")',
-                 'update value(@tritratrullala, "Ontopia")',
-                 '%prefix bla <http://www.semagia.com/>',
-                 ' ^<http://www.semagia.com/>',
-                 ' "x"^^<http://www.semagia.com/>',
-                 ' select $x where bla($blub)?',
-                 ' != /= ',
-                 '[CU:RIE] [c:/ddjdjjdjdjdd]',
                  ]
     import ply.lex as lex
     for data in test_data:
