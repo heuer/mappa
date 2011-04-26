@@ -85,52 +85,84 @@ class TopicMapLayer(object):
     def get_topics(self, types=ANY):
         """\
         Returns an iterable of topics.
+
+        `types`
+            An iterable of topics or ``ANY`` if the type is unconstrained.
         """
 
     def get_associations(self, types=ANY):
         """\
         Returns an iterable of associations.
+
+        `types`
+            An iterable of topics or ``ANY`` if the type is unconstrained.
         """
 
     def get_occurrences(self, topic, types=ANY):
         """\
         Returns an iterable of occurrences of the provided topic.
+
+        `types`
+            An iterable of topics or ``ANY`` if the type is unconstrained.
         """
 
     def get_names(self, topic, types=ANY):
         """\
         Returns an iterable of names of the provided topic.
+
+        `types`
+            An iterable of topics or ``ANY`` if the type is unconstrained.
         """
 
     def get_topic_children(self, topic, types=ANY):
         """\
         Returns an iterable of occurrences and names of the provided topic.
+
+        `types`
+            An iterable of topics or ``ANY`` if the type is unconstrained.
         """
         return chain(self.get_occurrences(topic, types), self.get_names(topic, types))
 
     def get_roles_played(self, topic, types=ANY):
         """\
         Returns an iterable of roles which the `topic` plays.
+
+        `topic`
+            The context topic.
+        `types`
+            An iterable of topics or ``ANY`` if the type is unconstrained.
         """
 
     def get_subject_identifiers(self, topic):
         """\
+        Returns an iterable of subject identifiers of the `topic`.
 
+        `topic`
+            The context topic.
         """
 
     def get_subject_locators(self, topic):
         """\
+        Returns an iterable of subject locators of the `topic`.
 
+        `topic`
+            The context topic.
         """
 
     def get_item_identifiers(self, tmc):
         """\
+        Returns an iterable of item identifiers of `tmc`.
 
+        `tmc`
+            The context Topic Maps construct.
         """
 
     def get_roles(self, assoc, types=ANY):
         """\
         Returns an iterable of roles from the provided association.
+
+        `types`
+            An iterable of topics or ``ANY`` if the type is unconstrained.
         """
 
     def get_reifier(self, reified):
