@@ -302,8 +302,6 @@ instance-of($COMPOSER, composer),
 influenced-by($COMPOSER, $INFLUENCE),
 born-in($INFLUENCE : person, $PLACE : place),
 not(located-in($PLACE : containee, italy : container))?''',
-'''INSERT from-hell - "I am from hell".''',
-'''INSERT #( from )# me. to. you. from tolog-predicate($x)''',
 '''INSERT
   from . from article-about($topic, $psi)''',
 '''INSERT
