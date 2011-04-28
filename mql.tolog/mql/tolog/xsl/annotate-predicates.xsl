@@ -55,7 +55,7 @@
             use="@name"/>
 
   <xsl:key name="roles" 
-            match="tl:builtin-predicate[@name='association-role']/tl:*[2][local-name(.) = 'variable']" 
+            match="tl:builtin-predicate[@name='association-role']/tl:*[2][local-name(.) = 'variable']|tl:builtin-predicate[@name='role-player']/tl:*[1][local-name(.) = 'variable']" 
             use="@name"/>
 
   <xsl:key name="occs" 
