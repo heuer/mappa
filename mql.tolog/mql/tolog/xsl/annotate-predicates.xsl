@@ -45,6 +45,9 @@
                 xmlns="http://psi.semagia.com/tolog-xml/"
                 exclude-result-prefixes="tl">
 
+  <!-- Indicates if the predicates should be rewritten or just annotated -->
+  <xsl:param name="rewrite_predicates" select="true()"/>
+
   <xsl:output method="xml" encoding="utf-8" standalone="yes"/>
 
   <xsl:key name="assocs" 
@@ -80,41 +83,16 @@
                                             or @name='value-like'
                                             or @name='datatype'
                                             or @name='resource'][tl:*[1][local-name(.)='variable']]">
-    <xsl:call-template name="annotate2"/>
+    <xsl:call-template name="annotate"/>
   </xsl:template>
 
   <xsl:template match="tl:builtin-predicate[@name='reifies'][tl:*[2][local-name(.)='variable']]">
-    <xsl:call-template name="annotate2">
+    <xsl:call-template name="annotate">
       <xsl:with-param name="index" select="2"/>
     </xsl:call-template>
   </xsl:template>
 
-
   <xsl:template name="annotate">
-    <xsl:param name="index" select="1"/>
-    <xsl:variable name="key" select="tl:*[$index][local-name(.) = 'variable']/@name"/>
-    <builtin-predicate>
-      <xsl:copy-of select="@*"/>
-      <xsl:if test="key('assocs', $key)">
-        <xsl:attribute name="association"><xsl:text>true</xsl:text></xsl:attribute>
-      </xsl:if>
-      <xsl:if test="key('roles', $key)">
-        <xsl:attribute name="role"><xsl:text>true</xsl:text></xsl:attribute>
-      </xsl:if>
-      <xsl:if test="key('occs', $key)">
-        <xsl:attribute name="occurrence"><xsl:text>true</xsl:text></xsl:attribute>
-      </xsl:if>
-      <xsl:if test="key('names', $key)">
-        <xsl:attribute name="topic-name"><xsl:text>true</xsl:text></xsl:attribute>
-      </xsl:if>
-      <xsl:if test="key('variants', $key)">
-        <xsl:attribute name="variant"><xsl:text>true</xsl:text></xsl:attribute>
-      </xsl:if>
-      <xsl:copy-of select="*"/>
-    </builtin-predicate>
-  </xsl:template>
-
-  <xsl:template name="annotate2">
     <xsl:param name="index" select="1"/>
     <xsl:variable name="key" select="tl:*[$index][local-name(.) = 'variable']/@name"/>
     <xsl:variable name="is_association" select="count(key('assocs', $key)) > 0"/>
@@ -125,11 +103,11 @@
     <xsl:variable name="name">
       <xsl:value-of>
         <xsl:choose>
-          <xsl:when test="$is_association and not($is_role or $is_occurrence or $is_name or $is_variant)"><xsl:value-of select="concat('association-', @name)"/></xsl:when>
-          <xsl:when test="$is_role and not($is_association or $is_occurrence or $is_name or $is_variant)"><xsl:value-of select="concat('role-', @name)"/></xsl:when>
-          <xsl:when test="$is_occurrence and not($is_association or $is_role or $is_name or $is_variant)"><xsl:value-of select="concat('occurrence-', @name)"/></xsl:when>
-          <xsl:when test="$is_name and not($is_association or $is_role or $is_occurrence or $is_variant)"><xsl:value-of select="concat('name-', @name)"/></xsl:when>
-          <xsl:when test="$is_variant and not($is_association or $is_role or $is_occurrence or $is_name)"><xsl:value-of select="concat('variant-', @name)"/></xsl:when>
+          <xsl:when test="$rewrite_predicates and $is_association and not($is_role or $is_occurrence or $is_name or $is_variant)"><xsl:value-of select="concat('association-', @name)"/></xsl:when>
+          <xsl:when test="$rewrite_predicates and $is_role and not($is_association or $is_occurrence or $is_name or $is_variant)"><xsl:value-of select="concat('role-', @name)"/></xsl:when>
+          <xsl:when test="$rewrite_predicates and $is_occurrence and not($is_association or $is_role or $is_name or $is_variant)"><xsl:value-of select="concat('occurrence-', @name)"/></xsl:when>
+          <xsl:when test="$rewrite_predicates and $is_name and not($is_association or $is_role or $is_occurrence or $is_variant)"><xsl:value-of select="concat('name-', @name)"/></xsl:when>
+          <xsl:when test="$rewrite_predicates and $is_variant and not($is_association or $is_role or $is_occurrence or $is_name)"><xsl:value-of select="concat('variant-', @name)"/></xsl:when>
           <xsl:otherwise><xsl:value-of select="@name"/></xsl:otherwise>
         </xsl:choose>
       </xsl:value-of>
