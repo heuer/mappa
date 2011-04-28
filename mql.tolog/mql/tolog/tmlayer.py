@@ -38,7 +38,7 @@
 :organization: Semagia - <http://www.semagia.com/>
 :license:      BSD License
 """
-from tm import ANY
+from tm import ANY, UCS
 from itertools import chain
 
 class TopicMapLayer(object):
@@ -90,7 +90,7 @@ class TopicMapLayer(object):
             An iterable of topics or ``ANY`` if the type is unconstrained.
         """
 
-    def get_associations(self, types=ANY):
+    def get_associations(self, types=ANY, scope=UCS):
         """\
         Returns an iterable of associations.
 
@@ -98,7 +98,7 @@ class TopicMapLayer(object):
             An iterable of topics or ``ANY`` if the type is unconstrained.
         """
 
-    def get_occurrences(self, topic, types=ANY):
+    def get_occurrences(self, topic, types=ANY, scope=UCS):
         """\
         Returns an iterable of occurrences of the provided topic.
 
@@ -106,7 +106,7 @@ class TopicMapLayer(object):
             An iterable of topics or ``ANY`` if the type is unconstrained.
         """
 
-    def get_names(self, topic, types=ANY):
+    def get_names(self, topic, types=ANY, scope=UCS):
         """\
         Returns an iterable of names of the provided topic.
 
@@ -114,14 +114,14 @@ class TopicMapLayer(object):
             An iterable of topics or ``ANY`` if the type is unconstrained.
         """
 
-    def get_topic_children(self, topic, types=ANY):
+    def get_topic_children(self, topic, types=ANY, scope=UCS):
         """\
         Returns an iterable of occurrences and names of the provided topic.
 
         `types`
             An iterable of topics or ``ANY`` if the type is unconstrained.
         """
-        return chain(self.get_occurrences(topic, types), self.get_names(topic, types))
+        return chain(self.get_occurrences(topic, types, scope), self.get_names(topic, types, scope))
 
     def get_roles_played(self, topic, types=ANY):
         """\
@@ -207,7 +207,7 @@ class TopicMapLayer(object):
         """
         return self.get_parent(child) == parent
 
-    def is_instance_of(self, instance, type):
+    def is_instance_of(self, instance, type, scope=UCS):
         """\
         Returns if `instance` is an instance of `type`.
         """
