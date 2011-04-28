@@ -89,7 +89,7 @@ def test_tm_fragment_from():
     for q, expected in data:
         yield lex, q, expected
 
-def test_string2():
+def test_string_escape():
     data = '"Se""magia"'
     token = lex_tokenlist(data)[0]
     ok_('STRING' == token.type)
