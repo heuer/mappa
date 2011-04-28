@@ -63,6 +63,20 @@ def simple_lex(data):
         if not tok:
             break
 
+def lex_tokenlist(data):
+    """\
+    Tokenizes `data` and returns a list of tokens.
+    """
+    lexer = plyutils.make_lexer(lexer_mod)
+    lexer.input(data)
+    tokens = []
+    while True:
+        tok = lexer.token()
+        if not tok:
+            break
+        tokens.append(tok)
+    return tokens
+
 def fail(msg):
     raise AssertionError(msg)
 
@@ -75,10 +89,83 @@ def test_tm_fragment_from():
     for q, expected in data:
         yield lex, q, expected
 
+def test_string2():
+    data = '"Se""magia"'
+    token = lex_tokenlist(data)[0]
+    ok_('STRING' == token.type)
+    ok_('Se"magia' == token.value)
+
+def test_tokentypes():
+    def check(data, expected):
+        tokens = lex_tokenlist(data)
+        ok_(len(expected) == len(tokens))
+        # Walk through the reference tokens and compare each with the 
+        # generated tokens
+        for i, ttype in enumerate(expected):
+            ok_(ttype == tokens[i].type)        
+
+    for data, expected in _TEST_DATA:
+        yield check, data, expected
 
 def test_accept():
     for d in _ACCEPT_DATA:
         yield simple_lex, d
+
+# (input, (tokentype1, tokentype2, ...))
+_TEST_DATA = (
+("instance-of($x, $y)", ('IDENT', 'LPAREN', 'VARIABLE', 'COMMA', 'VARIABLE', 'RPAREN')),
+
+("select $x from instance-of($x, $y)", 
+('KW_SELECT', 'VARIABLE', 'KW_FROM', 'IDENT', 'LPAREN', 'VARIABLE', 'COMMA', 'VARIABLE', 'RPAREN')),
+
+("sEleCt $x frOm instance-of($x, $y)", 
+('KW_SELECT', 'VARIABLE', 'KW_FROM', 'IDENT', 'LPAREN', 'VARIABLE', 'COMMA', 'VARIABLE', 'RPAREN')),
+
+('q:name($x, $y)', ('QNAME', 'LPAREN', 'VARIABLE', 'COMMA', 'VARIABLE', 'RPAREN')),
+
+('i"http://psi.example.org"($x, $y)', ('SID', 'LPAREN', 'VARIABLE', 'COMMA', 'VARIABLE', 'RPAREN')),
+
+('a"http://www.semagia.com/"($x, $y)', ('SLO', 'LPAREN', 'VARIABLE', 'COMMA', 'VARIABLE', 'RPAREN')),
+
+('s"http://www.semagia.com/"($x, $y)', ('IID', 'LPAREN', 'VARIABLE', 'COMMA', 'VARIABLE', 'RPAREN')),
+
+("""
+influenced-by($A, $B) :- {
+  pupil-of($A : pupil, $B : teacher) |
+  composed-by($OPERA : opera, $A : composer),
+  based-on($OPERA : result, $WORK : source),
+  written-by($WORK : work, $B : writer)
+}.
+""",
+('IDENT', 'LPAREN', 'VARIABLE', 'COMMA', 'VARIABLE', 'RPAREN', 'IMPLIES', 'LCURLY',
+'IDENT', 'LPAREN', 'VARIABLE', 'COLON', 'IDENT', 'COMMA', 'VARIABLE', 'COLON', 'IDENT', 'RPAREN', 'PIPE',
+#composed-by (      $OPERA      :        opera    ,        $A          :        composer )
+'IDENT', 'LPAREN', 'VARIABLE', 'COLON', 'IDENT', 'COMMA', 'VARIABLE', 'COLON', 'IDENT', 'RPAREN', 'COMMA',
+#based-on (         
+'IDENT', 'LPAREN', 'VARIABLE', 'COLON', 'IDENT', 'COMMA', 'VARIABLE', 'COLON', 'IDENT', 'RPAREN', 'COMMA',
+#written-by
+'IDENT', 'LPAREN', 'VARIABLE', 'COLON', 'IDENT', 'COMMA', 'VARIABLE', 'COLON', 'IDENT', 'RPAREN',
+'RCURLY', 'DOT'
+)),
+
+("""
+select $A, count($B) from
+  composed-by($A : composer, $B : opera)
+order by $B desc limit 1?
+""", 
+('KW_SELECT', 'VARIABLE', 'COMMA', 'KW_COUNT', 'LPAREN', 'VARIABLE', 'RPAREN', 'KW_FROM',
+'IDENT', 'LPAREN', 'VARIABLE', 'COLON', 'IDENT', 'COMMA', 'VARIABLE', 'COLON', 'IDENT', 'RPAREN',
+'KW_ORDER', 'KW_BY', 'VARIABLE', 'KW_DESC', 'KW_LIMIT', 'INTEGER', 'QM'
+)),
+
+("""
+composed-by($A : composer, $B : opera)?
+
+Everything after an ? must be ignored a.k.a. do not produce tokens and failures :)
+""",
+('IDENT', 'LPAREN', 'VARIABLE', 'COLON', 'IDENT', 'COMMA', 'VARIABLE', 'COLON', 'IDENT', 'RPAREN', 'QM')
+),
+)
 
 _ACCEPT_DATA = (
     
