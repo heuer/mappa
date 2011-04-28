@@ -14,9 +14,6 @@
   * topic
   * association
   
-  TODO: Support (direct-)instance-of?
-
-
   Copyright (c) 2010 - 2011, Semagia - Lars Heuer <http://www.semagia.com/>
   All rights reserved.
   
@@ -35,13 +32,17 @@
                                         or @name='subject-locator'
                                         or @name='topic-name'
                                         or @name='occurrence'
-                                        or @name='reifies'][tl:*[1][local-name(.) = 'variable']]"
+                                        or @name='reifies'
+                                        or @name='direct-instance-of'
+                                        or @name='instance-of'][tl:*[1][local-name(.) = 'variable']]"
             use="tl:*[1]/@name"/>
 
   <xsl:key name="topic2" 
             match="tl:builtin-predicate[@name='type'
                                         or @name='role-player'
-                                        or @name='scope'][tl:*[2][local-name(.) = 'variable']]"
+                                        or @name='scope'
+                                        or @name='direct-instance-of'
+                                        or @name='instance-of'][tl:*[2][local-name(.) = 'variable']]"
             use="tl:*[2]/@name"/>
 
   <xsl:key name="association" 
