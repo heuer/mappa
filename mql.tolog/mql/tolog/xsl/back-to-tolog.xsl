@@ -64,10 +64,18 @@
   </xsl:template>
 
   <xsl:template match="tl:namespace[@kind='module']">
+    <xsl:if test="$tolog-plus">%</xsl:if>
     <xsl:text>import </xsl:text>
-    <xsl:call-template name="iri"><xsl:with-param name="iri" select="@iri"/></xsl:call-template>
-    <xsl:text> as </xsl:text>
-    <xsl:value-of select="concat(@identifier, '&#xA;')"/>
+    <xsl:if test="not($tolog-plus)">
+      <xsl:call-template name="iri"><xsl:with-param name="iri" select="@iri"/></xsl:call-template>
+      <xsl:text> as </xsl:text>
+    </xsl:if>
+    <xsl:value-of select="@identifier"/>
+    <xsl:if test="$tolog-plus">
+      <xsl:text> </xsl:text>
+      <xsl:call-template name="iri"><xsl:with-param name="iri" select="@iri"/></xsl:call-template>
+    </xsl:if>
+    <xsl:text>&#xA;</xsl:text>
     <xsl:if test="position() = last()"><xsl:text>&#xA;</xsl:text></xsl:if>
   </xsl:template>
 
