@@ -101,16 +101,14 @@
     <xsl:variable name="is_name" select="count(key('names', $key)) > 0"/>
     <xsl:variable name="is_variant" select="count(key('variants', $key)) > 0"/>
     <xsl:variable name="name">
-      <xsl:value-of>
-        <xsl:choose>
-          <xsl:when test="$rewrite_predicates and $is_association and not($is_role or $is_occurrence or $is_name or $is_variant)"><xsl:value-of select="concat('association-', @name)"/></xsl:when>
-          <xsl:when test="$rewrite_predicates and $is_role and not($is_association or $is_occurrence or $is_name or $is_variant)"><xsl:value-of select="concat('role-', @name)"/></xsl:when>
-          <xsl:when test="$rewrite_predicates and $is_occurrence and not($is_association or $is_role or $is_name or $is_variant)"><xsl:value-of select="concat('occurrence-', @name)"/></xsl:when>
-          <xsl:when test="$rewrite_predicates and $is_name and not($is_association or $is_role or $is_occurrence or $is_variant)"><xsl:value-of select="concat('name-', @name)"/></xsl:when>
-          <xsl:when test="$rewrite_predicates and $is_variant and not($is_association or $is_role or $is_occurrence or $is_name)"><xsl:value-of select="concat('variant-', @name)"/></xsl:when>
-          <xsl:otherwise><xsl:value-of select="@name"/></xsl:otherwise>
-        </xsl:choose>
-      </xsl:value-of>
+      <xsl:choose>
+        <xsl:when test="$rewrite_predicates and $is_association and not($is_role or $is_occurrence or $is_name or $is_variant)"><xsl:value-of select="concat('association-', @name)"/></xsl:when>
+        <xsl:when test="$rewrite_predicates and $is_role and not($is_association or $is_occurrence or $is_name or $is_variant)"><xsl:value-of select="concat('role-', @name)"/></xsl:when>
+        <xsl:when test="$rewrite_predicates and $is_occurrence and not($is_association or $is_role or $is_name or $is_variant)"><xsl:value-of select="concat('occurrence-', @name)"/></xsl:when>
+        <xsl:when test="$rewrite_predicates and $is_name and not($is_association or $is_role or $is_occurrence or $is_variant)"><xsl:value-of select="concat('name-', @name)"/></xsl:when>
+        <xsl:when test="$rewrite_predicates and $is_variant and not($is_association or $is_role or $is_occurrence or $is_name)"><xsl:value-of select="concat('variant-', @name)"/></xsl:when>
+        <xsl:otherwise><xsl:value-of select="@name"/></xsl:otherwise>
+      </xsl:choose>
     </xsl:variable>
     <builtin-predicate>
       <xsl:copy-of select="@*"/>
