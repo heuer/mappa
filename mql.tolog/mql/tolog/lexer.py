@@ -73,7 +73,7 @@ _DIRECTIVES = {
 reserved = {
     'select': 'KW_SELECT',
     'from': 'KW_FROM',
-    'where': 'KW_FROM',
+    'where': 'KW_WHERE',
     'count': 'KW_COUNT',
     'not': 'KW_NOT',
     'limit': 'KW_LIMIT',

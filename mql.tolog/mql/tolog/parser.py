@@ -223,6 +223,7 @@ def p_literal_topic_ref(p):
 def p_from_clause(p):
     """\
     from_clause     : KW_FROM _start_where clauselist
+                    | KW_WHERE _start_where clauselist    
     """
     _handler(p).endWhere()
 
