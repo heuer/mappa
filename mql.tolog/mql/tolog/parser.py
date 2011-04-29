@@ -251,8 +251,14 @@ def p_prefix_directive(p):
 def p_import_directive(p):
     """\
     import_directive : KW_IMPORT iri_or_string KW_AS IDENT
+                     | DIR_IMPORT IDENT IRI 
     """
-    _handle_prefix(p.parser, p[4], p[2], consts.MODULE)
+    ident, iri = None, None
+    if len(p) == 5:
+        ident, iri = p[4], p[2]
+    else:
+        ident, iri = p[2], p[3]
+    _handle_prefix(p.parser, ident, iri, consts.MODULE)
     #TODO: Import 
 
 def p_base_directive(p):
@@ -951,6 +957,14 @@ using z for i"http://www.blabla.com"
 import "http://blablub.com" as a
 
 x:x($x), y:y($y), z:z($z), a:a($a), [x:x]($x), [y:y]($y), [z:z]($z), [a:a]($a)
+''',
+'''
+%base <http://www.semagia.com/>
+%prefix ident <http://www.semagia.com/x>
+''',
+'''
+%import a <http://www.semagia.com/>
+
 '''
     )
     from ply import yacc

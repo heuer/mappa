@@ -69,6 +69,7 @@ _DIRECTIVES = {
     # tolog extensions
     '%prefix': 'DIR_PREFIX',
     '%base': 'DIR_BASE',
+    '%import': 'DIR_IMPORT',
 }
 
 reserved = {
@@ -151,6 +152,7 @@ t_PIPE      = r'\|'
 
 t_DIR_PREFIX = r'%prefix'
 t_DIR_BASE = r'%base'
+t_DIR_IMPORT = r'%import'
 
 states = (
    ('tm','exclusive'),
