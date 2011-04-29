@@ -79,6 +79,23 @@ using x for i"http://www.semagia.com/test"
     for d in data:
         yield parse, d
 
+def test_base():
+    data = ('''%base <http://www.semagia.com/> %prefix x <http://www.semagia.com/x>''',)
+    for d in data:
+        yield parse, d
+
+def test_base_illegal():
+    def check(data):
+        try:
+            parse(data)
+            fail('Expected an error since %base is not the first directive')
+        except InvalidQueryError:
+            pass
+    data = ('''%prefix x <http://www.semagia.com/x>
+%base <http://www.semagia.com/>''',)
+    for d in data:
+        yield check, d
+
 def test_accept():
     for d in _ACCEPT_DATA:
         yield parse, d
