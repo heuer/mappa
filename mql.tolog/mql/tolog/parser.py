@@ -964,7 +964,7 @@ x:x($x), y:y($y), z:z($z), a:a($a), [x:x]($x), [y:y]($y), [z:z]($z), [a:a]($a)
 ''',
 '''
 %import a <http://www.semagia.com/>
-import "http://blablub.com" as a
+import "http://blablub.com" as b
 '''
     )
     from ply import yacc
