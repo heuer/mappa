@@ -715,7 +715,7 @@ def _handle_prefix(parser, ident, iri, kind=None):
     if existing:
         existing_kind, existing_iri = existing
         if existing_kind != kind or existing_iri != iri:
-            raise InvalidQueryError('The prefix "%s" is already bound to <%s>' % (ident, iri))
+            raise InvalidQueryError('The prefix "%s" is already bound to <%s>' % (ident, existing_iri))
     else:
         parser.prefixes[ident] = (kind, iri)
         parser.handler.namespace(ident, iri, kind)
@@ -964,7 +964,7 @@ x:x($x), y:y($y), z:z($z), a:a($a), [x:x]($x), [y:y]($y), [z:z]($z), [a:a]($a)
 ''',
 '''
 %import a <http://www.semagia.com/>
-
+import "http://blablub.com" as a
 '''
     )
     from ply import yacc
