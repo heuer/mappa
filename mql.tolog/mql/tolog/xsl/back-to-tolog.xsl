@@ -8,6 +8,7 @@
   <xsl:variable name="tolog-plus" select="false()"/>
 
   <xsl:template match="*">
+    <xsl:apply-templates select="tl:base"/>
     <xsl:apply-templates select="tl:namespace"/>
     <xsl:apply-templates select="tl:rule"/>
     <xsl:choose>
@@ -16,7 +17,11 @@
       </xsl:when>
       <xsl:otherwise>
         <xsl:call-template name="predicates">
-        <xsl:with-param name="items" select="tl:*[local-name(.) != 'orderby' and local-name(.) != 'namespace' and local-name(.) != 'pagination' and local-name(.) != 'rule']"/>
+        <xsl:with-param name="items" select="tl:*[local-name(.) != 'orderby' 
+                                                  and local-name(.) != 'namespace' 
+                                                  and local-name(.) != 'pagination' 
+                                                  and local-name(.) != 'rule' 
+                                                  and local-name(.) != 'base']"/>
           <xsl:with-param name="indent" select="false()"/>
         </xsl:call-template>
       </xsl:otherwise>
@@ -64,6 +69,12 @@
     <xsl:text> as </xsl:text>
     <xsl:value-of select="concat(@identifier, '&#xA;')"/>
     <xsl:if test="position() = last()"><xsl:text>&#xA;</xsl:text></xsl:if>
+  </xsl:template>
+
+  <xsl:template match="tl:base">
+    <xsl:text>%base </xsl:text>
+    <xsl:call-template name="iri"><xsl:with-param name="iri" select="@iri"/></xsl:call-template>
+    <xsl:text>&#xA;</xsl:text>
   </xsl:template>
 
   <xsl:template match="tl:namespace[not(@kind)]">
