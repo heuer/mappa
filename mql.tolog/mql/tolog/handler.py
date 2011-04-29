@@ -176,6 +176,9 @@ class XMLParserHandler(ParserHandler):
     def fragmentContent(self, fragment):
         self._writer.dataElement('content', fragment)
 
+    def base(self, iri):
+        self._writer.emptyElement('base', {'iri': iri})
+
     def namespace(self, identifier, iri, kind):
         self._writer.emptyElement('namespace', {'identifier': identifier,
                                                  'iri': iri,
