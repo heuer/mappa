@@ -94,7 +94,7 @@ reserved = {
     'insert': 'KW_INSERT',
     }
 
-tokens = tuple(set(reserved.values())) + tuple(_DIRECTIVES.values()) + (
+tokens = tuple(reserved.values()) + tuple(_DIRECTIVES.values()) + (
     'IDENT',
     'SID',
     'SLO',
