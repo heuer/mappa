@@ -68,6 +68,7 @@ _TIME = r'[0-9]{2}:[0-9]{2}:[0-9]{2}(\.[0-9]+)?(%s)?' % _TZ
 _DIRECTIVES = {
     # tolog extensions
     '%prefix': 'DIR_PREFIX',
+    '%base': 'DIR_BASE',
 }
 
 reserved = {
@@ -149,6 +150,7 @@ t_PIPE_PIPE = r'\|{2}'
 t_PIPE      = r'\|'
 
 t_DIR_PREFIX = r'%prefix'
+t_DIR_BASE = r'%base'
 
 states = (
    ('tm','exclusive'),

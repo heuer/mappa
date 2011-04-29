@@ -58,9 +58,11 @@ def initialize_parser(parser, handler, tolog_plus=False):
 
 def p_noop(p): # Handles all grammar rules where the result is not of interest
     """\
-    instance        : head
-                    | head statement
-                    | statement
+    instance        : prolog head
+                    | prolog head statement
+                    | prolog statement
+    prolog          :
+                    | base_directive
     head            : rule
                     | directive
                     | head directive
@@ -252,6 +254,12 @@ def p_import_directive(p):
     """
     _handle_prefix(p.parser, p[4], p[2], consts.MODULE)
     #TODO: Import 
+
+def p_base_directive(p):
+    """\
+    base_directive  : DIR_BASE IRI
+    """
+    _handler(p).base(p[2])
 
 def p_select_query(p):
     """\
