@@ -57,7 +57,7 @@ def check_handler(deserializer_factory, filename):
     # 1. Generate XTM 2.1 via XTM21Handler
     out = StringIO()
     deser = deserializer_factory()
-    deser.handler = XTM21Handler(out, prettify=True)
+    deser.handler = XTM21Handler(fileobj=out, prettify=True)
     deser.parse(src)
     # 2. Read the generated XTM 2.1
     tm = mappa.connect().create('http://www.semagia.com/test-xtm-handler')
