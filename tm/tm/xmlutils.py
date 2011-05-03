@@ -241,6 +241,66 @@ class SimpleXMLWriter(XMLWriter):
         self.endElement(self._elements[-1], indent)
 
 
+from xml.sax.xmlreader import AttributesNSImpl
+_EMPTY_ATTRS = AttributesNSImpl({}, {})
+
+class SAXSimpleXMLWriter(object):
+    """\
+    SimpleXMLWriter which translates the events to a SAX events
+    """
+    def __init__(self, handler):
+        """\
+
+        """
+        self._handler = handler
+        self._elements = []
+
+    def __getattr__(self, name):
+        return getattr(self._handler, name)
+
+    def startElementNS(self, name, qname, attrs):
+        self._elements.append(name)
+        self._handler.startElementNS(name, qname, _EMPTY_ATTRS if not attrs else AttributesImpl(attrs))
+
+    def endElementNS(self, name, qname):
+        assert name == self._elements.pop()
+        self._handler.endElementNS(name, qname)
+
+    def startElement(self, name, attrs=None):
+        self.startElementNS((None, name), name, attrs)
+
+    def endElement(self, name):
+        self.endElementNS((None, name), name)
+
+    def dataElement(self, name, data, attrs=None):
+        """\
+        Writes a start tag, the data and an end tag.
+        """
+        self.startElement(name, attrs)
+        self.characters(data)
+        self.endElement(name)
+
+    def emptyElement(self, name, attrs=None):
+        """\
+        Writes ``<name att1="attr-val1" attr2="attr-val2"/>``
+        """
+        self.startElement(name, attrs)
+        self.endElement(name)
+
+    def pop(self, indent=True):
+        """\
+        Closes the last started element.
+
+        `indent`
+            Ignored
+        """
+        self.endElement(self._elements[-1])
+
+    def comment(self, comment):
+        """\
+        Writes a comment (unsupported).
+        """
+
 #
 # The EtreeXMLWriter borrows code of the xml.etree.ElementTree
 # module of Python 2.7
@@ -252,7 +312,7 @@ class SimpleXMLWriter(XMLWriter):
 #
 class EtreeXMLWriter(object):
     """\
-    Simple SAX alike XML writer which generates an Etree.
+    SimpleXMLWriter which generates an Etree.
     """
     def __init__(self):
         """\
@@ -298,12 +358,6 @@ class EtreeXMLWriter(object):
     #
     # XMLWriter methods
     #
-    def startDocument(self):
-        """\
-        Writes the <?xml version="1.0" ... ?> declaration.
-        """
-        pass
-    
     def endDocument(self):
         """\
         Flushes to the output.
@@ -350,7 +404,7 @@ class EtreeXMLWriter(object):
         Writes ``<name att1="attr-val1" attr2="attr-val2"/>``
         """
         self.startElement(name, attrs)
-        self.pop()
+        self.endElement(name)
     
     def characters(self, content):
         """\
