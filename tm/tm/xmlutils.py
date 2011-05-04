@@ -241,8 +241,16 @@ class SimpleXMLWriter(XMLWriter):
         self.endElement(self._elements[-1], indent)
 
 
-from xml.sax.xmlreader import AttributesNSImpl
-_EMPTY_ATTRS = AttributesNSImpl({}, {})
+try:
+    import lxml.sax
+    def is_lxml_handler(handler):
+        return isinstance(handler, lxml.sax.ElementTreeContentHandler)
+except:
+    def is_lxml_handler(handler):
+        return False
+
+from xml.sax.xmlreader import AttributesImpl
+_EMPTY_ATTRS = {}
 
 class SAXSimpleXMLWriter(object):
     """\
@@ -253,24 +261,24 @@ class SAXSimpleXMLWriter(object):
 
         """
         self._handler = handler
+        if is_lxml_handler(handler):
+            setattr(self, 'startElement', self._startElementLXML)
         self._elements = []
 
     def __getattr__(self, name):
         return getattr(self._handler, name)
 
-    def startElementNS(self, name, qname, attrs):
-        self._elements.append(name)
-        self._handler.startElementNS(name, qname, _EMPTY_ATTRS if not attrs else AttributesImpl(attrs))
-
-    def endElementNS(self, name, qname):
-        assert name == self._elements.pop()
-        self._handler.endElementNS(name, qname)
-
     def startElement(self, name, attrs=None):
-        self.startElementNS((None, name), name, attrs)
+        self._elements.append(name)
+        self._handler.startElement(name, _EMPTY_ATTRS if not attrs else AttributesImpl(attrs))
+
+    def _startElementLXML(self, name, attrs=None):
+        self._elements.append(name)
+        self._handler.startElement(name, _EMPTY_ATTRS if not attrs else dict([((None, k), v) for k, v in attrs.items()]))
 
     def endElement(self, name):
-        self.endElementNS((None, name), name)
+        assert name == self._elements.pop()
+        self._handler.endElement(name)
 
     def dataElement(self, name, data, attrs=None):
         """\
