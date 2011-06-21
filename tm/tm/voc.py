@@ -107,4 +107,9 @@ RDF2TM = Namespace('http://psi.ontopia.net/rdf2tm/#')
 RDF to Topic Maps (RTM) namespace.
 """
 
+GR = Namespace('http://purl.org/goodrelations/v1#')
+"""\
+GoodRelations (GR) namespace.
+"""
+
 del Namespace
