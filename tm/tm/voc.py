@@ -112,4 +112,9 @@ GR = Namespace('http://purl.org/goodrelations/v1#')
 GoodRelations (GR) namespace.
 """
 
+VCARD = Namespace('http://www.w3.org/2006/vcard/ns#')
+"""\
+VCard namespace.
+"""
+
 del Namespace
