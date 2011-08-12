@@ -75,6 +75,7 @@ class CTMHandler(mio_handler.HamsterMapHandler):
         # Optional properties
         self.title = None
         self.author = None
+        self.date = None
         self.license = None
         self.comment = None
 
@@ -277,12 +278,14 @@ class CTMHandler(mio_handler.HamsterMapHandler):
         write = self._out.write
         if self._encoding != 'utf-8':
             write(u'%%encoding "%s"%s' % (self._encoding, _NL))
-        if self.title or self.author or self.license or self.comment:
+        if self.title or self.author or self.date or self.license or self.comment:
             write(u'#(%s' % _NL)
             if self.title:
                 write(u'Title:    %s%s' % (self.title, _NL))
             if self.author:
                 write(u'Author:   %s%s' % (self.author, _NL))
+            if self.date:
+                write(u'Date:     %s%s' % (self.date, _NL))
             if self.license:
                 write(u'License:  %s%s' % (self.license, _NL))
             if self.comment:
