@@ -176,7 +176,7 @@ class XMLWriter(object):
         write = self._out.write
         self._indent()
         write(u'<!-- ')
-        self.characters(comment)
+        self.characters(comment.replace(u'--', u'- -'))
         write(u' -->')
         if not self.prettify:
             self._newline()
