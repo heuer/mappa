@@ -111,6 +111,12 @@ class XTM21Handler(mio_handler.HamsterMapHandler):
         self._out = writer if writer else XMLWriter(fileobj, encoding, prettify)
         self._state = _STATE_ILLEGAL
         self._last_topic = None
+        # Optional properties
+        self.title = None
+        self.author = None
+        self.date = None
+        self.license = None
+        self.comment = None
 
     def _set_prettify(self, prettify):
         self._out.prettify = prettify
@@ -124,6 +130,7 @@ class XTM21Handler(mio_handler.HamsterMapHandler):
         super(XTM21Handler, self).startTopicMap()
         out = self._out
         out.startDocument()
+        self._write_header()
         out.startElement('topicMap', {'xmlns': voc.XTM, 'version': '2.1'})
         self._state = _STATE_INITIAL
 
@@ -235,6 +242,28 @@ class XTM21Handler(mio_handler.HamsterMapHandler):
     #
     # Private methods
     #
+    def _write_header(self):
+        comment = []
+        append = comment.append
+        if self.title:
+            append(u'\n')
+            append(u'=' * len(self.title))
+            append(self.title)
+            append(u'=' * len(self.title))
+            append(u'\n')
+        if self.author:
+            append(u'Author:    %s' % self.author)
+        if self.date:
+            append(u'Date:      %s' % self.date)
+        if self.license:
+            append(u'License:   %s' % self.license)
+        if self.comment:
+            append(u'\n')
+            append(self.comment)
+        if comment:
+            comment.append('')
+            self._out.comment(u'\n'.join(comment))
+    
     def _finish_pending_topic(self):
         if self._last_topic:
             self._finish_pending_instanceof()
