@@ -67,7 +67,7 @@ class CTMHandler(mio_handler.HamsterMapHandler):
         """
         self._out = codecs.getwriter(encoding)(fileobj)
         self._prefixes = {}
-        self._indent = ' ' * 4
+        self._indent = u' ' * 4
         self._something_written = False
         self._header_written = False
         self._last_topic = None
@@ -266,7 +266,7 @@ class CTMHandler(mio_handler.HamsterMapHandler):
 
     def _finish_pending_topic(self):
         if self._last_topic:
-            self._out.write('.\n')
+            self._out.write(u'.\n')
             self._last_topic = None
 
     def _write_header(self):
