@@ -289,7 +289,7 @@ class CTMHandler(mio_handler.HamsterMapHandler):
             if self.license:
                 write(u'License:  %s%s' % (self.license, _NL))
             if self.comment:
-                write(u'%s%s%s' & (_NL, self.comment, _NL))
+                write(u'%s%s%s' % (_NL, self.comment, _NL))
             write(u'%s)#%s' % (_NL, _NL))
         write(_NL)
         for prefix in sorted(self._prefixes.keys()):
