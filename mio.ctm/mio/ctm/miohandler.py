@@ -334,7 +334,7 @@ class CTMHandler(mio_handler.HamsterMapHandler):
                 written = True
         if not written:
             self._start_topic(main_identity)
-            self._write_identitiy(identity)
+            self._write_identity(identity)
             self._last_topic.add_identity(identity)
 
     def _write_identity(self, identity):
