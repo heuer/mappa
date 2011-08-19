@@ -40,7 +40,7 @@ This is more or less a straight port of the Java MIO package to Python.
 :organization: Semagia - http://www.semagia.com/
 :license:      BSD license
 """
-from tm import mio, TMDM
+from tm import mio, TMDM, XSD
 
 _DEFAULT_NAME_TYPE = mio.SUBJECT_IDENTIFIER, TMDM.topic_name
 
@@ -490,6 +490,14 @@ class SimpleMapHandler(DelegatingMapHandler):
         super(SimpleMapHandler, self).startOccurrence()
         if type is not None:
             self.type(type)
+
+    def occurrence(self, type, value, datatype=None):
+        """\
+        Issues a `startOccurrence`, `type` and `value` event.
+        """
+        self.startOccurrence(type)
+        self.value(value, datatype or XSD.string)
+        self.endOccurrence()
 
     def startName(self, type=None):
         """\
