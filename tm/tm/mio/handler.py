@@ -444,6 +444,14 @@ class SimpleMapHandler(DelegatingMapHandler):
         self.topicRef(identity)
         self.endPlayer()
 
+    def role(self, type, player):
+        """\
+        Generates a `startRole`, `player` and `endRole` event.
+        """
+        self.startRole(type)
+        self.player(player)
+        self.endRole()
+
     def reifier(self, identity):
         """\
         Generates a `startReifier`, `topicRef` and `endReifier` event 
