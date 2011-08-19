@@ -42,6 +42,8 @@ This is more or less a straight port of the Java MIO package to Python.
 """
 from tm import mio, TMDM
 
+_DEFAULT_NAME_TYPE = mio.SUBJECT_IDENTIFIER, TMDM.topic_name
+
 class MapHandler(object):
     """\
     Handler which receives notifications about Topic Maps constructs.
@@ -497,6 +499,14 @@ class SimpleMapHandler(DelegatingMapHandler):
         super(SimpleMapHandler, self).startName()
         if type is not None:
             self.type(type)
+
+    def name(self, value, type=None):
+        """\
+        Generates a `startName`, a `type`, `value`, and `endName` event.
+        """
+        self.startName(type if type else _DEFAULT_NAME_TYPE)
+        self.value(value)
+        self.endName()
 
 
 # Hamster handler states
