@@ -378,6 +378,144 @@ class DelegatingMapHandler(MapHandler):
     def value(self, val, datatype=None):
         self._handler.value(val, datatype)
 
+
+class TeeMapHandler(MapHandler):
+    """\
+    A ``MapHandler`` implementation that does nothing but delegates all events 
+    to two underlying ``MapHandler`` instance.
+    """
+    __slots__ = ['_first', '_second']
+    
+    def __init__(self, first, second):
+        super(DelegatingMapHandler, self).__init__()
+        self._first = first
+        self._second = second
+
+    def startTopicMap(self):
+        self._first.startTopicMap()
+        self._second.startTopicMap()
+
+    def endTopicMap(self):
+        self._first.endTopicMap()
+        self._second.endTopicMap()
+
+    def startTopic(self, identity):
+        self._first.startTopic(identity)
+        self._second.startTopic(identity)
+
+    def endTopic(self):
+        self._first.endTopic()
+        self._second.endTopic()
+
+    def topicRef(self, identity):
+        self._first.topicRef(identity)
+        self._second.topicRef(identity)
+
+    def subjectIdentifier(self, iri):
+        self._first.subjectIdentifier(iri)
+        self._second.subjectIdentifier(iri)
+
+    def subjectLocator(self, iri):
+        self._first.subjectLocator(iri)
+        self._second.subjectLocator(iri)
+
+    def itemIdentifier(self, iri):
+        self._first.itemIdentifier(iri)
+        self._second.itemIdentifier(iri)
+
+    def startAssociation(self):
+        self._first.startAssociation()
+        self._second.startAssociation()
+
+    def endAssociation(self):
+        self._first.endAssociation()
+        self._second.endAssociation()
+
+    def startRole(self):
+        self._first.startRole()
+        self._second.startRole()
+
+    def endRole(self):
+        self._first.endRole()
+        self._second.endRole()
+    
+    def startOccurrence(self):
+        self._first.startOccurrence()
+        self._second.startOccurrence()
+
+    def endOccurrence(self):
+        self._first.endOccurrence()
+        self._second.endOccurrence()
+
+    def startName(self):
+        self._first.startName()
+        self._second.startName()
+
+    def endName(self):
+        self._first.endName()
+        self._second.endName()
+
+    def startVariant(self):
+        self._first.startVariant()
+        self._second.startVariant()
+
+    def endVariant(self):
+        self._first.endVariant()
+        self._second.endVariant()
+
+    def startScope(self):
+        self._first.startScope()
+        self._second.startScope()
+
+    def endScope(self):
+        self._first.endScope()
+        self._second.endScope()
+
+    def startTheme(self):
+        self._first.startTheme()
+        self._second.startTheme()
+
+    def endTheme(self):
+        self._first.endTheme()
+        self._second.endTheme()
+
+    def startType(self):
+        self._first.startType()
+        self._second.startType()
+
+    def endType(self):
+        self._first.endType()
+        self._second.endType()
+
+    def startPlayer(self):
+        self._first.startPlayer()
+        self._second.startPlayer()
+
+    def endPlayer(self):
+        self._first.endPlayer()
+        self._second.endPlayer()
+
+    def startReifier(self):
+        self._first.startReifier()
+        self._second.startReifier()
+
+    def endReifier(self):
+        self._first.endReifier()
+        self._second.endReifier()
+
+    def startIsa(self):
+        self._first.startIsa()
+        self._second.startIsa()
+
+    def endIsa(self):
+        self._first.endIsa()
+        self._second.endIsa()
+
+    def value(self, val, datatype=None):
+        self._first.value(val, datatype)
+        self._second.value(val, datatype)
+
+
 #pylint: disable-msg=W0622,W0221
 class SimpleMapHandler(DelegatingMapHandler):
     """\
