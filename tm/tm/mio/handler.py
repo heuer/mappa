@@ -387,7 +387,7 @@ class TeeMapHandler(MapHandler):
     __slots__ = ['_first', '_second']
     
     def __init__(self, first, second):
-        super(DelegatingMapHandler, self).__init__()
+        super(TeeMapHandler, self).__init__()
         self._first = first
         self._second = second
 
