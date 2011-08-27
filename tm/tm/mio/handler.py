@@ -378,6 +378,34 @@ class DelegatingMapHandler(MapHandler):
     def value(self, val, datatype=None):
         self._handler.value(val, datatype)
 
+class NoTopicMapEventsMapHandler(MapHandler):
+    """\
+    A ``MapHandler`` implementation where the `startTopicMap` and `endTopicMap`
+    events are not delegated to the underlying `MapHandler`. They do nothing by default.
+    To issue the events, call `start_tm` and `end_tm`.
+    """
+    __slots__ = ['_handler']
+    
+    def __init__(self, handler):
+        super(NoTopicMapEventsMapHandler, self).__init__(handler)
+
+    def startTopicMap(self):
+        pass
+
+    def endTopicMap(self):
+        pass
+
+    def start_tm(self):
+        """\
+        Issues the `startTopicMap` event to the underlying MapHandler.
+        """
+        self._handler.startTopicMap()
+
+    def end_tm(self):
+        """\
+        Issues the `endTopicMap` event to the underlying MapHandler.
+        """
+        self._handler.endTopicMap()
 
 class TeeMapHandler(MapHandler):
     """\
