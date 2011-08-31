@@ -253,7 +253,12 @@ class TestAdditionalInfo(unittest.TestCase):
         self.assert_(handler.title == 'Test')
         handler.startTopicMap()
         handler.endTopicMap()
-        self.assert_("Title:    Test" in out.getvalue())
+        self.assert_('''#
+# ====
+# Test
+# ====
+#
+''' in out.getvalue())
 
 
 if __name__ == '__main__':
