@@ -72,6 +72,7 @@ class CTMHandler(mio_handler.HamsterMapHandler):
         self._header_written = False
         self._last_topic = None
         self._encoding = encoding.lower()
+        self._association_templates = {}
         # Optional properties
         self.title = None
         self.author = None
@@ -125,6 +126,12 @@ class CTMHandler(mio_handler.HamsterMapHandler):
         if self._header_written:
             raise MIOException('The prefix "%s" has been serialized already' % prefix)
         self._prefixes.pop(prefix, None)
+
+    def add_association_template(self, name, type, focus, *roles):
+        roles_ = [focus]
+        roles_.extend(roles)
+        tpl = _AssociationTemplate(name, type, roles_)
+        self._association_templates[(type, focus)] = tpl
 
     #
     # MIO handler methods
@@ -192,6 +199,8 @@ class CTMHandler(mio_handler.HamsterMapHandler):
                 self._out.write(_NL)
 
     def _create_association(self, type, scope, reifier, iids, roles):
+        if self._handle_association_template(type, scope, reifier, roles):
+            return
         self._something_written = True
         write_reifier = self._write_reifier
         write_topic_ref = self._write_topic_ref
@@ -250,6 +259,47 @@ class CTMHandler(mio_handler.HamsterMapHandler):
     #
     # Private methods
     #
+    def _handle_association_template(self, type, scope, reifier, roles):
+        """\
+
+        """
+        def is_role_reified(roles):
+            for r in roles:
+                if r.reifier:
+                    return True
+            return False
+        def focus_role_type(roles):
+            focus_identities = self._last_topic.identities
+            for role in roles:
+                if role.player in focus_identities:
+                    return role.type
+            return None
+        if not self._last_topic or scope or reifier or is_role_reified(roles):
+            return False
+        focus_role_type = focus_role_type(roles)
+        if not focus_role_type:
+            return False
+        tpl = self._association_templates.get((type, focus_role_type))
+        if not tpl:
+            return False
+        write, write_topic_ref = self._out.write, self._write_topic_ref
+        write(self._indent)
+        write(tpl.name)
+        write(u'(')
+        tpl_roles = tpl.roles
+        comp = lambda x, y: cmp(tpl_roles.index(x.type), tpl_roles.index(y.type))
+        i = 0
+        for role in sorted(roles, comp):
+            if role.type == focus_role_type:
+                continue
+            if i > 0:
+                write(u', ')
+            write_topic_ref(role.player)
+            i+=1
+        write(u')')
+        write(_END_OF_STATEMENT)
+        return True
+    
     def _start_topic(self, identity):
         if self._last_topic and identity in self._last_topic:
             return
@@ -300,6 +350,35 @@ class CTMHandler(mio_handler.HamsterMapHandler):
         write(_NL)
         for prefix in sorted(self._prefixes.keys()):
             self._write_prefix(prefix, self._prefixes[prefix])
+        write_topic_ref = self._write_topic_ref
+        for i, tpl in enumerate(self._association_templates.values()):
+            if i == 0:
+                write(u'%s#%s' % (_NL, _NL))
+                write(u'# Templates')
+                write(u'%s#%s%s' % (_NL, _NL, _NL))
+            write(u'def %s($ctx' % tpl.name)
+            for j, r in enumerate(tpl.other_roles):
+                write(u', $v%s' % j)
+            write(u')%s' % _NL)
+            write(self._indent)
+            write_topic_ref(tpl.type)
+            write(u'(')
+            i = 0
+            want_comma = False
+            for r in tpl.roles:
+                if want_comma:
+                    write(u', ')
+                write_topic_ref(r)
+                if r != tpl.focus:
+                    write(u': $v%s' % j)
+                    want_comma = True
+                else:
+                    i -= 1
+                    write(u': $ctx')
+                    want_comma = True
+                i+=1
+            write(u')%s' % _NL)
+            write(u'end%s%s' % (_NL, _NL))
 
     def _write_prefix(self, prefix, iri):
         self._out.write(u'%%prefix %s <%s>%s' % (prefix, iri, _NL))
@@ -437,7 +516,27 @@ class _Topic(object):
     def __contains__(self, ref):
         return ref in self._refs
 
+    @property
+    def identities(self):
+        return tuple(self._refs)
 
+class _AssociationTemplate(object):
+    """\
+    
+    """
+    def __init__(self, name, type, roles):
+        self.name = name
+        self.type = type
+        self.roles = roles
+
+    @property
+    def focus(self):
+        return self.roles[0]
+
+    @property
+    def other_roles(self):
+        return self.roles[1:]
+    
 if __name__ == '__main__':
     import doctest
     doctest.testmod()
