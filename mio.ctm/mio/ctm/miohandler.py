@@ -282,14 +282,18 @@ class CTMHandler(mio_handler.HamsterMapHandler):
         tpl = self._association_templates.get((type, focus_role_type))
         if not tpl:
             return False
+        tpl_roles = tpl.roles
+        comp = lambda x, y: cmp(tpl_roles.index(x.type), tpl_roles.index(y.type))
+        try:
+            roles_ = sorted(roles, comp)
+        except ValueError:
+            return False
         write, write_topic_ref = self._out.write, self._write_topic_ref
         write(self._indent)
         write(tpl.name)
         write(u'(')
-        tpl_roles = tpl.roles
-        comp = lambda x, y: cmp(tpl_roles.index(x.type), tpl_roles.index(y.type))
         i = 0
-        for role in sorted(roles, comp):
+        for role in roles_:
             if role.type == focus_role_type:
                 continue
             if i > 0:
