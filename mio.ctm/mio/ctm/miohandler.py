@@ -131,7 +131,7 @@ class CTMHandler(mio_handler.HamsterMapHandler):
         roles_ = [focus]
         roles_.extend(roles)
         tpl = _AssociationTemplate(name, type, roles_)
-        self._association_templates[(type, focus)] = tpl
+        self._association_templates[(type, focus, tpl.arity)] = tpl
 
     #
     # MIO handler methods
@@ -279,7 +279,7 @@ class CTMHandler(mio_handler.HamsterMapHandler):
         focus_role_type = focus_role_type(roles)
         if not focus_role_type:
             return False
-        tpl = self._association_templates.get((type, focus_role_type))
+        tpl = self._association_templates.get((type, focus_role_type, len(roles)))
         if not tpl:
             return False
         tpl_roles = tpl.roles
@@ -328,6 +328,9 @@ class CTMHandler(mio_handler.HamsterMapHandler):
         """\
 
         """
+        def tpl_comparator(a, b):
+            res = cmp(a.name, b.name)
+            return res if res != 0 else cmp(a.arity, b.arity)
         self._header_written = True
         write = self._out.write
         if self._encoding != 'utf-8':
@@ -355,7 +358,7 @@ class CTMHandler(mio_handler.HamsterMapHandler):
         for prefix in sorted(self._prefixes.keys()):
             self._write_prefix(prefix, self._prefixes[prefix])
         write_topic_ref = self._write_topic_ref
-        for i, tpl in enumerate(self._association_templates.values()):
+        for i, tpl in enumerate(sorted(self._association_templates.values(), tpl_comparator)):
             if i == 0:
                 write(u'%s#%s' % (_NL, _NL))
                 write(u'# Templates')
@@ -540,6 +543,10 @@ class _AssociationTemplate(object):
     @property
     def other_roles(self):
         return self.roles[1:]
+
+    @property
+    def arity(self):
+        return len(self.roles)
     
 if __name__ == '__main__':
     import doctest
