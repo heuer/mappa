@@ -377,7 +377,7 @@ class CTMHandler(mio_handler.HamsterMapHandler):
                     write(u', ')
                 write_topic_ref(r)
                 if r != tpl.focus:
-                    write(u': $v%s' % j)
+                    write(u': $v%s' % i)
                     want_comma = True
                 else:
                     i -= 1
