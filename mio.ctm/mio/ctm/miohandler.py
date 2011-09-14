@@ -357,35 +357,46 @@ class CTMHandler(mio_handler.HamsterMapHandler):
         write(_NL)
         for prefix in sorted(self._prefixes.keys()):
             self._write_prefix(prefix, self._prefixes[prefix])
+        if self._association_templates:
+            write(u'%s#%s' % (_NL, _NL))
+            write(u'# Templates')
+            write(u'%s#%s%s' % (_NL, _NL, _NL))
+        for tpl in sorted(self._association_templates.values(), tpl_comparator):
+            self._write_assoc_tpl(tpl)
+
+    def _write_assoc_tpl(self, tpl):
+        """\
+
+        """
+        write = self._out.write
         write_topic_ref = self._write_topic_ref
-        for i, tpl in enumerate(sorted(self._association_templates.values(), tpl_comparator)):
-            if i == 0:
-                write(u'%s#%s' % (_NL, _NL))
-                write(u'# Templates')
-                write(u'%s#%s%s' % (_NL, _NL, _NL))
-            write(u'def %s($ctx' % tpl.name)
-            for j, r in enumerate(tpl.other_roles):
-                write(u', $v%s' % j)
-            write(u')%s' % _NL)
-            write(self._indent)
-            write_topic_ref(tpl.type)
-            write(u'(')
-            i = 0
-            want_comma = False
-            for r in tpl.roles:
-                if want_comma:
-                    write(u', ')
-                write_topic_ref(r)
-                if r != tpl.focus:
-                    write(u': $v%s' % i)
-                    want_comma = True
-                else:
-                    i -= 1
-                    write(u': $ctx')
-                    want_comma = True
-                i+=1
-            write(u')%s' % _NL)
-            write(u'end%s%s' % (_NL, _NL))
+        write(u'def %s(' % tpl.name)
+        variables = [u'$v%d' % i for i, x in enumerate(tpl.other_roles)]
+        variables.insert(0, u'$ctx')
+        for i, name in enumerate(variables):
+            if i:
+                write(u', ')
+            write(name)
+        write(u')%s' % _NL)
+        write(self._indent)
+        write_topic_ref(tpl.type)
+        write(u'(')
+        i = 1
+        want_comma = False
+        for r in tpl.roles:
+            if want_comma:
+                write(u', ')
+            write_topic_ref(r)
+            if r != tpl.focus:
+                write(u': %s' % variables[i])
+                want_comma = True
+            else:
+                i -= 1
+                write(u': %s' % variables[0])
+                want_comma = True
+            i+=1
+        write(u')%s' % _NL)
+        write(u'end%s%s' % (_NL, _NL))
 
     def _write_prefix(self, prefix, iri):
         self._out.write(u'%%prefix %s <%s>%s' % (prefix, iri, _NL))
