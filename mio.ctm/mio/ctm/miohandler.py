@@ -368,11 +368,25 @@ class CTMHandler(mio_handler.HamsterMapHandler):
         """\
 
         """
+        def variable_name(variables, iri):
+            name = None
+            idx = iri.rfind(u'/')
+            if idx == -1:
+                idx = iri.rfind(u'#')
+            if idx > -1:
+                name = iri[idx+1:]
+                if not is_valid_id(name) or name in variables:
+                    name = None
+            if not name:
+                name = len(variables)
+            return u'$%s' % name
+            
         write = self._out.write
         write_topic_ref = self._write_topic_ref
         write(u'def %s(' % tpl.name)
-        variables = [u'$v%d' % i for i, x in enumerate(tpl.other_roles)]
-        variables.insert(0, u'$ctx')
+        variables = []
+        for i, (kind, iri) in enumerate(tpl.roles):
+            variables.append(variable_name(variables, iri))
         for i, name in enumerate(variables):
             if i:
                 write(u', ')
