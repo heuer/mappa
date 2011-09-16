@@ -385,7 +385,7 @@ class CTMHandler(mio_handler.HamsterMapHandler):
         write_topic_ref = self._write_topic_ref
         write(u'def %s(' % tpl.name)
         variables = []
-        for i, (kind, iri) in enumerate(tpl.roles):
+        for _, iri in tpl.roles:
             variables.append(variable_name(variables, iri))
         for i, name in enumerate(variables):
             if i:
