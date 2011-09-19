@@ -40,6 +40,7 @@ translates events into Compact Topic Maps (CTM) syntax.
 :license:      BSD license
 """
 import codecs
+from collections import defaultdict
 import logging
 from tm import XSD
 from tm.mio import SUBJECT_IDENTIFIER, SUBJECT_LOCATOR, ITEM_IDENTIFIER, MIOException
@@ -73,6 +74,11 @@ class CTMHandler(mio_handler.HamsterMapHandler):
         self._last_topic = None
         self._encoding = encoding.lower()
         self._association_templates = {}
+        self.detect_prefixes = False
+        self._pending_prefix_iris = []
+        self._prefix_counter = 0
+        self._prefix_iri_candidates = defaultdict(int)
+        self._min_prefix = 10
         # Optional properties
         self.title = None
         self.author = None
@@ -321,8 +327,17 @@ class CTMHandler(mio_handler.HamsterMapHandler):
 
     def _finish_pending_topic(self):
         if self._last_topic:
-            self._out.write(u'.\n')
+            self._out.write(u'.%s' % _NL)
             self._last_topic = None
+        if self._pending_prefix_iris:
+            self._out.write(_NL)
+        while self._pending_prefix_iris:
+            self._prefix_counter+=1
+            prefix = u'ns%d' % self._prefix_counter
+            while prefix in self._prefixes:
+                self._prefix_counter+=1
+                prefix = u'ns%d' % self._prefix_counter
+            self.add_prefix(prefix, self._pending_prefix_iris.pop())
 
     def _write_header(self):
         """\
@@ -492,6 +507,20 @@ class CTMHandler(mio_handler.HamsterMapHandler):
                     self._out.write(u':'.join((prefix, lp)))
                     return
         self._out.write(u'<%s>' % uri)
+        if self.detect_prefixes:
+            idx = uri.rfind(u'/')
+            if idx < 0:
+                idx = uri.rfind(u'#')
+            if idx < 0:
+                return
+            iri, lp = uri[:idx+1], uri[idx+1:]
+            if iri in self._pending_prefix_iris or len(iri) < 5:
+                return
+            if iri in self._prefix_iri_candidates or is_valid_local_part(lp):
+                self._prefix_iri_candidates[iri]+=1
+                if self._prefix_iri_candidates[iri] >= self._min_prefix:
+                    self._pending_prefix_iris.append(iri)
+                    del self._prefix_iri_candidates[iri]
 
     def _write_value_datatype(self, value, datatype):
         if XSD.anyURI == datatype:
