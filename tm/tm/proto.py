@@ -32,7 +32,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 """\
-This module tries to provide the interface definitions of `Zope Interfaces`_.
+This module tries to provide definitions of `Zope Interfaces`_.
 If the package is not available, this module provides dummy implementations.
 
 .. _Zope Interfaces: http://www.python.org/pypi/zope.interface
@@ -42,11 +42,17 @@ If the package is not available, this module provides dummy implementations.
 :organization: Semagia - <http://www.semagia.com/>
 :license:      BSD License
 """
-__all__ = ['Interface', 'Attribute']
+from __future__ import absolute_import
 try:
-    from zope.interface import Interface, Attribute
+    from zope.interface import Interface, Attribute, implements
 except ImportError:
     class Interface(object): 
-        def __init__(self, descr): pass
+        def __call__(self, default=None):
+            return default
     class Attribute(object):
         def __init__(self, descr): pass
+    def implements(i): pass
+try:
+    from zope.component import adapts
+except ImportError:
+    def adapts(i): pass
