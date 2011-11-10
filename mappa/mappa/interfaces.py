@@ -39,8 +39,8 @@ These interfaces exist for documentation purposes.
 .. Note::
 
    Everywhere, where a collection should be returned, the concrete
-   implementation MAY return an iterable (generator / iterator). Avoid 
-   something like ``len(t.names)`` since it does not work with generators / 
+   implementation MAY return an iterable (generator/iterator). Avoid 
+   something like ``len(t.names)`` since it does not work with generators or 
    iterators.
 
 
