@@ -254,7 +254,7 @@ _EMPTY_ATTRS = {}
 
 class SAXSimpleXMLWriter(object):
     """\
-    SimpleXMLWriter which translates the events to a SAX events
+    SimpleXMLWriter which translates the events to SAX events
     """
     def __init__(self, handler):
         """\
@@ -303,6 +303,12 @@ class SAXSimpleXMLWriter(object):
             Ignored
         """
         self.endElement(self._elements[-1])
+
+    def processingInstruction(self, target, data):
+        """\
+        Writes a processing instruction.
+        """
+        self._handler.processingInstruction(target, data)
 
     def comment(self, comment):
         """\
