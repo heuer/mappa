@@ -508,9 +508,9 @@ class CTMHandler(mio_handler.HamsterMapHandler):
                     return
         self._out.write(u'<%s>' % uri)
         if self.detect_prefixes:
-            idx = uri.rfind(u'/')
+            idx = uri.rfind(u'#')
             if idx < 0:
-                idx = uri.rfind(u'#')
+                idx = uri.rfind(u'/')
             if idx < 0:
                 return
             iri, lp = uri[:idx+1], uri[idx+1:]
