@@ -2,7 +2,7 @@
 <!--
   Reorder predicates by the "cost" attribute.
 
-  Copyright (c) 2010 - 2011, Semagia - Lars Heuer <http://www.semagia.com/>
+  Copyright (c) 2010 - 2012, Semagia - Lars Heuer <http://www.semagia.com/>
   All rights reserved.
   
   License: BSD
@@ -19,7 +19,7 @@
     <xsl:element name="{name()}">
       <xsl:copy-of select="@*"/>
       <xsl:for-each select="*">
-        <xsl:sort select="@cost"/>
+        <xsl:sort select="@cost" data-type="number"/>
         <xsl:apply-templates select="."/> 
       </xsl:for-each>
     </xsl:element>
