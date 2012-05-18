@@ -41,6 +41,7 @@
 from tm import ANY, UCS
 from itertools import chain
 
+#TODO: This shouldn't belong to the mql.tolog package but to the generic mql package
 class TopicMapLayer(object):
     """\
 
@@ -102,6 +103,8 @@ class TopicMapLayer(object):
         """\
         Returns an iterable of occurrences of the provided topic.
 
+        `topic`
+            The context topic.
         `types`
             An iterable of topics or ``ANY`` if the type is unconstrained.
         """
@@ -110,14 +113,23 @@ class TopicMapLayer(object):
         """\
         Returns an iterable of names of the provided topic.
 
+        `topic`
+            The context topic.
         `types`
             An iterable of topics or ``ANY`` if the type is unconstrained.
+        """
+
+    def get_variants(self, name, scope=ANY):
+        """\
+        
         """
 
     def get_topic_children(self, topic, types=ANY, scope=UCS):
         """\
         Returns an iterable of occurrences and names of the provided topic.
 
+        `topic`
+            The context topic.
         `types`
             An iterable of topics or ``ANY`` if the type is unconstrained.
         """
@@ -161,6 +173,8 @@ class TopicMapLayer(object):
         """\
         Returns an iterable of roles from the provided association.
 
+        `assoc`
+            The context association.
         `types`
             An iterable of topics or ``ANY`` if the type is unconstrained.
         """
@@ -177,7 +191,7 @@ class TopicMapLayer(object):
 
     def get_topic_types(self):
         """\
-        Returns an iterable of topics which play the type role within
+        Returns an iterable of topics which play the ``type`` role within
         a type-instance association.
         """
 
@@ -246,3 +260,49 @@ class TopicMapLayer(object):
         """\
         Indicates if the provided object is a variant.
         """
+
+
+class AdvancedTopicMapLayer(TopicMapLayer):
+    """\
+    
+    """
+    def get_children(self, tmc, types=ANY):
+        """\
+        Returns the children of the provided Topic Maps construct
+        """
+        if self.is_topic(tmc):
+            return self.get_topic_children(tmc, types=types)
+        elif self.is_association(tmc):
+            return self.get_roles(tmc, types=types)
+        elif self.is_name(tmc):
+            return self.get_variants(tmc)
+        elif self.is_topicmap(tmc):
+            return chain(self.get_topics(types=types), self.get_associations(types=types))
+        else:
+            topic = self._topic(tmc)
+            if topic:
+                return self.get_topic_children(topic, types=types)
+            #TODO: Exception
+
+    def _topic(self, tmc):
+        return tmc if self.is_topic(tmc) else self.reifier(tmc)
+        
+    def get_occurrences(self, tmc, types=ANY, scope=UCS):
+        topic = self._topic(tmc)
+        return () if not topic else super(AdvancedTopicMapLayer, self).get_occurrences(topic, types, scope)
+    
+    def get_names(self, tmc, types=ANY, scope=UCS):
+        topic = self._topic(tmc)
+        return () if not topic else super(AdvancedTopicMapLayer, self).get_names(topic, types, scope)
+
+    def get_roles_played(self, tmc, types=ANY):
+        topic = self._topic(tmc)
+        return () if not topic else super(AdvancedTopicMapLayer, self).get_roles_played(topic, types)
+
+    def get_subject_identifiers(self, tmc):
+        topic = self._topic(tmc)
+        return () if not topic else super(AdvancedTopicMapLayer, self).get_subject_identifiers(topic)
+
+    def get_subject_locators(self, tmc):
+        topic = self._topic(tmc)
+        return () if not topic else super(AdvancedTopicMapLayer, self).get_subject_locators(topic)
