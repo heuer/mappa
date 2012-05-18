@@ -484,6 +484,7 @@ if sys.platform[:4] == 'java':
     # SAX parsers expect an empty string not ``None`` for the namespace
     # This work-around lets Jython accept "attrs.get((None, 'myattr')) instead
     # of "attrs.get(('', 'myattr'))
+    # Fixed in Jython >= 2.5.2b1
     from xml.sax.drivers2.drv_javasax import AttributesNSImpl #pylint: disable-msg=E0611, F0401
     class AttrsImpl(AttributesNSImpl):
         def __init__(self, attrs):
