@@ -14,7 +14,7 @@
   CAUTION: This needs more work/tests.
 
 
-  Copyright (c) 2010 - 2011, Semagia - Lars Heuer <http://www.semagia.com/>
+  Copyright (c) 2010 - 2012, Semagia - Lars Heuer <http://www.semagia.com/>
   All rights reserved.
   
   License: BSD
@@ -57,7 +57,7 @@
 
 
 
-  <!-- Indicates if this optimization is allowed -->
+  <!-- Indicates if this optimization is allowed (only if a where clause is available) -->
   <xsl:variable name="allowed" select="count(/tl:query/tl:*/tl:where)=1"/>
 
   <xsl:template match="@*|node()">
