@@ -752,6 +752,7 @@ base-locator("http://some.base.locator/somewhere")?
 base-locator(<http://some.base.locator/somewhere>)?
 """,
 #"""\
+#%prefix xsd <http://www.w3.org/2001/XMLSchema#>
 #base-locator("http://some.base.locator/somewhere"^^xsd:anyURI)?
 #""",
 """
