@@ -945,8 +945,10 @@ select $TYPE, $VALUE from
 '''
 %prefix ex <http://psi.example.org/>
 
+[ex:/onto/homepage]($T, $V),
 =[ex:/onto/homepage]($T, $V),
 ^[ex:/onto/homepage]($T, $V),
+ex:xnxnx($T, $V),
 =ex:xnxnx($T, $V),
 ^ex:ddkdk($T, $V)
 ''',
