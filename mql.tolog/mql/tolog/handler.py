@@ -115,11 +115,13 @@ class XMLParserHandler(ParserHandler):
     def start(self):
         writer = self._writer
         writer.startDocument()
-        writer.startElement('query', {'xmlns': _NS_TL})
+        writer.startPrefixMapping(None, _NS_TL)
+        writer.startElement('query')
 
     def end(self):
         writer = self._writer
         writer.pop()
+        writer.endPrefixMapping(None)
         writer.endDocument()
 
     def __getattr__(self, name):
