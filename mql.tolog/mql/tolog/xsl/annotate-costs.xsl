@@ -5,7 +5,7 @@
   a "cost" attribute to the predicates.
 
 
-  Copyright (c) 2010 - 2011, Semagia - Lars Heuer <http://www.semagia.com/>
+  Copyright (c) 2010 - 2012, Semagia - Lars Heuer <http://www.semagia.com/>
   All rights reserved.
   
   License: BSD
@@ -267,7 +267,7 @@
     <xsl:param name="cost"/>
     <xsl:element name="{name(.)}">
       <xsl:copy-of select="@*"/>
-      <xsl:attribute name="cost" select="$cost"/>
+      <xsl:attribute name="cost"><xsl:value-of select="$cost"/></xsl:attribute>
       <xsl:copy-of select="*"/>
     </xsl:element>
   </xsl:template>
