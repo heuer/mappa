@@ -326,21 +326,21 @@ def p_qname_QNAME(p):
     """\
     qname           : QNAME
     """
-    prefix = p[1].split(':')[0]
+    prefix, lp = p[1].split(':')
     res = p.parser.prefixes.get(prefix)
     if not res:
         raise InvalidQueryError('The prefix "%s" is not defined' % prefix)
-    p[0] = consts.QNAME, (res[0], p[1])
+    p[0] = consts.QNAME, (res[0], prefix, lp)
 
 def p_qname_CURIE(p):
     """\
     qname           : CURIE
     """
-    prefix = p[1].split(':')[0]
+    prefix, lp = p[1].split(':', 1)
     res = p.parser.prefixes.get(prefix)
     if not res:
         raise InvalidQueryError('The prefix "%s" is not defined' % prefix)
-    p[0] = consts.CURIE, (res[0], p[1])
+    p[0] = consts.CURIE, (res[0], prefix, lp)
 
 def p_uri_ref(p):
     """\
@@ -373,8 +373,8 @@ def p_slo_QNAME(p):
     """\
     slo         : EQ qname
     """
-    kind, (k, value) = p[2]
-    p[0] = kind, (consts.SLO, value)
+    kind, (k, prefix, lp) = p[2]
+    p[0] = kind, (consts.SLO, prefix, lp)
 
 def p_iid(p):
     """\
@@ -387,8 +387,8 @@ def p_iid_QNAME(p):
     """\
     iid            : CIRCUMFLEX qname
     """
-    kind, (k, value) = p[2]
-    p[0] = kind, (consts.IID, value)    
+    kind, (k, prefix, lp) = p[2]
+    p[0] = kind, (consts.IID, prefix, lp)    
 
 def p_count_clause(p):
     """\
@@ -731,7 +731,8 @@ def _to_event(handler, arg, stringtoiri=False):
         meth = 'iri'
     method = getattr(handler, meth)
     if kind in (consts.QNAME, consts.CURIE):
-        method(name[0], name[1])
+        # name is a tuple: kind-of-namespace (MODULE, SID, IID, SLO), prefix, localpart
+        method(*name)
     else:
         method(name)
 

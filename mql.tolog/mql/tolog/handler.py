@@ -152,11 +152,11 @@ class XMLParserHandler(ParserHandler):
         value, datatype = lit
         self._writer.emptyElement('literal', {'value': value, 'datatype': datatype})
 
-    def curie(self, kind, name):
-        self._writer.emptyElement('curie', {'kind': _PREFIXKIND2NAME[kind], 'value': name})
+    def curie(self, kind, prefix, lp):
+        self._writer.emptyElement('curie', {'kind': _PREFIXKIND2NAME[kind], 'prefix': prefix, 'localpart': lp})
 
-    def qname(self, kind, name):
-        self._writer.emptyElement('qname', {'kind': _PREFIXKIND2NAME[kind], 'value': name})
+    def qname(self, kind, prefix, lp):
+        self._writer.emptyElement('qname', {'kind': _PREFIXKIND2NAME[kind], 'prefix': prefix, 'localpart': lp})
 
     def startBuiltinPredicate(self, name):
         self._writer.startElement('builtin-predicate', {'name': name})
