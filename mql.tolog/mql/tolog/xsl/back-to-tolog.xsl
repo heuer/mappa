@@ -1,4 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  This stylesheet translates a tolog XML representation back to a tolog
+  query string.
+
+  Copyright (c) 2010 - 2012, Semagia - Lars Heuer <http://www.semagia.com/>
+  All rights reserved.
+  
+  License: BSD
+-->
 <xsl:stylesheet version="1.0"
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:tl="http://psi.semagia.com/tolog-xml/">
@@ -238,7 +247,9 @@
     <xsl:if test="$tolog-plus and @kind='item-identifier'">^ </xsl:if>
     <xsl:if test="$tolog-plus and @kind='subject-locator'">= </xsl:if>
     <xsl:if test="local-name(.)='curie'">[</xsl:if>
-    <xsl:value-of select="@value"/>
+    <xsl:value-of select="@prefix"/>
+    <xsl:text>:</xsl:text>
+    <xsl:value-of select="@localpart"/>
     <xsl:if test="local-name(.)='curie'">]</xsl:if>
   </xsl:template>
 
