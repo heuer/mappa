@@ -372,6 +372,9 @@ class EtreeXMLWriter(object):
     #
     # XMLWriter methods
     #
+    def startDocument(self):
+        pass
+
     def endDocument(self):
         """\
         Flushes to the output.
@@ -450,7 +453,7 @@ def xmlwriter_as_contenthandler(writer):
 # Taken from RDFLib <http://rdflib.net/>
 # License: BSD
 #
-from unicodedata import category, decomposition
+from unicodedata import category
 
 NAME_START_CATEGORIES = ["Ll", "Lu", "Lo", "Lt", "Nl"]
 NAME_CATEGORIES = NAME_START_CATEGORIES + ["Mc", "Me", "Mn", "Lm", "Nd"]
