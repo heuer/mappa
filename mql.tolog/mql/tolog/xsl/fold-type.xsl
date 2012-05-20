@@ -38,14 +38,14 @@
   </xsl:template>
 
   <xsl:template match="tl:builtin-predicate[@name='role-player'][tl:*[1][local-name(.)='variable']][tl:*[2][local-name(.) != 'variable']]">
-    <xsl:variable name="parent" select=".."/>
-    <xsl:call-template name="enhance"><xsl:with-param name="types" select="key('type', tl:*[1]/@name)[..=$parent]"/></xsl:call-template>
+    <xsl:variable name="parent" select="generate-id(..)"/>
+    <xsl:call-template name="enhance"><xsl:with-param name="types" select="key('type', tl:*[1]/@name)[generate-id(..)=$parent]"/></xsl:call-template>
   </xsl:template>
 
   <xsl:template match="tl:builtin-predicate[@name='topic-name'
                                             or @name='occurrence'][tl:*[1][local-name(.)!='variable']][tl:*[2][local-name(.) = 'variable']]">
-    <xsl:variable name="parent" select=".."/>
-    <xsl:call-template name="enhance"><xsl:with-param name="types" select="key('type', tl:*[2]/@name)[..=$parent]"/></xsl:call-template>
+    <xsl:variable name="parent" select="generate-id(..)"/>
+    <xsl:call-template name="enhance"><xsl:with-param name="types" select="key('type', tl:*[2]/@name)[generate-id(..)=$parent]"/></xsl:call-template>
   </xsl:template>
 
   <xsl:template match="tl:builtin-predicate[@name='type'][tl:*[1][local-name(.) = 'variable']][tl:*[2][local-name(.) != 'variable']]">
