@@ -37,8 +37,8 @@
 
   <xsl:template match="tl:builtin-predicate[@name='scope']">
     <!--** Merges 2 .. n scope predicates about the same scoped statement into one scope predicate -->
-    <xsl:variable name="parent" select=".."/>
-    <xsl:variable name="scope" select="key('scopes', .)[..=$parent]"/>
+    <xsl:variable name="parent" select="generate-id(..)"/>
+    <xsl:variable name="scope" select="key('scopes', .)[generate-id(..)=$parent]"/>
     <xsl:choose>
       <!--@ When we have more than one scope predicate about the same scoped statment -->
       <xsl:when test="count($scope) > 1">
