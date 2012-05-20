@@ -46,6 +46,12 @@ _PATH = None
 _NOT_FOUND = object()
 _STYLESHEETS = None
 
+_DEFAULT_TRANSFORMERS = ('query-c14n', 
+                         'annotate-predicates', 
+                         'remove-redundant-predicates', 
+                         'annotate-costs', 
+                         'reorder-predicates') #TODO
+
 def _init():
     global _PATH, _STYLESHEETS
     _PATH = os.path.split(__file__)[0]
@@ -75,6 +81,30 @@ def get_transformator(name):
         t = _compile(name)
         _STYLESHEETS[name] = t
     return t
+
+def apply_transformations(doc, names):
+    """\
+    Applies a sequence of transformations against the provided `doc` and
+    returns the result.
+    
+    `doc` 
+        An Etree
+    `names`
+        An iterable of transformator names (c.f. `get_transformator_names()`)
+        to apply (in the provided order).
+    """
+    result = None
+    for name in names:
+        result = get_transformator(name)(result or doc)
+    return result
+
+
+def apply_default_transformations(doc):
+    """\
+    Applies a sequence of default transformations against the provided `doc` 
+    and returns the result.
+    """
+    return apply_transformations(doc, _DEFAULT_TRANSFORMERS)
 
 _init()
 
