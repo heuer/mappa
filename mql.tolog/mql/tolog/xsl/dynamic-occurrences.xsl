@@ -27,15 +27,6 @@
 
   <xsl:output method="xml" encoding="utf-8" standalone="yes"/>
 
-  <xsl:key name="variables"
-           match="tl:select/tl:variable
-                  |tl:insert/tl:fragment/tl:variable
-                  |tl:update/tl:function/tl:variable
-                  |tl:delete/tl:variable
-                  |tl:delete/tl:function/tl:variable
-                  |tl:merge/tl:variable"
-           use="@name"/>
-
   <xsl:key name="stmts1" 
             match="tl:builtin-predicate[@name='occurrence'
                                         or @name='topic-name'
@@ -69,13 +60,12 @@
   <xsl:template match="tl:builtin-predicate[@name='occurrence'][tl:*[2][local-name(.)='variable']]">
     <xsl:choose>
       <xsl:when test="$allowed">
-        <xsl:variable name="parent" select=".."/>
+        <xsl:variable name="parent" select="generate-id(..)"/>
         <xsl:variable name="key" select="tl:*[2]/@name"/>
-        <xsl:variable name="types" select="key('types', $key)[..=$parent]"/>
-        <xsl:variable name="values" select="key('values', $key)[..=$parent]"/>
-        <xsl:variable name="variables" select="key('variables', $key)"/>
+        <xsl:variable name="types" select="key('types', $key)[generate-id(..)=$parent]"/>
+        <xsl:variable name="values" select="key('values', $key)[generate-id(..)=$parent]"/>
         <xsl:choose>
-          <xsl:when test="count($types) = 1 and count($values) = 1 and count($variables) = 0">
+          <xsl:when test="count($types) = 1 and count($values) = 1">
             <dynamic-predicate>
               <name>
                 <xsl:copy-of select="$types/tl:*[2]"/>
@@ -97,13 +87,12 @@
                                             or @name='value'][tl:*[1][local-name(.)='variable']]">
     <xsl:choose>
       <xsl:when test="$allowed">
-        <xsl:variable name="parent" select=".."/>
+        <xsl:variable name="parent" select="generate-id(..)"/>
         <xsl:variable name="key" select="tl:*[1]/@name"/>
-        <xsl:variable name="stmts" select="key('stmts1', $key)[..=$parent]|key('stmts2', $key)[..=$parent]"/>
-        <xsl:variable name="types" select="key('types', $key)[..=$parent]"/>
-        <xsl:variable name="values" select="key('values', $key)[..=$parent]"/>
-        <xsl:variable name="variables" select="key('variables', $key)"/>
-        <xsl:if test="count($stmts) > 1 or count($types) + count($values) + count($variables) != 2">
+        <xsl:variable name="stmts" select="key('stmts1', $key)[generate-id(..)=$parent]|key('stmts2', $key)[generate-id(..)=$parent]"/>
+        <xsl:variable name="types" select="key('types', $key)[generate-id(..)=$parent]"/>
+        <xsl:variable name="values" select="key('values', $key)[generate-id(..)=$parent]"/>
+        <xsl:if test="count($stmts) > 1 or count($types) + count($values) != 2">
           <xsl:copy-of select="."/>
         </xsl:if>
       </xsl:when>
