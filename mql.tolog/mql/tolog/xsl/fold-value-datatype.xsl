@@ -46,8 +46,8 @@
     <!--** Matches all value(-like) predicates which contain a variable 
            at the first position (the object part) 
     -->
-    <xsl:variable name="parent" select=".."/>
-    <xsl:variable name="datatype-pred" select="key('datatypes', tl:*[1]/@name)[..=$parent]"/>
+    <xsl:variable name="parent" select="generate-id(..)"/>
+    <xsl:variable name="datatype-pred" select="key('datatypes', tl:*[1]/@name)[generate-id(..)=$parent]"/>
     <xsl:choose>
       <xsl:when test="count($datatype-pred) = 1">
         <!--@ Check if a corresponding datatype predicate exists -->
@@ -70,8 +70,8 @@
 
   <xsl:template match="tl:builtin-predicate[@name='datatype'][tl:*[1][local-name(.)='variable']]">
     <!--** Matches all datatype predicates which start with a variable -->
-    <xsl:variable name="parent" select=".."/>
-    <xsl:if test="not(key('values', tl:*[1]/@name)[..=$parent])">
+    <xsl:variable name="parent" select="generate-id(..)"/>
+    <xsl:if test="not(key('values', tl:*[1]/@name)[generate-id(..)=$parent])">
       <!--@ If this predicate has been folded into a literal(-like) predicate, omit it, 
             otherwise it is kept unchanged.
       -->
