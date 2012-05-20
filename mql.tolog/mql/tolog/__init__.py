@@ -32,7 +32,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 """\
-
+Provides functions to parse tolog queries.
 
 :author:       Lars Heuer (heuer[at]semagia.com)
 :organization: Semagia - http://www.semagia.com/
@@ -41,6 +41,8 @@
 from tm import plyutils
 
 def parse(query, handler, tolog_plus=False):
+    if hasattr(query, 'read'): #TODO: Use tm.mio.Source
+        query = query.read()
     from mql.tolog import lexer as lexer_mod, parser as parser_mod
     parser = plyutils.make_parser(parser_mod)
     parser_mod.initialize_parser(parser, handler, tolog_plus)
