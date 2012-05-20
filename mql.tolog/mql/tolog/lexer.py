@@ -70,6 +70,7 @@ _DIRECTIVES = {
     '%prefix': 'DIR_PREFIX',
     '%base': 'DIR_BASE',
     '%import': 'DIR_IMPORT',
+    '%version': 'DIR_VERSION'
 }
 
 reserved = {
