@@ -125,7 +125,7 @@
               <xsl:attribute name="occurrence"><xsl:text>true</xsl:text></xsl:attribute>
             </xsl:if>
             <xsl:if test="$is_name">
-              <xsl:attribute name="topic-name"><xsl:text>true</xsl:text></xsl:attribute>
+              <xsl:attribute name="name"><xsl:text>true</xsl:text></xsl:attribute>
             </xsl:if>
             <xsl:if test="$is_variant">
               <xsl:attribute name="variant"><xsl:text>true</xsl:text></xsl:attribute>
