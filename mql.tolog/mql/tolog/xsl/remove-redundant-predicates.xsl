@@ -56,17 +56,17 @@
   </xsl:template>
 
   <xsl:template match="tl:builtin-predicate[@name='topic'][tl:*[1][local-name(.)='variable']]">
-    <xsl:variable name="parent" select=".."/>
+    <xsl:variable name="parent" select="generate-id(..)"/>
     <xsl:variable name="key" select="tl:*[1]/@name"/>
-    <xsl:variable name="want-it" select="count(key('topic', $key)[..=$parent]|key('topic2', $key)[..=$parent])=0"/>
+    <xsl:variable name="want-it" select="count(key('topic', $key)[generate-id(..)=$parent]|key('topic2', $key)[generate-id(..)=$parent]) = 0"/>
     <xsl:if test="$want-it">
         <xsl:copy-of select="."/>
     </xsl:if>
   </xsl:template>
 
   <xsl:template match="tl:builtin-predicate[@name='association'][tl:*[1][local-name(.)='variable']]">
-    <xsl:variable name="parent" select=".."/>
-    <xsl:if test="count(key(@name, tl:*[1]/@name)[..=$parent]) = 0">
+    <xsl:variable name="parent" select="generate-id(..)"/>
+    <xsl:if test="count(key(@name, tl:*[1]/@name)[generate-id(..)=$parent]) = 0">
         <xsl:copy-of select="."/>
     </xsl:if>
   </xsl:template>
