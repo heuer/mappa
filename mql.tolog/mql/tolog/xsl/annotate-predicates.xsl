@@ -20,7 +20,7 @@
       <builtin-predicate name="asssociation">
         [...]
       </builtin-predicate>
-      <builtin-predicate name="type" association="true">
+      <builtin-predicate name="type" hint="association-type">
         [...]
       </builtin-predicate>
 
@@ -34,7 +34,7 @@
   * reifies
   * resource
 
-  Copyright (c) 2010 - 2011, Semagia - Lars Heuer <http://www.semagia.com/>
+  Copyright (c) 2010 - 2012, Semagia - Lars Heuer <http://www.semagia.com/>
   All rights reserved.
   
   License: BSD
@@ -112,25 +112,29 @@
     </xsl:variable>
     <builtin-predicate>
       <xsl:copy-of select="@*"/>
-      <xsl:attribute name="name"><xsl:value-of select="$name"/></xsl:attribute>
-      <xsl:if test="$name = @name">
-        <!-- Specialization isn't possible, annotate the predicate -->
-        <xsl:if test="$is_association">
-          <xsl:attribute name="association"><xsl:text>true</xsl:text></xsl:attribute>
-        </xsl:if>
-        <xsl:if test="$is_role">
-          <xsl:attribute name="role"><xsl:text>true</xsl:text></xsl:attribute>
-        </xsl:if>
-        <xsl:if test="$is_occurrence">
-          <xsl:attribute name="occurrence"><xsl:text>true</xsl:text></xsl:attribute>
-        </xsl:if>
-        <xsl:if test="$is_name">
-          <xsl:attribute name="topic-name"><xsl:text>true</xsl:text></xsl:attribute>
-        </xsl:if>
-        <xsl:if test="$is_variant">
-          <xsl:attribute name="variant"><xsl:text>true</xsl:text></xsl:attribute>
-        </xsl:if>
-      </xsl:if>
+      <xsl:choose>
+          <xsl:when test="$name = @name">
+            <!-- Specialization isn't possible, annotate the predicate -->
+            <xsl:if test="$is_association">
+              <xsl:attribute name="association"><xsl:text>true</xsl:text></xsl:attribute>
+            </xsl:if>
+            <xsl:if test="$is_role">
+              <xsl:attribute name="role"><xsl:text>true</xsl:text></xsl:attribute>
+            </xsl:if>
+            <xsl:if test="$is_occurrence">
+              <xsl:attribute name="occurrence"><xsl:text>true</xsl:text></xsl:attribute>
+            </xsl:if>
+            <xsl:if test="$is_name">
+              <xsl:attribute name="topic-name"><xsl:text>true</xsl:text></xsl:attribute>
+            </xsl:if>
+            <xsl:if test="$is_variant">
+              <xsl:attribute name="variant"><xsl:text>true</xsl:text></xsl:attribute>
+            </xsl:if>
+          </xsl:when>
+          <xsl:otherwise>
+              <xsl:attribute name="hint"><xsl:value-of select="$name"/></xsl:attribute>
+          </xsl:otherwise>
+        </xsl:choose>
       <xsl:copy-of select="*"/>
     </builtin-predicate>
   </xsl:template>
