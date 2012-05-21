@@ -46,6 +46,13 @@
             match="tl:builtin-predicate[@name='value'][tl:*[1][local-name(.) = 'variable']]"
             use="tl:*[1]/@name"/>
 
+  <xsl:key name="variables"
+           match="tl:select/tl:variable
+                  |tl:insert/tl:fragment/tl:variable
+                  |tl:update/tl:function/tl:variable
+                  |tl:delete/tl:variable
+                  |tl:merge/tl:variable"
+           use="@name"/>
 
 
   <!-- Indicates if this optimization is allowed (only if a where clause is available) -->
@@ -64,8 +71,9 @@
         <xsl:variable name="key" select="tl:*[2]/@name"/>
         <xsl:variable name="types" select="key('types', $key)[generate-id(..)=$parent]"/>
         <xsl:variable name="values" select="key('values', $key)[generate-id(..)=$parent]"/>
+        <xsl:variable name="variables" select="key('variables', $key)"/>
         <xsl:choose>
-          <xsl:when test="count($types) = 1 and count($values) = 1">
+          <xsl:when test="count($types) = 1 and count($values) = 1 and count($variables) = 0">
             <dynamic-predicate>
               <name>
                 <xsl:copy-of select="$types/tl:*[2]"/>
@@ -92,7 +100,8 @@
         <xsl:variable name="stmts" select="key('stmts1', $key)[generate-id(..)=$parent]|key('stmts2', $key)[generate-id(..)=$parent]"/>
         <xsl:variable name="types" select="key('types', $key)[generate-id(..)=$parent]"/>
         <xsl:variable name="values" select="key('values', $key)[generate-id(..)=$parent]"/>
-        <xsl:if test="count($stmts) > 1 or count($types) + count($values) != 2">
+        <xsl:variable name="variables" select="key('variables', $key)"/>
+        <xsl:if test="count($stmts) > 1 or count($types) + count($values) + count($variables) != 2">
           <xsl:copy-of select="."/>
         </xsl:if>
       </xsl:when>
