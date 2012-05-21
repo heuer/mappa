@@ -58,6 +58,10 @@ _BUILTIN_PREDICATES = _INFIX_PREDICATES + (
     'source-locator', 
     )
 
+_BUILTIN_PREDICATES_PLUS = _BUILTIN_PREDICATES + (
+    'literal',
+)
+
 _STR_FUNCTIONS = (
     'concat', 'contains', 'ends-with', 
     'index-of', 'last-index-of', 'length', 
@@ -100,11 +104,11 @@ def is_infix_predicate(name):
     """
     return name in _INFIX_PREDICATES
 
-def is_builtin_predicate(name):
+def is_builtin_predicate(name, tplus=False):
     """\
     Returns if ``name`` is a built-in predicate name
     """
-    return name in _BUILTIN_PREDICATES
+    return name in _BUILTIN_PREDICATES if not tplus else name in _BUILTIN_PREDICATES_PLUS
 
 def is_builtin_function(name, iri=None):
     """\
