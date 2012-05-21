@@ -62,6 +62,8 @@ def p_noop(p): # Handles all grammar rules where the result is not of interest
                     | prolog head statement
                     | prolog statement
     prolog          :
+                    | version_directive
+                    | version_directive base_directive
                     | base_directive
     head            : rule
                     | directive
@@ -260,6 +262,13 @@ def p_import_directive(p):
         ident, iri = p[2], p[3]
     _handle_prefix(p.parser, ident, iri, consts.MODULE)
     #TODO: Import 
+
+
+def p_version_directive(p):
+    """\
+    version_directive : DIR_VERSION DECIMAL
+    """
+    p.parser.tolog_plus = True #TODO: Handle version indicator
 
 def p_base_directive(p):
     """\
@@ -743,6 +752,10 @@ def _arguments_to_events(handler, args, stringtoiri=False):
 if __name__ == '__main__':
     test_input = (
 """\
+%version 1.0
+%prefix ident <http://www.semagia.com/x>
+""",
+"""\
 base-locator($LOC)?
 """,
 """\
@@ -983,6 +996,7 @@ import "http://blablub.com" as b
         handler.start()
         parser.parse(data, lexer=plyutils.make_lexer(lexer_mod))
         handler.end()
+
     for cnt, data in enumerate(test_input):
         print(cnt)
         print(data)
