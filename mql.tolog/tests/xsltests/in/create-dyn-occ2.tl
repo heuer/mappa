@@ -1,1 +1,1 @@
-occurrence($A, $O), type($O, homepage), value($O, "foo")?
+select $A where occurrence($A, $O), type($O, homepage), value($O, "foo")?
