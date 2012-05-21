@@ -70,7 +70,7 @@ _DIRECTIVES = {
     '%prefix': 'DIR_PREFIX',
     '%base': 'DIR_BASE',
     '%import': 'DIR_IMPORT',
-    '%version': 'DIR_VERSION'
+    '%version': 'DIR_VERSION',
 }
 
 reserved = {
@@ -154,6 +154,7 @@ t_PIPE      = r'\|'
 t_DIR_PREFIX = r'%prefix'
 t_DIR_BASE = r'%base'
 t_DIR_IMPORT = r'%import'
+t_DIR_VERSION = r'%version'
 
 states = (
    ('tm','exclusive'),
