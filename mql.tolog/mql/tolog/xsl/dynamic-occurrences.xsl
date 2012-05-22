@@ -56,7 +56,7 @@
 
 
   <!-- Indicates if this optimization is allowed (only if a where clause is available) -->
-  <xsl:variable name="allowed" select="count(/tl:query/tl:*/tl:where)=1"/>
+  <xsl:variable name="allowed" select="count(/tl:tolog/tl:*/tl:where)=1"/>
 
   <xsl:template match="@*|node()">
     <xsl:copy>

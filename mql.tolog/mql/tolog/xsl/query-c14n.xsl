@@ -22,7 +22,7 @@
     </xsl:copy>
   </xsl:template>
 
-  <xsl:template match="tl:query[not(tl:select)]
+  <xsl:template match="tl:tolog[not(tl:select)]
                                [not(tl:insert)]
                                [not(tl:merge)]
                                [not(tl:update)]
