@@ -39,6 +39,7 @@ tolog handler implementations.
 :license:      BSD License
 """
 import logging
+import xml.sax.handler as sax_handler
 from . import consts
 
 class ParserHandler(object):
@@ -49,7 +50,7 @@ class ParserHandler(object):
 
 class NoopParserHandler(ParserHandler):
     """\
-    A TologHandler which does nothing.
+    A ParserHandler which does nothing.
     """
     def __getattr__(self, name):
         def noop(*args): pass
@@ -57,13 +58,13 @@ class NoopParserHandler(ParserHandler):
 
 class LoggingParserHandler(ParserHandler):
     """\
-    A TologHandler which loggs all events and delegates the events to
+    A ParserHandler which loggs all events and delegates the events to
     an underlying TologHandler instance.
     """
     def __init__(self, handler, level='info'):
         """\
         `handler`
-            The TologHandler instance which should receive the events.
+            The ParserHandler instance which should receive the events.
         `level`
             The logging level (default: 'info')
         """
@@ -116,7 +117,7 @@ class XMLParserHandler(ParserHandler):
         writer = self._writer
         writer.startDocument()
         writer.startPrefixMapping(None, _NS_TL)
-        writer.startElement('query')
+        writer.startElement('tolog')
 
     def end(self):
         writer = self._writer
@@ -187,4 +188,3 @@ class XMLParserHandler(ParserHandler):
                                                  'kind': _PREFIXKIND2NAME[kind] # KeyError is intentional
                                                 }
                                   )
-
