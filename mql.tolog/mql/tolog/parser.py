@@ -488,7 +488,7 @@ def p_clause_predcause(p):
     """
     (kind, name), args = p[1]
     handler = _handler(p)
-    if kind == consts.IDENT and is_builtin_predicate(name):
+    if kind == consts.IDENT and is_builtin_predicate(name, p.parser.tolog_plus):
         handler.startBuiltinPredicate(name)
         _arguments_to_events(handler, args, stringtoiri=name in _IRI_PREDICATES)
         handler.endBuiltinPredicate()
@@ -982,6 +982,25 @@ x:x($x), y:y($y), z:z($z), a:a($a), [x:x]($x), [y:y]($y), [z:z]($z), [a:a]($a)
 '''
 %import a <http://www.semagia.com/>
 import "http://blablub.com" as b
+''',
+'''
+%prefix xsd <http://www.w3.org/2001/XMLSchema#>
+
+literal($o, 123), 
+literal($v, <http://www.semagia.com>), 
+literal($o2, 12.34), 
+literal($n, "foo"),
+literal($o3, "foo", xsd:int)?
+''',
+'''
+%version 1.2
+%prefix xsd <http://www.w3.org/2001/XMLSchema#>
+
+literal($o, 123), 
+literal($v, <http://www.semagia.com>), 
+literal($o2, 12.34), 
+literal($n, "foo"),
+literal($o3, "foo", xsd:int)?
 '''
     )
     from ply import yacc
