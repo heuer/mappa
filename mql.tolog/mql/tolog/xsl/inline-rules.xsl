@@ -20,9 +20,9 @@
   <xsl:output method="xml" encoding="utf-8" standalone="yes"/>
 
   <!-- Index for all rules which have no predicate invocations -->
-  <xsl:key name="rules" 
-            match="tl:rule[count(tl:body//tl:predicate) = 0]"
-            use="@name"/>
+  <xsl:key name="rules"
+           match="tl:rule[count(tl:body//tl:predicate) = 0]"
+           use="@name"/>
 
   <!-- Indicates the query has a where clause, otherwise this stylesheet would 
        introduce bindings the user hasn't asked for -->
@@ -46,31 +46,31 @@
       <xsl:when test="$allowed and $rule">
         <xsl:variable name="pred-args" select="tl:*[local-name(.)!='name']"/>
         <xsl:variable name="rule2arg">
-            <xsl:for-each select="$rule/tl:variable">
-                <xsl:variable name="pos" select="position()"/>
-              <entry key="{@name}"><xsl:copy-of select="$pred-args[$pos]"/></entry>
-            </xsl:for-each>
+          <xsl:for-each select="$rule/tl:variable">
+            <xsl:variable name="pos" select="position()"/>
+            <entry key="{@name}"><xsl:copy-of select="$pred-args[$pos]"/></entry>
+          </xsl:for-each>
         </xsl:variable>
         <xsl:apply-templates select="$rule/tl:body/tl:*" mode="variable-replacement">
-      <xsl:with-param name="map" select="$rule2arg"/>
-    </xsl:apply-templates>
+          <xsl:with-param name="map" select="$rule2arg"/>
+        </xsl:apply-templates>
       </xsl:when>
       <xsl:otherwise><xsl:copy-of select="."/></xsl:otherwise>
     </xsl:choose>
   </xsl:template>
 
   <xsl:template match="@*|node()" mode="variable-replacement">
-  <xsl:param name="map"/>
+    <xsl:param name="map"/>
     <xsl:copy>
       <xsl:apply-templates select="@*|node()" mode="variable-replacement">
         <xsl:with-param name="map" select="$map"/>
       </xsl:apply-templates>
     </xsl:copy>
   </xsl:template>
-  
+
   <xsl:template match="tl:variable" mode="variable-replacement">
     <xsl:param name="map"/>
-    <xsl:variable name="arg" select="$map/tl:entry[@key=current()/@name]/*"/>
+    <xsl:variable name="arg" select="$map/*[@key=current()/@name]/*"/>
     <xsl:choose>
       <xsl:when test="$arg"><xsl:copy-of select="$arg"/></xsl:when>
       <xsl:otherwise><variable name="{concat('__inlined__', @name)}"/></xsl:otherwise>
