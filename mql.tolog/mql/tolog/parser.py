@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2007 - 2011 -- Lars Heuer - Semagia <http://www.semagia.com/>.
+# Copyright (c) 2007 - 2012 -- Lars Heuer - Semagia <http://www.semagia.com/>.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -488,7 +488,7 @@ def p_clause_predcause(p):
     """
     (kind, name), args = p[1]
     handler = _handler(p)
-    if kind == consts.IDENT and is_builtin_predicate(name, p.parser.tolog_plus):
+    if kind == consts.IDENT and is_builtin_predicate(name):
         handler.startBuiltinPredicate(name)
         _arguments_to_events(handler, args, stringtoiri=name in _IRI_PREDICATES)
         handler.endBuiltinPredicate()
@@ -653,8 +653,13 @@ def p_value_literal_iri(p):
 
 def p_datatype_iri(p):
     """\
-    datatype        : STRING
-                    | IRI
+    datatype        : IRI
+    """
+    p[0] = consts.IRI, p[1]
+
+def p_datatype_qname(p):
+    """\
+    datatype        : qname
     """
     p[0] = p[1]
 
@@ -764,10 +769,10 @@ base-locator("http://some.base.locator/somewhere")?
 """\
 base-locator(<http://some.base.locator/somewhere>)?
 """,
-#"""\
-#%prefix xsd <http://www.w3.org/2001/XMLSchema#>
-#base-locator("http://some.base.locator/somewhere"^^xsd:anyURI)?
-#""",
+"""\
+%prefix xsd <http://www.w3.org/2001/XMLSchema#>
+base-locator("http://some.base.locator/somewhere"^^xsd:anyURI)?
+""",
 """
 born-in(Entenhausen: city, $p: person)?
 """,
@@ -958,6 +963,7 @@ select $TYPE, $VALUE from
   { resource($OCC, $VALUE) | value($OCC, $VALUE) }?
 ''',
 '''
+%base <http://abc.com/>
 %prefix ex <http://psi.example.org/>
 
 [ex:/onto/homepage]($T, $V),
@@ -1001,6 +1007,15 @@ literal($v, <http://www.semagia.com>),
 literal($o2, 12.34), 
 literal($n, "foo"),
 literal($o3, "foo", xsd:int)?
+''',
+'''
+%prefix xsd <http://www.w3.org/2001/XMLSchema#>
+
+value($o, 123), 
+value($v, <http://www.semagia.com>), 
+value($o2, 12.34), 
+value($n, "foo"),
+value($o3, "foo"^^xsd:int)?
 '''
     )
     from ply import yacc
