@@ -653,8 +653,13 @@ def p_value_literal_iri(p):
 
 def p_datatype_iri(p):
     """\
-    datatype        : STRING
-                    | IRI
+    datatype        : IRI
+    """
+    p[0] = consts.IRI, p[1]
+
+def p_datatype_qname(p):
+    """\
+    datatype        : qname
     """
     p[0] = p[1]
 
@@ -764,10 +769,10 @@ base-locator("http://some.base.locator/somewhere")?
 """\
 base-locator(<http://some.base.locator/somewhere>)?
 """,
-#"""\
-#%prefix xsd <http://www.w3.org/2001/XMLSchema#>
-#base-locator("http://some.base.locator/somewhere"^^xsd:anyURI)?
-#""",
+"""\
+%prefix xsd <http://www.w3.org/2001/XMLSchema#>
+base-locator("http://some.base.locator/somewhere"^^xsd:anyURI)?
+""",
 """
 born-in(Entenhausen: city, $p: person)?
 """,
@@ -958,6 +963,7 @@ select $TYPE, $VALUE from
   { resource($OCC, $VALUE) | value($OCC, $VALUE) }?
 ''',
 '''
+%base <http://abc.com/>
 %prefix ex <http://psi.example.org/>
 
 [ex:/onto/homepage]($T, $V),
@@ -1001,6 +1007,15 @@ literal($v, <http://www.semagia.com>),
 literal($o2, 12.34), 
 literal($n, "foo"),
 literal($o3, "foo", xsd:int)?
+''',
+'''
+%prefix xsd <http://www.w3.org/2001/XMLSchema#>
+
+value($o, 123), 
+value($v, <http://www.semagia.com>), 
+value($o2, 12.34), 
+value($n, "foo"),
+value($o3, "foo"^^xsd:int)?
 '''
     )
     from ply import yacc
