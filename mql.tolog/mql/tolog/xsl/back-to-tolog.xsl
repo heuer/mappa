@@ -254,7 +254,11 @@
   </xsl:template>
 
   <xsl:template match="tl:literal">
-    <xsl:value-of select="concat('&quot;', @value, '&quot;^^', '&lt;', @datatype, '&gt;')"/>
+    <xsl:value-of select="concat('&quot;', @value, '&quot;^^')"/>
+    <xsl:choose>
+        <xsl:when test="@datatype-iri"><xsl:value-of select="concat('&lt;', @datatype-iri, '&gt;')"/></xsl:when>
+        <xsl:otherwise><xsl:value-of select="concat(@datatype-prefix, ':', @datatype-localpart)"/></xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
 
   <xsl:template match="tl:subject-locator">
