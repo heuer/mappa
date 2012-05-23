@@ -29,13 +29,17 @@
                                [not(tl:delete)]">
     <!--** Converts a clause query (a query without a select statement) into a select query. -->
     <query>
+      <xsl:apply-templates select="tl:base"/>
+      <xsl:apply-templates select="tl:namespace"/>
       <xsl:apply-templates select="tl:rule"/>
       <select>
-        <xsl:for-each select="descendant::tl:*[local-name(.) != 'rule']/tl:variable[not(@name=preceding::tl:variable/@name)]">
+        <xsl:for-each select="descendant::tl:*[local-name(.) != 'rule'][not(ancestor::tl:rule)]/tl:variable[not(@name=preceding::tl:variable/@name)]">
           <xsl:copy-of select="."/>
         </xsl:for-each>
         <where>
-          <xsl:apply-templates select="tl:*[local-name(.) != 'rule']"/>
+          <xsl:apply-templates select="tl:*[local-name(.) != 'base']
+                                           [local-name(.) != 'namespace']
+                                           [local-name(.) != 'rule']"/>
         </where>
       </select>
     </query>
