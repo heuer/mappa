@@ -33,7 +33,7 @@
       <xsl:apply-templates select="tl:namespace"/>
       <xsl:apply-templates select="tl:rule"/>
       <select>
-        <xsl:for-each select="descendant::tl:*[local-name(.) != 'rule'][not(ancestor::tl:rule)]/tl:variable[not(@name=preceding::tl:variable/@name)]">
+        <xsl:for-each select="descendant::tl:*[not(ancestor-or-self::tl:rule)]/tl:variable[not(@name=preceding::tl:variable/@name)]">
           <xsl:copy-of select="."/>
         </xsl:for-each>
         <where>
