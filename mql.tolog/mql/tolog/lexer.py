@@ -54,10 +54,10 @@ _IDENT_START = ur'[a-zA-Z_]|[\u00C0-\u00D6]|[\u00D8-\u00F6]' + \
                 ur'|[\u2070-\u218F]|[\u2C00-\u2FEF]' + \
                 ur'|[\u3001-\uD7FF]|[\uF900-\uFDCF]|[\uFDF0-\uFFFD]'
 
-_IDENT_PART = ur'%s|[\.\-0-9]|[\u00B7]|[\u0300-\u036F]|[\u203F-\u2040]' % _IDENT_START
+_IDENT_PART = ur'%s|[\-0-9]|[\u00B7]|[\u0300-\u036F]|[\u203F-\u2040]' % _IDENT_START
 
 # Identifier
-_IDENT = ur'(%s)+(%s)*' % (_IDENT_START, _IDENT_PART)
+_IDENT = ur'(%s)+(\.*(%s))*' % (_IDENT_START, _IDENT_PART)
 
 _DATE = r'\-?(000[1-9]|00[1-9][0-9]|0[1-9][0-9][0-9]|[1-9][0-9][0-9][0-9]+)\-(0[1-9]|1[0-2])\-(0[1-9]|1[0-9]|2[0-9]|3[0-1])'
 # Timezone
