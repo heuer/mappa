@@ -53,7 +53,7 @@ class NoopParserHandler(ParserHandler):
     A ParserHandler which does nothing.
     """
     def __getattr__(self, name):
-        def noop(*args): pass
+        def noop(*args, **kw): pass
         return noop
 
 class LoggingParserHandler(ParserHandler):
@@ -61,21 +61,28 @@ class LoggingParserHandler(ParserHandler):
     A ParserHandler which loggs all events and delegates the events to
     an underlying TologHandler instance.
     """
-    def __init__(self, handler, level='info'):
+    def __init__(self, handler, level=logging.INFO):
         """\
         `handler`
             The ParserHandler instance which should receive the events.
         `level`
-            The logging level (default: 'info')
+            The logging level (default: logging.INFO)
         """
         self._handler = handler
+        self._logging_function = None
         self.level = level
 
+    def _set_level(self, level):
+        self._level = level
+        self._logging_function = getattr(logging, logging.getLevelName(level).lower())
+
     def __getattr__(self, name):
-        def logme(*args):
-            getattr(logging, self.level)('%s%r' % (name, args))
-            getattr(self._handler, name)(*args)
+        def logme(*args, **kw):
+            self._logging_function('%s %r %r' % (name, args, kw))
+            getattr(self._handler, name)(*args, **kw)
         return logme
+
+    level = property(lambda self: self._level, _set_level)
         
 
 _NS_TL = 'http://psi.semagia.com/tolog-xml/'
@@ -151,9 +158,14 @@ class XMLParserHandler(ParserHandler):
         self._writer.pop() # body
         self._writer.pop() # rule
 
-    def literal(self, lit):
-        value, datatype = lit
-        self._writer.emptyElement('literal', {'value': value, 'datatype': datatype})
+    def literal(self, value, datatype_iri=None, datatype_prefix=None, datatype_lp=None):
+        attrs = {'value': value}
+        if datatype_iri:
+            attrs['datatype-iri'] = datatype_iri
+        else:
+            attrs['datatype-prefix'] = datatype_prefix
+            attrs['datatype-localpart'] = datatype_lp
+        self._writer.emptyElement('literal', attrs)
 
     def curie(self, kind, prefix, lp):
         self._writer.emptyElement('curie', {'kind': _PREFIXKIND2NAME[kind], 'prefix': prefix, 'localpart': lp})
@@ -188,3 +200,4 @@ class XMLParserHandler(ParserHandler):
                                                  'kind': _PREFIXKIND2NAME[kind] # KeyError is intentional
                                                 }
                                   )
+
