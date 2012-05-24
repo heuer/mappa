@@ -39,8 +39,10 @@
 :license:      BSD License
 """
 
-_TOLOG_STRING_MODULE = 'http://psi.ontopia.net/tolog/string/'
-_TOLOG_EXPERIMENTAL_MODULE = 'http://psi.ontopia.net/tolog/experimental/'
+_MODULE_BASE = u'http://psi.ontopia.net/tolog/'
+_TOLOG_STRING_MODULE = _MODULE_BASE + u'string/'
+_TOLOG_EXPERIMENTAL_MODULE = _MODULE_BASE + u'experimental/'
+_TOLOG_NUMBER_MODULE = _MODULE_BASE + u'numbers/'
 
 _INFIX_PREDICATES = ('/=', '<', '<=', '=', '>', '>=')
 
@@ -65,7 +67,13 @@ _STR_FUNCTIONS = (
     'substring-before', 'translate',
     )
 
-_EXP_FUNCTIONS = (
+_NUM_FUNCTIONS = (
+    'value', 'format', 'absolute', 
+    'add', 'subtract', 'multiply',
+    'divide', 'min', 'max',
+)
+
+_EXPERIMENTAL_FUNCTIONS = (
     'in', 'gt', 'lt', 'gteq', 'lteq', 'name',
 )
 
@@ -85,7 +93,8 @@ _FUNCTIONS = _UPDATE_FUNCTIONS + _DELETE_FUNCTIONS
 _DEFAULT_MODULES = {
     None: _FUNCTIONS,
     _TOLOG_STRING_MODULE:  _STR_FUNCTIONS,
-    _TOLOG_EXPERIMENTAL_MODULE:  _EXP_FUNCTIONS,
+    _TOLOG_EXPERIMENTAL_MODULE:  _EXPERIMENTAL_FUNCTIONS,
+    _TOLOG_NUMBER_MODULE: _NUM_FUNCTIONS,
     }
 
 def is_function_module(iri):
