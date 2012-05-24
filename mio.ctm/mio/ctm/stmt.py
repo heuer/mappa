@@ -111,7 +111,7 @@ def make_statement(evt, arg=_UNDEFINED):
                     arguments.append('ctx.get_topic_reference((%d, u"%s"))' % (kind, val))
                 else:
                     arguments.append(u'(%r, %r)' % (kind, val))
-        res.append(', '.join(arguments))
+        res.append(u', '.join(arguments))
         res.append(u'])')
         res = u''.join(res)
     elif evt in ('itemIdentifier', 'subjectLocator', 'subjectIdentifier'):
