@@ -40,7 +40,7 @@ tolog parser.
 """
 from tm.mql import InvalidQueryError
 from mql.tolog import consts, lexer
-from mql.tolog.utils import is_builtin_predicate
+from mql.tolog.utils import is_builtin_predicate, is_function_module
 
 tokens = lexer.tokens # Just to get rid of unused import warnings
 
@@ -261,7 +261,8 @@ def p_import_directive(p):
     else:
         ident, iri = p[2], p[3]
     _handle_prefix(p.parser, ident, iri, consts.MODULE)
-    #TODO: Import 
+    if not is_function_module(iri):
+        pass #TODO: Import 
 
 
 def p_version_directive(p):
@@ -747,6 +748,14 @@ def _to_event(handler, arg, stringtoiri=False):
     if kind in (consts.QNAME, consts.CURIE):
         # name is a tuple: kind-of-namespace (MODULE, SID, IID, SLO), prefix, localpart
         method(*name)
+    elif kind == consts.LITERAL:
+        value, datatype = name
+        datatype_kind = datatype[0]
+        if datatype_kind == consts.IRI:
+            method(value, datatype_iri=datatype[1])
+        else:
+            _, prefix, lp = datatype[1]
+            method(value, datatype_prefix=prefix, datatype_lp=lp)
     else:
         method(name)
 
@@ -756,7 +765,6 @@ def _arguments_to_events(handler, args, stringtoiri=False):
 
 if __name__ == '__main__':
     test_input = (
-        
     )
     from ply import yacc
     from tm import plyutils
