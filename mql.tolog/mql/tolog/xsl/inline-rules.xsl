@@ -27,7 +27,7 @@
 
   <!-- Indicates the query has a where clause, otherwise this stylesheet would 
        introduce bindings the user hasn't asked for -->
-  <xsl:variable name="allowed" select="count(/tl:query/tl:*/tl:where)=1"/>
+  <xsl:variable name="allowed" select="count(/tl:tolog/tl:*/tl:where)=1"/>
 
   <xsl:template match="@*|node()">
     <xsl:copy>

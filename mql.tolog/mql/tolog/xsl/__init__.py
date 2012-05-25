@@ -47,6 +47,7 @@ _NOT_FOUND = object()
 _STYLESHEETS = None
 
 _DEFAULT_TRANSFORMERS = ('query-c14n', 
+                         'inline-rules', 
                          'annotate-predicates', 
                          'remove-redundant-predicates', 
                          'annotate-costs', 
@@ -54,7 +55,7 @@ _DEFAULT_TRANSFORMERS = ('query-c14n',
 
 def _init():
     global _PATH, _STYLESHEETS
-    _PATH = os.path.split(__file__)[0]
+    _PATH = os.path.dirname(__file__)
     _STYLESHEETS = dict((os.path.basename(f)[:-4], None) for f in glob.glob(_PATH + '/*.xsl'))
 
 def _compile(name):

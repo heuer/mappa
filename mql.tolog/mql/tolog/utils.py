@@ -39,8 +39,10 @@
 :license:      BSD License
 """
 
-_TOLOG_STRING_MODULE = 'http://psi.ontopia.net/tolog/string/'
-_TOLOG_EXPERIMENTAL_MODULE = 'http://psi.ontopia.net/tolog/experimental/'
+_MODULE_BASE = u'http://psi.ontopia.net/tolog/'
+_TOLOG_STRING_MODULE = _MODULE_BASE + u'string/'
+_TOLOG_EXPERIMENTAL_MODULE = _MODULE_BASE + u'experimental/'
+_TOLOG_NUMBER_MODULE = _MODULE_BASE + u'numbers/'
 
 _INFIX_PREDICATES = ('/=', '<', '<=', '=', '>', '>=')
 
@@ -58,10 +60,6 @@ _BUILTIN_PREDICATES = _INFIX_PREDICATES + (
     'source-locator', 
     )
 
-_BUILTIN_PREDICATES_PLUS = _BUILTIN_PREDICATES + (
-    'literal',
-)
-
 _STR_FUNCTIONS = (
     'concat', 'contains', 'ends-with', 
     'index-of', 'last-index-of', 'length', 
@@ -69,7 +67,13 @@ _STR_FUNCTIONS = (
     'substring-before', 'translate',
     )
 
-_EXP_FUNCTIONS = (
+_NUM_FUNCTIONS = (
+    'value', 'format', 'absolute', 
+    'add', 'subtract', 'multiply',
+    'divide', 'min', 'max',
+)
+
+_EXPERIMENTAL_FUNCTIONS = (
     'in', 'gt', 'lt', 'gteq', 'lteq', 'name',
 )
 
@@ -89,7 +93,8 @@ _FUNCTIONS = _UPDATE_FUNCTIONS + _DELETE_FUNCTIONS
 _DEFAULT_MODULES = {
     None: _FUNCTIONS,
     _TOLOG_STRING_MODULE:  _STR_FUNCTIONS,
-    _TOLOG_EXPERIMENTAL_MODULE:  _EXP_FUNCTIONS,
+    _TOLOG_EXPERIMENTAL_MODULE:  _EXPERIMENTAL_FUNCTIONS,
+    _TOLOG_NUMBER_MODULE: _NUM_FUNCTIONS,
     }
 
 def is_function_module(iri):
@@ -104,11 +109,11 @@ def is_infix_predicate(name):
     """
     return name in _INFIX_PREDICATES
 
-def is_builtin_predicate(name, tplus=False):
+def is_builtin_predicate(name):
     """\
     Returns if ``name`` is a built-in predicate name
     """
-    return name in _BUILTIN_PREDICATES if not tplus else name in _BUILTIN_PREDICATES_PLUS
+    return name in _BUILTIN_PREDICATES
 
 def is_builtin_function(name, iri=None):
     """\
