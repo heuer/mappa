@@ -271,13 +271,37 @@
     </xsl:call-template>
   </xsl:template>
 
-  <xsl:template match="tl:predicate[tl:name/tl:qname]">
+  <xsl:template match="tl:predicate[tl:name/tl:qname[@kind='module']]">
     <xsl:variable name="iri" select="key('namespaces', tl:name/tl:qname/@prefix)/@iri"/>
     <xsl:choose>
       <xsl:when test="$iri=$MOD_EXPERIMENTAL"><xsl:apply-templates select="." mode="module-experimental"/></xsl:when>
       <xsl:when test="$iri=$MOD_NUMBER"><xsl:apply-templates select="." mode="module-number"/></xsl:when>
       <xsl:otherwise><xsl:copy-of select="."/></xsl:otherwise>
     </xsl:choose>
+  </xsl:template>
+    
+  <!--
+        Module: Experimental
+  
+  -->
+  <xsl:template match="@*|node()" mode="module-experimental">
+    <xsl:call-template name="annotate">
+      <xsl:with-param name="cost" select="$WHOLE_TM_RESULT"/>
+    </xsl:call-template>
+  </xsl:template>
+
+  <xsl:template match="tl:predicate[tl:name/tl:qname[@localpart='in']]
+                                   [tl:*[1][local-name(.)='variable']]" mode="module-experimental">
+    <xsl:call-template name="annotate">
+      <xsl:with-param name="cost" select="$SMALL_RESULT"/>
+    </xsl:call-template>
+  </xsl:template>
+
+  <xsl:template match="tl:predicate[tl:name/tl:qname[@localpart='in']]
+                                   [tl:*[1][local-name(.)!='variable']]" mode="module-experimental">
+    <xsl:call-template name="annotate">
+        <xsl:with-param name="cost" select="$FILTER_RESULT"/>
+    </xsl:call-template>
   </xsl:template>
 
   <xsl:template match="tl:predicate[tl:name/tl:qname[@localpart='name']]
@@ -304,18 +328,24 @@
     </xsl:call-template>
   </xsl:template>
 
-  <xsl:template match="@*|node()" mode="module-experimental">
-      <xsl:call-template name="annotate">
-          <xsl:with-param name="cost" select="$WHOLE_TM_RESULT"/>
-      </xsl:call-template>
-  </xsl:template>
+    
+  <!--
+  
+        Module: Number
+        
+  -->
 
   <xsl:template match="@*|node()" mode="module-number">
     <xsl:call-template name="annotate">
       <xsl:with-param name="cost" select="$WHOLE_TM_RESULT"/>
     </xsl:call-template>
   </xsl:template>
+
+  <!--
     
+        Module: String
+          
+  -->
   <xsl:template match="@*|node()" mode="module-string">
     <xsl:call-template name="annotate">
       <xsl:with-param name="cost" select="$WHOLE_TM_RESULT"/>

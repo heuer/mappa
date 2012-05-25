@@ -51,7 +51,7 @@
     </query>
   </xsl:template>
 
-  <xsl:template match="tl:*[local-name(.) = 'predicate' or local-name(.) = 'dynamic-predicate'][tl:name/tl:qname]">
+  <xsl:template match="tl:predicate[tl:name/tl:qname[@kind='module']]">
     <xsl:variable name="iri" select="key('namespaces', tl:name/tl:qname/@prefix)/@iri"/>
       <xsl:choose>
         <xsl:when test="$iri=$MOD_EXPERIMENTAL"><xsl:apply-templates select="." mode="module-experimental"/></xsl:when>
@@ -59,7 +59,7 @@
       </xsl:choose>
   </xsl:template>
 
-  <xsl:template match="tl:*[tl:name/tl:qname[@localpart!='name']]" mode="module-experimental">
+  <xsl:template match="tl:predicate[tl:name/tl:qname[@localpart!='name']]" mode="module-experimental">
     <xsl:variable name="lp" select="tl:name/tl:qname/@localpart"/>
     <xsl:element name="infix-predicate">
       <xsl:attribute name="name">
