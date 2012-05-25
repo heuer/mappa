@@ -59,6 +59,16 @@ topicmap = attrgetter('tm')
 Returns the topic map of a Topic Maps construct.
 """
 
+topics = attrgetter('topics')
+"""\
+Returns the topics of a topic map.
+"""
+
+associations = attrgetter('associations')
+"""\
+Returns the associations of a topic map.
+"""
+
 parent = attrgetter('parent')
 """\
 Returns the parent of a Topic Maps construct
