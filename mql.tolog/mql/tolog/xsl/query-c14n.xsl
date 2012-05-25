@@ -16,6 +16,12 @@
 
   <xsl:output method="xml" encoding="utf-8" standalone="yes"/>
 
+  <xsl:variable name="MOD_EXPERIMENTAL" select="'http://psi.ontopia.net/tolog/experimental/'"/>
+  
+  <xsl:key name="namespaces"
+           match="tl:namespace[@kind='module']"
+           use="@identifier"/>
+
   <xsl:template match="@*|node()">
     <xsl:copy>
       <xsl:apply-templates select="@*|node()"/>
@@ -43,6 +49,32 @@
         </where>
       </select>
     </query>
+  </xsl:template>
+
+  <xsl:template match="tl:*[local-name(.) = 'predicate' or local-name(.) = 'dynamic-predicate'][tl:name/tl:qname]">
+    <xsl:variable name="iri" select="key('namespaces', tl:name/tl:qname/@prefix)/@iri"/>
+      <xsl:choose>
+        <xsl:when test="$iri=$MOD_EXPERIMENTAL"><xsl:apply-templates select="." mode="module-experimental"/></xsl:when>
+        <xsl:otherwise><xsl:copy-of select="."/><a b="{$iri}"/></xsl:otherwise>
+      </xsl:choose>
+  </xsl:template>
+
+  <xsl:template match="tl:*[tl:name/tl:qname[@localpart!='name']]" mode="module-experimental">
+    <xsl:variable name="lp" select="tl:name/tl:qname/@localpart"/>
+    <xsl:element name="infix-predicate">
+      <xsl:attribute name="name">
+        <xsl:choose>
+            <xsl:when test="$lp='gteq'"><xsl:text>ge</xsl:text></xsl:when>
+            <xsl:when test="$lp='lteq'"><xsl:text>le</xsl:text></xsl:when>
+            <xsl:otherwise><xsl:value-of select="tl:name/tl:qname/@localpart"/></xsl:otherwise>
+        </xsl:choose>
+      </xsl:attribute>
+      <xsl:apply-templates select="@*|node()[local-name(.) != 'name']"/>
+    </xsl:element>
+  </xsl:template>
+
+  <xsl:template match="@*|node()" mode="module-experimental">
+    <xsl:copy-of select="."/>
   </xsl:template>
 
   <xsl:template match="tl:builtin-predicate[@name='source-locator']">
