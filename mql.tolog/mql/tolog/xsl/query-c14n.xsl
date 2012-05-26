@@ -59,7 +59,11 @@
       </xsl:choose>
   </xsl:template>
 
-  <xsl:template match="tl:predicate[tl:name/tl:qname[@localpart!='name']]" mode="module-experimental">
+  <xsl:template match="tl:predicate[tl:name/tl:qname[@localpart='eq'
+                                                     or @localpart='gt'
+                                                     or @localpart='lt'
+                                                     or @localpart='gteq'
+                                                     or @localpart='lteq']]" mode="module-experimental">
     <xsl:variable name="lp" select="tl:name/tl:qname/@localpart"/>
     <xsl:element name="infix-predicate">
       <xsl:attribute name="name">
