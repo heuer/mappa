@@ -55,7 +55,7 @@
     <xsl:variable name="iri" select="key('namespaces', tl:name/tl:qname/@prefix)/@iri"/>
       <xsl:choose>
         <xsl:when test="$iri=$MOD_EXPERIMENTAL"><xsl:apply-templates select="." mode="module-experimental"/></xsl:when>
-        <xsl:otherwise><xsl:copy-of select="."/><a b="{$iri}"/></xsl:otherwise>
+        <xsl:otherwise><xsl:copy-of select="."/></xsl:otherwise>
       </xsl:choose>
   </xsl:template>
 
