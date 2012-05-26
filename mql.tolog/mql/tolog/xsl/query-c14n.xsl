@@ -59,8 +59,7 @@
       </xsl:choose>
   </xsl:template>
 
-  <xsl:template match="tl:predicate[tl:name/tl:qname[@localpart='eq'
-                                                     or @localpart='gt'
+  <xsl:template match="tl:predicate[tl:name/tl:qname[@localpart='gt'
                                                      or @localpart='lt'
                                                      or @localpart='gteq'
                                                      or @localpart='lteq']]" mode="module-experimental">
