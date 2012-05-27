@@ -105,7 +105,7 @@
         <xsl:when test="$rewrite_predicates and $is_association and not($is_role or $is_occurrence or $is_name or $is_variant)"><xsl:value-of select="'association'"/></xsl:when>
         <xsl:when test="$rewrite_predicates and $is_role and not($is_association or $is_occurrence or $is_name or $is_variant)"><xsl:value-of select="'role'"/></xsl:when>
         <xsl:when test="$rewrite_predicates and $is_occurrence and not($is_association or $is_role or $is_name or $is_variant)"><xsl:value-of select="'occurrence'"/></xsl:when>
-        <xsl:when test="$rewrite_predicates and $is_name and not($is_association or $is_role or $is_occurrence or $is_variant)"><xsl:value-of select="'name'"/></xsl:when>
+        <xsl:when test="$rewrite_predicates and $is_name and not($is_association or $is_role or $is_occurrence or $is_variant)"><xsl:value-of select="'topic-name'"/></xsl:when>
         <xsl:when test="$rewrite_predicates and $is_variant and not($is_association or $is_role or $is_occurrence or $is_name)"><xsl:value-of select="'variant'"/></xsl:when>
         <xsl:otherwise><xsl:value-of select="''"/></xsl:otherwise>
       </xsl:choose>
@@ -125,7 +125,7 @@
               <xsl:attribute name="occurrence"><xsl:text>true</xsl:text></xsl:attribute>
             </xsl:if>
             <xsl:if test="$is_name">
-              <xsl:attribute name="name"><xsl:text>true</xsl:text></xsl:attribute>
+              <xsl:attribute name="topic-name"><xsl:text>true</xsl:text></xsl:attribute>
             </xsl:if>
             <xsl:if test="$is_variant">
               <xsl:attribute name="variant"><xsl:text>true</xsl:text></xsl:attribute>
