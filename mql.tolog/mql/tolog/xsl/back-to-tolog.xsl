@@ -148,7 +148,7 @@
     <xsl:text>)</xsl:text>
   </xsl:template>
     
-  <xsl:template match="tl:builtin-predicate[@hint or @association or @role or @occurrence or @topic-name or @variant]" mode="annotate">
+  <xsl:template match="tl:builtin-predicate[@hint]" mode="annotate">
     <xsl:if test="$render-hints">
       <xsl:choose>
           <xsl:when test="$tolog-plus">  # </xsl:when>
