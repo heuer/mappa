@@ -149,8 +149,7 @@
   <xsl:template match="tl:infix-predicate">
     <xsl:apply-templates select="tl:*[1]"/>
     <xsl:text> </xsl:text>
-    <xsl:if test="@name='ne' and not($tolog-plus)"><xsl:text>/=</xsl:text></xsl:if>
-    <xsl:if test="@name='ne' and $tolog-plus"><xsl:text>!=</xsl:text></xsl:if>
+    <xsl:if test="@name='ne'"><xsl:text>/=</xsl:text></xsl:if>
     <xsl:if test="@name='eq'"><xsl:text>=</xsl:text></xsl:if>
     <xsl:if test="@name='lt'"><xsl:text>&lt;</xsl:text></xsl:if>
     <xsl:if test="@name='gt'"><xsl:text>&gt;</xsl:text></xsl:if>
