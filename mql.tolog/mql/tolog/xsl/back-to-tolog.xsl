@@ -150,13 +150,9 @@
     
   <xsl:template match="tl:builtin-predicate[@hint]" mode="annotate">
     <xsl:if test="$render-hints">
-      <xsl:choose>
-          <xsl:when test="$tolog-plus">  # </xsl:when>
-          <xsl:otherwise>  /* </xsl:otherwise>
-      </xsl:choose>
+      <xsl:text>  /* </xsl:text>
       <xsl:value-of select="translate(@hint, ' ', ',')"/>
-      <xsl:if test="not($tolog-plus)"> */</xsl:if>
-      <xsl:text>&#xA;</xsl:text>
+      <xsl:text> */ </xsl:text>
     </xsl:if>
   </xsl:template>
 
