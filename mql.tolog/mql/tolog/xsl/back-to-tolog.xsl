@@ -10,7 +10,9 @@
 -->
 <xsl:stylesheet version="1.0"
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                xmlns:tl="http://psi.semagia.com/tolog-xml/">
+                xmlns:tl="http://psi.semagia.com/tolog-xml/"
+                xmlns:str="http://exslt.org/strings"
+                extension-element-prefixes="str">
 
   <xsl:output method="text"/>
 
@@ -150,8 +152,19 @@
     
   <xsl:template match="tl:builtin-predicate[@hint]" mode="annotate">
     <xsl:if test="$render-hints">
+      <xsl:variable name="kind" select="@name"/>
       <xsl:text>  /* </xsl:text>
-      <xsl:value-of select="translate(@hint, ' ', ',')"/>
+      <xsl:for-each select="str:split(@hint, ' ')">
+        <xsl:choose>
+            <xsl:when test="position() = last()"><xsl:text>and </xsl:text></xsl:when>
+            <xsl:when test="position() != 1"><xsl:text>, </xsl:text></xsl:when>
+        </xsl:choose>
+        <xsl:value-of select="."/>
+        <xsl:choose>
+            <xsl:when test="position() != last()"><xsl:text>- </xsl:text></xsl:when>
+            <xsl:otherwise><xsl:value-of select="concat('-', $kind)"/></xsl:otherwise>
+        </xsl:choose>
+      </xsl:for-each>
       <xsl:text> */ </xsl:text>
     </xsl:if>
   </xsl:template>
