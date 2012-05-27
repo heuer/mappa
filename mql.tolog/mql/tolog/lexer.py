@@ -131,7 +131,7 @@ tokens = tuple(reserved.values()) + tuple(_DIRECTIVES.values()) + (
 t_ignore = ' \t'
 
 t_EQ        = r'='
-t_NE        = r'(/|!)='
+t_NE        = r'/='
 t_LE        = r'<='
 t_LT        = r'<'
 t_GE        = r'>='
