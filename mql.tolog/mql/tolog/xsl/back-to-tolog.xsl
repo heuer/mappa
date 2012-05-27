@@ -15,6 +15,7 @@
   <xsl:output method="text"/>
 
   <xsl:variable name="tolog-plus" select="false()"/>
+  <xsl:variable name="render-hints" select="false()"/>
 
   <xsl:template match="*">
     <xsl:apply-templates select="tl:base"/>
@@ -135,6 +136,7 @@
       <xsl:with-param name="items" select="tl:*"/>
     </xsl:call-template>
     <xsl:text>)</xsl:text>
+    <xsl:apply-templates select="." mode="annotate"/>
   </xsl:template>
 
   <xsl:template match="tl:predicate|tl:dynamic-predicate">
@@ -144,6 +146,18 @@
       <xsl:with-param name="items" select="tl:*[local-name() != 'name']"/>
     </xsl:call-template>
     <xsl:text>)</xsl:text>
+  </xsl:template>
+    
+  <xsl:template match="tl:builtin-predicate[@hint or @association or @role or @occurrence or @topic-name or @variant]" mode="annotate">
+    <xsl:if test="$render-hints">
+      <xsl:choose>
+          <xsl:when test="$tolog-plus">  # </xsl:when>
+          <xsl:otherwise>  /* </xsl:otherwise>
+      </xsl:choose>
+      <xsl:value-of select="concat(@hint, ' ', @name)"/>
+      <xsl:if test="not($tolog-plus)"> */</xsl:if>
+      <xsl:text>&#xA;</xsl:text>
+    </xsl:if>
   </xsl:template>
 
   <xsl:template match="tl:infix-predicate">
