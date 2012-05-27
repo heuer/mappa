@@ -34,7 +34,7 @@
                                [not(tl:update)]
                                [not(tl:delete)]">
     <!--** Converts a clause query (a query without a select statement) into a select query. -->
-    <query>
+    <tolog>
       <xsl:apply-templates select="tl:base"/>
       <xsl:apply-templates select="tl:namespace"/>
       <xsl:apply-templates select="tl:rule"/>
@@ -48,7 +48,7 @@
                                            [local-name(.) != 'rule']"/>
         </where>
       </select>
-    </query>
+    </tolog>
   </xsl:template>
 
   <xsl:template match="tl:predicate[tl:name/tl:qname[@kind='module']]">
