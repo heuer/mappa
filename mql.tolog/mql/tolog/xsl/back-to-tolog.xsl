@@ -17,7 +17,7 @@
   <xsl:output method="text"/>
 
   <xsl:variable name="tolog-plus" select="false()"/>
-  <xsl:variable name="render-hints" select="true()"/>
+  <xsl:variable name="render-hints" select="false()"/>
 
   <xsl:template match="*">
     <xsl:apply-templates select="tl:base"/>
@@ -156,12 +156,12 @@
       <xsl:text>  /* </xsl:text>
       <xsl:for-each select="str:split(@hint, ' ')">
         <xsl:choose>
-            <xsl:when test="position() = last()"><xsl:text>and </xsl:text></xsl:when>
+            <xsl:when test="position() = last()"><xsl:text> and </xsl:text></xsl:when>
             <xsl:when test="position() != 1"><xsl:text>, </xsl:text></xsl:when>
         </xsl:choose>
         <xsl:value-of select="."/>
         <xsl:choose>
-            <xsl:when test="position() != last()"><xsl:text>- </xsl:text></xsl:when>
+            <xsl:when test="position() != last()"><xsl:text>-</xsl:text></xsl:when>
             <xsl:otherwise><xsl:value-of select="concat('-', $kind)"/></xsl:otherwise>
         </xsl:choose>
       </xsl:for-each>
