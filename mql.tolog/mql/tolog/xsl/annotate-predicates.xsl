@@ -44,7 +44,8 @@
                 xmlns:tl="http://psi.semagia.com/tolog-xml/"
                 xmlns="http://psi.semagia.com/tolog-xml/"
                 xmlns:exsl="http://exslt.org/common"
-                exclude-result-prefixes="tl exsl">
+                extension-element-prefixes="exsl"
+                exclude-result-prefixes="tl">
 
   <xsl:output method="xml" encoding="utf-8" standalone="yes"/>
 

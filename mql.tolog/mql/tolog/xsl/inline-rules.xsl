@@ -16,6 +16,7 @@
                 xmlns:tl="http://psi.semagia.com/tolog-xml/"
                 xmlns="http://psi.semagia.com/tolog-xml/"
                 xmlns:exsl="http://exslt.org/common"
+                extension-element-prefixes="exsl"
                 exclude-result-prefixes="tl">
 
   <xsl:output method="xml" encoding="utf-8" standalone="yes"/>

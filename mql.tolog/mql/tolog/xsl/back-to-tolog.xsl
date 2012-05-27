@@ -15,7 +15,7 @@
   <xsl:output method="text"/>
 
   <xsl:variable name="tolog-plus" select="false()"/>
-  <xsl:variable name="render-hints" select="false()"/>
+  <xsl:variable name="render-hints" select="true()"/>
 
   <xsl:template match="*">
     <xsl:apply-templates select="tl:base"/>
@@ -154,7 +154,7 @@
           <xsl:when test="$tolog-plus">  # </xsl:when>
           <xsl:otherwise>  /* </xsl:otherwise>
       </xsl:choose>
-      <xsl:value-of select="concat(@hint, ' ', @name)"/>
+      <xsl:value-of select="translate(@hint, ' ', ',')"/>
       <xsl:if test="not($tolog-plus)"> */</xsl:if>
       <xsl:text>&#xA;</xsl:text>
     </xsl:if>
