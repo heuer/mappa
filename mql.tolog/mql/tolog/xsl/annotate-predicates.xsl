@@ -43,10 +43,8 @@
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:tl="http://psi.semagia.com/tolog-xml/"
                 xmlns="http://psi.semagia.com/tolog-xml/"
-                exclude-result-prefixes="tl">
-
-  <!-- Indicates if the predicates should be rewritten or just annotated -->
-  <xsl:param name="rewrite_predicates" select="true()"/>
+                xmlns:exsl="http://exslt.org/common"
+                exclude-result-prefixes="tl exsl">
 
   <xsl:output method="xml" encoding="utf-8" standalone="yes"/>
 
@@ -95,46 +93,23 @@
   <xsl:template name="annotate">
     <xsl:param name="index" select="1"/>
     <xsl:variable name="key" select="tl:*[$index][local-name(.) = 'variable']/@name"/>
-    <xsl:variable name="is_association" select="count(key('assocs', $key)) > 0"/>
-    <xsl:variable name="is_role" select="count(key('roles', $key)) > 0"/>
-    <xsl:variable name="is_occurrence" select="count(key('occs', $key)) > 0"/>
-    <xsl:variable name="is_name" select="count(key('names', $key)) > 0"/>
-    <xsl:variable name="is_variant" select="count(key('variants', $key)) > 0"/>
-    <xsl:variable name="hint">
-      <xsl:choose>
-        <xsl:when test="$rewrite_predicates and $is_association and not($is_role or $is_occurrence or $is_name or $is_variant)"><xsl:value-of select="'association'"/></xsl:when>
-        <xsl:when test="$rewrite_predicates and $is_role and not($is_association or $is_occurrence or $is_name or $is_variant)"><xsl:value-of select="'role'"/></xsl:when>
-        <xsl:when test="$rewrite_predicates and $is_occurrence and not($is_association or $is_role or $is_name or $is_variant)"><xsl:value-of select="'occurrence'"/></xsl:when>
-        <xsl:when test="$rewrite_predicates and $is_name and not($is_association or $is_role or $is_occurrence or $is_variant)"><xsl:value-of select="'topic-name'"/></xsl:when>
-        <xsl:when test="$rewrite_predicates and $is_variant and not($is_association or $is_role or $is_occurrence or $is_name)"><xsl:value-of select="'variant'"/></xsl:when>
-        <xsl:otherwise><xsl:value-of select="''"/></xsl:otherwise>
-      </xsl:choose>
+    <xsl:variable name="hints">
+        <association apply="{count(key('assocs', $key)) > 0}"/>
+        <role apply="{count(key('roles', $key)) > 0}"/>
+        <occurrence apply="{count(key('occs', $key)) > 0}"/>
+        <name apply="{count(key('names', $key)) > 0}"/>
+        <variant apply="{count(key('variants', $key)) > 0}"/>
     </xsl:variable>
+    <xsl:variable name="hint">
+      <xsl:for-each select="exsl:node-set($hints)/tl:*[@apply='true']">
+        <xsl:value-of select="local-name(.)"/>
+        <xsl:if test="position() != last()"><xsl:text> </xsl:text></xsl:if>
+      </xsl:for-each>
+    </xsl:variable>
+    
     <builtin-predicate>
       <xsl:copy-of select="@*"/>
-      <xsl:choose>
-          <xsl:when test="$hint = ''">
-            <!-- Specialization isn't possible, annotate the predicate -->
-            <xsl:if test="$is_association">
-              <xsl:attribute name="association"><xsl:text>true</xsl:text></xsl:attribute>
-            </xsl:if>
-            <xsl:if test="$is_role">
-              <xsl:attribute name="role"><xsl:text>true</xsl:text></xsl:attribute>
-            </xsl:if>
-            <xsl:if test="$is_occurrence">
-              <xsl:attribute name="occurrence"><xsl:text>true</xsl:text></xsl:attribute>
-            </xsl:if>
-            <xsl:if test="$is_name">
-              <xsl:attribute name="topic-name"><xsl:text>true</xsl:text></xsl:attribute>
-            </xsl:if>
-            <xsl:if test="$is_variant">
-              <xsl:attribute name="variant"><xsl:text>true</xsl:text></xsl:attribute>
-            </xsl:if>
-          </xsl:when>
-          <xsl:otherwise>
-              <xsl:attribute name="hint"><xsl:value-of select="$hint"/></xsl:attribute>
-          </xsl:otherwise>
-        </xsl:choose>
+      <xsl:if test="$hint != ''"><xsl:attribute name="hint"><xsl:value-of select="$hint"/></xsl:attribute></xsl:if>
       <xsl:copy-of select="*"/>
     </builtin-predicate>
   </xsl:template>
