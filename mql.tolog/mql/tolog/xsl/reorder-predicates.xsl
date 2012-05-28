@@ -15,14 +15,19 @@
 
   <xsl:output method="xml" encoding="utf-8"/>
 
-  <xsl:template match="tl:*">
-    <xsl:element name="{name()}">
-      <xsl:copy-of select="@*"/>
+  <xsl:template match="@*|node()">
+    <xsl:copy>
+      <xsl:apply-templates select="@*|node()"/>
+    </xsl:copy>
+  </xsl:template>
+
+  <xsl:template match="tl:where">
+    <where>
       <xsl:for-each select="*">
         <xsl:sort select="@cost" data-type="number"/>
         <xsl:apply-templates select="."/> 
       </xsl:for-each>
-    </xsl:element>
+    </where>
   </xsl:template>
     
 </xsl:stylesheet>
