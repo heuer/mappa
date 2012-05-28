@@ -2,8 +2,9 @@
 Changes
 =======
 
-0.1.7 - 2011-mm-dd
+0.1.7 - 2012-mm-dd
 ------------------
+* Moved tm.mio.Source into tm package and deprecated tm.mio.Source
 * Added MIOParseException
 * Added literalutils to normalize literals like xsd:decimal, xsd:integer
 * Removed deprecated ``tm.mio.plyutils`` module.
