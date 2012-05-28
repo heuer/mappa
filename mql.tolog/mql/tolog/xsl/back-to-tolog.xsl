@@ -17,7 +17,7 @@
   <xsl:output method="text"/>
 
   <xsl:variable name="tolog-plus" select="false()"/>
-  <xsl:variable name="render-hints" select="false()"/>
+  <xsl:variable name="render-hints" select="true()"/>
 
   <xsl:template match="*">
     <xsl:apply-templates select="tl:base"/>
@@ -133,12 +133,14 @@
   </xsl:template>
 
   <xsl:template match="tl:builtin-predicate|tl:function">
+    <xsl:if test="@kind='internal'"><xsl:text>:</xsl:text></xsl:if>
     <xsl:value-of select="concat(@name, '(')"/>
     <xsl:call-template name="parameters">
       <xsl:with-param name="items" select="tl:*"/>
     </xsl:call-template>
     <xsl:text>)</xsl:text>
     <xsl:apply-templates select="." mode="annotate"/>
+    <xsl:if test="$render-hints and @kind='internal'"><xsl:text>  /* optimizer */</xsl:text></xsl:if>
   </xsl:template>
 
   <xsl:template match="tl:predicate|tl:dynamic-predicate">
