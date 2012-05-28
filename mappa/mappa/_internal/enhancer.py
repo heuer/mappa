@@ -100,38 +100,40 @@ def enhance_connection(cls):
     if not hasattr(cls, '__contains__'):
         cls.__contains__ = lambda self, iri: iri in self.iris
     if not hasattr(cls, 'load'):
+        import tm
         from tm import mio
         from mappa.miohandler import MappaMapHandler
         def _load(conn, source, into, base=None, format=None, **kw):
             extension = None
             src = None
             if hasattr(source, 'read'):
-                src = mio.Source(file=source, iri=base)
+                src = tm.Source(file=source, iri=base)
             else:
-                src = mio.Source(iri=source)
+                src = tm.Source(iri=source)
                 dot = source.rfind('.')
                 if dot != -1:
                     extension = source[dot+1:]
             deser = mio.create_deserializer(format=format, extension=extension, **kw)
             if not deser:
                 raise IOError('No deserializer found for "%s"' % format)
-            tm = conn.get(into) or conn.create(into)
-            deser.handler = MappaMapHandler(tm)
+            tmap = conn.get(into) or conn.create(into)
+            deser.handler = MappaMapHandler(tmap)
             deser.parse(src)
-            _post_process_loading(tm, format, kw.get('version'), deser)
+            _post_process_loading(tmap, format, kw.get('version'), deser)
         cls.load = _load
     if not hasattr(cls, 'loads'):
+        import tm
         from tm import mio
         from mappa.miohandler import MappaMapHandler
         def _loads(conn, source, into, base=None, format='ctm', **kw):
-            src = mio.Source(data=source, iri=base or into)
+            src = tm.Source(data=source, iri=base or into)
             deser = mio.create_deserializer(format, **kw)
             if not deser:
                 raise IOError('No deserializer found for "%s"' % format)
-            tm = conn.get(into) or conn.create(into)
-            deser.handler = MappaMapHandler(tm)
+            tmap = conn.get(into) or conn.create(into)
+            deser.handler = MappaMapHandler(tmap)
             deser.parse(src)
-            _post_process_loading(tm, format, kw.get('version'), deser)
+            _post_process_loading(tmap, format, kw.get('version'), deser)
         cls.loads = _loads
     if not hasattr(cls, 'write'):
         def _write(conn, iri, out, base=None, format='xtm', encoding=None, version=None, **kw):
