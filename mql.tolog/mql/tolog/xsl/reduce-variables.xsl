@@ -45,7 +45,7 @@
         <builtin-predicate kind="internal">
             <xsl:copy-of select="@*"/>
             <xsl:attribute name="name"><xsl:value-of select="concat(substring-before(@name, 'instance-of'), 'types')"/></xsl:attribute>
-            <xsl:copy-of select="tl:*[2]"/>
+            <xsl:apply-templates select="tl:*[2]"/>
         </builtin-predicate>  
       </xsl:when>
       <xsl:otherwise><xsl:copy-of select="."/></xsl:otherwise>
