@@ -183,9 +183,9 @@ def p_fragment(p):
     fragment = p[1]
     handler = _handler(p)
     handler.startFragment()
-    handler.fragmentContent(fragment)
     for var in ctm_utils.find_variables(fragment, omit_dollar=True):
         handler.variable(var)
+    handler.fragmentContent(fragment)
     handler.endFragment()
 
 def p_update(p):
