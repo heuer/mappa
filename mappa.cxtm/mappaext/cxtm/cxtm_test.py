@@ -42,7 +42,8 @@ import os
 import codecs
 import mappa
 from StringIO import StringIO
-from tm.mio import Source, MIOException
+from tm import Source
+from tm.mio import MIOException
 from mappa import ModelConstraintViolation
 from .cxtm1 import CXTMTopicMapWriter
 from mappa.miohandler import MappaMapHandler
