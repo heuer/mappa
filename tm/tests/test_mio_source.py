@@ -41,8 +41,7 @@ Tests against ``tm.mio.Source``.
 from unittest import TestCase
 from urllib import pathname2url
 from urlparse import urljoin
-from tm.mio import Source
-from tm import irilib
+from tm import irilib, Source
 
 class TestSource(TestCase):
 
