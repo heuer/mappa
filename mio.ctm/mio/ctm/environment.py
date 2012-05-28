@@ -38,7 +38,7 @@ Environment.
 :organization: Semagia - http://www.semagia.com/
 :license:      BSD license
 """
-from tm import mio, irilib, TM
+from tm import mio, irilib, TM, Source
 from tm.mio.deserializer import Context
 from . import consts, tpl
 
@@ -230,7 +230,7 @@ class Environment(object):
         deser.subordinate = True
         if included:
             deser.wildcard_counter = self.wildcard_counter
-        deser.parse(mio.Source(iri))
+        deser.parse(Source(iri))
         if included:
             self.wildcard_counter = deser.wildcard_counter
             for template in deser.environment.templates.itervalues():
