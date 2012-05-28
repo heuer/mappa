@@ -112,6 +112,7 @@ class Source(object):
         `encoding`
             A string which represents the encoding.
         """
+        warnings.warn('Deprecated, use tm.Source', DeprecationWarning)
         self._stream = None
         self._encoding = encoding
         if file:
