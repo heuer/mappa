@@ -26,6 +26,10 @@
              match="tl:where//tl:variable"
              use="@name"/>
 
+  <xsl:key name="eq-predicates"
+             match="tl:infix-predicate[@name='eq'][count(tl:variable)=1]"
+             use="tl:variable/@name"/>
+
 
   <xsl:template match="@*|node()">
     <xsl:copy>
@@ -46,6 +50,29 @@
       </xsl:when>
       <xsl:otherwise><xsl:copy-of select="."/></xsl:otherwise>
     </xsl:choose>
+  </xsl:template>
+
+  <xsl:template match="tl:variable">
+    <!--** Replaces variables with a constant if an equals predicate exists: born-in($t, $city), $city = Bremen ==> born-in($t, Bremen) -->
+    <xsl:variable name="eq-predicate" select="key('eq-predicates', @name)"/>
+    <xsl:choose>
+      <xsl:when test="$eq-predicate and count($eq-predicate) = 1 and generate-id(..) != generate-id($eq-predicate)">
+        <xsl:copy-of select="$eq-predicate/tl:*[local-name() != 'variable']"/>
+      </xsl:when>
+      <xsl:otherwise><xsl:copy-of select="."/></xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+    
+  <xsl:template match="tl:infix-predicate[@name='eq']
+                                         [count(tl:variable) = 1]">
+    <!--** Ignores those equals predicates where the constant part became part of the other predicates -->
+    <xsl:variable name="var-name" select="tl:variable/@name"/>
+    <xsl:variable name="eq-predicate" select="key('eq-predicates', $var-name)"/>
+    <xsl:if test="count($eq-predicate) != 1 
+                    or count(key('where-variables', $var-name)) = 1 
+                    or generate-id(.) != generate-id($eq-predicate)">
+      <xsl:copy-of select="."/>
+    </xsl:if>
   </xsl:template>
 
 </xsl:stylesheet>
