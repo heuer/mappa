@@ -39,6 +39,7 @@ This module provides some PyTM constants.
 :license:      BSD license
 """
 from StringIO import StringIO
+from operator import attrgetter
 from urllib import pathname2url
 from . namespace import Namespace
 from . import irilib
