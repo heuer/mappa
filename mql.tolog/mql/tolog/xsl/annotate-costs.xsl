@@ -341,9 +341,7 @@
 
     
   <!--
-  
         Module: Number
-        
   -->
 
   <xsl:template match="@*|node()" mode="module-number">
@@ -353,9 +351,7 @@
   </xsl:template>
 
   <!--
-    
         Module: String
-          
   -->
   <xsl:template match="@*|node()" mode="module-string">
     <xsl:call-template name="annotate">
@@ -368,7 +364,7 @@
     <xsl:element name="{name(.)}">
       <xsl:copy-of select="@*"/>
       <xsl:attribute name="cost"><xsl:value-of select="$cost"/></xsl:attribute>
-      <xsl:copy-of select="*"/>
+      <xsl:apply-templates select="*"/>
     </xsl:element>
   </xsl:template>
 
