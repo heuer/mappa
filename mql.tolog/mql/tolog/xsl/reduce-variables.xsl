@@ -1,13 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-
   This stylesheet eliminates unused variables and introduces internal,
   non-standard tolog predicates.
-
-
-  TODO: Only select variables are considered, this stylesheet may generate an 
-        invalid query iff delete, merge or insert is used!
-
 
 
   Copyright (c) 2010 - 2012, Semagia - Lars Heuer <http://www.semagia.com/>
@@ -23,8 +17,15 @@
 
   <xsl:output method="xml" encoding="utf-8" standalone="yes"/>
 
-  <xsl:key name="select-variables"
-             match="tl:select/tl:*[local-name(.) = 'variable' or local-name(.) = 'count']"
+  <xsl:key name="query-variables"
+             match="tl:*[local-name() = 'select'
+                         or local-name() = 'delete'
+                         or local-name() = 'merge'
+                         or local-name() = 'update']/tl:*[local-name(.) = 'variable' or local-name(.) = 'count']"
+             use="@name"/>
+    
+  <xsl:key name="insert-variables"
+             match="tl:insert/tl:fragment/tl:variable"
              use="@name"/>
 
   <xsl:key name="where-variables"
@@ -46,7 +47,7 @@
     <!--** Replaces (direct-)instance-of($instance, $type) with (direct-)types($type) if the $instance variable is unused -->
     <xsl:variable name="instance-var" select="tl:variable[1]/@name"/>
     <xsl:choose>
-      <xsl:when test="count(key('select-variables', $instance-var)) = 0 and count(key('where-variables', $instance-var)) = 1">
+      <xsl:when test="count(key('query-variables', $instance-var)|key('insert-variables', $instance-var)) = 0 and count(key('where-variables', $instance-var)) = 1">
         <builtin-predicate kind="internal">
             <xsl:copy-of select="@*"/>
             <xsl:attribute name="name"><xsl:value-of select="concat(substring-before(@name, 'instance-of'), 'types')"/></xsl:attribute>
