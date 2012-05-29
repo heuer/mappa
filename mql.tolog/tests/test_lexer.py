@@ -165,6 +165,13 @@ Everything after an ? must be ignored a.k.a. do not produce tokens and failures 
 """,
 ('IDENT', 'LPAREN', 'VARIABLE', 'COLON', 'IDENT', 'COMMA', 'VARIABLE', 'COLON', 'IDENT', 'RPAREN', 'QM')
 ),
+('''
+    foo.
+    f.oo
+    f12oo
+    foo.12
+''',
+('IDENT', 'DOT', 'IDENT', 'IDENT', 'IDENT')),
 )
 
 _ACCEPT_DATA = (
@@ -226,7 +233,7 @@ not(located-in($PLACE : containee, italy : container))?''',
                  ' ^<http://www.semagia.com/>',
                  ' "x"^^<http://www.semagia.com/>',
                  ' select $x where bla($blub)?',
-                 ' != /= ',
+                 ' /= ',
                  '[CU:RIE] [c:/ddjdjjdjdjdd]',
 )
 
