@@ -38,9 +38,20 @@ Provides functions to parse tolog queries.
 :organization: Semagia - http://www.semagia.com/
 :license:      BSD license
 """
-from tm import plyutils
+from functools import partial
+import lxml.sax
+from tm import plyutils, xmlutils
+from . import handler as qhandler, xsl
+
+__all__ = ('parse', 'parse_query')
 
 def parse(query, handler, tolog_plus=False):
+    """\
+    Parses the provided query and issues events against the provided handler.
+    
+    `handler`
+        The ParserHandler which receives the parsing events.
+    """
     if hasattr(query, 'read'): #TODO: Use tm.mio.Source
         query = query.read()
     from mql.tolog import lexer as lexer_mod, parser as parser_mod
@@ -49,3 +60,18 @@ def parse(query, handler, tolog_plus=False):
     handler.start()
     parser.parse(query, lexer=plyutils.make_lexer(lexer_mod))
     handler.end()
+
+def parse_query(query, handler=None, tolog_plus=False):
+    """\
+    Parses and optimizes the query and returns an executable query.
+    
+    `handler`
+        The QueryHandler which receives the events to construct a query
+    `tolog_plus`
+        Indicates if tolog+ mode should be enabled.
+    """
+    contenthandler = lxml.sax.ElementTreeContentHandler()
+    parse(query, qhandler.XMLParserHandler(xmlutils.SAXSimpleXMLWriter(contenthandler)), tolog_plus)
+    handler = handler or qhandler.DefaultQueryHandler()
+    xsl.apply_default_transformations(contenthandler.etree, partial(xsl.saxify, handler=qhandler.SAXHandler(handler)))
+    return handler.query
