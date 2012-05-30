@@ -40,7 +40,7 @@ Module for XSLT stylesheets.
 """
 import os
 import glob
-from lxml import etree
+from lxml import etree, sax
 
 _PATH = None
 _NOT_FOUND = object()
@@ -83,29 +83,48 @@ def get_transformator(name):
         _STYLESHEETS[name] = t
     return t
 
-def apply_transformations(doc, names):
+def apply_transformations(doc, names, callback=None):
     """\
     Applies a sequence of transformations against the provided `doc` and
-    returns the result.
+    returns the result unless the `callback` does not return a result.
     
     `doc` 
         An Etree
     `names`
         An iterable of transformator names (c.f. `get_transformator_names()`)
         to apply (in the provided order).
+    `callback`
+        An optional function which receives the final result of the 
+        transformations.
     """
     result = None
     for name in names:
         result = get_transformator(name)(result or doc)
-    return result
+    return result if callback is None else callback(result)
 
 
-def apply_default_transformations(doc):
+def apply_default_transformations(doc, callback=None):
     """\
     Applies a sequence of default transformations against the provided `doc` 
-    and returns the result.
+    and returns the result unless the `callback` does not return a result.
+    
+    `doc` 
+        An Etree
+    `callback`
+        An optional function which receives the final result of the 
+        transformations.
     """
-    return apply_transformations(doc, _DEFAULT_TRANSFORMERS)
+    return apply_transformations(doc, _DEFAULT_TRANSFORMERS, callback=None)
+
+
+def saxify(doc, handler):
+    """\
+    Issues SAX events from the provided lxml.etree document.
+    
+    `doc` 
+        An Etree.
+    """
+    sax.saxify(doc, handler)
 
 _init()
 
