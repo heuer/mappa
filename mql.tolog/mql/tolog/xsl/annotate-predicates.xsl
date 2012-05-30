@@ -20,7 +20,7 @@
       <builtin-predicate name="asssociation">
         [...]
       </builtin-predicate>
-      <builtin-predicate name="type" hint="association-type">
+      <builtin-predicate name="type" hint="association">
         [...]
       </builtin-predicate>
 
