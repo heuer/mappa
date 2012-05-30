@@ -459,23 +459,27 @@ def p_rule(p):
     """\
     rule            : predclause IMPLIES _start_rule clauselist DOT
     """
-    _handler(p).endRule()
+    handler = _handler(p)
+    handler.endBody()
+    handler.endRule()
 
 def p__start_rule(p): # Inline action
     """\
     _start_rule     : 
     """
-    def make_variables(args):
-        return [v[1] for v in args if v[0] == consts.VARIABLE]
     (kind, name), args = p[-2]
     # 'predclause' may contain a name which is not an IDENT or bound arguments
     if consts.IDENT != kind:
         raise InvalidQueryError('Invalid rule name "%s".' % name)
-    params = make_variables(args)
-    if len(params) != len(args):
-        raise InvalidQueryError('The rule head of "%s" contains a non-variable parameter' % name)
     p.parser.rule_names.append(name)
-    _handler(p).startRule(name, params)
+    handler = _handler(p)
+    handler.startRule(name)
+    for arg in args:
+        if arg[0] != consts.VARIABLE:
+            raise InvalidQueryError('The rule head of "%s" contains a non-variable parameter' % name)
+        handler.variable(arg[1])
+    handler.startBody()
+    
 
 
 _PREDICATE = 'Predicate'
