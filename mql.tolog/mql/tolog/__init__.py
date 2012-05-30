@@ -73,8 +73,19 @@ def parse_query(query, handler=None, tolog_plus=False):
     `tolog_plus`
         Indicates if tolog+ mode should be enabled.
     """
+    handler = handler or qhandler.DefaultQueryHandler()
+    xsl.apply_default_transformations(parse_to_etree(query, tolog_plus), 
+                                        partial(xsl.saxify, handler=qhandler.SAXHandler(handler)))
+    return handler.query
+
+
+def parse_to_etree(query, tolog_plus=False):
+    """\
+    Returns the provided query as Etree.
+    
+    `tolog_plus`
+        Indicates if tolog+ mode should be enabled.
+    """
     contenthandler = lxml.sax.ElementTreeContentHandler()
     parse(query, qhandler.XMLParserHandler(xmlutils.SAXSimpleXMLWriter(contenthandler)), tolog_plus)
-    handler = handler or qhandler.DefaultQueryHandler()
-    xsl.apply_default_transformations(contenthandler.etree, partial(xsl.saxify, handler=qhandler.SAXHandler(handler)))
-    return handler.query
+    return contenthandler.etree
