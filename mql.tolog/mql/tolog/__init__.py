@@ -41,7 +41,7 @@ Provides functions to parse tolog queries.
 from functools import partial
 import lxml.sax
 from tm import plyutils, xmlutils
-from . import handler as qhandler, xsl
+from . import handler as handler_mod, xsl
 
 __all__ = ('parse', 'parse_query')
 
@@ -73,9 +73,9 @@ def parse_query(query, handler=None, tolog_plus=False):
     `tolog_plus`
         Indicates if tolog+ mode should be enabled.
     """
-    handler = handler or qhandler.DefaultQueryHandler()
+    handler = handler or handler_mod.DefaultQueryHandler()
     xsl.apply_default_transformations(parse_to_etree(query, tolog_plus), 
-                                        partial(xsl.saxify, handler=qhandler.SAXHandler(handler)))
+                                        partial(xsl.saxify, handler=handler_mod.SAXHandler(handler)))
     return handler.query
 
 
@@ -87,5 +87,5 @@ def parse_to_etree(query, tolog_plus=False):
         Indicates if tolog+ mode should be enabled.
     """
     contenthandler = lxml.sax.ElementTreeContentHandler()
-    parse(query, qhandler.XMLParserHandler(xmlutils.SAXSimpleXMLWriter(contenthandler)), tolog_plus)
+    parse(query, handler_mod.XMLParserHandler(xmlutils.SAXSimpleXMLWriter(contenthandler)), tolog_plus)
     return contenthandler.etree
