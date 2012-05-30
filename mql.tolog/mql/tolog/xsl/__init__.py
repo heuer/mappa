@@ -114,7 +114,7 @@ def apply_default_transformations(doc, callback=None):
         An optional function which receives the final result of the 
         transformations.
     """
-    return apply_transformations(doc, _DEFAULT_TRANSFORMERS, callback=None)
+    return apply_transformations(doc, _DEFAULT_TRANSFORMERS, callback)
 
 
 def saxify(doc, handler):
