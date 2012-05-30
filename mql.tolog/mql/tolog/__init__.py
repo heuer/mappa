@@ -51,6 +51,8 @@ def parse(query, handler, tolog_plus=False):
     
     `handler`
         The ParserHandler which receives the parsing events.
+    `tolog_plus`
+        Indicates if tolog+ mode should be enabled.
     """
     if hasattr(query, 'read'): #TODO: Use tm.mio.Source
         query = query.read()
@@ -60,6 +62,7 @@ def parse(query, handler, tolog_plus=False):
     handler.start()
     parser.parse(query, lexer=plyutils.make_lexer(lexer_mod))
     handler.end()
+
 
 def parse_query(query, handler=None, tolog_plus=False):
     """\
