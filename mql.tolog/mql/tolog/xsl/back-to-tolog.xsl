@@ -17,7 +17,7 @@
   <xsl:output method="text"/>
 
   <xsl:variable name="tolog-plus" select="false()"/>
-  <xsl:variable name="render-hints" select="true()"/>
+  <xsl:variable name="render-hints" select="false()"/>
 
   <xsl:template match="*">
     <xsl:apply-templates select="tl:base"/>

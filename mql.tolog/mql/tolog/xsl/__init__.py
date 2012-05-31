@@ -83,7 +83,25 @@ def get_transformator(name):
         _STYLESHEETS[name] = t
     return t
 
-def apply_transformations(doc, names, callback=None):
+
+def apply_transformation(doc, name, callback=None, **params):
+    """\
+    Applies the provided transformer (referenced by name) against the provided 
+    `doc` and returns the result unless the `callback` does not return a result.
+    
+    `doc` 
+        An Etree
+    `name`
+        The transformer to apply.
+    `callback`
+        An optional function which receives the final result of the 
+        transformation.
+    """
+    res = get_transformator(name)(doc, **params)
+    return res if callback is None else callback(res)
+
+
+def apply_transformations(doc, names, callback=None, **params):
     """\
     Applies a sequence of transformations against the provided `doc` and
     returns the result unless the `callback` does not return a result.
@@ -99,7 +117,7 @@ def apply_transformations(doc, names, callback=None):
     """
     result = None
     for name in names:
-        result = get_transformator(name)(result or doc)
+        result = get_transformator(name)(result or doc, **params)
     return result if callback is None else callback(result)
 
 
