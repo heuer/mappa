@@ -16,8 +16,8 @@
 
   <xsl:output method="text"/>
 
-  <xsl:variable name="tolog-plus" select="false()"/>
-  <xsl:variable name="render-hints" select="false()"/>
+  <xsl:param name="tolog-plus" select="false()"/>
+  <xsl:param name="render-hints" select="false()"/>
 
   <xsl:template match="*">
     <xsl:apply-templates select="tl:base"/>
@@ -40,7 +40,7 @@
     </xsl:choose>
     <xsl:apply-templates select="tl:*/tl:orderby|tl:orderby"/>
     <xsl:apply-templates select="tl:*/tl:pagination|tl:pagination"/>
-    <xsl:if test="not($tolog-plus) and not(tl:merge|tl:delete|tl:update|tl:insert)"><xsl:text>?</xsl:text></xsl:if>
+    <xsl:if test="$tolog-plus = 'false' and not(tl:merge|tl:delete|tl:update|tl:insert)"><xsl:text>?</xsl:text></xsl:if>
     <xsl:text>&#xA;</xsl:text>
   </xsl:template>
 
@@ -61,7 +61,7 @@
 
   <xsl:template match="tl:namespace[@kind!='module']">
     <xsl:choose>
-      <xsl:when test="$tolog-plus">
+      <xsl:when test="$tolog-plus = 'true'">
         <xsl:value-of select="concat('%prefix ', @identifier, ' &lt;', @iri,'&gt;&#xA;')"/>
       </xsl:when>
       <xsl:otherwise>
@@ -76,14 +76,14 @@
   </xsl:template>
 
   <xsl:template match="tl:namespace[@kind='module']">
-    <xsl:if test="$tolog-plus">%</xsl:if>
+    <xsl:if test="$tolog-plus = 'true'">%</xsl:if>
     <xsl:text>import </xsl:text>
-    <xsl:if test="not($tolog-plus)">
+    <xsl:if test="$tolog-plus = 'false'">
       <xsl:call-template name="iri"><xsl:with-param name="iri" select="@iri"/></xsl:call-template>
       <xsl:text> as </xsl:text>
     </xsl:if>
     <xsl:value-of select="@identifier"/>
-    <xsl:if test="$tolog-plus">
+    <xsl:if test="$tolog-plus = 'true'">
       <xsl:text> </xsl:text>
       <xsl:call-template name="iri"><xsl:with-param name="iri" select="@iri"/></xsl:call-template>
     </xsl:if>
@@ -104,7 +104,7 @@
 
   <xsl:template match="tl:where">
     <xsl:choose>
-      <xsl:when test="$tolog-plus"><xsl:text>&#xA;where&#xA;    </xsl:text></xsl:when>
+      <xsl:when test="$tolog-plus = 'true'"><xsl:text>&#xA;where&#xA;    </xsl:text></xsl:when>
       <xsl:otherwise><xsl:text>&#xA;from&#xA;    </xsl:text></xsl:otherwise>
     </xsl:choose>
     <xsl:call-template name="predicates">
@@ -140,7 +140,7 @@
     </xsl:call-template>
     <xsl:text>)</xsl:text>
     <xsl:apply-templates select="." mode="annotate"/>
-    <xsl:if test="$render-hints and @kind='internal'"><xsl:text>  /* optimizer */</xsl:text></xsl:if>
+    <xsl:if test="$render-hints = 'true' and @kind='internal'"><xsl:text>  /* optimizer */</xsl:text></xsl:if>
   </xsl:template>
 
   <xsl:template match="tl:predicate|tl:dynamic-predicate">
@@ -153,12 +153,12 @@
   </xsl:template>
     
   <xsl:template match="tl:builtin-predicate[@hint]" mode="annotate">
-    <xsl:if test="$render-hints">
+    <xsl:if test="$render-hints = 'true'">
       <xsl:variable name="kind" select="@name"/>
       <xsl:text>  /* </xsl:text>
       <xsl:for-each select="str:split(@hint, ' ')">
         <xsl:choose>
-            <xsl:when test="position() = last()"><xsl:text> and </xsl:text></xsl:when>
+            <xsl:when test="position() = last() and position() > 1"><xsl:text> and </xsl:text></xsl:when>
             <xsl:when test="position() != 1"><xsl:text>, </xsl:text></xsl:when>
         </xsl:choose>
         <xsl:value-of select="."/>
@@ -212,7 +212,7 @@
 
   <xsl:template match="tl:pair">
     <xsl:choose>
-      <xsl:when test="$tolog-plus">
+      <xsl:when test="$tolog-plus = 'true'">
         <xsl:apply-templates select="tl:type/*"/>
         <xsl:text>: </xsl:text>
         <xsl:apply-templates select="tl:player/*"/>
@@ -268,8 +268,8 @@
   </xsl:template>
 
   <xsl:template match="tl:curie|tl:qname">
-    <xsl:if test="$tolog-plus and @kind='item-identifier'">^ </xsl:if>
-    <xsl:if test="$tolog-plus and @kind='subject-locator'">= </xsl:if>
+    <xsl:if test="$tolog-plus = 'true' and @kind='item-identifier'">^ </xsl:if>
+    <xsl:if test="$tolog-plus = 'true' and @kind='subject-locator'">= </xsl:if>
     <xsl:if test="local-name(.)='curie'">[</xsl:if>
     <xsl:value-of select="@prefix"/>
     <xsl:text>:</xsl:text>
@@ -324,7 +324,7 @@
   <xsl:template name="iri">
     <xsl:param name="iri" select="."/>
     <xsl:choose>
-      <xsl:when test="$tolog-plus"><xsl:value-of select="concat('&lt;', $iri, '&gt;')"/></xsl:when>
+      <xsl:when test="$tolog-plus = 'true'"><xsl:value-of select="concat('&lt;', $iri, '&gt;')"/></xsl:when>
       <xsl:otherwise><xsl:value-of select="concat('&quot;', $iri, '&quot;')"/></xsl:otherwise>
     </xsl:choose>
   </xsl:template>
