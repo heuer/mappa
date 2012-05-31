@@ -38,9 +38,10 @@ tolog parser.
 :organization: Semagia - <http://www.semagia.com/>
 :license:      BSD License
 """
+from __future__ import absolute_import
 from tm.mql import InvalidQueryError
-from mql.tolog import consts, lexer
-from mql.tolog.utils import is_builtin_predicate, is_function_module
+from . import consts, lexer
+from .utils import is_builtin_predicate, is_function_module
 
 tokens = lexer.tokens # Just to get rid of unused import warnings
 
