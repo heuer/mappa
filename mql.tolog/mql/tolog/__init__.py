@@ -39,7 +39,7 @@ Provides functions to parse tolog queries.
 :license:      BSD license
 """
 from functools import partial
-import lxml.sax
+import lxml.sax #TODO: Any chance to remove this dependency (here)?
 from tm import plyutils, xmlutils
 from . import handler as handler_mod, xsl
 
