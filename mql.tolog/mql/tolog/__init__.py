@@ -45,11 +45,11 @@ from . import handler as handler_mod, xsl
 
 __all__ = ('parse', 'parse_query')
 
-def parse(query, handler, tolog_plus=False):
+def parse(src, handler, tolog_plus=False):
     """\
     Parses the provided query and issues events against the provided handler.
     
-    `query`
+    `src`
         The query to parse.
     `handler`
         The ParserHandler which receives the parsing events.
@@ -59,21 +59,21 @@ def parse(query, handler, tolog_plus=False):
         tolog+ mode is enabled automatically, regardless of the provided
         `tolog_plus` value
     """
-    if hasattr(query, 'read'): #TODO: Use tm.mio.Source
-        query = query.read()
+    if hasattr(src, 'read'): #TODO: Use tm.mio.Source
+        src = src.read()
     from mql.tolog import lexer as lexer_mod, parser as parser_mod
     parser = plyutils.make_parser(parser_mod)
     parser_mod.initialize_parser(parser, handler, tolog_plus)
     handler.start()
-    parser.parse(query, lexer=plyutils.make_lexer(lexer_mod))
+    parser.parse(src, lexer=plyutils.make_lexer(lexer_mod))
     handler.end()
 
 
-def parse_query(query, handler=None, tolog_plus=False, optimizers=None):
+def parse_query(src, handler=None, tolog_plus=False, optimizers=None):
     """\
     Parses and optimizes the query and returns an executable query.
     
-    `query`
+    `src`
         The query to parse.
     `handler`
         The QueryHandler which receives the events to construct a query
@@ -91,16 +91,16 @@ def parse_query(query, handler=None, tolog_plus=False, optimizers=None):
     handler = handler or handler_mod.DefaultQueryHandler()
     if optimizers is None:
         optimizers = xsl.DEFAULT_TRANSFORMERS
-    xsl.apply_transformations(parse_to_etree(query, tolog_plus), optimizers,
+    xsl.apply_transformations(parse_to_etree(src, tolog_plus), optimizers,
                                         partial(xsl.saxify, handler=handler_mod.SAXHandler(handler)))
     return handler.query
 
 
-def parse_to_etree(query, tolog_plus=False):
+def parse_to_etree(src, tolog_plus=False):
     """\
     Returns the provided query as Etree.
     
-    `query`
+    `src`
         The query to parse.
     `tolog_plus`
         Indicates if tolog+ parsing mode should be enabled.
@@ -109,18 +109,18 @@ def parse_to_etree(query, tolog_plus=False):
         `tolog_plus` value
     """
     contenthandler = lxml.sax.ElementTreeContentHandler()
-    parse(query, handler_mod.XMLParserHandler(xmlutils.SAXSimpleXMLWriter(contenthandler)), tolog_plus)
+    parse(src, handler_mod.XMLParserHandler(xmlutils.SAXSimpleXMLWriter(contenthandler)), tolog_plus)
     return contenthandler.etree
 
 
-def parse_to_tolog(query, tolog_plus=False, hints=False, optimizers=None):
+def parse_to_tolog(src, tolog_plus=False, hints=False, optimizers=None):
     """\
     Parses the provided query and returns the query as an optimized tolog
     query string. 
     
     This function is mainly useful for debugging purposes.
     
-    `query`
+    `src`
         The query to parse.
     `tolog_plus`
         Indicates if tolog+ parsing mode should be enabled.
@@ -136,15 +136,15 @@ def parse_to_tolog(query, tolog_plus=False, hints=False, optimizers=None):
         a default set of optimizers will be applied to the query.
         To omit any optimization, an empty iterable must be provided.
     """
-    return _back_to_tolog(query, False, tolog_plus=tolog_plus, hints=hints, optimizers=optimizers)
+    return _back_to_tolog(src, False, tolog_plus=tolog_plus, hints=hints, optimizers=optimizers)
     
 
-def parse_to_tologplus(query, tolog_plus=False, hints=False, optimizers=None):
+def parse_to_tologplus(src, tolog_plus=False, hints=False, optimizers=None):
     """\
     Parses the provided query and returns the query as an optimized tolog+
     query string. 
     
-    `query`
+    `src`
         The query to parse.
     `tolog_plus`
         Indicates if tolog+ parsing mode should be enabled.
@@ -160,15 +160,15 @@ def parse_to_tologplus(query, tolog_plus=False, hints=False, optimizers=None):
         a default set of optimizers will be applied to the query.
         To omit any optimization, an empty iterable must be provided.
     """
-    return _back_to_tolog(query, True, tolog_plus=tolog_plus, hints=hints, optimizers=optimizers)
+    return _back_to_tolog(src, True, tolog_plus=tolog_plus, hints=hints, optimizers=optimizers)
 
 
-def _back_to_tolog(query, tolog_plus_out, tolog_plus=False, hints=False, optimizers=None):
+def _back_to_tolog(src, tolog_plus_out, tolog_plus=False, hints=False, optimizers=None):
     """\
     Parses the provided query and returns the query as an optimized tolog(+)
     query string. 
     
-    `query`
+    `src`
         The query to parse.
     `tolog_plus_out`
         Indicates if the resulting query should use tolog+ syntax.
@@ -189,7 +189,7 @@ def _back_to_tolog(query, tolog_plus_out, tolog_plus=False, hints=False, optimiz
     if optimizers is None:
         optimizers = xsl.DEFAULT_TRANSFORMERS
     transformers = tuple(optimizers) + ('back-to-tolog',)
-    return xsl.apply_transformations(parse_to_etree(query, tolog_plus), 
+    return xsl.apply_transformations(parse_to_etree(src, tolog_plus), 
                                         transformers,
                                         **{'render-hints': '"true"' if hints else '"false"',
                                            'tolog-plus': '"true"' if tolog_plus_out else '"false"'})
