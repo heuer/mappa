@@ -69,7 +69,7 @@ def parse(query, handler, tolog_plus=False):
     handler.end()
 
 
-def parse_query(query, handler=None, tolog_plus=False):
+def parse_query(query, handler=None, tolog_plus=False, optimizers=None):
     """\
     Parses and optimizes the query and returns an executable query.
     
@@ -82,9 +82,16 @@ def parse_query(query, handler=None, tolog_plus=False):
         Note: If the query starts with a ``%version`` directive, the 
         tolog+ mode is enabled automatically, regardless of the provided
         `tolog_plus` value
+    `optimizers`
+        An optional iterable of optimizer names which should be applied to
+        the parsed provided query. If the optimizers are not provided,
+        a default set of optimizers will be applied to the query.
+        To omit any optimization, an empty iterable must be provided.
     """
     handler = handler or handler_mod.DefaultQueryHandler()
-    xsl.apply_default_transformations(parse_to_etree(query, tolog_plus), 
+    if optimizers is None:
+        optimizers = xsl.DEFAULT_TRANSFORMERS
+    xsl.apply_transformations(parse_to_etree(query, tolog_plus), optimizers,
                                         partial(xsl.saxify, handler=handler_mod.SAXHandler(handler)))
     return handler.query
 
@@ -106,7 +113,7 @@ def parse_to_etree(query, tolog_plus=False):
     return contenthandler.etree
 
 
-def parse_to_tolog(query, tolog_plus=False, hints=False):
+def parse_to_tolog(query, tolog_plus=False, hints=False, optimizers=None):
     """\
     Parses the provided query and returns the query as an optimized tolog
     query string. 
@@ -123,11 +130,16 @@ def parse_to_tolog(query, tolog_plus=False, hints=False):
     `hints`
         Indicates if the resulting tolog query string should contain hints
         which are inserted by the query optimizer (disabled by default).
+    `optimizers`
+        An optional iterable of optimizer names which should be applied to
+        the parsed provided query. If the optimizers are not provided,
+        a default set of optimizers will be applied to the query.
+        To omit any optimization, an empty iterable must be provided.
     """
-    return _back_to_tolog(query, False, tolog_plus=tolog_plus, hints=hints)
+    return _back_to_tolog(query, False, tolog_plus=tolog_plus, hints=hints, optimizers=optimizers)
     
 
-def parse_to_tologplus(query, tolog_plus=False, hints=False):
+def parse_to_tologplus(query, tolog_plus=False, hints=False, optimizers=None):
     """\
     Parses the provided query and returns the query as an optimized tolog+
     query string. 
@@ -142,11 +154,16 @@ def parse_to_tologplus(query, tolog_plus=False, hints=False):
     `hints`
         Indicates if the resulting tolog query string should contain hints
         which are inserted by the query optimizer (disabled by default).
+    `optimizers`
+        An optional iterable of optimizer names which should be applied to
+        the parsed provided query. If the optimizers are not provided,
+        a default set of optimizers will be applied to the query.
+        To omit any optimization, an empty iterable must be provided.
     """
-    return _back_to_tolog(query, True, tolog_plus=tolog_plus, hints=hints)
+    return _back_to_tolog(query, True, tolog_plus=tolog_plus, hints=hints, optimizers=optimizers)
 
 
-def _back_to_tolog(query, tolog_plus_out, tolog_plus=False, hints=False):
+def _back_to_tolog(query, tolog_plus_out, tolog_plus=False, hints=False, optimizers=None):
     """\
     Parses the provided query and returns the query as an optimized tolog(+)
     query string. 
@@ -163,8 +180,16 @@ def _back_to_tolog(query, tolog_plus_out, tolog_plus=False, hints=False):
     `hints`
         Indicates if the resulting tolog query string should contain hints
         which are inserted by the query optimizer (disabled by default).
+    `optimizers`
+        An optional iterable of optimizer names which should be applied to
+        the parsed provided query. If the optimizers are not provided,
+        a default set of optimizers will be applied to the query.
+        To omit any optimization, an empty iterable must be provided.
     """
-    doc = xsl.apply_default_transformations(parse_to_etree(query, tolog_plus))
-    return xsl.apply_transformation(doc, 'back-to-tolog',
-                                                     **{'render-hints': 'true' if hints else 'false"',
-                                                        'tolog-plus': 'true' if tolog_plus_out else '"false"'})
+    if optimizers is None:
+        optimizers = xsl.DEFAULT_TRANSFORMERS
+    transformers = tuple(optimizers) + ('back-to-tolog',)
+    return xsl.apply_transformations(parse_to_etree(query, tolog_plus), 
+                                        transformers,
+                                        **{'render-hints': '"true"' if hints else '"false"',
+                                           'tolog-plus': '"true"' if tolog_plus_out else '"false"'})
