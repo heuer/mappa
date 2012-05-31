@@ -120,12 +120,15 @@ def apply_transformations(doc, names, callback=None, **params):
         result = get_transformator(name)(result or doc, **params)
     return result if callback is None else callback(result)
 
+
 def saxify(doc, handler):
     """\
     Issues SAX events from the provided lxml.etree document.
     
     `doc` 
         An Etree.
+    `handler` 
+        A xml.sax.ContentHandler instance
     """
     sax.saxify(doc, handler)
 
