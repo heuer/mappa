@@ -49,10 +49,15 @@ def parse(query, handler, tolog_plus=False):
     """\
     Parses the provided query and issues events against the provided handler.
     
+    `query`
+        The query to parse.
     `handler`
         The ParserHandler which receives the parsing events.
     `tolog_plus`
-        Indicates if tolog+ mode should be enabled.
+        Indicates if tolog+ parsing mode should be enabled.
+        Note: If the query starts with a ``%version`` directive, the 
+        tolog+ mode is enabled automatically, regardless of the provided
+        `tolog_plus` value
     """
     if hasattr(query, 'read'): #TODO: Use tm.mio.Source
         query = query.read()
@@ -68,10 +73,15 @@ def parse_query(query, handler=None, tolog_plus=False):
     """\
     Parses and optimizes the query and returns an executable query.
     
+    `query`
+        The query to parse.
     `handler`
         The QueryHandler which receives the events to construct a query
     `tolog_plus`
-        Indicates if tolog+ mode should be enabled.
+        Indicates if tolog+ parsing mode should be enabled.
+        Note: If the query starts with a ``%version`` directive, the 
+        tolog+ mode is enabled automatically, regardless of the provided
+        `tolog_plus` value
     """
     handler = handler or handler_mod.DefaultQueryHandler()
     xsl.apply_default_transformations(parse_to_etree(query, tolog_plus), 
@@ -83,9 +93,78 @@ def parse_to_etree(query, tolog_plus=False):
     """\
     Returns the provided query as Etree.
     
+    `query`
+        The query to parse.
     `tolog_plus`
-        Indicates if tolog+ mode should be enabled.
+        Indicates if tolog+ parsing mode should be enabled.
+        Note: If the query starts with a ``%version`` directive, the 
+        tolog+ mode is enabled automatically, regardless of the provided
+        `tolog_plus` value
     """
     contenthandler = lxml.sax.ElementTreeContentHandler()
     parse(query, handler_mod.XMLParserHandler(xmlutils.SAXSimpleXMLWriter(contenthandler)), tolog_plus)
     return contenthandler.etree
+
+
+def parse_to_tolog(query, tolog_plus=False, hints=False):
+    """\
+    Parses the provided query and returns the query as an optimized tolog
+    query string. 
+    
+    This function is mainly useful for debugging purposes.
+    
+    `query`
+        The query to parse.
+    `tolog_plus`
+        Indicates if tolog+ parsing mode should be enabled.
+        Note: If the query starts with a ``%version`` directive, the 
+        tolog+ mode is enabled automatically, regardless of the provided
+        `tolog_plus` value
+    `hints`
+        Indicates if the resulting tolog query string should contain hints
+        which are inserted by the query optimizer (disabled by default).
+    """
+    return _back_to_tolog(query, False, tolog_plus=tolog_plus, hints=hints)
+    
+
+def parse_to_tologplus(query, tolog_plus=False, hints=False):
+    """\
+    Parses the provided query and returns the query as an optimized tolog+
+    query string. 
+    
+    `query`
+        The query to parse.
+    `tolog_plus`
+        Indicates if tolog+ parsing mode should be enabled.
+        Note: If the query starts with a ``%version`` directive, the 
+        tolog+ mode is enabled automatically, regardless of the provided
+        `tolog_plus` value
+    `hints`
+        Indicates if the resulting tolog query string should contain hints
+        which are inserted by the query optimizer (disabled by default).
+    """
+    return _back_to_tolog(query, True, tolog_plus=tolog_plus, hints=hints)
+
+
+def _back_to_tolog(query, tolog_plus_out, tolog_plus=False, hints=False):
+    """\
+    Parses the provided query and returns the query as an optimized tolog(+)
+    query string. 
+    
+    `query`
+        The query to parse.
+    `tolog_plus_out`
+        Indicates if the resulting query should use tolog+ syntax.
+    `tolog_plus`
+        Indicates if tolog+ parsing mode should be enabled.
+        Note: If the query starts with a ``%version`` directive, the 
+        tolog+ mode is enabled automatically, regardless of the provided
+        `tolog_plus` value
+    `hints`
+        Indicates if the resulting tolog query string should contain hints
+        which are inserted by the query optimizer (disabled by default).
+    """
+    doc = xsl.apply_default_transformations(parse_to_etree(query, tolog_plus))
+    return xsl.apply_transformation(doc, 'back-to-tolog',
+                                                     **{'render-hints': 'true' if hints else 'false"',
+                                                        'tolog-plus': 'true' if tolog_plus_out else '"false"'})
