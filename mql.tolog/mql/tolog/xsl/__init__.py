@@ -46,7 +46,7 @@ _PATH = None
 _NOT_FOUND = object()
 _STYLESHEETS = None
 
-_DEFAULT_TRANSFORMERS = ('query-c14n', 
+DEFAULT_TRANSFORMERS = ('query-c14n', 
                          'inline-rules', 
                          'annotate-predicates', 
                          'remove-redundant-predicates', 
@@ -119,21 +119,6 @@ def apply_transformations(doc, names, callback=None, **params):
     for name in names:
         result = get_transformator(name)(result or doc, **params)
     return result if callback is None else callback(result)
-
-
-def apply_default_transformations(doc, callback=None):
-    """\
-    Applies a sequence of default transformations against the provided `doc` 
-    and returns the result unless the `callback` does not return a result.
-    
-    `doc` 
-        An Etree
-    `callback`
-        An optional function which receives the final result of the 
-        transformations.
-    """
-    return apply_transformations(doc, _DEFAULT_TRANSFORMERS, callback)
-
 
 def saxify(doc, handler):
     """\
