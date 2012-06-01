@@ -51,6 +51,7 @@
         <builtin-predicate kind="internal">
             <xsl:copy-of select="@*"/>
             <xsl:attribute name="name"><xsl:value-of select="concat(substring-before(@name, 'instance-of'), 'types')"/></xsl:attribute>
+            <xsl:attribute name="removed-variables"><xsl:value-of select="$instance-var"/></xsl:attribute>
             <xsl:apply-templates select="tl:*[2]"/>
         </builtin-predicate>  
       </xsl:when>
