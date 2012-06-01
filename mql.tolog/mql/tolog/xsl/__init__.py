@@ -115,9 +115,9 @@ def apply_transformations(doc, names, callback=None, **params):
         An optional function which receives the final result of the 
         transformations.
     """
-    result = None
+    result = doc
     for name in names:
-        result = get_transformator(name)(result or doc, **params)
+        result = get_transformator(name)(result, **params)
     return result if callback is None else callback(result)
 
 
