@@ -135,4 +135,3 @@ def saxify(doc, handler):
 _init()
 del _init
 del glob
-del os
