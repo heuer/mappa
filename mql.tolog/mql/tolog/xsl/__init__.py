@@ -133,4 +133,6 @@ def saxify(doc, handler):
     sax.saxify(doc, handler)
 
 _init()
-del _init, glob, os
+del _init
+del glob
+del os
