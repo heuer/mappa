@@ -366,6 +366,30 @@ class ITologHandler(Interface):
         `value` 
             
         """
+        
+    def curie(kind, prefix, localpart):
+        """\
+        Reports a `CURIE <http://www.w3.org/TR/2010/NOTE-curie-20101216/>`
+
+        `kind`
+            consts.IID, consts.SID, or consts.SLO
+        `prefix`
+            An identifier which was previously reported via `namespace`.
+        `localpart`
+            Local part of the CURIE.
+        """
+        
+    def qname(kind, prefix, localpart):
+        """\
+        Reports a QName.
+        
+        `kind`
+            consts.IID, consts.SID, or consts.SLO
+        `prefix`
+            An identifier which was previously reported via `namespace`.
+        `localpart`
+            Local part of the QName.
+        """
 
     def string(value):
         """\
