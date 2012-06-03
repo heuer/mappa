@@ -353,7 +353,21 @@ class ITologHandler(Interface):
 
         """
 
+    def decimal(value):
+        """\
+        
+        `value`
+            
+        """
+
     def date(value):
+        """\
+        
+        `value`
+            
+        """
+        
+    def datetime(value):
         """\
         
         `value`
