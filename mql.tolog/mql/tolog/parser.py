@@ -745,8 +745,7 @@ def _to_event(handler, arg, stringtoiri=False):
     kind, name = arg
     meth = consts.get_name(kind)
     if not meth:
-        print 'unhandled', kind #TODO
-        return
+        raise Exception('Unhandled: "%r"' % kind) #TODO: Better exception
     if stringtoiri and meth == 'string':
         meth = 'iri'
     method = getattr(handler, meth)
