@@ -259,7 +259,7 @@
     <xsl:value-of select="concat('&quot;', @value, '&quot;')"/>
   </xsl:template>
   
-  <xsl:template match="tl:iri">
+  <xsl:template match="tl:iri|tl:subjectidentifier">
     <xsl:call-template name="iri"><xsl:with-param name="iri" select="@value"/></xsl:call-template>
   </xsl:template>
 
@@ -285,12 +285,12 @@
     </xsl:choose>
   </xsl:template>
 
-  <xsl:template match="tl:subject-locator">
+  <xsl:template match="tl:subjectlocator">
     <xsl:text>= </xsl:text>
     <xsl:call-template name="iri"><xsl:with-param name="iri" select="@value"/></xsl:call-template>
   </xsl:template>
 
-  <xsl:template match="tl:item-identifier">
+  <xsl:template match="tl:itemidentifier">
     <xsl:text>^ </xsl:text>
     <xsl:call-template name="iri"><xsl:with-param name="iri" select="@value"/></xsl:call-template>
   </xsl:template>
