@@ -66,9 +66,9 @@
       </xsl:when>
       <xsl:otherwise>
         <xsl:value-of select="concat('using ', @identifier, ' for ')"/>
-        <xsl:if test="@kind='subject-identifier'"><xsl:text>i</xsl:text></xsl:if>
-        <xsl:if test="@kind='subject-locator'"><xsl:text>a</xsl:text></xsl:if>
-        <xsl:if test="@kind='item-identifier'"><xsl:text>s</xsl:text></xsl:if>
+        <xsl:if test="@kind='subjectidentifier'"><xsl:text>i</xsl:text></xsl:if>
+        <xsl:if test="@kind='subjectlocator'"><xsl:text>a</xsl:text></xsl:if>
+        <xsl:if test="@kind='itemidentifier'"><xsl:text>s</xsl:text></xsl:if>
         <xsl:value-of select="concat('&quot;', @iri, '&quot;&#xA;')"/>
       </xsl:otherwise>
     </xsl:choose>
