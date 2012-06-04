@@ -22,6 +22,13 @@
   <xsl:param name="base" select="''"/>
 
   <xsl:variable name="base-directive" select="tl:tolog/tl:base/@iri"/>
+
+  <xsl:variable name="base-iri">
+    <xsl:choose>
+      <xsl:when test="$base-directive"><xsl:value-of select="$base-directive"/></xsl:when>
+      <xsl:otherwise><xsl:value-of select="$base"/></xsl:otherwise>
+    </xsl:choose>
+  </xsl:variable>
     
   <xsl:key name="namespaces"
              match="tl:namespace[@kind!='module']"
@@ -41,14 +48,7 @@
     </xsl:element>
   </xsl:template>
 
-
   <xsl:template match="tl:identifier[local-name(../..) != 'predicate']">
-    <xsl:variable name="base-iri">
-      <xsl:choose>
-        <xsl:when test="$base-directive"><xsl:value-of select="$base-directive"/></xsl:when>
-        <xsl:otherwise><xsl:value-of select="$base"/></xsl:otherwise>
-      </xsl:choose>
-    </xsl:variable>
     <itemidentifier value="{concat($base-iri, '#', @value)}"/>
   </xsl:template>
 
