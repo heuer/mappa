@@ -343,7 +343,28 @@ class ITologHandler(Interface):
         """\
         
         `value`
-            Name of the variable (without ``$`` prefix)
+            Name of the identifier.
+        """
+
+    def subjectidentifier(value):
+        """\
+        
+        `value`
+            An IRI.
+        """
+
+    def subjectlocator(value):
+        """\
+        
+        `value`
+            An IRI.
+        """
+
+    def itemidentifier(value):
+        """\
+        
+        `value`
+            An IRI.
         """
 
     def integer(value):
