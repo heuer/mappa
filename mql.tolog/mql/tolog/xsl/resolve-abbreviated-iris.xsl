@@ -34,7 +34,7 @@
     </xsl:copy>
   </xsl:template>
 
-  <xsl:template match="tl:curie|tl:qname">
+  <xsl:template match="tl:curie[@kind!='module']|tl:qname[@kind!='module']">
     <xsl:variable name="iri" select="key('namespaces', @prefix)/@iri"/>
     <xsl:element name="{@kind}">
       <xsl:attribute name="value"><xsl:value-of select="concat($iri, @localpart)"/></xsl:attribute>  
