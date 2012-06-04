@@ -259,7 +259,7 @@
     <xsl:value-of select="concat('&quot;', @value, '&quot;')"/>
   </xsl:template>
   
-  <xsl:template match="tl:iri|tl:subjectidentifier">
+  <xsl:template match="tl:iri">
     <xsl:call-template name="iri"><xsl:with-param name="iri" select="@value"/></xsl:call-template>
   </xsl:template>
 
@@ -285,13 +285,24 @@
     </xsl:choose>
   </xsl:template>
 
+  <xsl:template match="tl:subjectidentifier">
+    <xsl:if test="$tolog-plus != 'true'"><xsl:text>i</xsl:text></xsl:if>
+    <xsl:call-template name="iri"><xsl:with-param name="iri" select="@value"/></xsl:call-template>
+  </xsl:template>
+
   <xsl:template match="tl:subjectlocator">
-    <xsl:text>= </xsl:text>
+    <xsl:choose>
+      <xsl:when test="$tolog-plus = 'true'"><xsl:text>= </xsl:text></xsl:when>
+      <xsl:otherwise><xsl:text>a</xsl:text></xsl:otherwise>
+    </xsl:choose>
     <xsl:call-template name="iri"><xsl:with-param name="iri" select="@value"/></xsl:call-template>
   </xsl:template>
 
   <xsl:template match="tl:itemidentifier">
-    <xsl:text>^ </xsl:text>
+      <xsl:choose>
+          <xsl:when test="$tolog-plus = 'true'"><xsl:text>^ </xsl:text></xsl:when>
+          <xsl:otherwise><xsl:text>s</xsl:text></xsl:otherwise>
+      </xsl:choose>
     <xsl:call-template name="iri"><xsl:with-param name="iri" select="@value"/></xsl:call-template>
   </xsl:template>
 
