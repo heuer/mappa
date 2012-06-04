@@ -88,7 +88,7 @@ def parse_query(src, handler=None, tolog_plus=False, optimizers=None):
         a default set of optimizers will be applied to the query.
         To omit any optimization, an empty iterable must be provided.
     """
-    handler = handler or handler_mod.DefaultQueryHandler()
+    handler = handler or handler_mod.make_default_queryhandler()
     if optimizers is None:
         optimizers = xsl.DEFAULT_TRANSFORMERS
     xsl.apply_transformations(parse_to_etree(src, tolog_plus), optimizers,
