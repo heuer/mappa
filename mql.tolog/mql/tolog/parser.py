@@ -775,7 +775,7 @@ if __name__ == '__main__':
     from tm import plyutils
     from tm.xmlutils import EtreeXMLWriter
     from mql.tolog import lexer as lexer_mod
-    from mql.tolog.handler import XMLParserHandler
+    from mql.tolog.handler import XMLHandler
     from lxml import etree
     def parse(data, handler):
         parser = yacc.yacc(debug=True)
@@ -789,7 +789,7 @@ if __name__ == '__main__':
         print(data)
         try:
             writer = EtreeXMLWriter()
-            parse(data, XMLParserHandler(writer))
+            parse(data, XMLHandler(writer))
             print etree.tostring(writer.getroot(), pretty_print=True)
         except Exception, ex:
             print data
