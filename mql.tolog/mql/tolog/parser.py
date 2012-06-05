@@ -40,8 +40,8 @@ tolog parser.
 """
 from __future__ import absolute_import
 from tm.mql import InvalidQueryError
-from . import consts, lexer
-from .utils import is_builtin_predicate, is_function_module
+from mql.tolog import consts, lexer
+from mql.tolog.utils import is_builtin_predicate, is_function_module
 
 tokens = lexer.tokens # Just to get rid of unused import warnings
 
@@ -772,11 +772,11 @@ if __name__ == '__main__':
 
     )
     from ply import yacc
-    from tm import plyutils
-    from tm.xmlutils import EtreeXMLWriter
+    from tm import plyutils, xmlutils
     from mql.tolog import lexer as lexer_mod
     from mql.tolog.handler import XMLHandler
     from lxml import etree
+    import lxml.sax
     def parse(data, handler):
         parser = yacc.yacc(debug=True)
         initialize_parser(parser, handler)
@@ -788,9 +788,10 @@ if __name__ == '__main__':
         print(cnt)
         print(data)
         try:
-            writer = EtreeXMLWriter()
-            parse(data, XMLHandler(writer))
-            print etree.tostring(writer.getroot(), pretty_print=True)
+            contenthandler = lxml.sax.ElementTreeContentHandler()
+            handler = XMLHandler(xmlutils.SAXSimpleXMLWriter(contenthandler))
+            parse(data, handler)
+            print etree.tostring(contenthandler.etree, pretty_print=True)
         except Exception, ex:
             print data
             raise ex
