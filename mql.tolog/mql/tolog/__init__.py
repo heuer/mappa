@@ -92,7 +92,7 @@ def parse_query(src, handler=None, tolog_plus=False, optimizers=None):
     if optimizers is None:
         optimizers = xsl.DEFAULT_TRANSFORMERS
     xsl.apply_transformations(parse_to_etree(src, tolog_plus), optimizers,
-                                        partial(xsl.saxify, handler=handler_mod.SAXHandler(handler)))
+                                        partial(xsl.saxify, handler=handler_mod.TologXMLContentHandler(handler)))
     return handler.query
 
 
