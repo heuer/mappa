@@ -226,7 +226,7 @@ try:
     import lxml.sax
     def is_lxml_handler(handler):
         return isinstance(handler, lxml.sax.ElementTreeContentHandler)
-except:
+except ImportError:
     def is_lxml_handler(handler):
         return False
 
