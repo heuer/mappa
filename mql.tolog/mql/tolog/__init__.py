@@ -109,7 +109,7 @@ def parse_to_etree(src, tolog_plus=False):
         `tolog_plus` value
     """
     contenthandler = lxml.sax.ElementTreeContentHandler()
-    parse(src, handler_mod.XMLParserHandler(xmlutils.SAXSimpleXMLWriter(contenthandler)), tolog_plus)
+    parse(src, handler_mod.XMLHandler(xmlutils.SAXSimpleXMLWriter(contenthandler)), tolog_plus)
     return contenthandler.etree
 
 
