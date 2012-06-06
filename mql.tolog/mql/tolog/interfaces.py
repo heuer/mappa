@@ -680,6 +680,46 @@ class IQueryFactory(Interface):
             A string representing a variable name (without ``$`` prefix).
         """
 
+    def create_string(value):
+        """\
+        Creates a string literal.
+        
+        `value`
+            The string value.
+        """
+
+    def create_integer(value):
+        """\
+        Creates an integer literal.
+        
+        `value`
+            A string representing an integer value.
+        """
+        
+    def create_decimal(value):
+        """\
+        Creates a decimal literal.
+
+        `value`
+            A string representing a decimal value.
+        """
+        
+    def create_date(value):
+        """\
+        Creates a date literal.
+
+        `value`
+            A string representing a date value in ISO 8601 format.
+        """
+
+    def create_datetime(value):
+        """\
+        Creates a date time literal.
+
+        `value`
+            A string representing a date time value in ISO 8601 format.
+        """
+
     def resolve_iri(base, reference):
         """\
         Resolves the specified `reference` against the `base`.
