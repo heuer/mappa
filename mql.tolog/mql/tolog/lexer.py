@@ -45,7 +45,7 @@ from tm.mql import SyntaxQueryError
 # We allow something like INSERT from . from . from tolog-predicate
 # for the time being although the tolog spec. says that it is an error since
 # 'from' is a tolog keyword.
-_END_OF_FRAGMENT = re.compile(r'$|\s+(?=(from|where)\s+(?!(.*?("|\.|\#))))', re.IGNORECASE).search
+_END_OF_FRAGMENT = re.compile(r'$|\s+(?=(from|where|into)\s+(?!(.*?("|\.|\#))))', re.IGNORECASE).search
 
 # Start of an identifier
 _IDENT_START = ur'[a-zA-Z_]|[\u00C0-\u00D6]|[\u00D8-\u00F6]' + \
@@ -94,6 +94,8 @@ reserved = {
     'merge': 'KW_MERGE',
     'update': 'KW_UPDATE',
     'insert': 'KW_INSERT',
+    # t+
+    'into': 'KW_INTO',
     }
 
 tokens = tuple(reserved.values()) + tuple(_DIRECTIVES.values()) + (
