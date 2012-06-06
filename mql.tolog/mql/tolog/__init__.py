@@ -64,6 +64,7 @@ def parse(src, handler, tolog_plus=False):
     parser = plyutils.make_parser(parser_mod)
     parser_mod.initialize_parser(parser, handler, tolog_plus)
     data = src.stream or urlopen(src.iri)
+    handler.base_iri = src.iri
     handler.start()
     parser.parse(data.read(), lexer=plyutils.make_lexer(lexer_mod))
     handler.end()
@@ -89,6 +90,7 @@ def parse_query(src, handler=None, tolog_plus=False, optimizers=None):
         To omit any optimization, an empty iterable must be provided.
     """
     handler = handler or handler_mod.make_queryhandler()
+    handler.base_iri = src.iri
     if optimizers is None:
         optimizers = xsl.DEFAULT_TRANSFORMERS
     xsl.apply_transformations(parse_to_etree(src, tolog_plus), optimizers,
