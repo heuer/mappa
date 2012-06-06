@@ -114,6 +114,16 @@ Note: The base IRI may be overridden by a `base` event.
         Indicates the end of an UPDATE statement.
         """
 
+    def startFrom():
+        """\
+        Indicates the start of topic maps referenced by an IRI.
+        """
+        
+    def endFrom():
+        """\
+        Indicates the end of a from clause.
+        """
+
     def startWhere():
         """\
         Indicates the start of the WHERE clause.
