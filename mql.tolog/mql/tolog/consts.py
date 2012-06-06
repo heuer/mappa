@@ -64,6 +64,8 @@ DECIMAL = 112
 LITERAL = 113
 MODULE = 114
 
+COUNT = 1000
+
 _CONST2NAME = {
     VARIABLE: 'variable',
     DECIMAL: 'decimal',
