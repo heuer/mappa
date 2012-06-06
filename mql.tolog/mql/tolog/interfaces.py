@@ -121,7 +121,17 @@ Note: The base IRI may be overridden by a `base` event.
         
     def endFrom():
         """\
-        Indicates the end of a from clause.
+        Indicates the end of a FROM clause.
+        """
+
+    def startInto():
+        """\
+        Indicates the start of topic maps referenced by an IRI.
+        """
+        
+    def endInto():
+        """\
+        Indicates the end of an INTO clause.
         """
 
     def startWhere():
