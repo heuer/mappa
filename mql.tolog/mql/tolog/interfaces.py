@@ -32,6 +32,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 """\
+Interfaces used to build a tolog query.
 
 
 :author:       Lars Heuer (heuer[at]semagia.com)
@@ -47,12 +48,12 @@ class ITologHandler(Interface):
 
     def start():
         """\
-        
+        The very first event.
         """
 
     def end():
         """\
-        
+        The last event.
         """
 
     def startSelect():
@@ -117,22 +118,30 @@ class ITologHandler(Interface):
 
     def startRule(name):
         """\
+        Indicates the start of a rule definition.
         
+        Subsequent events define the variables in the rule's header followed
+        by a `startBody` event.
+        
+        `name`
+            Name of the rule.
         """
 
     def endRule():
         """\
-        
+        Indicates the end of a rule defintion.
         """
 
     def startBody():
         """\
+        Indicates the start of a rule body definition.
         
+        Subsequent events define the clauses of the rule body.
         """
 
     def endBody():
         """\
-        
+        Indicates the end of a rule body definition.
         """
 
     def base(iri):
@@ -153,6 +162,7 @@ class ITologHandler(Interface):
 
     def startBuiltinPredicate(name, hints=None):
         """\
+        Indicates the start of a built-in predicate.
         
         `name`
             Name of the predicate.
@@ -169,11 +179,17 @@ class ITologHandler(Interface):
 
     def endBuiltinPredicate():
         """\
-        
+        Indicates the end of a built-in predicate.        
         """
 
-    def startInternalPredicate(name, hints=None):
+    def startInternalPredicate(name, hints=None, removed_variables=None):
         """\
+        Indicates the start of an internal predicate.
+        
+        If internal predicates aren't supported, it is possible to reconstruct
+        the built-in predicate. I.e. if the internal predicate is ``types($x)``,
+        the handler may construct the built-in predicate 
+        ``instance-of(removed_variables[0], $x)``
 
         `name`
             Name of the predicate.
@@ -186,31 +202,41 @@ class ITologHandler(Interface):
                 occurrence
                 name
                 variant
+        `removed_variables`
+            An optional iterable of strings containing the removed variable
+            names.
         """
 
     def endInternalPredicate():
         """\
-        
+        Indicates the end of an internal predicate.
         """
 
     def startInfixPredicate(name):
         """\
+        Indictaes the start of an infix predicate definition.
         
+        The subsequent events indicate the left hand side and then the 
+        right hand side of the expression.
+        
+        `name`
+            The name of the predicate: ``eq`` (``=``), ``ne`` (``/=``), 
+            ``lt`` (``<``), ``le`` (``<=``), ``gt`` (``>``), ``ge`` (``>=``).
         """
 
     def endInfixPredicate():
         """\
-        
+        Indictaes the end of an infix predicate definition.
         """
 
     def startAssociationPredicate():
         """\
-        
+        Indictaes the start of an association predicate definition.
         """
 
     def endAssociationPredicate():
         """\
-        
+        Indictaes the end of an association predicate definition.
         """
 
     def startPair():
@@ -245,37 +271,42 @@ class ITologHandler(Interface):
 
     def startDynamicPredicate():
         """\
-        
+        Indictaes the start of a dynamic predicate definition.
         """
 
     def endDynamicPredicate():
         """\
-        
+        Indictaes the end of a dynamic predicate definition.
         """
 
     def startPredicate():
         """\
-        
+        Indictaes the start of a rule or module function invocation.
         """
 
     def endPredicate():
         """\
-        
+        Indictaes the end of a rule or module function invocation.
         """
 
     def startName():
         """\
-
+        Indictaes the start of predicate, association predicate, or dynamic 
+        predicate name definition.
         """
 
     def endName():
         """\
-        
+        Indictaes the end of predicate, association predicate, or dynamic 
+        predicate name definition.
         """
 
     def startFragment():
         """\
         Indicates the start of a fragment.
+        
+        Subsequent events define the variables used within the fragment (if any)
+        followed by a ``fragmentContent`` event.
         """
 
     def endFragment():
@@ -285,6 +316,7 @@ class ITologHandler(Interface):
 
     def fragmentContent(content):
         """\
+        Reports the fragment's content.
         
         `content`
             A string representing the fragment.
