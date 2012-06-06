@@ -524,13 +524,14 @@ class IQueryFactory(Interface):
         
         """
 
-    def create_rule(name, args, body):
+    def create_rule(name, params, body):
         """\
+        Returns a rule.
         
         `name`
             Name of the rule.
-        `args`
-            An iterable of variables
+        `params`
+            An iterable of rule parameters.
         `body`
             An iterable of predicates, built-in predicates, infix predicates etc.
         """
@@ -546,6 +547,7 @@ class IQueryFactory(Interface):
 
     def create_builtin_predicate(name, args, hints=None):
         """\
+        Returns a built-in predicate.
         
         `name`
             Name of the predicate.
@@ -563,6 +565,9 @@ class IQueryFactory(Interface):
 
     def create_internal_predicate(name, args, hints=None):
         """\
+        Returns an internal predicate or ``None``.
+        
+        If the internal predicate is unknown, this method MUST return ``None``.
         
         `name`
             Name of the predicate.
@@ -580,6 +585,7 @@ class IQueryFactory(Interface):
 
     def create_infix_predicate(name, lh, rh, hints=None):
         """\
+        Returns an infix predicate.
         
         `name`
             Name of the infix predicate.
@@ -599,6 +605,7 @@ class IQueryFactory(Interface):
 
     def create_association_predicate(type, roles):
         """\
+        Returns an association predicate.
         
         `type`
             The association type
@@ -608,6 +615,7 @@ class IQueryFactory(Interface):
 
     def create_dynamic_predicate(type, topic, value):
         """\
+        Returns a dynamic predicate.
         
         `type`
             The occurrence type.
