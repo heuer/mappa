@@ -672,7 +672,7 @@ class IQueryFactory(Interface):
             An object created by `create_iri` or `resolve_iri`.
         """
 
-    def create_item_identitfier(iri):
+    def create_item_identifier(iri):
         """\
         Creates a item identifier.
         
