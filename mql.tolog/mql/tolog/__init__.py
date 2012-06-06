@@ -70,14 +70,22 @@ def parse(src, handler, tolog_plus=False):
     handler.end()
 
 
-def parse_query(src, handler=None, tolog_plus=False, optimizers=None):
+def parse_query(src, handler=None, factory=None, tolog_plus=False, optimizers=None):
     """\
     Parses and optimizes the query and returns an executable query.
+    
+    If the `handler` is ``None`` and the ``factory`` is ``None`` a default
+    handler/factory combination will be used. If the handler is not ``None``,
+    the factory argument will be ignored. If the `factory` is provided and
+    the `handler` is ``None``, a default handler will be used which utilizes
+    the provided factory to create the query.
     
     `src`
         A `tm.Source` instance to read the query from.
     `handler`
         A `IQueryHandler` which receives events to construct a query
+    `factory`
+        A `IQueryFactory` which is used to construct the query.
     `tolog_plus`
         Indicates if tolog+ parsing mode should be enabled.
         Note: If the query starts with a ``%version`` directive, the 
@@ -89,7 +97,7 @@ def parse_query(src, handler=None, tolog_plus=False, optimizers=None):
         a default set of optimizers will be applied to the query.
         To omit any optimization, an empty iterable must be provided.
     """
-    handler = handler or handler_mod.make_queryhandler()
+    handler = handler or handler_mod.make_queryhandler(factory)
     handler.base_iri = src.iri
     if optimizers is None:
         optimizers = xsl.DEFAULT_TRANSFORMERS
