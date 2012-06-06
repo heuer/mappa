@@ -21,13 +21,10 @@
              match="tl:*[local-name() = 'select'
                          or local-name() = 'delete'
                          or local-name() = 'merge'
+                         or local-name() = 'insert'
                          or local-name() = 'update']/tl:*[local-name(.) = 'variable' or local-name(.) = 'count']"
              use="@name"/>
     
-  <xsl:key name="insert-variables"
-             match="tl:insert/tl:fragment/tl:variable"
-             use="@name"/>
-
   <xsl:key name="where-variables"
              match="tl:where//tl:variable"
              use="@name"/>
@@ -47,7 +44,7 @@
     <!--** Replaces (direct-)instance-of($instance, $type) with (direct-)types($type) if the $instance variable is unused -->
     <xsl:variable name="instance-var" select="tl:variable[1]/@name"/>
     <xsl:choose>
-      <xsl:when test="count(key('query-variables', $instance-var)|key('insert-variables', $instance-var)) = 0 and count(key('where-variables', $instance-var)) = 1">
+      <xsl:when test="count(key('query-variables', $instance-var)) = 0 and count(key('where-variables', $instance-var)) = 1">
         <builtin-predicate kind="internal">
             <xsl:copy-of select="@*"/>
             <xsl:attribute name="name"><xsl:value-of select="concat(substring-before(@name, 'instance-of'), 'types')"/></xsl:attribute>
