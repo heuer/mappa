@@ -648,6 +648,38 @@ class IQueryFactory(Interface):
             A string representing an absolute IRI.
         """
 
+    def create_subject_identifier(iri):
+        """\
+        Creates a subject identifier.
+        
+        `iri`
+            An object created by `create_iri` or `resolve_iri`.
+        """
+
+    def create_subject_locator(iri):
+        """\
+        Creates a subject locator.
+        
+        `iri`
+            An object created by `create_iri` or `resolve_iri`.
+        """
+
+    def create_item_identfier(iri):
+        """\
+        Creates a item identifier.
+        
+        `iri`
+            An object created by `create_iri` or `resolve_iri`.
+        """
+
+    def create_variable(name):
+        """\
+        Creates a variable.
+        
+        `name`
+            A string representing a variable name (without ``$`` prefix).
+        """
+
     def resolve_iri(base, reference):
         """\
         Resolves the specified `reference` against the `base`.
