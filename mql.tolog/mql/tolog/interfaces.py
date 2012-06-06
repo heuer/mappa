@@ -34,6 +34,9 @@
 """\
 Interfaces used to build a tolog query.
 
+Although the package annotates implementations with ``zope.interfaces.implements``,
+it does not utilize the ``zope.interfaces.adapt`` function; the caller is 
+responsible to adapt arbitrary objects.
 
 :author:       Lars Heuer (heuer[at]semagia.com)
 :organization: Semagia - http://www.semagia.com/
@@ -45,6 +48,11 @@ class ITologHandler(Interface):
     """\
     Common superclass of tolog query handlers.    
     """
+    base_iri = Attribute("""\
+Sets/returns the base IRI as string.
+ 
+Note: The base IRI may be overridden by a `base` event.
+""")
 
     def start():
         """\
@@ -146,6 +154,7 @@ class ITologHandler(Interface):
 
     def base(iri):
         """\
+        Sets the base IRI.
         
         `iri`
             The base IRI all IRIs should be resolved against.
@@ -153,11 +162,14 @@ class ITologHandler(Interface):
 
     def namespace(identifier, iri, kind):
         """\
+        Reports a namespace.
         
         `identifier` 
             The identifier to which the IRI is assigned to.
         `iri`
             The IRI.
+        `kind`
+            An optional kind
         """
 
     def startBuiltinPredicate(name, hints=None):
@@ -361,77 +373,89 @@ class ITologHandler(Interface):
         """\
         
         `name`
-            Name of the variable to count (without ``$`` prefix)
+            A string representing the name of the variable to count 
+            (without ``$`` prefix)
         """
 
     def variable(name):
         """\
         
         `name`
-            Name of the variable (without ``$`` prefix)
+            A string representing the name of the variable (without ``$`` prefix)
         """
 
     def identifier(value):
         """\
+        Reports an identifier. 
+        
+        Unless the identifier is used as predicate name, it should be
+        expanded to an item identifier.
         
         `value`
-            Name of the identifier.
+            A string representing the name of the identifier.
         """
 
     def subjectidentifier(value):
         """\
         
         `value`
-            An IRI.
+            A string representing an IRI which should be used as subject identifier.
         """
 
     def subjectlocator(value):
         """\
         
         `value`
-            An IRI.
+            A string representing an IRI which should be used as subject locator.
         """
 
     def itemidentifier(value):
         """\
         
         `value`
-            An IRI.
+            A string representing an IRI which should be used as item identifier.
+        """
+
+    def string(value):
+        """\
+        
+        `value`
+            The value of the string.    
         """
 
     def integer(value):
         """\
         
         `value`
-
+            A string representing an integer.
         """
 
     def decimal(value):
         """\
         
         `value`
-            
+            A string representing a decimal number.            
         """
 
     def date(value):
         """\
         
         `value`
-            
+            A string representing a date in ISO 8601 format.
         """
         
     def datetime(value):
         """\
         
         `value`
-            
+            A string representing a date time value in ISO 8601 format.
         """
 
     def iri(value):
         """\
         
         `value` 
-            
+            A string representing an (absolute or relative) IRI.
         """
         
     def curie(kind, prefix, localpart):
@@ -456,13 +480,6 @@ class ITologHandler(Interface):
             An identifier which was previously reported via `namespace`.
         `localpart`
             Local part of the QName.
-        """
-
-    def string(value):
-        """\
-        
-        `value`
-            
         """
 
 
