@@ -336,12 +336,14 @@ def p_import_directive(p):
     if not is_function_module(iri):
         pass #TODO: Import 
 
-
 def p_version_directive(p):
     """\
     version_directive : DIR_VERSION DECIMAL
     """
-    p.parser.tolog_plus = True #TODO: Handle version indicator
+    version = [int(part) for part in p[2].split(u'.')]
+    if version[0] != 1 or version[1] > 2:
+        raise InvalidQueryError('Unknown version %s' % p[2])
+    p.parser.tolog_plus = True
 
 def p_base_directive(p):
     """\
