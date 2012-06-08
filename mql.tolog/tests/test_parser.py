@@ -363,7 +363,22 @@ from-hell
     value($o2, 12.34), 
     value($n, "foo"),
     value($o3, "foo"^^xsd:int)?
+    ''',
     '''
+    load <http://www.semagia.com/tolog-xml>
+    ''',
+    '''
+    load <http://www.semagia.com/tolog-xml> into <http://www.semagia.com/foo>
+    ''',
+    '''
+    load <http://www.semagia.com/tolog-xml> into <http://www.semagia.com/foo>, <http://www.semagia.com/bar> 
+    ''',
+    '''
+    drop <http://www.semagia.com/tolog-xml> 
+    ''',
+    '''
+    create <http://www.semagia.com/tolog-xml> 
+    ''',
     )
 
 if __name__ == '__main__':
