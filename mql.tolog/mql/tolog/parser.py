@@ -362,6 +362,12 @@ def p_ref(p):
     """
     p[0] = p[1]
 
+def p_qiri_IRI(p):
+    """\
+    qiri            : IRI
+    """
+    p[0] = consts.IRI, p[1]
+
 def p_qiri_qname(p):
     """\
     qiri            : qname
