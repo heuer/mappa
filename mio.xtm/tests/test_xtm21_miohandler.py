@@ -39,14 +39,13 @@ Tests against the XTM 2.1 MIOHandler
 :version:      $Rev: 168 $ - $Date: 2009-06-26 14:22:56 +0200 (Fr, 26 Jun 2009) $
 :license:      BSD license
 """
-import unittest
 from StringIO import StringIO
 import codecs
 import mappa
 from mappa.miohandler import MappaMapHandler
 from mappaext.cxtm.cxtm_test import find_valid_cxtm_cases, get_baseline
 from mappaext.cxtm import create_writer
-from tm.mio import Source
+from tm import Source
 from mio.xtm import create_deserializer, XTM21Handler
 
 def fail(msg):

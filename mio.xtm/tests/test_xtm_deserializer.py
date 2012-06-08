@@ -39,7 +39,7 @@ Tests against the XTM content handler.
 :license:      BSD license
 """
 from unittest import TestCase
-from tm.mio import Source
+from tm import Source
 from tm.mio.handler import MapHandler
 from mio.xtm import create_deserializer
 
