@@ -38,7 +38,7 @@ Tests against the lexer.
 :organization: Semagia - <http://www.semagia.com/>
 :license:      BSD License
 """
-from nose.tools import ok_
+from nose.tools import eq_
 from tm import plyutils
 import mql.tolog.lexer as lexer_mod
 
@@ -51,8 +51,8 @@ def lex(data, expected):
         if not tok:
             break
         expected_type, expected_value = expected[i]
-        ok_(expected_type == tok.type, expected_type)
-        ok_(expected_value == tok.value, expected_value)
+        eq_(expected_type, tok.type)
+        eq_(expected_value, tok.value)
         i+=1
 
 def simple_lex(data):
@@ -92,17 +92,17 @@ def test_tm_fragment_from():
 def test_string_escape():
     data = '"Se""magia"'
     token = lex_tokenlist(data)[0]
-    ok_('STRING' == token.type)
-    ok_('Se"magia' == token.value)
+    eq_('STRING', token.type)
+    eq_('Se"magia', token.value)
 
 def test_tokentypes():
     def check(data, expected):
         tokens = lex_tokenlist(data)
-        ok_(len(expected) == len(tokens))
+        eq_(len(expected), len(tokens))
         # Walk through the reference tokens and compare each with the 
         # generated tokens
         for i, ttype in enumerate(expected):
-            ok_(ttype == tokens[i].type)        
+            eq_(ttype, tokens[i].type)
 
     for data, expected in _TEST_DATA:
         yield check, data, expected
