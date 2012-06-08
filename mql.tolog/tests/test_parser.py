@@ -38,13 +38,12 @@ Tests against the parser.
 :organization: Semagia - <http://www.semagia.com/>
 :license:      BSD License
 """
-import tm
 from tm.mql import InvalidQueryError
 import mql.tolog as tolog
-from mql.tolog.handler import NoopParserHandler
+from mql.tolog.handler import NoopHandler
 
 def parse(data, handler=None):
-    tolog.parse(tm.Source(data=data, iri='http://www.semagia.com/tolog-test/'), handler or NoopParserHandler())
+    tolog.parse(data, handler or NoopHandler(), iri='http://www.semagia.com/tolog-test/')
 
 def fail(msg):
     raise AssertionError(msg)
