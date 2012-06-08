@@ -43,7 +43,7 @@ from tm import plyutils
 import mql.tolog.lexer as lexer_mod
 
 def lex(data, expected):
-    lexer = plyutils.make_lexer(lexer_mod)
+    lexer = plyutils.make_lexer(lexer_mod, optimize=False)
     lexer.input(data)
     i = 0
     while True:
@@ -85,10 +85,30 @@ def test_tm_fragment_from():
               [('KW_INSERT', 'INSERT'), ('TM_FRAGMENT', 'from-hell - "I am from hell".')]),
             ('''INSERT #( from )# me. to. you. from tolog-predicate($x)''',
              [('KW_INSERT', 'INSERT'), ('TM_FRAGMENT', '#( from )# me. to. you.'), ('KW_FROM', 'from'), ('IDENT', 'tolog-predicate'), ('LPAREN', '('), ('VARIABLE', 'x'), ('RPAREN', ')')]),
+            ('''insert $foo. into <http://www.semagia.com/> from nonsense($foo, "boo")''',
+                [('KW_INSERT', 'insert'), ('TM_FRAGMENT', '$foo.'), 
+                    ('KW_INTO', 'into'), ('IRI', 'http://www.semagia.com/'), 
+                    ('KW_FROM', 'from'), ('IDENT', 'nonsense'), ('LPAREN', '('), ('VARIABLE', 'foo'), ('COMMA', ','), ('STRING', 'boo'), ('RPAREN', ')')]),
+            ('''insert $foo. from nonsense($foo, "boo")''',
+             [('KW_INSERT', 'insert'), ('TM_FRAGMENT', '$foo.'),
+                 ('KW_FROM', 'from'), ('IDENT', 'nonsense'), ('LPAREN', '('), ('VARIABLE', 'foo'), ('COMMA', ','), ('STRING', 'boo'), ('RPAREN', ')')]),
+            ('''insert $foo. where nonsense($foo, "boo")''',
+             [('KW_INSERT', 'insert'), ('TM_FRAGMENT', '$foo.'),
+                 ('KW_WHERE', 'where'), ('IDENT', 'nonsense'), ('LPAREN', '('), ('VARIABLE', 'foo'), ('COMMA', ','), ('STRING', 'boo'), ('RPAREN', ')')]),
              )
     for q, expected in data:
         yield lex, q, expected
 
+def test_idents():
+    idents = ['foo', 'fo.12', 'fo.12', 'foo-123', 'fo....----1234']
+    for ident in idents:
+        yield lex, ident, [('IDENT', ident)]
+
+def test_ident_dot():
+    idents = ['foo.', 'fo.12.', 'fo.12.', 'foo-123.', 'fo....----1234.']
+    for ident in idents:
+        yield lex, ident, [('IDENT', ident[:-1]), ('DOT', '.')]
+        
 def test_string_escape():
     data = '"Se""magia"'
     token = lex_tokenlist(data)[0]
