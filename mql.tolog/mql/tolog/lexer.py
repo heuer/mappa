@@ -240,6 +240,8 @@ def t_IDENT(t):
 def t_directive(t):
     r'%[A-Za-z]+'
     t.type = _DIRECTIVES.get(t.value.lower())
+    if not t.type:
+        raise SyntaxQueryError('Unknown directive %s' % t.value)
     return t
 
 @TOKEN(r'%sT%s' % (_DATE, _TIME))
