@@ -166,7 +166,7 @@ def p_param_STRING(p):
 
 def p_insert(p):
     """\
-    insert          : KW_INSERT _start_insert fragment opt_from_clause
+    insert          : KW_INSERT _start_insert fragment opt_into_clause opt_from_clause
     """
     _handler(p).endInsert()
 
@@ -175,6 +175,39 @@ def p__start_insert(p): # Inline action
     _start_insert   : 
     """
     _handler(p).startInsert()
+    
+def p_opt_into_clause(p):
+    """\
+    opt_into_clause : 
+                    | KW_INTO tm_list
+    """
+    if len(p) > 1:
+        handler = _handler(p)
+        handler.startInto()
+        for item in p[2]:
+            _to_event(handler, item)
+        handler.endInto()
+
+def p_tm_list(p):
+    """\
+    tm_list         : tm
+                    | tm_list COMMA tm
+    """
+    if len(p) == 2:
+        p[0] = [p[1]]
+    else:
+        p[0] = p[1]
+        p[0].append(p[3])
+        
+def p_tm(p):
+    """\
+    tm              : qname
+                    | IRI
+    """
+    if not isinstance(p[1], tuple):
+        p[0] = consts.IRI, p[1]
+    else:
+        p[0] = p[1]
 
 def p_fragment(p):
     """\
