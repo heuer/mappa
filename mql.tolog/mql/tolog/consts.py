@@ -85,6 +85,7 @@ _CONST2NAME = {
     LITERAL: 'literal',
     ASC: 'ascending',
     DESC: 'descending',
+    COUNT: 'count'
 }
 
 def get_name(constant):
