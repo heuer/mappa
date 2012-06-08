@@ -42,11 +42,6 @@ import re
 from ply.lex import TOKEN #pylint: disable-msg=F0401, E0611
 from tm.mql import SyntaxQueryError
 
-# We allow something like INSERT from . from . from tolog-predicate
-# for the time being although the tolog spec. says that it is an error since
-# 'from' is a tolog keyword.
-_END_OF_FRAGMENT = re.compile(r'$|\s+(?=(from|where|into)\s+(?!(.*?("|\.|\#))))', re.IGNORECASE).search
-
 # Start of an identifier
 _IDENT_START = ur'[a-zA-Z_]|[\u00C0-\u00D6]|[\u00D8-\u00F6]' + \
                 ur'|[\u00F8-\u02FF]|[\u0370-\u037D]' + \
@@ -73,7 +68,7 @@ _DIRECTIVES = {
     '%version': 'DIR_VERSION',
 }
 
-reserved = {
+_RESERVED = {
     'select': 'KW_SELECT',
     'from': 'KW_FROM',
     'where': 'KW_WHERE',
@@ -95,10 +90,13 @@ reserved = {
     'update': 'KW_UPDATE',
     'insert': 'KW_INSERT',
     # t+
+    'load': 'KW_LOAD',
+    'create': 'KW_CREATE',
+    'drop': 'KW_DROP',
     'into': 'KW_INTO',
     }
 
-tokens = tuple(reserved.values()) + tuple(_DIRECTIVES.values()) + (
+tokens = tuple(_RESERVED.values()) + tuple(_DIRECTIVES.values()) + (
     'IDENT',
     'SID',
     'SLO',
@@ -153,11 +151,6 @@ t_COLON     = r':'
 t_PIPE_PIPE = r'\|{2}'
 t_PIPE      = r'\|'
 
-t_DIR_PREFIX = r'%prefix'
-t_DIR_BASE = r'%base'
-t_DIR_IMPORT = r'%import'
-t_DIR_VERSION = r'%version'
-
 states = (
    ('tm','exclusive'),
 )
@@ -167,6 +160,8 @@ states = (
 
 def t_error(t):
     raise SyntaxQueryError('Invalid tolog syntax: %r' % t) #TODO
+
+t_tm_error = t_error # Same error handling within state 'tm'
 
 def t_mlcomment(t):
     r'/\*[^\*/]*\*/'
@@ -236,9 +231,14 @@ def t_QNAME(t):
 
 @TOKEN(_IDENT)
 def t_IDENT(t):
-    t.type = reserved.get(t.value.lower(), 'IDENT')
+    t.type = _RESERVED.get(t.value.lower(), 'IDENT')
     if t.type == 'KW_INSERT':
         t.lexer.begin('tm') # Switch to TM mode
+    return t
+
+def t_directive(t):
+    r'%[A-Za-z]+'
+    t.type = _DIRECTIVES.get(t.value.lower())
     return t
 
 @TOKEN(r'%sT%s' % (_DATE, _TIME))
@@ -260,27 +260,40 @@ def t_INTEGER(t):
 # Satisfy PLY and ignore nothing
 t_tm_ignore = ''
 
+# We allow something like INSERT from . from . from tolog-predicate
+# for the time being although the tolog spec. says that it is an error since
+# 'from' is a tolog keyword.
+#TODO: Needs more work/tests
+_INTO_KEYWORD = re.compile(r'\s+(?=into\s+)', re.IGNORECASE).finditer
+_WHERE_KEYWORD = re.compile(r'\s+(?=(from|where)\s+(?!(.*?("(.*?(\.|;))|\.|(?:#\))))))', re.IGNORECASE).finditer
+
 # Matches first whitespace characters after INSERT
-# Then search for the tolog keyword 'from' or to the
+# Then search for the tolog keyword 'into' or 'from'/'where' or to the
 # end of the string. The content between INSERT and from (exclusive) / end of 
 # string is returned as TM_FRAGMENT token
 def t_tm_content(t):
     r'\s+'
-    m = _END_OF_FRAGMENT(t.lexer.lexdata, t.lexer.lexpos)
-    if not m:
-        raise Exception('Internal error: Cannot find topic map content to insert')
-    t.value = t.lexer.lexdata[t.lexer.lexpos:m.start()]
+    def last_match(match_iterator):
+        m = None
+        for m in match_iterator(t.lexer.lexdata, t.lexer.lexpos):
+            pass
+        return m
+    m = last_match(_INTO_KEYWORD) or last_match(_WHERE_KEYWORD)
+    if m:
+        start, end = m.start(), m.end()
+    else:
+        start = t.lexer.lexlen
+        end = start
+    t.value = t.lexer.lexdata[t.lexer.lexpos:start]
     t.type = 'TM_FRAGMENT'
     t.lexer.lineno += t.value.count('\n')
     # Move the lexer's position to the end of the TM fragment 
-    # but in advance of the optional 'from' keyword
-    t.lexer.lexpos = m.end()
+    # but in advance of the optional keyword
+    t.lexer.lexpos = end
     # Continue with tolog
     t.lexer.begin('INITIAL')
     return t
 
-def t_tm_error(t):
-    raise Exception() #TODO
 
 if __name__ == '__main__':
     test_data = [
