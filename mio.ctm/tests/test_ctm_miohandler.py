@@ -45,7 +45,8 @@ import mappa
 from mappa.miohandler import MappaMapHandler
 from mappaext.cxtm.cxtm_test import find_valid_cxtm_cases, get_baseline
 from mappaext.cxtm import create_writer
-from tm.mio import Source, MIOException, SUBJECT_IDENTIFIER
+from tm import Source
+from tm.mio import MIOException, SUBJECT_IDENTIFIER
 from mio.ctm import create_deserializer, CTMHandler
 from mio import xtm
 
