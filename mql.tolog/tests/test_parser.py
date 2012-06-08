@@ -379,6 +379,12 @@ from-hell
     '''
     create <http://www.semagia.com/tolog-xml> 
     ''',
+    '''
+    select $x using <http://www.semagia.com/> from nonsense($x)?
+    ''',
+    '''
+    select $x using <http://www.semagia.com/> where nonsense($x)?
+    '''
     )
 
 if __name__ == '__main__':
