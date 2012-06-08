@@ -70,7 +70,7 @@ def parse(src, handler, tolog_plus=False, **kw):
             raise ValueError('If the query source is a string, an "iri" keyword is expected')
         src = Source(data=src, iri=iri)
     elif isinstance(src, file):
-        src = Source(file=src)
+        src = Source(file=src, iri=kw.get('iri'))
     data = src.stream or urlopen(src.iri)
     handler.base_iri = src.iri
     handler.start()
