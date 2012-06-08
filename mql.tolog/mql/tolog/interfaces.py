@@ -46,7 +46,7 @@ from tm.proto import Interface, Attribute
 
 class ITologHandler(Interface):
     """\
-    Common superclass of tolog query handlers.    
+    Event handler which receives notifications.
     """
     base_iri = Attribute("""\
 Sets/returns the base IRI as string.
@@ -61,8 +61,38 @@ Note: The base IRI may be overridden by a `base` event.
 
     def end():
         """\
-        The last event.
+        The last event (in case no error happened).
         """
+
+    def startLoad():
+        """\
+        Indicates the start of a LOAD statement.
+        """
+        
+    def endLoad():
+        """\
+        Indicates the end of a LOAD statement.
+        """
+
+    def startCreate():
+        """\
+        Indicates the start of a CREATE statement.
+        """
+
+    def endCreate():
+        """\
+        Indicates the end of a CREATE statement.
+        """
+    
+    def startDrop():
+        """\
+        Indicates the start of a DROP statement.
+        """
+
+    def endDrop():
+        """\
+        Indicates the end of a DROP statement.
+        """    
 
     def startSelect():
         """\
@@ -116,22 +146,22 @@ Note: The base IRI may be overridden by a `base` event.
 
     def startFrom():
         """\
-        Indicates the start of topic maps referenced by an IRI.
+        Indicates the start a FROM statement (topic maps referenced by IRIs).
         """
         
     def endFrom():
         """\
-        Indicates the end of a FROM clause.
+        Indicates the end of a FROM statement.
         """
 
     def startInto():
         """\
-        Indicates the start of topic maps referenced by an IRI.
+        Indicates the start of an INTO statement (topic maps referenced by IRIs).
         """
         
     def endInto():
         """\
-        Indicates the end of an INTO clause.
+        Indicates the end of an INTO statement.
         """
 
     def startWhere():
@@ -509,9 +539,9 @@ class IQueryHandler(ITologHandler):
     created query.
     """
     query = Attribute("""\
-A query object.
+Returns a query object.
 
-This may be ``None`` until the `end` method was invoked.
+This may be ``None`` until the `end` event was issued.
 """)
 
 
