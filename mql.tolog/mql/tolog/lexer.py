@@ -70,8 +70,7 @@ _DIRECTIVES = {
 
 _RESERVED = {
     'select': 'KW_SELECT',
-    'from': 'KW_FROM',
-    'where': 'KW_WHERE',
+    'from': 'KW_WHERE',
     'count': 'KW_COUNT',
     'not': 'KW_NOT',
     'limit': 'KW_LIMIT',
@@ -94,9 +93,11 @@ _RESERVED = {
     'create': 'KW_CREATE',
     'drop': 'KW_DROP',
     'into': 'KW_INTO',
+    'where': 'KW_WHERE',
     }
 
-tokens = tuple(_RESERVED.values()) + tuple(_DIRECTIVES.values()) + (
+# Creating a set here to get rid of the warning that KW_WHERE is defined twice
+tokens = tuple(set(_RESERVED.values())) + tuple(_DIRECTIVES.values()) + (
     'IDENT',
     'SID',
     'SLO',

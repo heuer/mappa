@@ -96,6 +96,8 @@ def p_noop(p): # Handles all grammar rules where the result is not of interest
                     | QM  
     delete_element  : function_call
                     | paramlist
+    opt_from        : 
+                    | from_clause
     opt_where       : 
                     | where_clause
     opt_tail        : 
@@ -152,7 +154,7 @@ def p_drop(p):
     
 def p_delete(p):
     """\
-    delete          : KW_DELETE _start_delete delete_element opt_where
+    delete          : KW_DELETE _start_delete delete_element opt_from opt_where
     """
     _handler(p).endDelete()
 
@@ -251,7 +253,7 @@ def p_fragment(p):
 
 def p_update(p):
     """\
-    update          : KW_UPDATE _start_update function_call opt_where
+    update          : KW_UPDATE _start_update function_call opt_from opt_where
     """
     _handler(p).endUpdate()
 
@@ -263,7 +265,7 @@ def p__start_update(p): # Inline action
 
 def p_merge(p):
     """\
-    merge           : KW_MERGE _start_merge literal COMMA literal opt_where
+    merge           : KW_MERGE _start_merge literal COMMA literal opt_from opt_where
     """
     _handler(p).endMerge()
 
@@ -285,10 +287,19 @@ def p_literal_topic_ref(p):
     """
     _to_event(_handler(p), p[1])
 
+def p_from_clause(p):
+    """\
+    from_clause     : KW_USING qiris
+    """
+    handler = _handler(p)
+    handler.startFrom()
+    for item in p[2]:
+        _to_event(handler, item)
+    handler.endFrom()
+
 def p_where_clause(p):
     """\
-    where_clause    : KW_FROM _start_where clauselist
-                    | KW_WHERE _start_where clauselist    
+    where_clause    : KW_WHERE _start_where clauselist    
     """
     _handler(p).endWhere()
 
@@ -340,7 +351,7 @@ def p_base_directive(p):
 
 def p_select_query(p):
     """\
-    select_query    : KW_SELECT _start_select select_elements where_clause opt_tail opt_qm
+    select_query    : KW_SELECT _start_select select_elements opt_from where_clause opt_tail opt_qm
     """
     _handler(p).endSelect()
 
