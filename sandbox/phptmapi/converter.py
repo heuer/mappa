@@ -22,7 +22,8 @@ except ImportError:
     import sys
     sys.path.append('..')
 from phptmapi.miohandler import PHPTMAPIMapHandler
-from tm.mio import Source, create_deserializer
+from tm import Source
+from tm.mio import create_deserializer
 
 def _generate_phpfilename(source):
     filename = source + '.php'
