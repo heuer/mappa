@@ -32,7 +32,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 """\
-
+Internal utility functions.
 
 :author:       Lars Heuer (heuer[at]semagia.com)
 :organization: Semagia - <http://www.semagia.com/>
