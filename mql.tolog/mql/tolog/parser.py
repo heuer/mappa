@@ -78,6 +78,9 @@ def p_noop(p): # Handles all grammar rules where the result is not of interest
                     | merge
                     | delete
                     | update
+                    | create
+                    | load
+                    | drop
     query           : select_query
                     | clause_query
     select_elements : select_element
@@ -93,8 +96,8 @@ def p_noop(p): # Handles all grammar rules where the result is not of interest
                     | QM  
     delete_element  : function_call
                     | paramlist
-    opt_from_clause : 
-                    | from_clause
+    opt_where       : 
+                    | where_clause
     opt_tail        : 
                     | tail
     tail            : order_clause opt_limit_offset
@@ -113,9 +116,43 @@ def p_noop(p): # Handles all grammar rules where the result is not of interest
     """
     p[0] = None
 
+
+def p_create(p):
+    """\
+    create          : KW_CREATE qiri
+    """
+    handler = _handler(p)
+    handler.startCreate()
+    _to_event(handler, p[2])
+    handler.endCreate()
+
+def p_load(p):
+    """\
+    load            : KW_LOAD qiri _start_load opt_into
+    """
+    _handler(p).endLoad()
+
+def p__start_load(p): # Inline action
+    """\
+    _start_load     : 
+    """
+    handler = _handler(p)
+    handler.startLoad()
+    _to_event(handler, p[-1])
+    
+def p_drop(p):
+    """\
+    drop            : KW_DROP qiris
+    """
+    handler = _handler(p)
+    handler.startDrop()
+    for item in p[2]:
+        _to_event(handler, item)
+    handler.endDrop()
+    
 def p_delete(p):
     """\
-    delete          : KW_DELETE _start_delete delete_element opt_from_clause
+    delete          : KW_DELETE _start_delete delete_element opt_where
     """
     _handler(p).endDelete()
 
@@ -166,7 +203,7 @@ def p_param_STRING(p):
 
 def p_insert(p):
     """\
-    insert          : KW_INSERT _start_insert fragment opt_into_clause opt_from_clause
+    insert          : KW_INSERT _start_insert fragment opt_into opt_where
     """
     _handler(p).endInsert()
 
@@ -176,10 +213,10 @@ def p__start_insert(p): # Inline action
     """
     _handler(p).startInsert()
     
-def p_opt_into_clause(p):
+def p_opt_into(p):
     """\
-    opt_into_clause : 
-                    | KW_INTO tm_list
+    opt_into        : 
+                    | KW_INTO qiris
     """
     if len(p) > 1:
         handler = _handler(p)
@@ -188,10 +225,10 @@ def p_opt_into_clause(p):
             _to_event(handler, item)
         handler.endInto()
 
-def p_tm_list(p):
+def p_qiris(p):
     """\
-    tm_list         : tm
-                    | tm_list COMMA tm
+    qiris           : qiri
+                    | qiris COMMA qiri
     """
     if len(p) == 2:
         p[0] = [p[1]]
@@ -199,16 +236,6 @@ def p_tm_list(p):
         p[0] = p[1]
         p[0].append(p[3])
         
-def p_tm(p):
-    """\
-    tm              : qname
-                    | IRI
-    """
-    if not isinstance(p[1], tuple):
-        p[0] = consts.IRI, p[1]
-    else:
-        p[0] = p[1]
-
 def p_fragment(p):
     """\
     fragment        : TM_FRAGMENT
@@ -224,7 +251,7 @@ def p_fragment(p):
 
 def p_update(p):
     """\
-    update          : KW_UPDATE _start_update function_call opt_from_clause
+    update          : KW_UPDATE _start_update function_call opt_where
     """
     _handler(p).endUpdate()
 
@@ -236,7 +263,7 @@ def p__start_update(p): # Inline action
 
 def p_merge(p):
     """\
-    merge           : KW_MERGE _start_merge literal COMMA literal opt_from_clause
+    merge           : KW_MERGE _start_merge literal COMMA literal opt_where
     """
     _handler(p).endMerge()
 
@@ -258,9 +285,9 @@ def p_literal_topic_ref(p):
     """
     _to_event(_handler(p), p[1])
 
-def p_from_clause(p):
+def p_where_clause(p):
     """\
-    from_clause     : KW_FROM _start_where clauselist
+    where_clause    : KW_FROM _start_where clauselist
                     | KW_WHERE _start_where clauselist    
     """
     _handler(p).endWhere()
@@ -313,7 +340,7 @@ def p_base_directive(p):
 
 def p_select_query(p):
     """\
-    select_query    : KW_SELECT _start_select select_elements from_clause opt_tail opt_qm
+    select_query    : KW_SELECT _start_select select_elements where_clause opt_tail opt_qm
     """
     _handler(p).endSelect()
 
