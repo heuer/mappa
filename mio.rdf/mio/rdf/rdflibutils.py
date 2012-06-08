@@ -65,7 +65,7 @@ class RDFMappingReader(Store):
         `handler`
             A IMappingHandler instance.
         """
-        super(RDFLibHandler, self).__init__(configuration=None, identifier=None)
+        super(RDFMappingReader, self).__init__(configuration=None, identifier=None)
         self.handler = handler
         self._mappings = collections.defaultdict(_Mapping)
 
