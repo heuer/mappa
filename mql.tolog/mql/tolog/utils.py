@@ -45,7 +45,7 @@ _TOLOG_EXPERIMENTAL_MODULE = _TOLOG_BASE + u'experimental/'
 _TOLOG_NUMBER_MODULE = _TOLOG_BASE + u'numbers/'
 
 _TPLUS_BASE = u'http://psi.semagia.com/tplus/'
-_TPLUS_EXPERIMENTAL_MODULE = _TPLUS_BASE + 'experimental/'
+_TPLUS_EXPERIMENTAL_MODULE = _TPLUS_BASE + u'experimental/'
 
 _INFIX_PREDICATES = ('/=', '<', '<=', '=', '>', '>=')
 
