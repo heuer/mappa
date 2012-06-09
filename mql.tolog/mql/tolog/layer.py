@@ -46,16 +46,6 @@ class TopicMapLayer(object):
     """\
 
     """
-    def get_baseuri(self):
-        """\
-        Returns the base locator
-        """
-
-    def resolve_iri(self, iri):
-        """\
-
-        """
-        
     def get_topic_by_subject_identifier(self, sid):
         """\
 
