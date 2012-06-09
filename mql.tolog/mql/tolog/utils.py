@@ -39,10 +39,13 @@ Internal utility functions.
 :license:      BSD License
 """
 
-_MODULE_BASE = u'http://psi.ontopia.net/tolog/'
-_TOLOG_STRING_MODULE = _MODULE_BASE + u'string/'
-_TOLOG_EXPERIMENTAL_MODULE = _MODULE_BASE + u'experimental/'
-_TOLOG_NUMBER_MODULE = _MODULE_BASE + u'numbers/'
+_TOLOG_BASE = u'http://psi.ontopia.net/tolog/'
+_TOLOG_STRING_MODULE = _TOLOG_BASE + u'string/'
+_TOLOG_EXPERIMENTAL_MODULE = _TOLOG_BASE + u'experimental/'
+_TOLOG_NUMBER_MODULE = _TOLOG_BASE + u'numbers/'
+
+_TPLUS_BASE = u'http://psi.semagia.com/tplus/'
+_TPLUS_EXPERIMENTAL_MODULE = _TPLUS_BASE + 'experimental/'
 
 _INFIX_PREDICATES = ('/=', '<', '<=', '=', '>', '>=')
 
@@ -60,41 +63,46 @@ _BUILTIN_PREDICATES = _INFIX_PREDICATES + (
     'source-locator', 
     )
 
-_STR_FUNCTIONS = (
+_TOLOG_STR_FUNCTIONS = (
     'concat', 'contains', 'ends-with', 
     'index-of', 'last-index-of', 'length', 
     'starts-with', 'substring', 'substring-after', 
     'substring-before', 'translate',
     )
 
-_NUM_FUNCTIONS = (
+_TOLOG_NUM_FUNCTIONS = (
     'value', 'format', 'absolute', 
     'add', 'subtract', 'multiply',
     'divide', 'min', 'max',
 )
 
-_EXPERIMENTAL_FUNCTIONS = (
+_TOLOG_EXPERIMENTAL_FUNCTIONS = (
     'in', 'gt', 'lt', 'gteq', 'lteq', 'name',
 )
 
-_UPDATE_FUNCTIONS = (
+_TPLUS_EXPERIMENTAL_FUNCTIONS = (
+    'parent', 'child',
+)
+
+_TOLOG_UPDATE_FUNCTIONS = (
     # tolog 1.2
     'value', 'resource',
 )
 
-_DELETE_FUNCTIONS = (
+_TOLOG_DELETE_FUNCTIONS = (
     # tolog 1.2
     'subject-identifier', 'subject-locator', 'item-identifier',
     'scope', 'reifies', 'direct-instance-of',
 )
 
-_FUNCTIONS = _UPDATE_FUNCTIONS + _DELETE_FUNCTIONS
+_FUNCTIONS = _TOLOG_UPDATE_FUNCTIONS + _TOLOG_DELETE_FUNCTIONS
 
 _DEFAULT_MODULES = {
     None: _FUNCTIONS,
-    _TOLOG_STRING_MODULE:  _STR_FUNCTIONS,
-    _TOLOG_EXPERIMENTAL_MODULE:  _EXPERIMENTAL_FUNCTIONS,
-    _TOLOG_NUMBER_MODULE: _NUM_FUNCTIONS,
+    _TOLOG_STRING_MODULE:  _TOLOG_STR_FUNCTIONS,
+    _TOLOG_EXPERIMENTAL_MODULE:  _TOLOG_EXPERIMENTAL_FUNCTIONS,
+    _TOLOG_NUMBER_MODULE: _TOLOG_NUM_FUNCTIONS,
+    _TPLUS_EXPERIMENTAL_MODULE: _TPLUS_EXPERIMENTAL_FUNCTIONS,
     }
 
 def is_function_module(iri):
@@ -126,10 +134,10 @@ def is_delete_function(name):
     """\
     Returns if ``name`` is a delete function.
     """
-    return name in _DELETE_FUNCTIONS
+    return name in _TOLOG_DELETE_FUNCTIONS
 
 def is_update_function(name):
     """\
     Returns if ``name`` is a update function.
     """
-    return name in _UPDATE_FUNCTIONS
+    return name in _TOLOG_UPDATE_FUNCTIONS
