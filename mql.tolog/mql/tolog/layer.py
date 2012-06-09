@@ -81,7 +81,7 @@ class TopicMapLayer(object):
             An iterable of topics or ``ANY`` if the type is unconstrained.
         """
 
-    def get_associations(self, types=ANY, scope=UCS):
+    def get_associations(self, types=ANY, scope=ANY):
         """\
         Returns an iterable of associations.
 
@@ -89,7 +89,7 @@ class TopicMapLayer(object):
             An iterable of topics or ``ANY`` if the type is unconstrained.
         """
 
-    def get_occurrences(self, topic, types=ANY, scope=UCS):
+    def get_occurrences(self, topic, types=ANY, scope=ANY):
         """\
         Returns an iterable of occurrences of the provided topic.
 
@@ -99,7 +99,7 @@ class TopicMapLayer(object):
             An iterable of topics or ``ANY`` if the type is unconstrained.
         """
 
-    def get_names(self, topic, types=ANY, scope=UCS):
+    def get_names(self, topic, types=ANY, scope=ANY):
         """\
         Returns an iterable of names of the provided topic.
 
@@ -114,7 +114,7 @@ class TopicMapLayer(object):
         
         """
 
-    def get_topic_children(self, topic, types=ANY, scope=UCS):
+    def get_topic_children(self, topic, types=ANY, scope=ANY):
         """\
         Returns an iterable of occurrences and names of the provided topic.
 
@@ -211,7 +211,7 @@ class TopicMapLayer(object):
         """
         return self.get_parent(child) == parent
 
-    def is_instance_of(self, instance, type, scope=UCS):
+    def is_instance_of(self, instance, type, scope=ANY):
         """\
         Returns if `instance` is an instance of `type`.
         """
@@ -277,11 +277,11 @@ class AdvancedTopicMapLayer(TopicMapLayer):
     def _topic(self, tmc):
         return tmc if self.is_topic(tmc) else self.reifier(tmc)
         
-    def get_occurrences(self, tmc, types=ANY, scope=UCS):
+    def get_occurrences(self, tmc, types=ANY, scope=ANY):
         topic = self._topic(tmc)
         return () if not topic else super(AdvancedTopicMapLayer, self).get_occurrences(topic, types, scope)
     
-    def get_names(self, tmc, types=ANY, scope=UCS):
+    def get_names(self, tmc, types=ANY, scope=ANY):
         topic = self._topic(tmc)
         return () if not topic else super(AdvancedTopicMapLayer, self).get_names(topic, types, scope)
 
