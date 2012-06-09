@@ -41,7 +41,7 @@ tolog parser.
 from __future__ import absolute_import
 from tm.mql import InvalidQueryError
 from mql.tolog import consts, lexer
-from mql.tolog.utils import is_builtin_predicate, is_module
+from mql.tolog.utils import is_builtin_predicate, is_module_iri
 
 tokens = lexer.tokens # Just to get rid of unused import warnings
 
@@ -333,7 +333,7 @@ def p_import_directive(p):
     else:
         ident, iri = p[2], p[3]
     _handle_prefix(p.parser, ident, iri, consts.MODULE)
-    if not is_module(iri):
+    if not is_module_iri(iri):
         pass #TODO: Import 
 
 def p_version_directive(p):
