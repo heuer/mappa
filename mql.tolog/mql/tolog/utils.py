@@ -64,19 +64,6 @@ _BUILTIN_PREDICATES = _INFIX_PREDICATES + (
     'source-locator', 
     )
 
-_TOLOG_STR_FUNCTIONS = (
-    'concat', 'contains', 'ends-with', 
-    'index-of', 'last-index-of', 'length', 
-    'starts-with', 'substring', 'substring-after', 
-    'substring-before', 'translate',
-    )
-
-_TOLOG_NUM_FUNCTIONS = (
-    'value', 'format', 'absolute', 
-    'add', 'subtract', 'multiply',
-    'divide', 'min', 'max',
-)
-
 _TOLOG_UPDATE_FUNCTIONS = (
     # tolog 1.2
     'value', 'resource',
@@ -88,35 +75,21 @@ _TOLOG_DELETE_FUNCTIONS = (
     'scope', 'reifies', 'direct-instance-of',
 )
 
-
-_TOLOG_EXPERIMENTAL_FUNCTIONS = (
-    'in', 'gt', 'lt', 'gteq', 'lteq', 'name',
-)
-
-_TPLUS_EXPERIMENTAL_FUNCTIONS = (
-    'parent', 'child',
-)
-
-_TPLUS_EXPERIMENTAL_DATE_FUNCTIONS = (
-    'now',
-)
-
 _FUNCTIONS = _TOLOG_UPDATE_FUNCTIONS + _TOLOG_DELETE_FUNCTIONS
 
-_DEFAULT_MODULES = {
-    None: _FUNCTIONS,
-    _TOLOG_STRING_MODULE:  _TOLOG_STR_FUNCTIONS,
-    _TOLOG_EXPERIMENTAL_MODULE:  _TOLOG_EXPERIMENTAL_FUNCTIONS,
-    _TOLOG_NUMBER_MODULE: _TOLOG_NUM_FUNCTIONS,
-    _TPLUS_EXPERIMENTAL_MODULE: _TPLUS_EXPERIMENTAL_FUNCTIONS,
-    _TPLUS_EXPERIMENTAL_DATE_MODULE: _TPLUS_EXPERIMENTAL_DATE_FUNCTIONS,
-}
+_DEFAULT_MODULES = (
+    _TOLOG_STRING_MODULE,
+    _TOLOG_EXPERIMENTAL_MODULE,
+    _TOLOG_NUMBER_MODULE,
+    _TPLUS_EXPERIMENTAL_MODULE,
+    _TPLUS_EXPERIMENTAL_DATE_MODULE,
+)
 
 def is_module_iri(iri):
     """\
     Returns if ``iri`` represents a default module.
     """
-    return iri and iri in _DEFAULT_MODULES
+    return iri in _DEFAULT_MODULES
 
 def is_infix_predicate(name):
     """\
@@ -129,13 +102,6 @@ def is_builtin_predicate(name):
     Returns if ``name`` is a built-in predicate name
     """
     return name in _BUILTIN_PREDICATES
-
-def is_builtin_function(name, iri=None):
-    """\
-    Returns if ``name`` in combination with ``iri`` 
-    represents a built-in function.
-    """
-    return name in _DEFAULT_MODULES.get(iri)
 
 def is_delete_function(name):
     """\
