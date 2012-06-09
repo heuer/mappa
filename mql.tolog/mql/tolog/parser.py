@@ -327,11 +327,7 @@ def p_import_directive(p):
     import_directive : KW_IMPORT iri_or_string KW_AS IDENT
                      | DIR_IMPORT IDENT IRI 
     """
-    ident, iri = None, None
-    if len(p) == 5:
-        ident, iri = p[4], p[2]
-    else:
-        ident, iri = p[2], p[3]
+    ident, iri = (p[4], p[2]) if len(p) == 5 else (p[2], p[3])
     _handle_prefix(p.parser, ident, iri, consts.MODULE)
     if not is_module_iri(iri):
         pass #TODO: Import 
