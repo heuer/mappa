@@ -46,6 +46,7 @@ _TOLOG_NUMBER_MODULE = _TOLOG_BASE + u'numbers/'
 
 _TPLUS_BASE = u'http://psi.semagia.com/tplus/'
 _TPLUS_EXPERIMENTAL_MODULE = _TPLUS_BASE + u'experimental/'
+_TPLUS_EXPERIMENTAL_DATE_MODULE = _TOLOG_EXPERIMENTAL_MODULE + 'date/'
 
 _INFIX_PREDICATES = ('/=', '<', '<=', '=', '>', '>=')
 
@@ -76,14 +77,6 @@ _TOLOG_NUM_FUNCTIONS = (
     'divide', 'min', 'max',
 )
 
-_TOLOG_EXPERIMENTAL_FUNCTIONS = (
-    'in', 'gt', 'lt', 'gteq', 'lteq', 'name',
-)
-
-_TPLUS_EXPERIMENTAL_FUNCTIONS = (
-    'parent', 'child',
-)
-
 _TOLOG_UPDATE_FUNCTIONS = (
     # tolog 1.2
     'value', 'resource',
@@ -95,6 +88,19 @@ _TOLOG_DELETE_FUNCTIONS = (
     'scope', 'reifies', 'direct-instance-of',
 )
 
+
+_TOLOG_EXPERIMENTAL_FUNCTIONS = (
+    'in', 'gt', 'lt', 'gteq', 'lteq', 'name',
+)
+
+_TPLUS_EXPERIMENTAL_FUNCTIONS = (
+    'parent', 'child',
+)
+
+_TPLUS_EXPERIMENTAL_DATE_FUNCTIONS = (
+    'now',
+)
+
 _FUNCTIONS = _TOLOG_UPDATE_FUNCTIONS + _TOLOG_DELETE_FUNCTIONS
 
 _DEFAULT_MODULES = {
@@ -103,7 +109,8 @@ _DEFAULT_MODULES = {
     _TOLOG_EXPERIMENTAL_MODULE:  _TOLOG_EXPERIMENTAL_FUNCTIONS,
     _TOLOG_NUMBER_MODULE: _TOLOG_NUM_FUNCTIONS,
     _TPLUS_EXPERIMENTAL_MODULE: _TPLUS_EXPERIMENTAL_FUNCTIONS,
-    }
+    _TPLUS_EXPERIMENTAL_DATE_MODULE: _TPLUS_EXPERIMENTAL_DATE_FUNCTIONS,
+}
 
 def is_function_module(iri):
     """\
