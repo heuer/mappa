@@ -32,7 +32,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 """\
-
+Constants.
 
 :author:       Lars Heuer (heuer[at]semagia.com)
 :organization: Semagia - <http://www.semagia.com/>
@@ -40,6 +40,22 @@
 """
 from tm import mio
 
+#
+#-- Module IRIs
+#
+_TOLOG_BASE = u'http://psi.ontopia.net/tolog/'
+TOLOG_STRING_MODULE_IRI = _TOLOG_BASE + u'string/'
+TOLOG_EXPERIMENTAL_MODULE_IRI = _TOLOG_BASE + u'experimental/'
+TOLOG_NUMBER_MODULE_IRI = _TOLOG_BASE + u'numbers/'
+
+_TPLUS_BASE = u'http://psi.semagia.com/tplus/'
+TPLUS_EXPERIMENTAL_MODULE_IRI = _TPLUS_BASE + u'experimental/'
+TPLUS_EXPERIMENTAL_DATE_MODULE_IRI = TPLUS_EXPERIMENTAL_MODULE_IRI + 'date/'
+
+
+#
+#-- Constants for grammar constructs
+#
 IID = mio.ITEM_IDENTIFIER
 SID = mio.SUBJECT_IDENTIFIER
 SLO = mio.SUBJECT_LOCATOR

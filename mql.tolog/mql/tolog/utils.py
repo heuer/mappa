@@ -38,15 +38,7 @@ Internal utility functions.
 :organization: Semagia - <http://www.semagia.com/>
 :license:      BSD License
 """
-
-_TOLOG_BASE = u'http://psi.ontopia.net/tolog/'
-_TOLOG_STRING_MODULE = _TOLOG_BASE + u'string/'
-_TOLOG_EXPERIMENTAL_MODULE = _TOLOG_BASE + u'experimental/'
-_TOLOG_NUMBER_MODULE = _TOLOG_BASE + u'numbers/'
-
-_TPLUS_BASE = u'http://psi.semagia.com/tplus/'
-_TPLUS_EXPERIMENTAL_MODULE = _TPLUS_BASE + u'experimental/'
-_TPLUS_EXPERIMENTAL_DATE_MODULE = _TOLOG_EXPERIMENTAL_MODULE + 'date/'
+from mql.tolog import consts
 
 _INFIX_PREDICATES = ('/=', '<', '<=', '=', '>', '>=')
 
@@ -76,11 +68,11 @@ _TOLOG_DELETE_FUNCTIONS = (
 )
 
 _DEFAULT_MODULES = (
-    _TOLOG_STRING_MODULE,
-    _TOLOG_EXPERIMENTAL_MODULE,
-    _TOLOG_NUMBER_MODULE,
-    _TPLUS_EXPERIMENTAL_MODULE,
-    _TPLUS_EXPERIMENTAL_DATE_MODULE,
+    consts.TOLOG_STRING_MODULE_IRI,
+    consts.TOLOG_EXPERIMENTAL_MODULE_IRI,
+    consts.TOLOG_NUMBER_MODULE_IRI,
+    consts.TPLUS_EXPERIMENTAL_MODULE_IRI,
+    consts.TPLUS_EXPERIMENTAL_DATE_MODULE_IRI,
 )
 
 def is_module_iri(iri):
