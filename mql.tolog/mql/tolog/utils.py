@@ -112,7 +112,7 @@ _DEFAULT_MODULES = {
     _TPLUS_EXPERIMENTAL_DATE_MODULE: _TPLUS_EXPERIMENTAL_DATE_FUNCTIONS,
 }
 
-def is_function_module(iri):
+def is_module(iri):
     """\
     Returns if ``iri`` represents a default module.
     """
