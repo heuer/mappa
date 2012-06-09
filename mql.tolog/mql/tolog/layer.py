@@ -179,10 +179,31 @@ class TopicMapLayer(object):
         Returns the reified Topic Maps construct of `reifier` or ``None``.
         """
 
+    def get_names_by_value(self, value):
+        """\
+        Return an iterable of names which have the provided value.
+        """
+    
+    def get_occurrences_by_value(self, value, datatype):
+        """\
+        Returns an iterable of occurrences which have the provided value/datatype.
+        """
+        
+    def get_variants_by_value(self, value, datatype):
+        """\
+        Returns an iterable of variants which have the provided value/datatype.
+        """
+
+    def get_topic_direct_types(self):
+        """\
+        Returns an iterable of topic which play the ``type`` role within 
+        a type-instance association.
+        """
+
     def get_topic_types(self):
         """\
         Returns an iterable of topics which play the ``type`` role within
-        a type-instance association.
+        a type-instance association and their supertypes.
         """
 
     def get_association_types(self):
