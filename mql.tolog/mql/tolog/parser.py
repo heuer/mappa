@@ -289,7 +289,7 @@ def p_literal_topic_ref(p):
 
 def p_from_clause(p):
     """\
-    from_clause     : KW_USING qiris
+    from_clause     : KW_FROM qiris
     """
     handler = _handler(p)
     handler.startFrom()
@@ -340,6 +340,7 @@ def p_version_directive(p):
     if version[0] != 1 or version[1] > 2:
         raise InvalidQueryError('Unknown version %s' % p[2])
     p.parser.tolog_plus = True
+    p.lexer.tolog_plus = True
 
 def p_base_directive(p):
     """\

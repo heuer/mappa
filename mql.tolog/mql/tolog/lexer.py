@@ -70,7 +70,7 @@ _DIRECTIVES = {
 
 _RESERVED = {
     'select': 'KW_SELECT',
-    'from': 'KW_WHERE',
+    'from': 'KW_FROM',
     'count': 'KW_COUNT',
     'not': 'KW_NOT',
     'limit': 'KW_LIMIT',
@@ -235,6 +235,8 @@ def t_IDENT(t):
     t.type = _RESERVED.get(t.value.lower(), 'IDENT')
     if t.type == 'KW_INSERT':
         t.lexer.begin('tm') # Switch to TM mode
+    elif t.type == 'KW_FROM' and not t.lexer.tolog_plus:
+        t.type = 'KW_WHERE'
     return t
 
 def t_directive(t):

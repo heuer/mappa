@@ -76,7 +76,9 @@ def parse(src, handler, tolog_plus=False, **kw):
     data = src.stream or urlopen(src.iri)
     handler.base_iri = src.iri
     handler.start()
-    parser.parse(data.read(), lexer=plyutils.make_lexer(lexer_mod))
+    lexer = plyutils.make_lexer(lexer_mod)
+    lexer.tolog_plus = tolog_plus
+    parser.parse(data.read(), lexer=lexer)
     handler.end()
 
 
