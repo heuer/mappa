@@ -102,6 +102,8 @@ def p_noop(p): # Handles all grammar rules where the result is not of interest
                     | where_clause
     opt_tail        : 
                     | tail
+    opt_into        : 
+                    | into_statement
     tail            : order_clause opt_limit_offset
     order_elements  : order_element
                     | order_elements COMMA order_element
@@ -215,17 +217,15 @@ def p__start_insert(p): # Inline action
     """
     _handler(p).startInsert()
     
-def p_opt_into(p):
+def p_into_statement(p):
     """\
-    opt_into        : 
-                    | KW_INTO qiris
+    into_statement  : KW_INTO qiris
     """
-    if len(p) > 1:
-        handler = _handler(p)
-        handler.startInto()
-        for item in p[2]:
-            _to_event(handler, item)
-        handler.endInto()
+    handler = _handler(p)
+    handler.startInto()
+    for item in p[2]:
+        _to_event(handler, item)
+    handler.endInto()
 
 def p_qiris(p):
     """\
