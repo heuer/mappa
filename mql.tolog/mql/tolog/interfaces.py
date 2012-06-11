@@ -167,6 +167,11 @@ Note: The base IRI may be overridden by a `base` event.
     def startWhere():
         """\
         Indicates the start of the WHERE clause.
+        
+        .. Note:: In tolog the 'from' part is reported as 'where'::
+
+              select $x from something($x)?
+              -> startSelect() ... startWhere() ... endWhere() endSelect() 
         """
 
     def endWhere():
