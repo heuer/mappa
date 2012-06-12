@@ -569,7 +569,8 @@ class IQueryFactory(Interface):
         
         `into`
             An optional iterable of IRIs which should get the data specified by
-            `iri`.
+            `iri`. If `into` is ``None`` the specified `iri` will be utilized
+             as target IRI, too.
         """
     
     def create_select_query(header, where, order_by=None, limit=None, offset=None):
