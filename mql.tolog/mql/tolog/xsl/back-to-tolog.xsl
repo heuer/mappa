@@ -44,18 +44,30 @@
     <xsl:text>&#xA;</xsl:text>
   </xsl:template>
 
+  <xsl:template match="tl:create|tl:drop|tl:load">
+    <xsl:value-of select="concat(local-name(.), '&#xA;    ')"/>
+    <xsl:apply-templates select="*"/>
+  </xsl:template>
+
+  <xsl:template match="tl:into|tl:from">
+      <xsl:value-of select="concat('&#xA;', local-name(.), '&#xA;    ')"/>
+      <xsl:apply-templates select="*"/>
+  </xsl:template>
+
   <xsl:template match="tl:select|tl:merge|tl:delete|tl:update">
     <xsl:value-of select="concat(local-name(.), '&#xA;    ')"/>
     <xsl:call-template name="predicates">
         <xsl:with-param name="items" select="tl:*[local-name(.) != 'where' and local-name(.) != 'orderby' and local-name(.) != 'namespace' and local-name(.) != 'pagination']"/>
         <xsl:with-param name="nl" select="local-name(.) != 'select' and local-name(.) != 'merge'"/>
     </xsl:call-template>
+    <xsl:apply-templates select="tl:into|tl:from"/>
     <xsl:apply-templates select="tl:where"/>
   </xsl:template>
 
   <xsl:template match="tl:insert">
     <xsl:text>insert&#xA;    </xsl:text>
   <xsl:value-of select="tl:fragment/tl:content"/>
+  <xsl:apply-templates select="tl:into"/>
   <xsl:apply-templates select="tl:where"/>
   </xsl:template>
 
