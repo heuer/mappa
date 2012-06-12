@@ -51,13 +51,20 @@
 
   <xsl:template match="tl:into|tl:from">
       <xsl:value-of select="concat('&#xA;', local-name(.), '&#xA;    ')"/>
-      <xsl:apply-templates select="*"/>
+      <xsl:call-template name="parameters">
+          <xsl:with-param name="items" select="*"/>
+      </xsl:call-template>
   </xsl:template>
 
   <xsl:template match="tl:select|tl:merge|tl:delete|tl:update">
     <xsl:value-of select="concat(local-name(.), '&#xA;    ')"/>
     <xsl:call-template name="predicates">
-        <xsl:with-param name="items" select="tl:*[local-name(.) != 'where' and local-name(.) != 'orderby' and local-name(.) != 'namespace' and local-name(.) != 'pagination']"/>
+        <xsl:with-param name="items" select="tl:*[local-name(.) != 'from'
+                                                    and local-name(.) != 'into'
+                                                    and local-name(.) != 'where' 
+                                                    and local-name(.) != 'orderby' 
+                                                    and local-name(.) != 'namespace' 
+                                                    and local-name(.) != 'pagination']"/>
         <xsl:with-param name="nl" select="local-name(.) != 'select' and local-name(.) != 'merge'"/>
     </xsl:call-template>
     <xsl:apply-templates select="tl:into|tl:from"/>
