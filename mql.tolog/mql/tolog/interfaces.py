@@ -554,6 +554,24 @@ class IQueryFactory(Interface):
     """\
     
     """
+    def create_create_query(self, iri):
+        """\
+        
+        """
+        
+    def create_drop_query(self, iri):
+        """\
+        
+        """
+        
+    def create_load_query(self, iri, into=None):
+        """\
+        
+        `into`
+            An optional iterable of IRIs which should get the data specified by
+            `iri`.
+        """
+    
     def create_select_query(header, where, order_by=None, limit=None, offset=None):
         """\
         
