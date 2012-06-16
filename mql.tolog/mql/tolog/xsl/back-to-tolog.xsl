@@ -25,7 +25,7 @@
     <xsl:apply-templates select="tl:rule"/>
     <xsl:choose>
       <xsl:when test="tl:select|tl:merge|tl:delete|tl:update|tl:insert">
-        <xsl:apply-templates select="tl:select|tl:merge|tl:delete|tl:update|tl:insert"/>
+        <xsl:apply-templates select="*"/>
       </xsl:when>
       <xsl:otherwise>
         <xsl:call-template name="predicates">
