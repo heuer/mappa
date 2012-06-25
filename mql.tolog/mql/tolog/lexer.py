@@ -127,6 +127,9 @@ tokens = tuple(set(_RESERVED.values())) + tuple(_DIRECTIVES.values()) + (
     
     # Keeping (unparsed) topic map content. Not really a token, though
     'TM_FRAGMENT',
+    
+    # Non-standard directives 
+    'X_DIRECTIVE',
 )
 
 t_ignore = ' \t'
@@ -240,10 +243,14 @@ def t_IDENT(t):
     return t
 
 def t_directive(t):
-    r'%[A-Za-z]+'
+    r'%[A-Z\-a-z]+'
     t.type = _DIRECTIVES.get(t.value.lower())
     if not t.type:
-        raise SyntaxQueryError('Unknown directive %s' % t.value)
+        if t.value[:3] == u'%x-':
+            t.value = t.value[1:]
+            t.type = 'X_DIRECTIVE'
+        else:
+            raise SyntaxQueryError('Unknown directive %s' % t.value)
     return t
 
 @TOKEN(r'%sT%s' % (_DATE, _TIME))

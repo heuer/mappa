@@ -73,6 +73,7 @@ def p_noop(p): # Handles all grammar rules where the result is not of interest
     directive       : using_directive
                     | prefix_directive
                     | import_directive
+                    | x_directive
     statement       : query
                     | insert
                     | merge
@@ -119,7 +120,6 @@ def p_noop(p): # Handles all grammar rules where the result is not of interest
                     | PIPE_PIPE _start_branch clauselist
     """
     p[0] = None
-
 
 def p_create(p):
     """\
@@ -203,7 +203,6 @@ def p_param_STRING(p):
     param           : STRING
     """
     p[0] = consts.STRING, p[1]
-    
 
 def p_insert(p):
     """\
@@ -347,6 +346,12 @@ def p_base_directive(p):
     base_directive  : DIR_BASE IRI
     """
     _handler(p).base(p[2])
+
+def p_x_directive(p):
+    """\
+    x_directive     : X_DIRECTIVE STRING
+    """
+    _handler(p).xdirective(p[1], p[2])
 
 def p_select_query(p):
     """\

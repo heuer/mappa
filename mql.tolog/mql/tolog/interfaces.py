@@ -215,6 +215,16 @@ Note: The base IRI may be overridden by a `base` event.
             The base IRI all IRIs should be resolved against.
         """
 
+    def xdirective(name, value):
+        """\
+        Reports an X-directive.
+        
+        `name`
+            Name of the directive
+        `value`
+            Value of the directive
+        """
+
     def namespace(identifier, iri, kind):
         """\
         Reports a namespace.
