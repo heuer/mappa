@@ -349,7 +349,7 @@ def p_base_directive(p):
 
 def p_x_directive(p):
     """\
-    x_directive     : X_DIRECTIVE STRING
+    x_directive     : X_DIRECTIVE IRI
     """
     _handler(p).xdirective(p[1], p[2])
 
