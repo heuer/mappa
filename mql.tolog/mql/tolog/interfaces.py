@@ -215,13 +215,13 @@ Note: The base IRI may be overridden by a `base` event.
             The base IRI all IRIs should be resolved against.
         """
 
-    def xdirective(name, value):
+    def xdirective(name, iri):
         """\
         Reports an X-directive.
         
         `name`
             Name of the directive
-        `value`
+        `iri`
             Value of the directive
         """
 
