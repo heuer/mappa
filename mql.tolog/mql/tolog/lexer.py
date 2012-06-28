@@ -247,7 +247,7 @@ def t_directive(t):
     t.type = _DIRECTIVES.get(t.value.lower())
     if not t.type:
         if t.value[:3] == u'%x-':
-            t.value = t.value[1:]
+            t.value = t.value[3:]
             t.type = 'X_DIRECTIVE'
         else:
             raise SyntaxQueryError('Unknown directive %s' % t.value)
