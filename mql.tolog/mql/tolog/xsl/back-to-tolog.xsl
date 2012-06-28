@@ -20,12 +20,12 @@
   <xsl:param name="render-hints" select="false()"/>
 
   <xsl:template match="*">
-    <xsl:apply-templates select="tl:base"/>
-    <xsl:apply-templates select="tl:namespace"/>
+    <xsl:apply-templates select="tl:base|tl:namespace|tl:x-directive"/>
+    <xsl:if test="count(tl:base|tl:namespace|tl:x-directive) > 0"><xsl:text>&#xA;</xsl:text></xsl:if>
     <xsl:apply-templates select="tl:rule"/>
     <xsl:choose>
       <xsl:when test="tl:select|tl:merge|tl:delete|tl:update|tl:insert">
-        <xsl:apply-templates select="*"/>
+        <xsl:apply-templates select="tl:select|tl:merge|tl:delete|tl:update|tl:insert"/>
       </xsl:when>
       <xsl:otherwise>
         <xsl:call-template name="predicates">
@@ -33,7 +33,8 @@
                                                   and local-name(.) != 'namespace' 
                                                   and local-name(.) != 'pagination' 
                                                   and local-name(.) != 'rule' 
-                                                  and local-name(.) != 'base']"/>
+                                                  and local-name(.) != 'base'
+                                                  and local-name(.) != 'x-directive']"/>
           <xsl:with-param name="indent" select="false()"/>
         </xsl:call-template>
       </xsl:otherwise>
@@ -91,7 +92,6 @@
         <xsl:value-of select="concat('&quot;', @iri, '&quot;&#xA;')"/>
       </xsl:otherwise>
     </xsl:choose>
-    <xsl:if test="position() = last()"><xsl:text>&#xA;</xsl:text></xsl:if>
   </xsl:template>
 
   <xsl:template match="tl:namespace[@kind='module']">
@@ -107,18 +107,20 @@
       <xsl:call-template name="iri"><xsl:with-param name="iri" select="@iri"/></xsl:call-template>
     </xsl:if>
     <xsl:text>&#xA;</xsl:text>
-    <xsl:if test="position() = last()"><xsl:text>&#xA;</xsl:text></xsl:if>
   </xsl:template>
 
+  <xsl:template match="tl:namespace[not(@kind)]">
+    <xsl:value-of select="concat('%prefix ', @identifier, ' &lt;', @iri,'&gt;&#xA;')"/>
+  </xsl:template>
+    
   <xsl:template match="tl:base">
     <xsl:text>%base </xsl:text>
     <xsl:call-template name="iri"><xsl:with-param name="iri" select="@iri"/></xsl:call-template>
     <xsl:text>&#xA;</xsl:text>
   </xsl:template>
 
-  <xsl:template match="tl:namespace[not(@kind)]">
-    <xsl:value-of select="concat('%prefix ', @identifier, ' &lt;', @iri,'&gt;&#xA;')"/>
-    <xsl:if test="position() = last()"><xsl:text>&#xA;</xsl:text></xsl:if>
+  <xsl:template match="tl:x-directive">
+    <xsl:value-of select="concat('%x-', @name, ' &lt;', @iri,'&gt;&#xA;')"/>
   </xsl:template>
 
   <xsl:template match="tl:where">
