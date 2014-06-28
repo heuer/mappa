@@ -50,7 +50,7 @@ class sdist(_sdist):
         sys.path[0:0] = ['.', '..']
         from mio.ctm import lexer, parser
         plyutils.make_lexer(lexer)
-        plyutils.make_parser_for_sdist(parser)
+        plyutils._make_parser_for_sdist(parser)
         files.extend(['mio/ctm/lexer_lextab.py', 'mio/ctm/parser_parsetab.py'])
         _sdist.make_release_tree(self, basedir, files)
         

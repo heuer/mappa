@@ -50,7 +50,7 @@ class sdist(_sdist):
         sys.path[0:0] = ['.', '..']
         from mql.tolog import lexer, parser
         plyutils.make_lexer(lexer)
-        plyutils.make_parser_for_sdist(parser)
+        plyutils._make_parser_for_sdist(parser)
         files.extend(['mql/tolog/lexer_lextab.py', 'mql/tolog/parser_parsetab.py'])
         _sdist.make_release_tree(self, basedir, files)
 

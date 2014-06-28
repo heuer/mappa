@@ -79,9 +79,9 @@ else:
                          tabmodule='%s_parsetab' % module.__name__)
 
 
-def make_parser_for_sdist(module):
+def _make_parser_for_sdist(module):
     """\
-    INTERNAL function to prepare PLY parser modules for source distribution.
+    Prepare PLY parser modules for source distribution.
     """
     import re
     make_parser(module)
