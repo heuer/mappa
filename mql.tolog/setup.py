@@ -45,18 +45,12 @@ except ImportError:
 
 class sdist(_sdist):
     def make_release_tree(self, basedir, files):
-        import re
         from tm import plyutils
         import sys
         sys.path[0:0] = ['.', '..']
         from mql.tolog import lexer, parser
         plyutils.make_lexer(lexer)
-        plyutils.make_parser(parser)
-        with open('./mql/tolog/parser_parsetab.py', 'rb') as f:
-            s = f.read()
-        s = re.sub(u"(\d\s*,)('[^']+',\s*').*?(parser.py')", ur"\1\2\3", s)
-        with open('./mql/tolog/parser_parsetab.py', 'wb') as f:
-            f.write(s)
+        plyutils.make_parser_for_sdist(parser)
         files.extend(['mql/tolog/lexer_lextab.py', 'mql/tolog/parser_parsetab.py'])
         _sdist.make_release_tree(self, basedir, files)
 

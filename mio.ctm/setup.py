@@ -45,18 +45,12 @@ except ImportError:
 
 class sdist(_sdist):
     def make_release_tree(self, basedir, files):
-        import re
         from tm import plyutils
         import sys
         sys.path[0:0] = ['.', '..']
         from mio.ctm import lexer, parser
         plyutils.make_lexer(lexer)
-        plyutils.make_parser(parser)
-        with open('./mio/ctm/parser_parsetab.py', 'rb') as f:
-            s = f.read()
-        s = re.sub(u"(\d\s*,)('[^']+',\s*').*?(parser.py')", ur"\1\2\3", s)
-        with open('./mio/ctm/parser_parsetab.py', 'wb') as f:
-            f.write(s)
+        plyutils.make_parser_for_sdist(parser)
         files.extend(['mio/ctm/lexer_lextab.py', 'mio/ctm/parser_parsetab.py'])
         _sdist.make_release_tree(self, basedir, files)
         

@@ -2,7 +2,7 @@
 Changes
 =======
 
-0.1.7 - 2012-mm-dd
+0.1.7 - yyyy-mm-dd
 ------------------
 * Moved tm.mio.Source into tm package and deprecated tm.mio.Source
 * Added tm.mql module
@@ -17,6 +17,7 @@ Changes
 * Changed entry point for syntax readers from ``tm.reader`` to
   ``mio.reader``
 * Removed support for Ply < 3.3 in plyutils (under Java)
+* Added (internal) function plyutils.make_parser_for_sdist
 
 
 0.1.6 - 2010-10-28

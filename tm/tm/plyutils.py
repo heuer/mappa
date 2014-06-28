@@ -78,6 +78,21 @@ else:
                          outputdir=_get_tablocation(module),
                          tabmodule='%s_parsetab' % module.__name__)
 
+
+def make_parser_for_sdist(module):
+    """\
+    INTERNAL function to prepare PLY parser modules for source distribution.
+    """
+    import re
+    make_parser(module)
+    filename = os.path.join(_get_tablocation(module), 'parser_parsetab.py')
+    with open(filename, 'rb') as f:
+        s = f.read()
+    s = re.sub(u"(\d\s*,)('[^']+',\s*').*?(parser.py')", ur"\1\2\3", s)
+    with open(filename, 'wb') as f:
+        f.write(s)
+
+
 def _get_tablocation(module):
     """\
     Returns the absolute path of the specified module.
