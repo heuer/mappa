@@ -2,7 +2,7 @@
 Changes
 =======
 
-0.1.2 - 2011-mm-dd
+0.1.2 - yyyy-mm-dd
 ------------------
 * Added support for JTM 1.1
 * Changed implementation: JSON is read into memory and evaluated afterwards

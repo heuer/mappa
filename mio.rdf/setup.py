@@ -36,10 +36,24 @@ Setup script for deserializer.
 """
 try:
     from setuptools import setup, find_packages
+    from setuptools.command.sdist import sdist as _sdist
 except ImportError:
     from ez_setup import use_setuptools
     use_setuptools()
     from setuptools import setup, find_packages
+
+
+class sdist(_sdist):
+    def make_release_tree(self, basedir, files):
+        from tm import plyutils
+        import sys
+        sys.path[0:0] = ['.', '..']
+        from mio.rdf.crtm import lexer, parser
+        plyutils.make_lexer(lexer)
+        plyutils._make_parser_for_sdist(parser)
+        files.extend(['mio/rdf/crtm/lexer_lextab.py', 'mio/rdf/crtm/parser_parsetab.py'])
+        _sdist.make_release_tree(self, basedir, files)
+
 
 setup(
       name = 'mio.rdf',
@@ -63,6 +77,7 @@ setup(
       zip_safe = False,
       include_package_data = True,
       package_data = {'': ['*.txt']},
+      cmdclass={'sdist': sdist},
       install_requires=['tm>=0.1.7', 'rdflib>=3.1.0'],
       keywords = ['Topic Maps', 'Semantic Web', 'RDF'],
       classifiers = [
