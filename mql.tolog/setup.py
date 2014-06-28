@@ -36,10 +36,30 @@ Setup script
 """
 try:
     from setuptools import setup, find_packages
+    from setuptools.command.sdist import sdist as _sdist
 except ImportError:
     from ez_setup import use_setuptools
     use_setuptools()
     from setuptools import setup, find_packages
+
+
+class sdist(_sdist):
+    def make_release_tree(self, basedir, files):
+        import re
+        from tm import plyutils
+        import sys
+        sys.path[0:0] = ['.', '..']
+        from mql.tolog import lexer, parser
+        plyutils.make_lexer(lexer)
+        plyutils.make_parser(parser)
+        with open('./mql/tolog/parser_parsetab.py', 'rb') as f:
+            s = f.read()
+        s = re.sub(u"(\d\s*,)('[^']+',\s*').*?(parser.py')", ur"\1\2\3", s)
+        with open('./mql/tolog/parser_parsetab.py', 'wb') as f:
+            f.write(s)
+        files.extend(['mql/tolog/lexer_lextab.py', 'mql/tolog/parser_parsetab.py'])
+        _sdist.make_release_tree(self, basedir, files)
+
 
 setup(
       name = 'mql.tolog',
@@ -58,6 +78,7 @@ setup(
       zip_safe = False,
       include_package_data = True,
       package_data = {'': ['*.txt', '*.xsl']},
+      cmdclass={'sdist': sdist},
       install_requires=['lxml>=2.3.1', 'tm>=0.1.7', 'mio.ctm>=0.1.3'],
       keywords = ['Topic Maps', 'Semantic Web', 'tolog'],
       classifiers = [
