@@ -36,10 +36,31 @@ Setup script for deserializer.
 """
 try:
     from setuptools import setup, find_packages
+    from setuptools.command.sdist import sdist as _sdist
 except ImportError:
     from ez_setup import use_setuptools
     use_setuptools()
     from setuptools import setup, find_packages
+
+
+class sdist(_sdist):
+    def make_release_tree(self, basedir, files):
+        import re
+        from tm import plyutils
+        import sys
+        sys.path[0:0] = ['.', '..']
+        from mio.ltm import lexer, parser
+        plyutils.make_lexer(lexer)
+        plyutils.make_parser(parser)
+        with open('./mio/ltm/parser_parsetab.py', 'rb') as f:
+            s = f.read()
+        s = re.sub(u"(\d\s*,)('[^']+',\s*').*?(parser.py')", ur"\1\2\3", s)
+        with open('./mio/ltm/parser_parsetab.py', 'wb') as f:
+            f.write(s)
+        files.extend(['mio/ltm/lexer_lextab.py', 'mio/ltm/parser_parsetab.py'])
+        print files
+        _sdist.make_release_tree(self, basedir, files)
+
 
 setup(
       name = 'mio.ltm',
@@ -60,6 +81,7 @@ setup(
       zip_safe = False,
       include_package_data = True,
       package_data = {'': ['*.txt']},
+      cmdclass={'sdist': sdist},
       install_requires=['tm>=0.1.7', 'ply>=3.3'],
       keywords = ['Topic Maps', 'Semantic Web', 'LTM'],
       classifiers = [
