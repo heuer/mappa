@@ -88,7 +88,7 @@ def make_parser_for_sdist(module):
     filename = os.path.join(_get_tablocation(module), 'parser_parsetab.py')
     with open(filename, 'rb') as f:
         s = f.read()
-    s = re.sub(u"(\d\s*,)('[^']+',\s*').*?(parser.py')", ur"\1\2\3", s)
+    s = re.sub(ur"(\d\s*,)('[^']+',\s*').*?(parser.py')", ur"\1\2\3", s)
     with open(filename, 'wb') as f:
         f.write(s)
 
