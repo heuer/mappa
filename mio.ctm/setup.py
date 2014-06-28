@@ -58,7 +58,6 @@ class sdist(_sdist):
         with open('./mio/ctm/parser_parsetab.py', 'wb') as f:
             f.write(s)
         files.extend(['mio/ctm/lexer_lextab.py', 'mio/ctm/parser_parsetab.py'])
-        print files
         _sdist.make_release_tree(self, basedir, files)
         
 
