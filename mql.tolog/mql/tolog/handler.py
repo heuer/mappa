@@ -85,27 +85,27 @@ class LoggingParserHandler(ParserHandler):
     level = property(lambda self: self._level, _set_level)
         
 
-_NS_TL = 'http://psi.semagia.com/tolog-xml/'
+_NS_TL = u'http://psi.semagia.com/tolog-xml/'
 
 # Elements which have never attributes and are simple containers for child elements
-_SIMPLE_ELS = ('select', 'insert', 'update', 'delete', 'merge', 'predicate',
-               'where', 'pagination', 'orderby', 'not', 'or', 'pair',
-               'type', 'player', 'left', 'right', 'name', 'fragment')
+_SIMPLE_ELS = (u'select', u'insert', u'update', u'delete', u'merge', u'predicate',
+               u'where', u'pagination', u'orderby', u'not', u'or', u'pair',
+               u'type', u'player', u'left', u'right', u'name', u'fragment')
 
 # Elements which have a name attribute
-_NAME_ELS = ('count', 'variable', 'parameter', 'ascending', 'descending')
+_NAME_ELS = (u'count', u'variable', u'parameter', u'ascending', u'descending')
 
 # Elements which have a value attribute
-_VALUE_ELS = ('string', 'iri', 'itemidentifier', 'subjectlocator',
-              'identifier', 'integer', 'limit', 'offset',
-              'objectid', 'date', 'datetime', 'integer', 'decimal')
+_VALUE_ELS = (u'string', u'iri', u'itemidentifier', u'subjectlocator',
+              u'identifier', u'integer', u'limit', u'offset',
+              u'objectid', u'date', u'datetime', u'integer', u'decimal')
 
 # Prefix 'kind' to name mapping
 _PREFIXKIND2NAME = {
-    consts.SID: 'subject-identifier',
-    consts.SLO: 'subject-locator',
-    consts.IID: 'item-identifier',
-    consts.MODULE: 'module',
+    consts.SID: u'subject-identifier',
+    consts.SLO: u'subject-locator',
+    consts.IID: u'item-identifier',
+    consts.MODULE: u'module',
 }
 
 class XMLParserHandler(ParserHandler):
@@ -124,7 +124,7 @@ class XMLParserHandler(ParserHandler):
         writer = self._writer
         writer.startDocument()
         writer.startPrefixMapping(None, _NS_TL)
-        writer.startElement('tolog')
+        writer.startElement(u'tolog')
 
     def end(self):
         writer = self._writer
@@ -133,71 +133,71 @@ class XMLParserHandler(ParserHandler):
         writer.endDocument()
 
     def __getattr__(self, name):
-        if name.startswith('end'):
+        if name.startswith(u'end'):
             return self._writer.pop
         n = name.lower()
-        if n.startswith('start') and n[5:] in _SIMPLE_ELS:
+        if n.startswith(u'start') and n[5:] in _SIMPLE_ELS:
             return lambda: self._writer.startElement(n[5:])
         elif n in _NAME_ELS:
-            return lambda v: self._writer.emptyElement(n, {'name': v})
+            return lambda v: self._writer.emptyElement(n, {u'name': v})
         elif n in _VALUE_ELS:
-            return lambda v: self._writer.emptyElement(n, {'value': str(v)})
+            return lambda v: self._writer.emptyElement(n, {u'value': str(v)})
         raise AttributeError(name)
 
     def startBranch(self, short_circuit):
-        attrs = {'short-circuit': 'true'} if short_circuit else None
-        self._writer.startElement('branch', attrs)
+        attrs = {u'short-circuit': u'true'} if short_circuit else None
+        self._writer.startElement(u'branch', attrs)
 
     def startRule(self, name, variables):
-        self._writer.startElement('rule', {'name': name})
+        self._writer.startElement(u'rule', {u'name': name})
         for v in variables:
             self.variable(v)
-        self._writer.startElement('body')
+        self._writer.startElement(u'body')
 
     def endRule(self):
         self._writer.pop() # body
         self._writer.pop() # rule
 
     def literal(self, value, datatype_iri=None, datatype_prefix=None, datatype_lp=None):
-        attrs = {'value': value}
+        attrs = {u'value': value}
         if datatype_iri:
-            attrs['datatype-iri'] = datatype_iri
+            attrs[u'datatype-iri'] = datatype_iri
         else:
-            attrs['datatype-prefix'] = datatype_prefix
-            attrs['datatype-localpart'] = datatype_lp
-        self._writer.emptyElement('literal', attrs)
+            attrs[u'datatype-prefix'] = datatype_prefix
+            attrs[u'datatype-localpart'] = datatype_lp
+        self._writer.emptyElement(u'literal', attrs)
 
     def curie(self, kind, prefix, lp):
-        self._writer.emptyElement('curie', {'kind': _PREFIXKIND2NAME[kind], 'prefix': prefix, 'localpart': lp})
+        self._writer.emptyElement(u'curie', {u'kind': _PREFIXKIND2NAME[kind], u'prefix': prefix, u'localpart': lp})
 
     def qname(self, kind, prefix, lp):
-        self._writer.emptyElement('qname', {'kind': _PREFIXKIND2NAME[kind], 'prefix': prefix, 'localpart': lp})
+        self._writer.emptyElement(u'qname', {u'kind': _PREFIXKIND2NAME[kind], u'prefix': prefix, u'localpart': lp})
 
     def startBuiltinPredicate(self, name):
-        self._writer.startElement('builtin-predicate', {'name': name})
+        self._writer.startElement(u'builtin-predicate', {u'name': name})
 
     def startDynamicPredicate(self):
-        self._writer.startElement('dynamic-predicate')
+        self._writer.startElement(u'dynamic-predicate')
 
     def startAssociationPredicate(self):
-        self._writer.startElement('association-predicate')
+        self._writer.startElement(u'association-predicate')
 
     def startFunction(self, name):
-        self._writer.startElement('function-call', {'name': name})
+        self._writer.startElement(u'function-call', {u'name': name})
 
     def startInfixPredicate(self, name):
-        self._writer.startElement('infix-predicate', {'name': name})
+        self._writer.startElement(u'infix-predicate', {u'name': name})
 
     def fragmentContent(self, fragment):
-        self._writer.dataElement('content', fragment)
+        self._writer.dataElement(u'content', fragment)
 
     def base(self, iri):
-        self._writer.emptyElement('base', {'iri': iri})
+        self._writer.emptyElement(u'base', {u'iri': iri})
 
     def namespace(self, identifier, iri, kind):
-        self._writer.emptyElement('namespace', {'identifier': identifier,
-                                                 'iri': iri,
-                                                 'kind': _PREFIXKIND2NAME[kind] # KeyError is intentional
+        self._writer.emptyElement(u'namespace', {u'identifier': identifier,
+                                                 u'iri': iri,
+                                                 u'kind': _PREFIXKIND2NAME[kind] # KeyError is intentional
                                                 }
                                   )
 
