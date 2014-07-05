@@ -49,7 +49,7 @@ from tm.irilib import resolve_iri
 __all__ = ['XTM10ContentHandler']
 
 # XML namespace
-NS_XML = 'http://www.w3.org/XML/1998/namespace'
+NS_XML = u'http://www.w3.org/XML/1998/namespace'
 
 # XTM 1.0 namespace
 NS_XTM = voc.XTM_10
@@ -59,30 +59,30 @@ NS_XLINK = voc.XLINK
 
 
 # Constants for XTM elements.
-MERGE_MAP = 'mergeMap'
-TOPIC_MAP = 'topicMap'
-TOPIC = 'topic'
-ASSOCIATION = 'association'
-MEMBER = 'member'
-ROLE_SPEC = 'roleSpec'
-OCCURRENCE = 'occurrence'
-BASE_NAME = 'baseName'
-BASE_NAME_STRING = 'baseNameString'
-VARIANT = 'variant'
-VARIANT_NAME = 'variantName'
+MERGE_MAP = u'mergeMap'
+TOPIC_MAP = u'topicMap'
+TOPIC = u'topic'
+ASSOCIATION = u'association'
+MEMBER = u'member'
+ROLE_SPEC = u'roleSpec'
+OCCURRENCE = u'occurrence'
+BASE_NAME = u'baseName'
+BASE_NAME_STRING = u'baseNameString'
+VARIANT = u'variant'
+VARIANT_NAME = u'variantName'
 
-INSTANCE_OF = 'instanceOf'
+INSTANCE_OF = u'instanceOf'
 
-RESOURCE_REF = 'resourceRef'
-RESOURCE_DATA = 'resourceData'
+RESOURCE_REF = u'resourceRef'
+RESOURCE_DATA = u'resourceData'
 
-SCOPE = 'scope'
-PARAMETERS = 'parameters'
+SCOPE = u'scope'
+PARAMETERS = u'parameters'
 
-TOPIC_REF = 'topicRef'
+TOPIC_REF = u'topicRef'
 
-SUBJECT_IDENTITY = 'subjectIdentity'
-SUBJECT_INDICATOR_REF = 'subjectIndicatorRef'
+SUBJECT_IDENTITY = u'subjectIdentity'
+SUBJECT_INDICATOR_REF = u'subjectIndicatorRef'
 
 #pylint: disable-msg=E1103
 class XTM10ContentHandler(object, sax_handler.ContentHandler):
@@ -135,7 +135,7 @@ class XTM10ContentHandler(object, sax_handler.ContentHandler):
         self._bases.append(locator.getSystemId())
 
     def startElementNS(self, (uri, name), qname, attrs):
-        if uri != NS_XTM and uri != '':
+        if uri != NS_XTM and uri != u'':
             return
         attrs = attributes(attrs)
         handler = self.map_handler
@@ -143,7 +143,7 @@ class XTM10ContentHandler(object, sax_handler.ContentHandler):
         href = self._href
         create_locator = self._create_locator
         process_iid = self._process_iid
-        base = attrs.get((None, 'base'), None) or attrs.get((NS_XML, 'base'), None)
+        base = attrs.get((None, u'base'), None) or attrs.get((NS_XML, u'base'), None)
         if base:
             base = create_locator(base)
         self._bases.append(base or self._bases[-1])
@@ -153,7 +153,7 @@ class XTM10ContentHandler(object, sax_handler.ContentHandler):
         elif TOPIC_REF == name:
             self._process_topic_reference_iri(href(attrs))
         elif TOPIC == name:
-            handler.startTopic((mio.ITEM_IDENTIFIER, create_locator('#' + attrs.get((None, 'id')))))
+            handler.startTopic((mio.ITEM_IDENTIFIER, create_locator(u'#' + attrs.get((None, u'id')))))
             stack.append(TOPIC)
         elif SUBJECT_INDICATOR_REF == name:
             self._process_sid(href(attrs))
@@ -184,9 +184,9 @@ class XTM10ContentHandler(object, sax_handler.ContentHandler):
             self._content = []
             self._accept_content = True
         elif VARIANT == name:
-            iid = attrs.get((None, 'id'), None)
+            iid = attrs.get((None, u'id'), None)
             if iid:
-                iid = create_locator('#' + iid)
+                iid = create_locator(u'#' + iid)
             variant = Variant(iid)
             # Inherit the scope from the variant's parents
             for v in self._variants:
@@ -208,7 +208,7 @@ class XTM10ContentHandler(object, sax_handler.ContentHandler):
             raise mio.MIOException('Unknown start element "%s"' % name)
 
     def endElementNS(self, (uri, name), qname):
-        if uri != NS_XTM and uri != '':
+        if uri != NS_XTM and uri != u'':
             return
         stack = self._stack
         handler = self.map_handler
@@ -289,12 +289,12 @@ class XTM10ContentHandler(object, sax_handler.ContentHandler):
         """\
         Returns an absolute IRI from the attributes.
         """
-        return self._create_locator(attrs.get((NS_XLINK, 'href')))
+        return self._create_locator(attrs.get((NS_XLINK, u'href')))
 
     def _process_iid(self, attrs):
-        iid = attrs.get((None, 'id'), None)
+        iid = attrs.get((None, u'id'), None)
         if iid:
-            return self.map_handler.itemIdentifier(self._create_locator('#%s' % iid))
+            return self.map_handler.itemIdentifier(self._create_locator(u'#%s' % iid))
 
     def _create_locator(self, reference):
         """\

@@ -65,14 +65,14 @@ class XTM21Handler(mio_handler.HamsterMapHandler):
     """
 
     _TOPICREF2EL = {
-        SUBJECT_IDENTIFIER: 'subjectIdentifierRef',
-        SUBJECT_LOCATOR: 'subjectLocatorRef',
-        ITEM_IDENTIFIER: 'topicRef'
+        SUBJECT_IDENTIFIER: u'subjectIdentifierRef',
+        SUBJECT_LOCATOR: u'subjectLocatorRef',
+        ITEM_IDENTIFIER: u'topicRef'
     }
 
     _IDENTITY2EL = {
-        SUBJECT_IDENTIFIER: 'subjectIdentifier',
-        SUBJECT_LOCATOR: 'subjectLocator'
+        SUBJECT_IDENTIFIER: u'subjectIdentifier',
+        SUBJECT_LOCATOR: u'subjectLocator'
     }
 
     def __init__(self, writer=None, fileobj=None, encoding='utf-8', prettify=False):
@@ -131,13 +131,13 @@ class XTM21Handler(mio_handler.HamsterMapHandler):
         out = self._out
         out.startDocument()
         self._write_header()
-        out.startElement('topicMap', {'xmlns': voc.XTM, 'version': '2.1'})
+        out.startElement(u'topicMap', {u'xmlns': voc.XTM, u'version': u'2.1'})
         self._state = _STATE_INITIAL
 
     def endTopicMap(self):
         super(XTM21Handler, self).endTopicMap()
         self._finish_pending_topic()
-        self._out.endElement('topicMap')
+        self._out.endElement(u'topicMap')
         self._out.endDocument()
 
     def startTopic(self, identity):
@@ -160,7 +160,7 @@ class XTM21Handler(mio_handler.HamsterMapHandler):
         if not self._start_topic(instance, _STATE_INSTANCE_OF) and self._state == _STATE_INSTANCE_OF:
             self._write_topic_ref(type)
         else:
-            self._out.startElement('instanceOf')
+            self._out.startElement(u'instanceOf')
             self._write_topic_ref(type)
             self._state = _STATE_INSTANCE_OF
 
@@ -195,49 +195,49 @@ class XTM21Handler(mio_handler.HamsterMapHandler):
         write_reifier, write_iids, write_type = self._write_reifier, self._write_iids, self._write_type
         self._finish_pending_topic()
         self._state = _STATE_TOPIC_MAP
-        startElement('association')
+        startElement(u'association')
         write_reifier(reifier)
         write_iids(iids)
         write_type(type)
         self._write_scope(scope)
         for role in roles:
-            startElement('role')
+            startElement(u'role')
             write_reifier(role.reifier)
             write_iids(role.iids)
             write_type(role.type)
             self._write_topic_ref(role.player)
-            endElement('role')
-        endElement('association')
+            endElement(u'role')
+        endElement(u'association')
 
     def _create_occurrence(self, parent, type, value, datatype, scope, reifier, iids):
         self._start_topic(parent, _STATE_CHARACTERISTIC)
         self._state = _STATE_CHARACTERISTIC
-        self._out.startElement('occurrence')
+        self._out.startElement(u'occurrence')
         self._write_reifier(reifier)
         self._write_iids(iids)
         self._write_type(type)
         self._write_scope(scope)
         self._write_value_datatype(value, datatype)
-        self._out.endElement('occurrence')
+        self._out.endElement(u'occurrence')
 
     def _create_name(self, parent, type, value, scope, reifier, iids, variants):
         self._start_topic(parent, _STATE_CHARACTERISTIC)
         self._state = _STATE_CHARACTERISTIC
-        self._out.startElement('name')
+        self._out.startElement(u'name')
         self._write_reifier(reifier)
         self._write_iids(iids)
         if type != _DEFAULT_NAME_TYPE:
             self._write_type(type)
         self._write_scope(scope)
-        self._out.dataElement('value', value)
+        self._out.dataElement(u'value', value)
         for variant in variants:
-            self._out.startElement('variant')
+            self._out.startElement(u'variant')
             self._write_reifier(variant.reifier)
             self._write_iids(variant.iids)
             self._write_scope(variant.scope)
             self._write_value_datatype(variant.value, variant.datatype)
-            self._out.endElement('variant')
-        self._out.endElement('name')
+            self._out.endElement(u'variant')
+        self._out.endElement(u'name')
 
     #
     # Private methods
@@ -267,13 +267,13 @@ class XTM21Handler(mio_handler.HamsterMapHandler):
     def _finish_pending_topic(self):
         if self._last_topic:
             self._finish_pending_instanceof()
-            self._out.endElement('topic')
+            self._out.endElement(u'topic')
             self._last_topic = None
             self._state = _STATE_TOPIC_MAP
 
     def _finish_pending_instanceof(self):
         if self._state == _STATE_INSTANCE_OF:
-            self._out.endElement('instanceOf')
+            self._out.endElement(u'instanceOf')
 
     def _start_topic(self, identity, next_state):
         def next_state_is_compatible():
@@ -295,7 +295,7 @@ class XTM21Handler(mio_handler.HamsterMapHandler):
         if new_topic:
             self._finish_pending_topic()
             self._last_topic = _Topic(identity)
-            self._out.startElement('topic')
+            self._out.startElement(u'topic')
             self._write_identity(identity)
             self._state = _STATE_TOPIC_MAP
         elif should_merge:
@@ -333,30 +333,30 @@ class XTM21Handler(mio_handler.HamsterMapHandler):
         if kind == ITEM_IDENTIFIER:
             self._write_iid(iri)
         else:
-            self._out.emptyElement(XTM21Handler._IDENTITY2EL[kind], {'href': iri})
+            self._out.emptyElement(XTM21Handler._IDENTITY2EL[kind], {u'href': iri})
 
     def _write_reifier(self, reifier):
         if reifier:
-            self._out.startElement('reifier')
+            self._out.startElement(u'reifier')
             self._write_topic_ref(reifier)
-            self._out.endElement('reifier')
+            self._out.endElement(u'reifier')
 
     def _write_type(self, type):
-        self._out.startElement('type')
+        self._out.startElement(u'type')
         self._write_topic_ref(type)
-        self._out.endElement('type')
+        self._out.endElement(u'type')
 
     def _write_scope(self, scope):
         if scope:
-            self._out.startElement('scope')
+            self._out.startElement(u'scope')
             write_topic_ref = self._write_topic_ref
             for theme in scope:
                 write_topic_ref(theme)
-            self._out.endElement('scope')
+            self._out.endElement(u'scope')
 
     def _write_topic_ref(self, topicref):
         kind, iri = topicref
-        self._out.emptyElement(XTM21Handler._TOPICREF2EL.get(kind), {'href': iri})
+        self._out.emptyElement(XTM21Handler._TOPICREF2EL.get(kind), {u'href': iri})
 
     def _write_iids(self, iids):
         write_iid = self._write_iid
@@ -364,15 +364,15 @@ class XTM21Handler(mio_handler.HamsterMapHandler):
             write_iid(iid)
 
     def _write_iid(self, iid):
-        self._out.emptyElement('itemIdentity', {'href': iid})
+        self._out.emptyElement(u'itemIdentity', {u'href': iid})
 
     def _write_value_datatype(self, value, datatype):
         if XSD.anyURI == datatype:
-            self._out.emptyElement('resourceRef', {'href': value})
+            self._out.emptyElement(u'resourceRef', {u'href': value})
         elif XSD.string == datatype:
-            self._out.dataElement('resourceData', value)
+            self._out.dataElement(u'resourceData', value)
         else:
-            self._out.dataElement('resourceData', value, {'datatype': datatype})
+            self._out.dataElement(u'resourceData', value, {u'datatype': datatype})
 
 
 class _Topic(object):

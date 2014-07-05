@@ -48,9 +48,9 @@ from mio.xtm.miohandler import XTM21Handler
 
 __all__ = ['create_deserializer', 'XTM21Handler']
 
-_CONTENT_HANDLERS = {'1.0': XTM10ContentHandler,
-                     '2.0': XTM2ContentHandler,
-                     '2.1': XTM2ContentHandler
+_CONTENT_HANDLERS = {u'1.0': XTM10ContentHandler,
+                     u'2.0': XTM2ContentHandler,
+                     u'2.1': XTM2ContentHandler
                      }
 
 def create_deserializer(version=None, strict=True, **kw):
@@ -118,16 +118,16 @@ class XTMContentHandler(sax_handler.ContentHandler):
         attrs = attributes(attrs)
         if uri == NS_XTM_2:
             handler = XTM2ContentHandler(self.map_handler)
-            self.version = attrs.get((None, 'version'))
+            self.version = attrs.get((None, u'version'))
         elif uri == NS_XTM_10:
             handler = XTM10ContentHandler(self.map_handler)
-            self.version = '1.0'
-        elif attrs.get((None, 'version')) in ('2.0', '2.1'):
+            self.version = u'1.0'
+        elif attrs.get((None, u'version')) in (u'2.0', u'2.1'):
             handler = XTM2ContentHandler(self.map_handler)
-            self.version = attrs.get((None, 'version'))
+            self.version = attrs.get((None, u'version'))
         else:
             handler = XTM10ContentHandler(self.map_handler)
-            self.version = '1.0'
+            self.version = u'1.0'
         # Provide missing info
         handler.map_handler = self.map_handler
         handler.strict = self.strict

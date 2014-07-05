@@ -49,8 +49,8 @@ from tm.irilib import resolve_iri
 
 __all__ = ['TMXMLContentHandler']
 
-_NS_TMXML = 'http://psi.ontopia.net/xml/tm-xml/'
-_NS_TMDM = 'http://psi.topicmaps.org/iso13250/model/'
+_NS_TMXML = u'http://psi.ontopia.net/xml/tm-xml/'
+_NS_TMDM = u'http://psi.topicmaps.org/iso13250/model/'
 _TOPIC_NAME = mio.SUBJECT_IDENTIFIER, TMDM.topic_name   # Default name type
 
 # States
@@ -65,13 +65,13 @@ _NAME = 7
 _VARIANT = 8
 _PROPERTY = 9
 
-_ATTR_ID = None, 'id'
-_ATTR_ROLE = None, 'role'
-_ATTR_SCOPE = None, 'scope'
-_ATTR_REIFIER = None, 'reifier'
-_ATTR_DATATYPE = None, 'datatype'
-_ATTR_TOPIC_REF = None, 'topicref'
-_ATTR_OTHER_ROLE = None, 'otherrole'
+_ATTR_ID = None, u'id'
+_ATTR_ROLE = None, u'role'
+_ATTR_SCOPE = None, u'scope'
+_ATTR_REIFIER = None, u'reifier'
+_ATTR_DATATYPE = None, u'datatype'
+_ATTR_TOPIC_REF = None, u'topicref'
+_ATTR_OTHER_ROLE = None, u'otherrole'
 
 
 class TMXMLContentHandler(sax_handler.ContentHandler):
@@ -134,7 +134,7 @@ class TMXMLContentHandler(sax_handler.ContentHandler):
                     self._type = type_
             state = _TOPIC
         elif _TOPIC is state:
-            if uri == _NS_TMXML and name in ('identifier', 'locator'):
+            if uri == _NS_TMXML and name in (u'identifier', u'locator'):
                 state = _IDENTITY
             elif attrs.get(_ATTR_ROLE, None):
                 handler.startAssociation(self._resolve_type(uri, name))
@@ -162,10 +162,10 @@ class TMXMLContentHandler(sax_handler.ContentHandler):
             self._handle_reifier(attrs)
             handler.endRole()
             state = _AFTER_ROLE
-        elif _PROPERTY is state and uri == _NS_TMXML and name == 'value':
+        elif _PROPERTY is state and uri == _NS_TMXML and name == u'value':
             self._content = []
             state = _BASENAME
-        elif _NAME is state and uri == _NS_TMXML and name == 'variant':
+        elif _NAME is state and uri == _NS_TMXML and name == u'variant':
             self._scope = self._collect_scope(attrs)
             self._reifier = attrs.get(_ATTR_REIFIER, None)
             self._datatype = attrs.get(_ATTR_DATATYPE, XSD.string)
@@ -185,10 +185,10 @@ class TMXMLContentHandler(sax_handler.ContentHandler):
             iri = self._resolve_iri(''.join(self._content))
             if not self._seen_identity:
                 self._handle_delayed_topic(name, iri)
-            elif name == 'identifier':
+            elif name == u'identifier':
                 handler.subjectIdentifier(iri)
             else:
-                assert name == 'locator'
+                assert name == u'locator'
                 handler.subjectLocator(iri)
             self._content = []
             state = _TOPIC
@@ -233,9 +233,9 @@ class TMXMLContentHandler(sax_handler.ContentHandler):
         """\
         Sends a startTopic event with a subject identifier or subject locator.
         """
-        if name == 'identifier':
+        if name == u'identifier':
             self._current_topic = mio.SUBJECT_IDENTIFIER, iri
-        elif name == 'locator':
+        elif name == u'locator':
             self._current_topic = mio.SUBJECT_LOCATOR, iri
         self.map_handler.startTopic(self._current_topic)
         if self._type:
@@ -248,7 +248,7 @@ class TMXMLContentHandler(sax_handler.ContentHandler):
         If `ref` is a QName (prefix:local), a subject identifier is returned, 
         otherwise an item identifier.
         """
-        if ':' in ref:
+        if u':' in ref:
             return self._resolve_sid(ref)
         return self._resolve_iid(ref)
 
@@ -257,14 +257,14 @@ class TMXMLContentHandler(sax_handler.ContentHandler):
         Resolves the specified `ref` against the base IRI and returns an 
         item identifier reference.
         """
-        return mio.ITEM_IDENTIFIER, self._resolve_iri('#%s' % ref)
+        return mio.ITEM_IDENTIFIER, self._resolve_iri(u'#%s' % ref)
 
     def _resolve_sid(self, qname):
         """\
         Resolves the specified `qname` against the base IRI and returns a
         subject identifier reference.
         """
-        prefix, local = qname.split(':')
+        prefix, local = qname.split(u':')
         try:
             return mio.SUBJECT_IDENTIFIER, self._resolve_iri(self._prefixes[prefix] + local)
         except KeyError:
@@ -284,9 +284,9 @@ class TMXMLContentHandler(sax_handler.ContentHandler):
         """
         if not uri:
             return self._resolve_iid(name)
-        if uri == _NS_TMDM and name == 'topic-name':
+        if uri == _NS_TMDM and name == u'topic-name':
             return _TOPIC_NAME
-        if uri == _NS_TMXML and name == 'topic':
+        if uri == _NS_TMXML and name == u'topic':
             return None
         return mio.SUBJECT_IDENTIFIER, self._resolve_iri(uri + name)
 

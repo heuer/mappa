@@ -54,35 +54,35 @@ __all__ = ['XTM2ContentHandler']
 NS_XTM = voc.XTM
 
 # Constants for XTM elements.
-MERGE_MAP = 'mergeMap'
-TOPIC_MAP = 'topicMap'
-TOPIC = 'topic'
-ASSOCIATION = 'association'
-ROLE = 'role'
-OCCURRENCE = 'occurrence'
-NAME = 'name'
-VARIANT = 'variant'
-INSTANCE_OF = 'instanceOf'
-TYPE = 'type'
-VALUE = 'value'
-RESOURCE_REF = 'resourceRef'
-RESOURCE_DATA = 'resourceData'
-SCOPE = 'scope'
-TOPIC_REF = 'topicRef'
-SUBJECT_IDENTIFIER = 'subjectIdentifier'
-SUBJECT_LOCATOR = 'subjectLocator'
-ITEM_IDENTITY = 'itemIdentity'
+MERGE_MAP = u'mergeMap'
+TOPIC_MAP = u'topicMap'
+TOPIC = u'topic'
+ASSOCIATION = u'association'
+ROLE = u'role'
+OCCURRENCE = u'occurrence'
+NAME = u'name'
+VARIANT = u'variant'
+INSTANCE_OF = u'instanceOf'
+TYPE = u'type'
+VALUE = u'value'
+RESOURCE_REF = u'resourceRef'
+RESOURCE_DATA = u'resourceData'
+SCOPE = u'scope'
+TOPIC_REF = u'topicRef'
+SUBJECT_IDENTIFIER = u'subjectIdentifier'
+SUBJECT_LOCATOR = u'subjectLocator'
+ITEM_IDENTITY = u'itemIdentity'
 # XTM 2.1 specific elements
-REIFIER = 'reifier'
-SUBJECT_IDENTIFIER_REF = 'subjectIdentifierRef'
-SUBJECT_LOCATOR_REF = 'subjectLocatorRef'
+REIFIER = u'reifier'
+SUBJECT_IDENTIFIER_REF = u'subjectIdentifierRef'
+SUBJECT_LOCATOR_REF = u'subjectLocatorRef'
 
 # Constants for XTM attributes.
-_VERSION = (None, 'version')
-_REIFIER = (None, 'reifier')
-_HREF = (None, 'href')
-_ID = (None, 'id')
-_DATATYPE = (None, 'datatype')
+_VERSION = (None, u'version')
+_REIFIER = (None, u'reifier')
+_HREF = (None, u'href')
+_ID = (None, u'id')
+_DATATYPE = (None, u'datatype')
 
 # States
 _STATE_INITIAL = 1
@@ -115,7 +115,7 @@ class XTM2ContentHandler(sax_handler.ContentHandler):
         self.subordinate = False
         self.context = Context()
         self.reset(locator)
-        self.version = '2.0'
+        self.version = u'2.0'
         self._seen_identity = False
         self.strict = True
 
@@ -165,23 +165,23 @@ class XTM2ContentHandler(sax_handler.ContentHandler):
         create_locator = self._create_locator
         if TOPIC_REF == name:
             iid = href(attrs)
-            if self.version == '2.0' and '#' not in iid:
+            if self.version == u'2.0' and u'#' not in iid:
                 raise mio.MIOException('Invalid topic reference "%s". Does not contain a fragment identifier' % iid)
             ref = mio.ITEM_IDENTIFIER, iid
             self._handle_topic_reference(ref)
         elif SUBJECT_IDENTIFIER_REF == name:
-            if self.version == '2.0':
+            if self.version == u'2.0':
                 raise mio.MIOException('The <subjectIdentifierRef/> element is disallowed in XTM 2.0')
             self._handle_topic_reference((mio.SUBJECT_IDENTIFIER, href(attrs)))
         elif SUBJECT_LOCATOR_REF == name:
-            if self.version == '2.0':
+            if self.version == u'2.0':
                 raise mio.MIOException('The <subjectLocatorRef/> element is disallowed in XTM 2.0')
             self._handle_topic_reference((mio.SUBJECT_LOCATOR, href(attrs)))
         elif TOPIC == name:
             ident = attrs.get(_ID)
             if ident:
                 handler.startTopic((mio.ITEM_IDENTIFIER, create_locator('#' + ident)))
-            elif self.version == '2.0':
+            elif self.version == u'2.0':
                 raise mio.MIOException('Illegal XTM 2.0 instance: The id attribute is missing from the <topic/> element')
             self._state = _STATE_TOPIC
             self._seen_identity = ident is not None
@@ -245,7 +245,7 @@ class XTM2ContentHandler(sax_handler.ContentHandler):
             self._next_state, self._state = state, _STATE_SCOPE
         elif TOPIC_MAP == name:
             version = attrs.get(_VERSION)
-            if version not in ('2.0', '2.1'):
+            if version not in (u'2.0', u'2.1'):
                 raise mio.MIOException('Invalid XTM version. Expected "2.0" or "2.1", got: "%s"' % version)
             self.version = version
             reifier = attrs.get(_REIFIER)
@@ -258,7 +258,7 @@ class XTM2ContentHandler(sax_handler.ContentHandler):
         elif MERGE_MAP == name:
             self._process_mergemap(href(attrs))
         elif REIFIER == name:
-            if self.version == '2.0':
+            if self.version == u'2.0':
                 raise mio.MIOException('The <reifier/> element is disallowed in XTM 2.0')
             if self._seen_reifier:
                 raise mio.MIOException('Found a reifier attribute and reifier element')
