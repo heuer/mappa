@@ -90,7 +90,7 @@ class CTMHandler(mio_handler.HamsterMapHandler):
         return len(self._indent)
 
     def _set_indentation(self, val):
-        self._indent = ' ' * val
+        self._indent = u' ' * val
 
     indentation = property(_get_indentation, _set_indentation, doc='Sets the indentation level')
     prefixes = property(lambda self: dict(self._prefixes), doc='Returns the registered prefixes (a dict)')
@@ -191,16 +191,16 @@ class CTMHandler(mio_handler.HamsterMapHandler):
             if self._something_written:
                 kind, iri = reifier
                 if kind == ITEM_IDENTIFIER:
-                    kind = 'item identifier'
+                    kind = u'item identifier'
                 elif kind == SUBJECT_IDENTIFIER:
-                    kind = 'subject identifier'
+                    kind = u'subject identifier'
                 elif kind == SUBJECT_LOCATOR:
-                    kind = 'subject locator'
+                    kind = u'subject locator'
                 msg = 'Ignoring the topic map reifier with the %s <%s>' % (kind, iri)
                 logging.warn(msg)
             else:
                 self._something_written = True
-                self._out.write('~ ')
+                self._out.write(u'~ ')
                 self._write_topic_ref(reifier)
                 self._out.write(_NL)
 
@@ -348,7 +348,7 @@ class CTMHandler(mio_handler.HamsterMapHandler):
             return res if res != 0 else cmp(a.arity, b.arity)
         self._header_written = True
         write = self._out.write
-        if self._encoding != 'utf-8':
+        if self._encoding != u'utf-8':
             write(u'%%encoding "%s"%s' % (self._encoding, _NL))
         if self.title or self.author or self.date or self.license or self.comment:
             write(u'#(%s' % _NL)
@@ -484,7 +484,7 @@ class CTMHandler(mio_handler.HamsterMapHandler):
 
     def _write_string(self, value):
         write = self._out.write
-        if '"' in value and value[-1] != '"':
+        if u'"' in value and value[-1] != u'"':
             write(u'"""')
             for c in value:
                 if c == u'\\':
