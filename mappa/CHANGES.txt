@@ -2,7 +2,7 @@
 Changes
 =======
 
-0.1.7 - 2011-mm-dd
+0.1.7 - 2014-mm-dd
 ------------------
 * JTM writer forgot to serialize the reifier of names, occurrences, and 
   variants. Fixed.
