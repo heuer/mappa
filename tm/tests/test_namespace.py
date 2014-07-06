@@ -14,10 +14,12 @@ Tests against ``tm.mio.Source``.
 """
 from tm import Namespace
 
+
 def test_namespace_string():
     iri = 'http://www.example.org/bla'
     ns = Namespace(iri)
     assert(iri == ns)
+
 
 if __name__ == '__main__':
     import nose

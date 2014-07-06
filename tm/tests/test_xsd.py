@@ -15,6 +15,7 @@ Tests against the XSD module.
 from unittest import TestCase
 from tm import XSD
 
+
 class TestXSD(TestCase):
     
     def test_xsd(self):

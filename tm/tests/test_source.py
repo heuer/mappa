@@ -17,6 +17,7 @@ from urllib import pathname2url
 from urlparse import urljoin
 from tm import irilib, Source
 
+
 class TestSource(TestCase):
 
     def test_file(self):
@@ -84,6 +85,7 @@ class TestSource(TestCase):
             self.fail('.stream should be immutable')
         except AttributeError:
             pass
+
 
 if __name__ == '__main__':
     import nose

@@ -20,8 +20,10 @@ from tm.mio import syntax
 
 _TEST_SYNTAX = syntax.Syntax('Test-Syntax', 'application/something', 'blub')
 
+
 class _MapHandler(MapHandler):
     pass
+
 
 class TestDeserializer(TestCase):
 

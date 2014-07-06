@@ -35,6 +35,7 @@ def test_simplesaxhandler():
     handler.endElement('xml')
     handler.endDocument()
 
+
 def test_simplesaxhandler2():
     out = StringIO()
     h = saxutils.XMLGenerator(out)

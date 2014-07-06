@@ -15,6 +15,7 @@ Tests against the mio.syntax module.
 from unittest import TestCase
 from tm.mio import syntax
 
+
 class TestMIOSyntax(TestCase):
     
     def _syntaxes(self):
@@ -47,6 +48,7 @@ class TestMIOSyntax(TestCase):
             self.assert_(syn is syntax.syntax_for_name(syn.name))
             self.assert_(syn is syntax.syntax_for_name(syn.name.upper()))
             self.assert_(syn is syntax.syntax_for_name(syn.name.lower()))
+
 
 if __name__ == '__main__':
     import nose
