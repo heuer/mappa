@@ -50,6 +50,7 @@ __all__ = ['Literal', '__version__',
            'connect',
            'ModelConstraintViolation', 'IdentityViolation']
 
+
 def connect(backend='mem', **kw):
     """\
     Creates / returns a connection with the specified configuration.
@@ -98,6 +99,7 @@ class ModelConstraintViolation(Exception):
         super(ModelConstraintViolation, self).__init__(msg)
         self.reporter = reporter
 
+
 class IdentityViolation(ModelConstraintViolation):
     """\
     Exception that is raised if a uniqueness constraint is violated.
@@ -128,6 +130,7 @@ class InternalError(Exception):
     """
     def __init__(self, msg):
         super(InternalError, self).__init__('INTERNAL ERROR: %s' % msg)
+
 
 if __name__ == '__main__':
     import doctest
