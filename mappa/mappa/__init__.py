@@ -83,6 +83,12 @@ def connect(backend='mem', **kw):
             store = ep.load()
             break
     if not store:
+        import importlib
+        try:
+            store = importlib.import_module('mappaext.store.%s' % backend)
+        except:
+            pass
+    if not store:
         raise Exception('Cannot find the store "%s"' % store_name)
     return store.create_connection(**kw)
 
