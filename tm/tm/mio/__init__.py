@@ -49,6 +49,7 @@ class MIOException(SAXException, Exception):
     """
     pass
 
+
 class MIOParseException(MIOException):
     """\
     MIO exception that provides optional line/column information.
@@ -126,6 +127,7 @@ class Source(object):
 # Syntax -> factory mapping
 _DESERIALIZERS = {}
 
+
 def register_deserializer(module, syn, warn=True):
     """\
     Registers a deserializer factory.
@@ -146,6 +148,7 @@ _ENTRY_POINT = 'mio.reader'
 # Register all deserializers
 import pkg_resources
 
+
 def _register_all(warn=True):
     for ep in pkg_resources.iter_entry_points(_ENTRY_POINT):
         syntax_ = syntax.syntax_for_name(ep.name)
@@ -156,11 +159,13 @@ def _register_all(warn=True):
 
 _register_all()
 
+
 def _get_deserializer(syn):
     deser = _DESERIALIZERS.get(syn)
     if not deser:
         _register_all(warn=False)
     return _DESERIALIZERS.get(syn)
+
 
 def create_deserializer(format=None, mimetype=None, extension=None, **kw):
     """\
