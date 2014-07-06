@@ -16,6 +16,7 @@ from nose.tools import eq_
 from unittest import TestCase
 from tm.irilib import normalize, resolve_iri
 
+
 class TestIRI(TestCase):
     
     def test_mark_wilhelm_kuester(self):
@@ -139,9 +140,11 @@ class TestIRI(TestCase):
         self.assertEquals("http://lars:xyz@semagia.com/", normalize("http://lars:xyz@semagia.com:80/"))
         self.assertEquals("http://lars:@semagia.com/", normalize("http://lars:@semagia.com:"))
 
+
 def test_windows_normalization():
     eq_('file:///E:/somewhere/bla.ctm', normalize('file:///E|/somewhere/bla.ctm'))
     eq_('file://localhost/E:/somewhere/bla.ctm', normalize('file://localhost/E|/somewhere/bla.ctm'))
+
 
 if __name__ == '__main__':
     import nose
