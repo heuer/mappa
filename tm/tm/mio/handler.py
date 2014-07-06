@@ -18,6 +18,7 @@ from tm import mio, TMDM, XSD
 
 _DEFAULT_NAME_TYPE = mio.SUBJECT_IDENTIFIER, TMDM.topic_name
 
+
 class MapHandler(object):
     """\
     Handler which receives notifications about Topic Maps constructs.
@@ -672,6 +673,7 @@ _STATE_PLAYER = 11
 _STATE_REIFIER = 12
 _STATE_ISA = 13
 
+
 class _Association(object):
     __slots__ = ['reifier', 'type', 'scope', 'iids', 'roles']
     def __init__(self):
@@ -687,6 +689,7 @@ class _Association(object):
     def add_theme(self, theme):
         self.scope.append(theme)
 
+
 class _Role(object):
     __slots__ = ['reifier', 'type', 'player', 'iids']
     def __init__(self):
@@ -696,6 +699,7 @@ class _Role(object):
         self.iids = []
     def add_iid(self, iri):
         self.iids.append(iri)
+
 
 class _Occurrence(object):
     __slots__ = ['reifier', 'type', 'scope', 'iids', 'value', 'datatype']
@@ -710,6 +714,7 @@ class _Occurrence(object):
         self.iids.append(iri)
     def add_theme(self, theme):
         self.scope.append(theme)
+
 
 class _Name(object):
     __slots__ = ['reifier', 'value', 'type', 'scope', 'iids', 'variants']
@@ -727,6 +732,7 @@ class _Name(object):
     def add_theme(self, theme):
         self.scope.append(theme)
 
+
 class _Variant(object):
     __slots__ = ['reifier', 'scope', 'iids', 'value', 'datatype']
     def __init__(self):
@@ -740,20 +746,26 @@ class _Variant(object):
     def add_theme(self, theme):
         self.scope.append(theme)
 
+
 def _create_association():
     return _Association()
+
 
 def _create_role():
     return _Role()
 
+
 def _create_occurrence():
     return _Occurrence()
+
 
 def _create_name():
     return _Name()
 
+
 def _create_variant():
     return _Variant()
+
 
 class HamsterMapHandler(MapHandler):
     """\
