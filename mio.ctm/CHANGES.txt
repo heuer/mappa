@@ -1,0 +1,33 @@
+=======
+Changes
+=======
+
+0.1.3 - yyyy-mm-dd
+------------------
+* Moved package from mio.reader.ctm to mio.ctm
+* Fixed CTM grammar
+* Moved to PLY >= 3.3
+* Fixed several CTM bugs
+* Added (experimental) mio.ctm.CTMHandler which translates MIO events 
+  into CTM syntax
+* Precompile PLY grammars
+
+
+0.1.2 - 2010-01-28
+------------------
+* All included wildcards are now resolved against the doc IRI of 
+  the master file c.f. <http://projects.topicmapslab.de/issues/1907>
+* Embedded topics which contain embedded topics were not parsed correctly
+  if they occur within templates. Fixed.
+* Internal code changes
+
+
+0.1.1 - 2009-12-20
+------------------
+* Aligned wildcard generation to the latest CTM draft
+* Internal code changes
+
+
+0.1.0 - 2009-12-16
+------------------
+* Initial release
