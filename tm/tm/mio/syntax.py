@@ -17,6 +17,7 @@ from operator import itemgetter
 
 _SYNTAXES = {}
 
+
 class Syntax(tuple):
     """\
     Immutable class which holds syntax properties.
@@ -110,6 +111,7 @@ def syntax_for_extension(ext, default=None):
             return syntax
     return default
 
+
 def syntax_for_mimetype(mt, default=None):
     """\
     Returns a syntax for the given MIME type.
@@ -124,6 +126,7 @@ def syntax_for_mimetype(mt, default=None):
         if mt in syntax.mimetypes:
             return syntax
     return default
+
 
 def syntax_for_name(name, default=None):
     """\
