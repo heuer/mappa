@@ -35,19 +35,22 @@ def get_baseline(filename):
 def _download_cxtm_tests():
     from zipfile import ZipFile
     import urllib, shutil
-    directory = os.path.abspath('./cxtm/')
-    archive_name = os.path.join(directory, 'cxtm-tests.zip')
+    directory = os.path.abspath(u'./cxtm/')
+    archive_name = os.path.join(directory, _CXTM_TRUNK)
     sf_filename = _CXTM_TRUNK
-    urllib.urlretrieve('http://sourceforge.net/code-snapshots/svn/c/cx/cxtm-tests/code/%s' % sf_filename, archive_name)
+    if not os.path.isfile(archive_name):
+        urllib.urlretrieve(u'http://sourceforge.net/code-snapshots/svn/c/cx/cxtm-tests/code/%s' % sf_filename, archive_name)
     archive = ZipFile(archive_name)
     archive.extractall(directory)
     archive.close()
     trunk_dir = os.path.join(directory, sf_filename[:sf_filename.rindex(u'.')])
     for f in os.listdir(trunk_dir):
         subdir = os.path.join(trunk_dir, f)
-        if os.path.isdir(subdir) and f != 'web':
+        if os.path.isdir(subdir) and f != u'web':
             target = os.path.join(directory, f)
-            shutil.move(subdir, target)
+            if os.path.isdir(target):
+                shutil.rmtree(target)
+            shutil.copytree(subdir, target)
     shutil.rmtree(trunk_dir)
 
 
@@ -56,7 +59,7 @@ def find_cxtm_cases(directory, extension, subdir, exclude=None):
 
     """
     exclude = set(exclude or [])
-    directory = os.path.abspath('./cxtm/%s/%s' % (directory, subdir))
+    directory = os.path.abspath(u'cxtm/%s/%s' % (directory, subdir))
     if not os.path.exists(directory):
         _download_cxtm_tests()
     for filename in (n for n in os.listdir(directory) if n.endswith(extension) and n not in exclude):
@@ -67,14 +70,14 @@ def find_valid_cxtm_cases(directory, extension, exclude=None):
     """\
 
     """
-    return find_cxtm_cases(directory, extension, 'in', exclude)
+    return find_cxtm_cases(directory, extension, u'in', exclude)
 
 
 def find_invalid_cxtm_cases(directory, extension, exclude=None):
     """\
 
     """
-    return find_cxtm_cases(directory, extension, 'invalid', exclude)
+    return find_cxtm_cases(directory, extension, u'invalid', exclude)
 
 
 def create_invalid_cxtm_cases(factory, directory, extension, exclude=None):
