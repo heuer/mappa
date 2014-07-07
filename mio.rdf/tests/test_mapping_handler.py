@@ -16,6 +16,7 @@ from nose.tools import ok_
 from tm import mio
 from mio.rdf.mapping import MappingHandler
 
+
 def test_mapping_handler():
     mh = MappingHandler()
     ok_(not mh.mapping)
@@ -49,6 +50,7 @@ def test_mapping_handler():
     ok_(slo_pred in mh.mapping)
     mh.end()
 
+
 def test_illegal_association_subject():
     mh = MappingHandler()
     mh.start()
@@ -57,6 +59,7 @@ def test_illegal_association_subject():
         fail('Excpected an exception for subject_role == None')
     except mio.MIOException:
         pass
+
 
 def test_illegal_association_object():
     mh = MappingHandler()
