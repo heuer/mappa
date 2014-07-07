@@ -13,7 +13,7 @@ Constants and functions that may be useful to operate upon IRIs.
 :license:      BSD license
 """
 from urlparse import urljoin
-from tm._urlutils import normalize
+
 
 def resolve_iri(base, reference):
     """\

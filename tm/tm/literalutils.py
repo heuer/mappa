@@ -17,6 +17,7 @@ import re
 from decimal import Decimal, InvalidOperation
 from tm import XSD
 
+
 def normalize_literal(value, datatype):
     """\
     Normalizes the `value` if a normalization function exists for the
@@ -37,6 +38,7 @@ def normalize_literal(value, datatype):
     return value, datatype
 
 _TRAILING_ZEROS_PATTERN = re.compile(r'[0-9](0+)$')
+
 
 def normalize_decimal(val):
     """\
@@ -111,6 +113,7 @@ def normalize_decimal(val):
         res = '0.0'
     return res
 
+
 def normalize_boolean(val):
     """\
     Returns the canonical representation of a xsd:boolean value.
@@ -140,6 +143,7 @@ def normalize_boolean(val):
     if v in ('1', 'true'):
         return 'true'
     raise ValueError('Illegal xsd:boolean: "%s"' % val)
+
 
 def normalize_integer(val):
     """\
@@ -174,6 +178,7 @@ _DATATYPE2NORMALIZER = {
     XSD.integer: normalize_integer,
     XSD.boolean: normalize_boolean,
 }
+
 
 if __name__ == '__main__':
     import doctest

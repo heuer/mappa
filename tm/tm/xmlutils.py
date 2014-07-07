@@ -207,6 +207,7 @@ except ImportError:
 from xml.sax.xmlreader import AttributesImpl
 _EMPTY_ATTRS = {}
 
+
 class SAXSimpleXMLWriter(object):
     """\
     SimpleXMLWriter which translates the events to SAX events

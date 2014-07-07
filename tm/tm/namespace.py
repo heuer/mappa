@@ -13,6 +13,7 @@ This module provides an utility class which can be used to abbreviate IRIs.
 :license:      BSD license
 """
 
+
 class Namespace(unicode):
     """\
     The namespace class.
@@ -29,6 +30,7 @@ class Namespace(unicode):
     u'http://www.w3.org/2001/XMLSchema#string'
     """
     __slots__ = ()
+
     def __new__(cls, value):
         if value is None:
             raise ValueError()
@@ -41,6 +43,7 @@ class Namespace(unicode):
     
     def __getitem__(self, key):
         return u'%s%s' % (self, key)
+
 
 if __name__ == '__main__':
     import doctest

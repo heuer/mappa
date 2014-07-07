@@ -16,9 +16,9 @@ These PSIs can be used to work with topic maps which assume a XTM 1.0 model.
 """
 from tm.voc import XTM_10
 
-DISPLAY = XTM_10['core.xtm#display']
+DISPLAY = XTM_10[u'core.xtm#display']
 
-SORT = XTM_10['core.xtm#sort']
+SORT = XTM_10[u'core.xtm#sort']
 
 DEFAULT_ASSOCIATION_TYPE = XTM_10[u'core.xtm#association']
 """\
