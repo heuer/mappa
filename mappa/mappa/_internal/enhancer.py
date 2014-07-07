@@ -1,35 +1,9 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2007 - 2011 -- Lars Heuer - Semagia <http://www.semagia.com/>.
+# Copyright (c) 2007 - 2014 -- Lars Heuer - Semagia <http://www.semagia.com/>.
 # All rights reserved.
 #
-# Redistribution and use in source and binary forms, with or without
-# modification, are permitted provided that the following conditions are
-# met:
-#
-#     * Redistributions of source code must retain the above copyright
-#       notice, this list of conditions and the following disclaimer.
-#
-#     * Redistributions in binary form must reproduce the above
-#       copyright notice, this list of conditions and the following
-#       disclaimer in the documentation and/or other materials provided
-#       with the distribution.
-#
-#     * Neither the name of the project nor the names of the contributors 
-#       may be used to endorse or promote products derived from this 
-#       software without specific prior written permission.
-#
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-# OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+# BSD license.
 #
 """\
 Provides several ``enhance`` functions to add missing functionality to 
@@ -57,6 +31,7 @@ from mappa._internal.itemexpr import filter_topic_children, add_topic_child, \
 from mappa._internal.filter import filter_by_type_scope, filter_roles
 from mappa._internal import mergeutils, siggen, atomification
 
+
 def enhance(cls):
     """\
     Adds some methods to the specified class, if necessary.
@@ -80,6 +55,7 @@ def enhance(cls):
         enhance_name(cls)
     elif is_variant(cls):
         enhance_variant(cls)
+
 
 def enhance_connection(cls):
     def _post_process_loading(tm, format, version, deser):
@@ -151,6 +127,7 @@ def enhance_connection(cls):
             writer.write(tm)
         cls.write = _write
 
+
 def enhance_construct(cls):
     """\
     
@@ -161,6 +138,7 @@ def enhance_construct(cls):
         cls.find = _not_implemented
     if not hasattr(cls, 'findall'):
         cls.findall = _not_implemented
+
 
 def enhance_topicmap(cls):
     if not hasattr(cls, 'create_topic'):
@@ -173,6 +151,7 @@ def enhance_topicmap(cls):
         def _merge(tm, other):
             mergeutils. merge_topicmaps(other, tm)
         cls.merge = _merge
+
 
 def enhance_topic(cls):
     def add_type(topic, tt):
@@ -256,7 +235,8 @@ def enhance_topic(cls):
         def _iter(topic):
             raise TypeError('Topics are not iterable')
         cls.__iter__ = _iter
-    
+
+
 def enhance_association(cls):
     def _add_role(assoc, expr, player):
         add_role(assoc, player, expr)
@@ -286,6 +266,7 @@ def enhance_association(cls):
             return [role for role in assoc.roles if has_type(role, type)]
         cls.roles_by = _filter_roles
 
+
 def enhance_role(cls):
     if not hasattr(cls, '__sig__'):
         cls.__sig__ = siggen.role_signature
@@ -295,11 +276,13 @@ def enhance_role(cls):
             yield role.player
         cls.__iter__ = _iter
 
+
 def enhance_occurrence(cls):
     if not hasattr(cls, '__sig__'):
         cls.__sig__ = siggen.occurrence_signature
     if not hasattr(cls, '__atomify__'):
         cls.__atomify__ = atomification.atomify_dataobject
+
 
 def enhance_name(cls):
     if not hasattr(cls, '__iter__'):
@@ -308,6 +291,7 @@ def enhance_name(cls):
         cls.__sig__ = siggen.name_signature
     if not hasattr(cls, '__atomify__'):
         cls.__atomify__ = atomification.atomify_name
+
 
 def enhance_variant(cls):
     if not hasattr(cls, '__sig__'):
