@@ -39,21 +39,21 @@ tokens = tuple(directives.values()) + (
     'COMMA', 'SEMI', 'COLON', 'TILDE', 'EQ', 'AT', 'SLASH', 'PERCENT',
 )
 
-t_IDENT     = r'[a-zA-Z_][\-\.\w]*'
-t_LBRACK    = r'\['
-t_RBRACK    = r'\]'
-t_LCURLY    = r'{'
-t_RCURLY    = r'}'
-t_LPAREN    = r'\('
-t_RPAREN    = r'\)'
-t_COLON     = r':'
-t_COMMA     = r','
-t_SEMI      = r';'
-t_TILDE     = r'~'
-t_EQ        = r'='
-t_AT        = r'@'
-t_SLASH     = r'/'
-t_PERCENT   = r'%'
+t_IDENT = r'[a-zA-Z_][\-\.\w]*'
+t_LBRACK = r'\['
+t_RBRACK = r'\]'
+t_LCURLY = r'{'
+t_RCURLY = r'}'
+t_LPAREN = r'\('
+t_RPAREN = r'\)'
+t_COLON = r':'
+t_COMMA = r','
+t_SEMI = r';'
+t_TILDE = r'~'
+t_EQ = r'='
+t_AT = r'@'
+t_SLASH = r'/'
+t_PERCENT = r'%'
 
 def t_error(t):
     raise MIOException('Unexpected token "%r"' % t)

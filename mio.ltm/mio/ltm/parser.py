@@ -12,9 +12,9 @@ Linear Topic Maps Notation (LTM) 1.3 parser.
 :organization: Semagia - http://www.semagia.com/
 :license:      BSD license
 """
-from mio.ltm.lexer import tokens #pylint: disable-msg=E0611, F0401, W0611
 from tm import mio, XSD
 from tm import TMDM, XTM_10
+from mio.ltm.lexer import tokens #pylint: disable-msg=E0611, F0401, W0611
 _TOPICNAME = mio.SUBJECT_IDENTIFIER, TMDM.topic_name
 _SORT = mio.SUBJECT_IDENTIFIER, XTM_10.SORT
 _DISPLAY = mio.SUBJECT_IDENTIFIER, XTM_10.DISPLAY
