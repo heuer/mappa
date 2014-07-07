@@ -215,27 +215,26 @@ class TestPrefixes:
         ok_('%%prefix %s <%s>' % (prefix2, iri2) in out.getvalue())
 
 
-class TestAdditionalInfo:
+def test_author():
+    out = StringIO()
+    handler = CTMHandler(out)
+    ok_(handler.author is None)
+    handler.author = 'Lars'
+    eq_(u'Lars', handler.author)
+    handler.startTopicMap()
+    handler.endTopicMap()
+    ok_("Author:   Lars" in out.getvalue())
 
-    def test_author(self):
-        out = StringIO()
-        handler = CTMHandler(out)
-        ok_(handler.author is None)
-        handler.author = 'Lars'
-        eq_(u'Lars', handler.author)
-        handler.startTopicMap()
-        handler.endTopicMap()
-        ok_("Author:   Lars" in out.getvalue())
 
-    def test_title(self):
-        out = StringIO()
-        handler = CTMHandler(out)
-        ok_(handler.title is None)
-        handler.title = u'Test'
-        eq_(u'Test', handler.title)
-        handler.startTopicMap()
-        handler.endTopicMap()
-        ok_(u'''#(
+def test_title():
+    out = StringIO()
+    handler = CTMHandler(out)
+    ok_(handler.title is None)
+    handler.title = u'Test'
+    eq_(u'Test', handler.title)
+    handler.startTopicMap()
+    handler.endTopicMap()
+    ok_(u'''#(
 ====
 Test
 ====
