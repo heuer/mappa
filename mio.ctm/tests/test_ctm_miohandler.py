@@ -235,11 +235,12 @@ class TestAdditionalInfo:
         eq_(u'Test', handler.title)
         handler.startTopicMap()
         handler.endTopicMap()
-        ok_(u'''#
-# ====
-# Test
-# ====
-#
+        ok_(u'''#(
+====
+Test
+====
+
+)#
 ''' in out.getvalue())
 
 
