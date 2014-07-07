@@ -6,6 +6,8 @@ Changes
 ------------------
 * Added support for JTM 1.1
 * Changed implementation: JSON is read into memory and evaluated afterwards
+* Removed fallback to django.utils.simplejson (used by old Google AppEngine
+  environment, only)
 
 
 0.1.1 - 2009-12-17
