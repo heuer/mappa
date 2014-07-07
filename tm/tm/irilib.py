@@ -13,6 +13,9 @@ Constants and functions that may be useful to operate upon IRIs.
 :license:      BSD license
 """
 from urlparse import urljoin
+from ._urlutils import normalize
+
+__all__ = ['resolve_iri', 'normalize']
 
 
 def resolve_iri(base, reference):

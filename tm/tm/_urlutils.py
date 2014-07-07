@@ -42,6 +42,7 @@ default_port = {
 _WIN_FILE_PATTERN = re.compile(r'^(/[A-Za-z]*)(%7C)')
 _MAILTO_HOST_PATTERN = re.compile(r'(@.+)')
 
+
 def normalize(url):
     """Normalize a URL."""
 
