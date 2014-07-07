@@ -2,7 +2,7 @@
 Changes
 =======
 
-0.1.0 - 2011-mm-dd
+0.1.0 - 20yy-mm-dd
 ------------------
 * Initial release (was previously part of Mappa)
 * The default name type is omitted if possible
