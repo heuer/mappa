@@ -1,35 +1,9 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2007 - 2011 -- Lars Heuer - Semagia <http://www.semagia.com/>.
+# Copyright (c) 2007 - 2014 -- Lars Heuer - Semagia <http://www.semagia.com/>.
 # All rights reserved.
 #
-# Redistribution and use in source and binary forms, with or without
-# modification, are permitted provided that the following conditions are
-# met:
-#
-#     * Redistributions of source code must retain the above copyright
-#       notice, this list of conditions and the following disclaimer.
-#
-#     * Redistributions in binary form must reproduce the above
-#       copyright notice, this list of conditions and the following
-#       disclaimer in the documentation and/or other materials provided
-#       with the distribution.
-#
-#     * Neither the name of the project nor the names of the contributors 
-#       may be used to endorse or promote products derived from this 
-#       software without specific prior written permission.
-#
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-# OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+# BSD license.
 #
 """\
 Tests against the CTM 1.0 MIOHandler
@@ -38,7 +12,7 @@ Tests against the CTM 1.0 MIOHandler
 :organization: Semagia - http://www.semagia.com/
 :license:      BSD license
 """
-import unittest
+from nose.tools import eq_, ok_
 from StringIO import StringIO
 import codecs
 import mappa
@@ -50,8 +24,10 @@ from tm.mio import MIOException, SUBJECT_IDENTIFIER
 from mio.ctm import create_deserializer, CTMHandler
 from mio import xtm
 
+
 def fail(msg):
     raise AssertionError(msg)
+
 
 def check_handler(deserializer_factory, filename):
     src = Source(file=open(filename))
@@ -59,7 +35,7 @@ def check_handler(deserializer_factory, filename):
     out = StringIO()
     deser = deserializer_factory()
     handler = CTMHandler(out)
-    handler.add_prefix('_', src.iri + '#')
+    handler.add_prefix(u'_', src.iri + u'#')
     deser.handler = handler
     try:
         deser.parse(src)
@@ -67,14 +43,14 @@ def check_handler(deserializer_factory, filename):
         fail('failed: %s.\nError: %s' % (filename, ex))            
     # 2. Read the generated CTM
     conn = mappa.connect()
-    tm = conn.create('http://www.semagia.com/test-ctm-handler')
+    tm = conn.create(u'http://www.semagia.com/test-ctm-handler')
     deser = create_deserializer()
     deser.handler = MappaMapHandler(tm)
     new_src = Source(data=out.getvalue(), iri=src.iri)
     try:
         deser.parse(new_src)
     except MIOException, ex:
-        self.fail('failed: %s.\nError: %s\nGenerated CTM: %s' % (filename, ex, out.getvalue()))
+        fail('failed: %s.\nError: %s\nGenerated CTM: %s' % (filename, ex, out.getvalue()))
     # 3. Generate the CXTM
     f = codecs.open(get_baseline(filename), encoding='utf-8')
     expected = f.read()
@@ -85,6 +61,7 @@ def check_handler(deserializer_factory, filename):
     res = unicode(result.getvalue(), 'utf-8')
     if expected != res:
         fail('failed: %s.\nExpected: %s\nGot: %s\nGenerated CTM: %s' % (filename, expected, res, out.getvalue()))
+
 
 def test_ctm():
     excluded = ['occurrence-string-multiline2.ctm', 'tm-reifier2.ctm']
@@ -116,15 +93,18 @@ _EXCLUDE_XTM = [
                 "variant-duplicate-iid.xtm"
     ]
 
+
 def test_xtm_20():
     for filename in find_valid_cxtm_cases('xtm2', 'xtm', exclude=_EXCLUDE_XTM):
         yield check_handler, xtm.create_deserializer, filename
+
 
 def test_xtm_21():
     for filename in find_valid_cxtm_cases('xtm21', 'xtm', exclude=_EXCLUDE_XTM):
         yield check_handler, xtm.create_deserializer, filename
 
-class TestPrefixes(unittest.TestCase):
+
+class TestPrefixes:
 
     def make_handler(self, out=None):
         if out == None:
@@ -133,56 +113,56 @@ class TestPrefixes(unittest.TestCase):
 
     def test_registering(self):
         handler = self.make_handler()
-        self.assertTrue(len(handler.prefixes) == 0)
+        eq_(0, len(handler.prefixes))
         prefix, iri = 'base', 'http://www.semagia.com/base'
         handler.add_prefix(prefix, iri)
         prefixes = handler.prefixes
-        self.assertTrue(len(prefixes) == 1)
-        self.assertEquals(iri, prefixes[prefix])
+        eq_(1, len(prefixes))
+        eq_(iri, prefixes[prefix])
         new_iri = iri + '/something-different'
         prefixes[prefix] = new_iri
-        self.assertEquals(new_iri, prefixes[prefix])
+        eq_(new_iri, prefixes[prefix])
         # The IRI must not have changed at the handler
-        self.assertEquals(iri, handler.prefixes[prefix])
+        eq_(iri, handler.prefixes[prefix])
         handler.remove_prefix(prefix)
-        self.assert_(prefix not in handler.prefixes)
+        ok_(prefix not in handler.prefixes)
         handler.add_prefix(prefix, iri)
-        self.assert_(iri == handler.prefixes[prefix])
+        eq_(iri, handler.prefixes[prefix])
         handler.add_prefix(prefix, iri)
-        self.assert_(iri == handler.prefixes[prefix])
+        eq_(iri, handler.prefixes[prefix])
         handler.add_prefix(prefix, new_iri)
-        self.assert_(new_iri == handler.prefixes[prefix])
+        eq_(new_iri, handler.prefixes[prefix])
 
     def test_registering_illegal(self):
         handler = self.make_handler()
         try:
             handler.add_prefix('.aaa', 'http://www.semagia.com/')
-            self.fail('Expected an exception, illegal CTM identifier as prefix')
+            fail('Expected an exception, illegal CTM identifier as prefix')
         except ValueError:
             pass
         try:
             handler.add_prefix('', 'http://www.semagia.com/')
-            self.fail('Expected an exception, illegal CTM identifier as prefix')
+            fail('Expected an exception, illegal CTM identifier as prefix')
         except ValueError:
             pass
         try:
             handler.add_prefix(None, 'http://www.semagia.com/')
-            self.fail('Expected an exception, illegal CTM identifier as prefix')
+            fail('Expected an exception, illegal CTM identifier as prefix')
         except ValueError:
             pass
         try:
             handler.add_prefix('a', '')
-            self.fail('Expected an exception, illegal CTM IRI')
+            fail('Expected an exception, illegal CTM IRI')
         except ValueError:
             pass
         try:
             handler.add_prefix('a', None)
-            self.fail('Expected an exception, illegal CTM IRI')
+            fail('Expected an exception, illegal CTM IRI')
         except ValueError:
             pass
         try:
             handler.add_prefix('a', 'http://www.{semagia}.com/')
-            self.fail('Expected an exception, illegal CTM IRI')
+            fail('Expected an exception, illegal CTM IRI')
         except ValueError:
             pass
 
@@ -194,7 +174,7 @@ class TestPrefixes(unittest.TestCase):
         handler.startTopicMap()
         try:
             handler.remove_prefix(prefix)
-            self.fail('A prefix must not be removable once it is serialized')
+            fail('A prefix must not be removable once it is serialized')
         except MIOException:
             pass
 
@@ -209,7 +189,7 @@ class TestPrefixes(unittest.TestCase):
         new_iri = iri + '/something-different'
         try:
             handler.add_prefix(prefix, new_iri)
-            self.fail('A prefix must not be modifiable once it is serialized')
+            fail('A prefix must not be modifiable once it is serialized')
         except MIOException:
             pass
         out = StringIO()
@@ -218,7 +198,7 @@ class TestPrefixes(unittest.TestCase):
         handler.startTopic((SUBJECT_IDENTIFIER, 'http://psi.semagia.com/bla'))
         try:
             handler.add_prefix(prefix, iri)
-            self.fail("Within a topic, adding a prefix shouldn't be allowed")
+            fail("Within a topic, adding a prefix shouldn't be allowed")
         except MIOException:
             pass
 
@@ -231,30 +211,31 @@ class TestPrefixes(unittest.TestCase):
         prefix2, iri2 = 'p2', 'http://www.semagia.com/something-different'
         handler.add_prefix(prefix2, iri2)
         handler.endTopicMap()
-        self.assert_('%%prefix %s <%s>' % (prefix, iri) in out.getvalue())
-        self.assert_('%%prefix %s <%s>' % (prefix2, iri2) in out.getvalue())
+        ok_('%%prefix %s <%s>' % (prefix, iri) in out.getvalue())
+        ok_('%%prefix %s <%s>' % (prefix2, iri2) in out.getvalue())
 
-class TestAdditionalInfo(unittest.TestCase):
+
+class TestAdditionalInfo:
 
     def test_author(self):
         out = StringIO()
         handler = CTMHandler(out)
-        self.assert_(handler.author is None)
+        ok_(handler.author is None)
         handler.author = 'Lars'
-        self.assert_(handler.author == 'Lars')
+        eq_(u'Lars', handler.author)
         handler.startTopicMap()
         handler.endTopicMap()
-        self.assert_("Author:   Lars" in out.getvalue())
+        ok_("Author:   Lars" in out.getvalue())
 
     def test_title(self):
         out = StringIO()
         handler = CTMHandler(out)
-        self.assert_(handler.title is None)
-        handler.title = 'Test'
-        self.assert_(handler.title == 'Test')
+        ok_(handler.title is None)
+        handler.title = u'Test'
+        eq_(u'Test', handler.title)
         handler.startTopicMap()
         handler.endTopicMap()
-        self.assert_('''#
+        ok_(u'''#
 # ====
 # Test
 # ====
