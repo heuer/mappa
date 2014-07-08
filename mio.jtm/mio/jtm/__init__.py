@@ -52,8 +52,10 @@ _IDENTITYPREFIX2MIO = {
     u'sl': mio.SUBJECT_LOCATOR,
 }
 
+
 def create_deserializer(version=None, **kw): # pylint: disable-msg=W0613
     return JTMDeserializer()
+
 
 class JTMDeserializer(Deserializer):
     def __init__(self, version=None):
@@ -110,11 +112,13 @@ def _issue_events(handler, base_iri, dct, version):
                 for assoc in v:
                     _handle_association(handler, prefixes, assoc)
 
+
 def _resolve_topicref(prefixes, ref):
     kind = _IDENTITYPREFIX2MIO.get(ref[:2], None)
     if kind is None:
         raise mio.MIOException('Unknown identity type: "%s"' % ref[:2])
     return kind, _resolve_iri(prefixes, ref[3:])
+
 
 def _resolve_iri(prefixes, qiri):
     if qiri[0] == '[':
@@ -131,6 +135,7 @@ def _resolve_iri(prefixes, qiri):
     else:
         iri = resolve_iri(prefixes[None], qiri)
     return iri
+
 
 def _handle_topic(handler, prefixes, dct, version=1.0):
     types = dct.get(u'instance_of', _EMPTY)
@@ -161,6 +166,7 @@ def _handle_topic(handler, prefixes, dct, version=1.0):
     for name in dct.get(u'names', _EMPTY):
         _handle_name(handler, prefixes, name)
     handler.endTopic()
+
 
 def _get_type(prefixes, dct, default=None):
     type_ = dct.get(u'type', None)
@@ -221,6 +227,7 @@ def _start_parent(handler, prefixes, dct):
         return True
     return False
 
+
 def _handle_occurrence(handler, prefixes, dct):
     parent = _start_parent(handler, prefixes, dct)
     handler.startOccurrence(_get_type(prefixes, dct))
@@ -231,6 +238,7 @@ def _handle_occurrence(handler, prefixes, dct):
     handler.endOccurrence()
     if parent:
         handler.endTopic()
+
 
 def _handle_name(handler, prefixes, dct):
     parent = _start_parent(handler, prefixes, dct)

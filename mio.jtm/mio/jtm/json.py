@@ -13,6 +13,7 @@ This module provides a JSON writer.
 :license:      BSD license
 """
 from __future__ import absolute_import
+import codecs
 try:
     import simplejson as json
 except ImportError:
@@ -37,7 +38,7 @@ class JSONWriter(object):
         """\
         Initializes the writer with the provided ``out`` file-alike object.
         """
-        self._out = out
+        self._out = codecs.getwriter('utf-8')(out)
         self._want_comma = False
         self._depth = 0
         self.prettify = False
