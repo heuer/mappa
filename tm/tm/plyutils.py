@@ -15,8 +15,8 @@ Utilities for lexers / parsers using `Ply <http://www.dabeaz.com/ply/>`_
 from __future__ import absolute_import
 import os
 import sys
-import ply.yacc as yacc
-import ply.lex as lex
+import tm.ply.yacc as yacc
+import tm.ply.lex as lex
 # Work-around for parsers which create a big parsetab file
 # Import would result in:
 #   java.lang.ClassFormatError: Invalid method Code length <number-here>
@@ -24,6 +24,7 @@ _yacc_pickle = sys.platform[:4] == 'java'
 del sys
 # For some reason pylint thinks that ply.lex and ply.yacc do not exist
 # pylint: disable-msg=F0401, E0611
+
 
 def make_lexer(module, debug=False, optimize=True):
     """\
