@@ -29,6 +29,7 @@ _OBJ2KIND = {
     RDF2TM.instance_of: _ISA,
 }
 
+
 class RDFMappingReader(Store):
     """\
 
