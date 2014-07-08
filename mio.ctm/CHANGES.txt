@@ -11,6 +11,7 @@ Changes
 * Added (experimental) mio.ctm.CTMHandler which translates MIO events 
   into CTM syntax
 * Precompile PLY grammars
+* Require Python >= 2.6
 
 
 0.1.2 - 2010-01-28
