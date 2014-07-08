@@ -25,6 +25,7 @@ def create_xtm10_writer(out, base):
 def create_xtm20_writer(out, base):
     return xtm.create_writer(out, base, prettify=True, version=2.0)
 
+
 def create_xtm21_writer(out, base):
     return xtm.create_writer(out, base, prettify=True, version=2.1)
 
