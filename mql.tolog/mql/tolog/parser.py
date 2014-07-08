@@ -1,35 +1,9 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2007 - 2012 -- Lars Heuer - Semagia <http://www.semagia.com/>.
+# Copyright (c) 2007 - 2014 -- Lars Heuer - Semagia <http://www.semagia.com/>.
 # All rights reserved.
 #
-# Redistribution and use in source and binary forms, with or without
-# modification, are permitted provided that the following conditions are
-# met:
-#
-#     * Redistributions of source code must retain the above copyright
-#       notice, this list of conditions and the following disclaimer.
-#
-#     * Redistributions in binary form must reproduce the above
-#       copyright notice, this list of conditions and the following
-#       disclaimer in the documentation and/or other materials provided
-#       with the distribution.
-#
-#     * Neither the name of the project nor the names of the contributors 
-#       may be used to endorse or promote products derived from this 
-#       software without specific prior written permission.
-#
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-# OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+# BSD license.
 #
 """\
 tolog parser.
@@ -786,14 +760,18 @@ def p_value_IRI(p):
     """
     p[0] = consts.IRI, p[1]
 
+
 def p_error(p):
     raise InvalidQueryError(p)
+
 
 def _handler(p):
     return p.parser.handler
 
+
 def _resolve_qnames(p):
     return p.parser.resolve_qnames
+
 
 def _handle_pair(p, first, second):
     if p.parser.tolog_plus:
@@ -810,6 +788,7 @@ def _handle_pair(p, first, second):
     handler.endPlayer()
     handler.endPair()
 
+
 def _handle_prefix(parser, ident, iri, kind=None):
     kind = kind or consts.IRI
     existing = parser.prefixes.get(ident)
@@ -820,7 +799,7 @@ def _handle_prefix(parser, ident, iri, kind=None):
     else:
         parser.prefixes[ident] = (kind, iri)
         parser.handler.namespace(ident, iri, kind)
-                   
+
 
 def _to_event(handler, arg, stringtoiri=False):
     kind, name = arg
@@ -844,18 +823,20 @@ def _to_event(handler, arg, stringtoiri=False):
     else:
         method(name)
 
+
 def _arguments_to_events(handler, args, stringtoiri=False):
     for kind, name in args:
         _to_event(handler, (kind, name), stringtoiri)
+
 
 if __name__ == '__main__':
     test_input = (
 
     )
-    from ply import yacc
     from tm import plyutils, xmlutils
+    from tm.ply import yacc
     from mql.tolog import lexer as lexer_mod
-    from mql.tolog.handler import XMLHandler
+    from mql.tolog.handler import XMLParserHandler
     from lxml import etree
     import lxml.sax
     def parse(data, handler):
@@ -870,7 +851,7 @@ if __name__ == '__main__':
         print(data)
         try:
             contenthandler = lxml.sax.ElementTreeContentHandler()
-            handler = XMLHandler(xmlutils.SAXSimpleXMLWriter(contenthandler))
+            handler = XMLParserHandler(xmlutils.SAXSimpleXMLWriter(contenthandler))
             parse(data, handler)
             print etree.tostring(contenthandler.etree, pretty_print=True)
         except Exception, ex:

@@ -1,35 +1,9 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2010 - 2011 -- Lars Heuer - Semagia <http://www.semagia.com/>.
+# Copyright (c) 2007 - 2014 -- Lars Heuer - Semagia <http://www.semagia.com/>.
 # All rights reserved.
 #
-# Redistribution and use in source and binary forms, with or without
-# modification, are permitted provided that the following conditions are
-# met:
-#
-#     * Redistributions of source code must retain the above copyright
-#       notice, this list of conditions and the following disclaimer.
-#
-#     * Redistributions in binary form must reproduce the above
-#       copyright notice, this list of conditions and the following
-#       disclaimer in the documentation and/or other materials provided
-#       with the distribution.
-#
-#     * Neither the name of the project nor the names of the contributors 
-#       may be used to endorse or promote products derived from this 
-#       software without specific prior written permission.
-#
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-# OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+# BSD license.
 #
 """\
 Tests against the lexer.
@@ -39,12 +13,17 @@ Tests against the lexer.
 :license:      BSD License
 """
 from nose.tools import eq_
-from tm import plyutils
-import mql.tolog.lexer as lexer_mod
+from mql.tolog import _make_lexer as make_lexer
 
-def lex(data, expected):
-    lexer = plyutils.make_lexer(lexer_mod, optimize=False)
+
+def the_lexer(data, tolog_plus):
+    lexer = make_lexer(tolog_plus)
     lexer.input(data)
+    return lexer
+
+
+def lex(data, expected, tolog_plus=True):
+    lexer = the_lexer(data, tolog_plus)
     i = 0
     while True:
         tok = lexer.token()
@@ -55,20 +34,20 @@ def lex(data, expected):
         eq_(expected_value, tok.value)
         i+=1
 
-def simple_lex(data):
-    lexer = plyutils.make_lexer(lexer_mod)
-    lexer.input(data)
+
+def simple_lex(data, tolog_plus=True):
+    lexer = the_lexer(data, tolog_plus)
     while True:
         tok = lexer.token()
         if not tok:
             break
 
-def lex_tokenlist(data):
+
+def lex_tokenlist(data, tolog_plus=True):
     """\
     Tokenizes `data` and returns a list of tokens.
     """
-    lexer = plyutils.make_lexer(lexer_mod)
-    lexer.input(data)
+    lexer = the_lexer(data, tolog_plus)
     tokens = []
     while True:
         tok = lexer.token()
@@ -77,8 +56,9 @@ def lex_tokenlist(data):
         tokens.append(tok)
     return tokens
 
-def fail(msg):
-    raise AssertionError(msg)
+
+fail = AssertionError
+
 
 def test_tm_fragment_from():
     data = (('''INSERT from-hell - "I am from hell".''',
@@ -99,21 +79,25 @@ def test_tm_fragment_from():
     for q, expected in data:
         yield lex, q, expected
 
+
 def test_idents():
     idents = ['foo', 'fo.12', 'fo.12', 'foo-123', 'fo....----1234']
     for ident in idents:
         yield lex, ident, [('IDENT', ident)]
 
+
 def test_ident_dot():
     idents = ['foo.', 'fo.12.', 'fo.12.', 'foo-123.', 'fo....----1234.']
     for ident in idents:
         yield lex, ident, [('IDENT', ident[:-1]), ('DOT', '.')]
-        
+
+
 def test_string_escape():
     data = '"Se""magia"'
     token = lex_tokenlist(data)[0]
     eq_('STRING', token.type)
     eq_('Se"magia', token.value)
+
 
 def test_tokentypes():
     def check(data, expected):
@@ -126,6 +110,7 @@ def test_tokentypes():
 
     for data, expected in _TEST_DATA:
         yield check, data, expected
+
 
 def test_accept():
     for d in _ACCEPT_DATA:
@@ -256,6 +241,7 @@ not(located-in($PLACE : containee, italy : container))?''',
                  ' /= ',
                  '[CU:RIE] [c:/ddjdjjdjdjdd]',
 )
+
 
 if __name__ == '__main__':
     import nose
