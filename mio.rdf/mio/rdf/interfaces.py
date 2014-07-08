@@ -14,6 +14,7 @@
 """
 from tm.proto import Interface, Attribute
 
+
 class IMapper(Interface):
     """\
     Represents a handler which can map a RDF predicate IRI to a Topic Maps
@@ -135,7 +136,6 @@ class IMappingReader(Interface):
 
     mapping_handler = Attribute("Returns/sets the mapping handler")
     prefix_listener = Attribute("Returns/sets the prefix listener")
-
 
 
 class IErrorHandler(Interface):
