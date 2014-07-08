@@ -30,38 +30,38 @@ class sdist(_sdist):
 
 
 setup(
-      name = 'mio.rdf',
-      version = '0.1.0',
-      description = 'RDF to Topic Maps readers',
-      long_description = '\n\n'.join([open('README.txt').read(), open('CHANGES.txt').read()]),
-      author = 'Lars Heuer',
-      author_email = 'mappa@googlegroups.com',
-      url = 'http://mappa.semagia.com/',
-      license = 'BSD',
-      packages = find_packages(),
-      namespace_packages = ['mio'],
-      entry_points = """
-      [mio.reader]
-      n3 = mio.rdf.n3
-      n-triples = mio.rdf.nt
-      [mio.rdf.mappingreader]
-      crtm = mio.rdf.crtm
-      """,
-      platforms = 'any',
-      zip_safe = False,
-      include_package_data = True,
-      package_data = {'': ['*.txt']},
-      cmdclass={'sdist': sdist},
-      install_requires=['tm>=0.1.7', 'rdflib>=3.1.0'],
-      keywords = ['Topic Maps', 'Semantic Web', 'RDF'],
-      classifiers = [
-                    'Intended Audience :: Developers',
-                    'Intended Audience :: Information Technology',
-                    'Topic :: Software Development',
-                    'Topic :: Software Development :: Libraries',
-                    'Topic :: Software Development :: Libraries :: Python Modules',
-                    'License :: OSI Approved :: BSD License',
-                    'Operating System :: OS Independent',
-                    'Programming Language :: Python',
-                    ]
-      )
+    name='mio.rdf',
+    version='0.1.0',
+    description='RDF to Topic Maps readers',
+    long_description='\n\n'.join([open('README.txt').read(), open('CHANGES.txt').read()]),
+    author='Lars Heuer',
+    author_email='mappa@googlegroups.com',
+    url='http://mappa.semagia.com/',
+    license='BSD',
+    packages=find_packages(),
+    namespace_packages=['mio'],
+    entry_points = """
+    [mio.reader]
+    n3 = mio.rdf.n3
+    n-triples = mio.rdf.nt
+    [mio.rdf.mappingreader]
+    crtm = mio.rdf.crtm
+    """,
+    platforms='any',
+    zip_safe=False,
+    include_package_data=True,
+    package_data={'': ['*.txt']},
+    cmdclass={'sdist': sdist},
+    install_requires=['tm>=0.1.7', 'rdflib>=3.1.0'],
+    keywords=['Topic Maps', 'Semantic Web', 'RDF'],
+    classifiers=[
+        'Intended Audience :: Developers',
+        'Intended Audience :: Information Technology',
+        'Topic :: Software Development',
+        'Topic :: Software Development :: Libraries',
+        'Topic :: Software Development :: Libraries :: Python Modules',
+        'License :: OSI Approved :: BSD License',
+        'Operating System :: OS Independent',
+        'Programming Language :: Python',
+        ]
+)
