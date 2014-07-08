@@ -22,7 +22,7 @@ _CONST2IRI = {
     consts.INTEGER: XSD.integer,
     consts.DATE: XSD.date,
     consts.DATE_TIME: XSD.dateTime,
-    consts.CTM_INTEGER: 'http://psi.topicmaps.org/iso13250/ctm-integer'
+    consts.CTM_INTEGER: u'http://psi.topicmaps.org/iso13250/ctm-integer'
     }
 
 def as_literal(lit):

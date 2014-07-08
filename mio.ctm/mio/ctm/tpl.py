@@ -12,6 +12,7 @@ Template-related classes.
 :organization: Semagia - http://www.semagia.com/
 :license:      BSD license
 """
+
 class Template(object):
     """\
     Represents a CTM template.

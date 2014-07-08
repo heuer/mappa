@@ -17,6 +17,7 @@ from . import consts
 
 _UNDEFINED = object()
 
+
 def make_statement(evt, arg=_UNDEFINED):
     """\
     Returns Python code for the provided event (i.e. 'startTopic').

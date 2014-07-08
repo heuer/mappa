@@ -16,11 +16,13 @@ from tm import mio
 from tm.irilib import resolve_iri
 from mio.ctm import consts, tpl, stmt, internal_utils as iutils
 
+
 def _maphandler(content_handler):
     """\
     Returns the ``tm.mio.IMapHandler`` from the `content_handler` 
     """
     return content_handler.environment.maphandler
+
 
 def _check_valid_global_identity(identity):
     """\
@@ -29,6 +31,7 @@ def _check_valid_global_identity(identity):
     """
     if identity[0] not in (consts.IID, consts.SID, consts.SLO):
         raise mio.MIOException('Unknown identity type: %s' % identity[0])
+
 
 class ContentHandler(object):
     """\
@@ -40,6 +43,7 @@ class ContentHandler(object):
         if reifier:
             self.reifier(reifier)
         self.endRole()
+
 
 class GlobalScopeContentHandler(ContentHandler):
     """\
@@ -162,7 +166,7 @@ class MainContentHandler(ContentHandler):
         if self.environment.included_by:
             handler = self._handler
             handler.startTopic((consts.IID, res))
-            frag = '#' + ident
+            frag = u'#' + ident
             for iri in self.environment.included_by:
                 handler.itemIdentifier(resolve_iri(iri, frag))
             handler.endTopic()

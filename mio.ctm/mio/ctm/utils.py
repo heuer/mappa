@@ -18,6 +18,7 @@ from .lexer import VARIABLE
 
 CTM_INTEGER = u'http://psi.topicmaps.org/iso13250/ctm-integer'
 
+
 def is_native_datatype(iri):
     """\
     Returns if the provided datatype is supported by CTM natively (the value
@@ -25,11 +26,13 @@ def is_native_datatype(iri):
     """
     return iri in (XSD.decimal, XSD.integer, XSD.date, XSD.dateTime, CTM_INTEGER)
 
+
 def is_keyword(ident):
     """\
     Returns if the provided identifier is a CTM keyword.
     """
     return ident in (u'isa', u'ako', u'def', u'end')
+
 
 def is_valid_id_start(c):
     """\
@@ -51,12 +54,14 @@ def is_valid_id_start(c):
             or u'\uFDF0' <= c <= u'\uFFFD' \
             or u'\u10000' <= c <= u'\uEFFFF'
 
+
 def is_valid_localid_start(c):
     """\
     Returns if the provided character is valid start of the local part of 
     a CTM QName.
     """
     return c.isdigit() or is_valid_id_start(c)
+
 
 def is_valid_id_part(c):
     """\
@@ -67,6 +72,7 @@ def is_valid_id_part(c):
             or c in u'.-\u00B7' \
             or u'\u0300' <= c <= u'\u036F' \
             or u'\u203F' <= c <= u'\u2040'
+
 
 def is_valid_id(ident):
     """\
@@ -79,6 +85,7 @@ def is_valid_id(ident):
             return False
     return True
 
+
 def is_valid_local_part(ident):
     """\
     Returns if the identifier is a valid local part of a CTM QName.
@@ -90,11 +97,13 @@ def is_valid_local_part(ident):
             return False
     return True
 
+
 def is_valid_iri_part(c):
     """\
     Returns if the provided character is valid within an ``<IRI>``.
     """
     return c not in u' \n\r\t\f<>"`{}\\'
+
 
 def is_valid_iri(iri):
     """\

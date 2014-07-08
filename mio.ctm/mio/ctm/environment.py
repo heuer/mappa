@@ -17,9 +17,10 @@ from tm.mio.deserializer import Context
 from . import consts, tpl
 
 _IRI2SYNTAX = {
-    TM.ctm: 'ctm',
-    TM.xtm: 'xtm'
-    }
+    TM.ctm: u'ctm',
+    TM.xtm: u'xtm'
+}
+
 
 class Environment(object):
     """\
@@ -90,12 +91,12 @@ class Environment(object):
         wildcard is already known.
         """
         self.wildcard_counter+=1
-        ident = '$__%d' % self.wildcard_counter
+        ident = u'$__%d' % self.wildcard_counter
         if name:
             ident = '.'.join([ident, name])
         iri = None
         if self.included_by:
-            iri = irilib.resolve_iri(self.included_by[0], '#' + ident)
+            iri = irilib.resolve_iri(self.included_by[0], u'#' + ident)
         else:
             iri = self.resolve_ident(ident)
         return consts.IID, iri
@@ -136,7 +137,7 @@ class Environment(object):
         Converts the `ident` into a fragment identifier and resolves it against
         the document IRI.
         """
-        return self.resolve_iri('#' + ident)
+        return self.resolve_iri(u'#' + ident)
 
     def resolve_qname(self, qname):
         """\
@@ -177,7 +178,7 @@ class Environment(object):
             return
         self._context.add_loaded(iri)
         syntax = _IRI2SYNTAX.get(syntax_iri)
-        if syntax == 'ctm':
+        if syntax == u'ctm':
             self._merge_ctm(iri)
         else:
             deser = mio.create_deserializer(syntax)
@@ -186,7 +187,7 @@ class Environment(object):
             deser.subordinate = True
             deser.context = self._context
             deser.handler = self._maphandler
-            deser.parse(mio.Source(iri))
+            deser.parse(Source(iri))
 
     def _merge_ctm(self, iri, included=None):
         """\
