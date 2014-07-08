@@ -102,7 +102,7 @@ def t_directive(t):
 if __name__ == '__main__':
     # For some reason pylint thinks that ply.lex and ply.yacc do not exist
     # pylint: disable-msg=F0401, E0611
-    import ply.lex as lex
+    import tm.ply.lex as lex
     lexer = lex.lex()
     test_data = [
                  '[semagia]', 

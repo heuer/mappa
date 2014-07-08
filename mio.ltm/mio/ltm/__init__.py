@@ -20,10 +20,6 @@ from tm.mio import MIOException
 from tm.mio.deserializer import Deserializer, Context
 from tm import plyutils
 from mio.ltm.runtime import LTMContext # pylint: disable-msg=E0611
-try:
-    set
-except NameError:
-    from sets import Set as set # pylint: disable-msg=W0622
 
 __all__ = ['create_deserializer']
 
