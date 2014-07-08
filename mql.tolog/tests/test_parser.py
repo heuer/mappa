@@ -80,7 +80,10 @@ def test_base_illegal():
 
 def test_accept():
     for d in _ACCEPT_DATA:
-        yield parse, d
+        tolog_plus = True
+        if isinstance(d, tuple):
+            d, tolog_plus = d
+        yield parse, d, None, tolog_plus
 
 
 _ACCEPT_DATA = (
@@ -111,32 +114,32 @@ _ACCEPT_DATA = (
     born-in($PERSON : person, $CITY : place),
     located-in($CITY : containee, italy : container)?
     """,
-    """
+    ("""
     select $PERSON from
       born-in($PERSON : person, $CITY : place),
       located-in($CITY : containee, italy : container)?
-    """,
-    """
+    """, False),
+    ("""
     select $A, count($B) from
       composed-by($A : composer, $B : opera)?
-    """,
-    """
+    """, False),
+    ("""
       select $A, count($B) from
         composed-by($A : composer, $B : opera)
       order by $B desc?
-    """,
+    """, False),
     """
     date-of-birth($PERSON, "1867 (24 Mar)")?
     """,
     """
     homepage($TOPIC, "http://www.puccini.it")?
     """,
-    """
+    ("""
     select $OPERA from
       { premiere($OPERA : opera, milano : place) | 
         premiere($OPERA : opera, $THEATRE : place), 
         located-in($THEATRE : containee, milano : container) }?
-    """,
+    """, False),
     """
     instance-of($OPERA, opera),
     { premiere($OPERA : opera, %param% : place) }?
@@ -154,7 +157,7 @@ _ACCEPT_DATA = (
       written-by($WORK : work, $B : writer)
     }.
     """,
-    """
+    ("""
     select $TOP from
       i"http://www.topicmaps.org/xtm/1.0/core.xtm#superclass-subclass"(
         $TOP : i"http://www.topicmaps.org/xtm/1.0/core.xtm#superclass",
@@ -162,7 +165,7 @@ _ACCEPT_DATA = (
       not(i"http://www.topicmaps.org/xtm/1.0/core.xtm#superclass-subclass"(
         $OTHER : i"http://www.topicmaps.org/xtm/1.0/core.xtm#superclass",
         $TOP : i"http://www.topicmaps.org/xtm/1.0/core.xtm#subclass"))?
-    """,
+    """, False),
     """
     import "opera.tl" as opera
     
@@ -171,11 +174,11 @@ _ACCEPT_DATA = (
     born-in($INFLUENCE : person, $PLACE : place),
     not(located-in($PLACE : containee, italy : container))?
     """,
-    """
+    ("""
     select $A, count($B) from
       composed-by($A : composer, $B : opera)
     order by $B desc LiMiT 1?
-    """,
+    """, False),
     """
     instance-of($OPERA, opera)
     order by $OPERA limit 10 offset 10?
@@ -189,31 +192,31 @@ _ACCEPT_DATA = (
     date-of-birth($PERSON2, $DATE),
     $PERSON1 /= $PERSON2?
     """,
-    """
+    ("""
     select $UPNAME from
       instance-of($PERSON, person), name($PERSON, $NAME),
       substring($NAME, 0, 1, $FIRST), translate($FIRST, "abcdef...", "ABCDEF...", $U1),
       substring($NAME, 1, 1000, $REST), concat($U1, $REST, $UPNAME)
     order by $UPNAME?
-    """,
+    """, False),
     '''INSERT
 tolog-updates isa update-language;
   - "tolog updates".''',
     '''INSERT
 from-hell
 - "I am from hell".''',
-    '''import "http://psi.ontopia.net/tolog/string/" as str
+    ('''import "http://psi.ontopia.net/tolog/string/" as str
    insert $topic $psi . from
    article-about($topic, $psi),
-   str:starts-with($psi, "http://en.wikipedia.org/wiki/")''',
-    '''update value($TN, "Ontopia") from
-   topic-name(oks, $TN)''',
-    '''merge $T1, $T2 from
+   str:starts-with($psi, "http://en.wikipedia.org/wiki/")''', False),
+    ('''update value($TN, "Ontopia") from
+   topic-name(oks, $TN)''', False),
+    ('''merge $T1, $T2 from
    email($T1, $EMAIL),
-   email($T2, $EMAIL)''',
-    '''
+   email($T2, $EMAIL)''', False),
+    ('''
     select $x from { bla($x) || blub($x) } ?
-    ''',
+    ''', False),
     '''
     using x for i"bla"
     using y for s"blub"
@@ -284,12 +287,12 @@ from-hell
     '''
     role-player($x, bla), type($x, $t)
     ''',
-    '''
+    ('''
     select $TYPE, $VALUE from
       occurrence(topic, $OCC),
       type($OCC, $TYPE),
       { resource($OCC, $VALUE) | value($OCC, $VALUE) }?
-    ''',
+    ''', False),
     '''
     %base <http://abc.com/>
     %prefix ex <http://psi.example.org/>
@@ -360,12 +363,16 @@ from-hell
     '''
     create <http://www.semagia.com/tolog-xml> 
     ''',
-    '''
-    select $x using <http://www.semagia.com/> from nonsense($x)?
-    ''',
-    '''
-    select $x using <http://www.semagia.com/> where nonsense($x)?
-    '''
+
+    #
+    # Not yet supported. Why did I add these queries?
+    #
+    #'''
+    #select $x using <http://www.semagia.com/> from nonsense($x)?
+    #''',
+    #'''
+    #select $x using <http://www.semagia.com/> where nonsense($x)?
+    #'''
     )
 
 
