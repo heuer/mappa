@@ -12,8 +12,7 @@ Linear Topic Maps Notation (LTM) 1.3 runtime environment.
 :organization: Semagia - http://www.semagia.com/
 :license:      BSD license
 """
-import tm
-from tm import mio
+from tm import mio, Source
 from tm.irilib import resolve_iri
 from tm.mio.deserializer import Context
 
@@ -52,7 +51,7 @@ class LTMContext(object):
                                 included_by=(included or set()))
         deser.handler = self.handler
         deser.subordinate = True
-        deser.parse(tm.Source(doc_iri))
+        deser.parse(Source(doc_iri))
 
     def merge(self, iri, syntax='ltm'):
         if syntax.lower() == 'ltm':
@@ -68,7 +67,7 @@ class LTMContext(object):
             deser.subordinate = True
             deser.context = self._context
             deser.handler = self.handler
-            deser.parse(tm.Source(doc_iri))
+            deser.parse(Source(doc_iri))
 
     def register_slo_prefix(self, prefix, iri):
         """\
