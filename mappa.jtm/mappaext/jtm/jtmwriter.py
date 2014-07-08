@@ -49,7 +49,7 @@ class JTMTopicMapWriter(object):
         if self.version < 1.1:
             raise ValueError('JTM versions <= 1.1 do not support prefixes')
         else:
-            if 'xsd' == ident.lower() and iri != XSD:
+            if u'xsd' == ident.lower() and iri != XSD:
                 raise ValueError('The prefix "xsd" is reserved')
             self.prefixes[ident] = iri
 
@@ -61,21 +61,21 @@ class JTMTopicMapWriter(object):
         writer.prettify = self.prettify
         writer.start()
         writer.start_object()
-        writer.key_value('version', str(self.version))
+        writer.key_value(u'version', unicode(self.version))
         self._write_prefixes()
-        writer.key_value('item_type', 'topicmap')
+        writer.key_value(u'item_type', u'topicmap')
         self._write_iids(topicmap)
         self._write_reifier(topicmap)
         write_if_available = self._write_if_available
-        write_if_available('topics', topicmap.topics, self._write_topic)
-        write_if_available('associations', topicmap.associations, self._write_association)
+        write_if_available(u'topics', topicmap.topics, self._write_topic)
+        write_if_available(u'associations', topicmap.associations, self._write_association)
         writer.end_object()
         writer.end()
 
     def _write_prefixes(self):
         if self.prefixes:
             writer = self._writer
-            writer.key('prefixes')
+            writer.key(u'prefixes')
             writer.start_object()
             for ident, iri in self.prefixes.iteritems():
                 writer.key_value(ident, iri)
@@ -85,7 +85,7 @@ class JTMTopicMapWriter(object):
         if self.version >= 1.1:
             for prefix, iri in self.prefixes.iteritems():
                 if uri.startswith(iri):
-                    return '[%s:%s]' % (prefix, uri[len(iri):])
+                    return u'[%s:%s]' % (prefix, uri[len(iri):])
         return uri
 
     def _uris(self, uris):
@@ -104,12 +104,12 @@ class JTMTopicMapWriter(object):
         writer = self._writer
         writer.start_object()
         if self.export_iids or not (sids or slos):
-            writer.array('item_identifiers', self._uris(iids))
-        writer.array('subject_identifiers', self._uris(sids))
-        writer.array('subject_locators', self._uris(slos))
+            writer.array(u'item_identifiers', self._uris(iids))
+        writer.array(u'subject_identifiers', self._uris(sids))
+        writer.array(u'subject_locators', self._uris(slos))
         write_if_available = self._write_if_available
-        write_if_available('occurrences', topic.occurrences, self._write_occurrence)
-        write_if_available('names', topic.names, self._write_name)
+        write_if_available(u'occurrences', topic.occurrences, self._write_occurrence)
+        write_if_available(u'names', topic.names, self._write_name)
         writer.end_object()
 
     def _write_association(self, association):
@@ -124,13 +124,13 @@ class JTMTopicMapWriter(object):
         write_type(association)
         self._write_scope(association)
         write_reifier(association)
-        writer.key('roles')
+        writer.key(u'roles')
         writer.start_array()
         for role in association.roles:
             start_object()
             write_iids(role)
             write_type(role)
-            writer.key_value('player', self._topic_ref(role.player))
+            writer.key_value(u'player', self._topic_ref(role.player))
             write_reifier(role)
             end_object()
         writer.end_array()
@@ -148,7 +148,7 @@ class JTMTopicMapWriter(object):
         self._write_scope(name)
         self._write_reifier(name)
         self._write_value(name)
-        self._write_if_available('variants', name.variants, self._write_variant)
+        self._write_if_available(u'variants', name.variants, self._write_variant)
         self._writer.end_object()
 
     def _write_variant(self, variant):
@@ -180,7 +180,7 @@ class JTMTopicMapWriter(object):
         """\
         Writes the ``value`` attribute of ``tmc``.
         """
-        self._writer.key_value('value', tmc.value)
+        self._writer.key_value(u'value', tmc.value)
 
     def _write_datatype(self, tmc):
         """\
@@ -190,36 +190,36 @@ class JTMTopicMapWriter(object):
         if not XSD.string == dt:
             if self.version >= 1.1:
                 if dt.startswith(XSD):
-                    dt = '[xsd:%s]' % dt.replace(XSD, '')
+                    dt = u'[xsd:%s]' % dt.replace(XSD, '')
                 else:
                     dt = self._uri(dt)
-            self._writer.key_value('datatype', dt)
+            self._writer.key_value(u'datatype', dt)
 
     def _write_iids(self, reifiable):
         """\
         Writes the item identifiers of ``reifiable`` if any.
         """
         if self.export_iids:
-            self._writer.array('item_identifiers', self._uris(reifiable.iids))
+            self._writer.array(u'item_identifiers', self._uris(reifiable.iids))
 
     def _write_scope(self, scoped):
         """\
         Writes the scope of ``scoped`` if it is not unconstrained.
         """
-        self._writer.array('scope', map(self._topic_ref, scoped.scope))
+        self._writer.array(u'scope', map(self._topic_ref, scoped.scope))
 
     def _write_type(self, typed):
         """\
         Writes the type of the ``typed`` Topic Maps construct.
         """
-        self._writer.key_value('type', self._topic_ref(typed.type))
+        self._writer.key_value(u'type', self._topic_ref(typed.type))
 
     def _write_reifier(self, reifiable):
         """\
         Writes the reifier of the ``reifiable`` Topic Maps construct, if any.
         """
         if reifiable.reifier:
-            self._writer.key_value('reifier', self._topic_ref(reifiable.reifier))
+            self._writer.key_value(u'reifier', self._topic_ref(reifiable.reifier))
 
     def _topic_ref(self, topic):
         """\
@@ -231,18 +231,18 @@ class JTMTopicMapWriter(object):
         """
         res = one_of(topic.sids)
         if res:
-            res = 'si:%s' % self._uri(res)
+            res = u'si:%s' % self._uri(res)
         else:
             res = one_of(topic.slos)
             if res:
-                res = 'sl:%s' % self._uri(res)
+                res = u'sl:%s' % self._uri(res)
             else:
                 res = one_of(topic.iids)
                 if res:
                     self._uri(res)
                 else:
-                    res = '%s#id-%s' % (self._base, topic.id)
-                res = 'ii:%s' % res
+                    res = u'%s#id-%s' % (self._base, topic.id)
+                res = u'ii:%s' % res
         return res
 
     def _write_if_available(self, key, iterable, func):

@@ -12,7 +12,7 @@
 :organization: Semagia - http://www.semagia.com/
 :license:      BSD license
 """
-from StringIO import StringIO
+import io
 from nose.tools import ok_
 from tm.voc import XSD
 from mappaext.cxtm.cxtm_test import create_writer_cxtm_cases
@@ -20,8 +20,7 @@ from mio.jtm import create_deserializer
 from mappaext.jtm import create_writer
 
 
-def fail(msg):
-    raise AssertionError(msg)
+fail = AssertionError
 
 
 def create_jtm10_writer(out, base):
@@ -30,8 +29,9 @@ def create_jtm10_writer(out, base):
 
 def create_jtm11_writer(out, base):
     writer = create_writer(out, base, version=1.1)
-    writer.add_prefix('_', base)
+    writer.add_prefix(u'_', base)
     return writer
+
 
 def test_jtm_10_writer():
     for test in create_writer_cxtm_cases(create_jtm10_writer, create_deserializer, 'jtm', 'jtm'):
@@ -47,7 +47,7 @@ def test_jtm_11_writer():
 
 def test_add_prefix11():
     iri = 'http://www.semagia.com/'
-    writer = create_jtm11_writer(StringIO(), iri)
+    writer = create_jtm11_writer(io.BytesIO(), iri)
     writer.add_prefix('x', iri)
     ok_('x' in writer.prefixes)
     ok_(iri == writer.prefixes['x'])
@@ -55,14 +55,14 @@ def test_add_prefix11():
 
 def test_prefixes_keyword_arg():
     iri = 'http://www.semagia.com/'
-    writer = writer = create_writer(StringIO(), iri, version=1.1, prefixes={'x': iri})
+    writer = writer = create_writer(io.BytesIO(), iri, version=1.1, prefixes={'x': iri})
     ok_('x' in writer.prefixes)
     ok_(iri == writer.prefixes['x'])
 
 
 def test_add_prefix10():
     iri = 'http://www.semagia.com/'
-    writer = create_jtm10_writer(StringIO(), iri)
+    writer = create_jtm10_writer(io.BytesIO(), iri)
     try:
         writer.add_prefix('x', iri)
         fail('Expected an error for registering a prefix in JTM 1.0')
@@ -72,7 +72,7 @@ def test_add_prefix10():
 
 def test_add_xsd_prefix():
     iri = 'http://www.semagia.com/'
-    writer = create_jtm11_writer(StringIO(), iri)
+    writer = create_jtm11_writer(io.BytesIO(), iri)
     writer.add_prefix('Xsd', XSD)
     writer.add_prefix('xsd', XSD)
     writer.add_prefix('XSD', XSD)
@@ -80,7 +80,7 @@ def test_add_xsd_prefix():
 
 def test_add_xsd_prefix_invalid():
     iri = 'http://www.semagia.com/'
-    writer = create_jtm11_writer(StringIO(), iri)
+    writer = create_jtm11_writer(io.BytesIO(), iri)
     try:
         writer.add_prefix('Xsd', iri)
         fail('The prefix "xsd" is reserved')
