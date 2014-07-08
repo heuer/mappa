@@ -17,6 +17,7 @@ from tm import Source
 from tm.mio.handler import MapHandler
 from mio.xtm import create_deserializer
 
+
 #pylint: disable-msg=W0212
 class TestXTMDeserializer(TestCase):
     
@@ -43,27 +44,27 @@ class TestXTMDeserializer(TestCase):
         self.assert_('2.0' == deser.version)
 
     def test_xtm10_detection(self):
-        deser = self._parse('<topicMap xmlns="http://www.topicmaps.org/xtm/1.0/"></topicMap>')
+        deser = self._parse(u'<topicMap xmlns="http://www.topicmaps.org/xtm/1.0/"></topicMap>')
         self.assert_('1.0' == deser.version)
 
     def test_xtm10_detection2(self):
-        deser = self._parse('<topicMap></topicMap>')
+        deser = self._parse(u'<topicMap></topicMap>')
         self.assert_('1.0' == deser.version)
 
     def test_xtm20_detection1(self):
-        deser = self._parse('<topicMap version="2.0"></topicMap>')
+        deser = self._parse(u'<topicMap version="2.0"></topicMap>')
         self.assert_('2.0' == deser.version)
 
     def test_xtm20_detection2(self):
-        deser = self._parse('<topicMap xmlns="http://www.topicmaps.org/xtm/" version="2.0"></topicMap>')
+        deser = self._parse(u'<topicMap xmlns="http://www.topicmaps.org/xtm/" version="2.0"></topicMap>')
         self.assert_('2.0' == deser.version)
 
     def test_xtm21_detection1(self):
-        deser = self._parse('<topicMap version="2.1"></topicMap>')
+        deser = self._parse(u'<topicMap version="2.1"></topicMap>')
         self.assert_('2.1' == deser.version)
 
     def test_xtm21_detection2(self):
-        deser = self._parse('<topicMap xmlns="http://www.topicmaps.org/xtm/" version="2.1"></topicMap>')
+        deser = self._parse(u'<topicMap xmlns="http://www.topicmaps.org/xtm/" version="2.1"></topicMap>')
         self.assert_('2.1' == deser.version)
 
 

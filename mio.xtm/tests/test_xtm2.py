@@ -19,17 +19,21 @@ _EXCLUDED_INVALID_TESTS = (
     'id-invalid.xtm', # This should be detected by the XML parser, but expat accepts it
 )
 
+
 def test_cxtm_invalid_xtm_20():
     for test in create_invalid_cxtm_cases(create_deserializer, 'xtm2', 'xtm', _EXCLUDED_INVALID_TESTS):
         yield test
+
 
 def test_cxtm_valid_xtm_20():
     for test in create_valid_cxtm_cases(create_deserializer, 'xtm2', 'xtm'):
         yield test
 
+
 def test_cxtm_invalid_xtm_21():
     for test in create_invalid_cxtm_cases(create_deserializer, 'xtm21', 'xtm', _EXCLUDED_INVALID_TESTS):
         yield test
+
 
 def test_cxtm_valid_xtm_21():
     for test in create_valid_cxtm_cases(create_deserializer, 'xtm21', 'xtm'):

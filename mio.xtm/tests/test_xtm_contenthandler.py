@@ -15,11 +15,12 @@ Tests against the XTM content handler.
 """
 from unittest import TestCase
 from xml import sax
-from StringIO import StringIO
+import io
 from tm.mio.handler import MapHandler
 from mio.xtm import XTMContentHandler
 from mio.xtm.xtm1 import XTM10ContentHandler
 from mio.xtm.xtm2 import XTM2ContentHandler
+
 
 #pylint: disable-msg=W0212
 class TestXTMContentHandler(TestCase):
@@ -31,31 +32,31 @@ class TestXTMContentHandler(TestCase):
         parser = sax.make_parser()
         parser.setFeature(sax.handler.feature_namespaces, True)
         parser.setContentHandler(ch)
-        parser.parse(StringIO(source))
+        parser.parse(io.StringIO(source))
         return ch._content_handler
     
     def test_xtm10_detection(self):
-        ch = self._parse('<topicMap xmlns="http://www.topicmaps.org/xtm/1.0/"></topicMap>')
+        ch = self._parse(u'<topicMap xmlns="http://www.topicmaps.org/xtm/1.0/"></topicMap>')
         self.assert_(isinstance(ch, XTM10ContentHandler))
 
     def test_xtm10_detection2(self):
-        ch = self._parse('<topicMap></topicMap>')
+        ch = self._parse(u'<topicMap></topicMap>')
         self.assert_(isinstance(ch, XTM10ContentHandler))
 
     def test_xtm20_detection1(self):
-        ch = self._parse('<topicMap version="2.0"></topicMap>')
+        ch = self._parse(u'<topicMap version="2.0"></topicMap>')
         self.assert_(isinstance(ch, XTM2ContentHandler))
 
     def test_xtm20_detection2(self):
-        ch = self._parse('<topicMap xmlns="http://www.topicmaps.org/xtm/" version="2.0"></topicMap>')
+        ch = self._parse(u'<topicMap xmlns="http://www.topicmaps.org/xtm/" version="2.0"></topicMap>')
         self.assert_(isinstance(ch, XTM2ContentHandler))
 
     def test_xtm21_detection1(self):
-        ch = self._parse('<topicMap version="2.1"></topicMap>')
+        ch = self._parse(u'<topicMap version="2.1"></topicMap>')
         self.assert_(isinstance(ch, XTM2ContentHandler))
 
     def test_xtm21_detection2(self):
-        ch = self._parse('<topicMap xmlns="http://www.topicmaps.org/xtm/" version="2.1"></topicMap>')
+        ch = self._parse(u'<topicMap xmlns="http://www.topicmaps.org/xtm/" version="2.1"></topicMap>')
         self.assert_(isinstance(ch, XTM2ContentHandler))
 
 

@@ -13,8 +13,7 @@ Tests against the XTM 2.1 MIOHandler
 :version:      $Rev: 168 $ - $Date: 2009-06-26 14:22:56 +0200 (Fr, 26 Jun 2009) $
 :license:      BSD license
 """
-from StringIO import StringIO
-import codecs
+import io
 import mappa
 from mappa.miohandler import MappaMapHandler
 from mappaext.cxtm.cxtm_test import find_valid_cxtm_cases, get_baseline
@@ -22,18 +21,18 @@ from mappaext.cxtm import create_writer
 from tm import Source
 from mio.xtm import create_deserializer, XTM21Handler
 
-def fail(msg):
-    raise AssertionError(msg)
+fail = AssertionError
+
 
 def check_handler(deserializer_factory, filename):
     src = Source(file=open(filename))
     # 1. Generate XTM 2.1 via XTM21Handler
-    out = StringIO()
+    out = io.BytesIO()
     deser = deserializer_factory()
     deser.handler = XTM21Handler(fileobj=out, prettify=True)
     deser.parse(src)
     # 2. Read the generated XTM 2.1
-    tm = mappa.connect().create('http://www.semagia.com/test-xtm-handler')
+    tm = mappa.connect().create(u'http://www.semagia.com/test-xtm-handler')
     deser = create_deserializer()
     deser.handler = MappaMapHandler(tm)
     new_src = Source(data=out.getvalue(), iri=src.iri)
@@ -42,15 +41,15 @@ def check_handler(deserializer_factory, filename):
     except Exception, ex:
         fail('failed: %s.\nError: %s\nGenerated XTM 2.1: %s' % (filename, ex, out.getvalue()))
     # 3. Generate the CXTM
-    f = codecs.open(get_baseline(filename), encoding='utf-8')
-    expected = f.read()
-    f.close()
-    result = StringIO()
+    with io.open(get_baseline(filename), encoding='utf-8') as f:
+        expected = f.read()
+    result = io.BytesIO()
     c14n = create_writer(result, src.iri)
     c14n.write(tm)
     res = unicode(result.getvalue(), 'utf-8')
     if expected != res:
         fail('failed: %s.\nExpected: %s\nGot: %s\nGenerated XTM 2.1: %s' % (filename, expected, res, out.getvalue()))
+
 
 def test_ctm():
     exclude = ["occurrence-string-multiline2.ctm",
@@ -65,6 +64,7 @@ def test_ctm():
     except ImportError:
         pass
 
+
 def test_jtm():
     exclude = [
                ]
@@ -77,9 +77,11 @@ def test_jtm():
     except ImportError:
         pass
 
+
 def test_xtm_20():
     for filename in find_valid_cxtm_cases('xtm2', 'xtm'):
         yield check_handler, create_deserializer, filename
+
 
 def test_xtm_21():
     for filename in find_valid_cxtm_cases('xtm21', 'xtm'):
