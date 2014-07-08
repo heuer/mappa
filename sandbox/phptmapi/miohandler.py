@@ -69,64 +69,64 @@ class PHPTMAPIMapHandler(mio_handler.HamsterMapHandler):
 
     def _create_topic_by_iid(self, iri):
         name = self._make_topic_variable()
-        self._writeln("%s = $tm->createTopicByItemIdentifier('%s');" % (name, _escape(iri)))
+        self._writeln(u"%s = $tm->createTopicByItemIdentifier('%s');" % (name, _escape(iri)))
         return name
 
     def _create_topic_by_sid(self, iri):
         name = self._make_topic_variable()
-        self._writeln("%s = $tm->createTopicBySubjectIdentifier('%s');" % (name, _escape(iri)))
+        self._writeln(u"%s = $tm->createTopicBySubjectIdentifier('%s');" % (name, _escape(iri)))
         return name
 
     def _create_topic_by_slo(self, iri):
         name = self._make_topic_variable()
-        self._writeln("%s = $tm->createTopicBySubjectLocator('%s');" % (name, _escape(iri)))
+        self._writeln(u"%s = $tm->createTopicBySubjectLocator('%s');" % (name, _escape(iri)))
         return name
 
     def _handle_item_identifier(self, topic, iri):
-        self._writeln("_handle_item_identifier($tm, %s, '%s');" % (topic, _escape(iri)))
+        self._writeln(u"_handle_item_identifier($tm, %s, '%s');" % (topic, _escape(iri)))
 
     def _handle_subject_identifier(self, topic, iri):
-        self._writeln("_handle_subject_identifier($tm, %s, '%s');" % (topic, _escape(iri)))
+        self._writeln(u"_handle_subject_identifier($tm, %s, '%s');" % (topic, _escape(iri)))
 
     def _handle_subject_locator(self, topic, iri):
-        self._writeln("_handle_subject_locator($tm, %s, '%s');" % (topic, _escape(iri)))
+        self._writeln(u"_handle_subject_locator($tm, %s, '%s');" % (topic, _escape(iri)))
 
     def _handle_type_instance(self, instance, type):
-        self._writeln('%s->addType(%s);' % (instance, type))
+        self._writeln(u'%s->addType(%s);' % (instance, type))
 
     def _handle_topicmap_item_identifier(self, iri):
-        self._writeln("$tm->addItemIdentifier('%s');" % _escape(iri))
+        self._writeln(u"$tm->addItemIdentifier('%s');" % _escape(iri))
 
     def _handle_topicmap_reifier(self, reifier):
-        self._writeln('$tm->setReifier(%s);' % reifier)
+        self._writeln(u'$tm->setReifier(%s);' % reifier)
 
     def _create_association(self, type, scope, reifier, iids, roles):
-        self._writeln('$assoc = $tm->createAssociation(%s, %s);' % (type, _make_scope(scope)))
-        self._apply_reifier('$assoc', reifier)
-        self._apply_iids('$assoc', iids)
+        self._writeln(u'$assoc = $tm->createAssociation(%s, %s);' % (type, _make_scope(scope)))
+        self._apply_reifier(u'$assoc', reifier)
+        self._apply_iids(u'$assoc', iids)
         for role in roles:
-            self._writeln('$role = $assoc->createRole(%s, %s);' % (role.type, role.player))
-            self._apply_reifier('$role', role.reifier)
-            self._apply_iids('$role', role.iids)
+            self._writeln(u'$role = $assoc->createRole(%s, %s);' % (role.type, role.player))
+            self._apply_reifier(u'$role', role.reifier)
+            self._apply_iids(u'$role', role.iids)
 
     def _create_occurrence(self, parent, type, value, datatype, scope, reifier, iids):
-        self._writeln("$occ = %s->createOccurrence(%s, '%s', '%s', %s);" % (parent, type,
+        self._writeln(u"$occ = %s->createOccurrence(%s, '%s', '%s', %s);" % (parent, type,
                                                                            _escape(value), _escape(datatype),
                                                                            _make_scope(scope)))
-        self._apply_reifier('$occ', reifier)
-        self._apply_iids('$occ', iids)
+        self._apply_reifier(u'$occ', reifier)
+        self._apply_iids(u'$occ', iids)
 
     def _create_name(self, parent, type, value, scope, reifier, iids, variants):
-        self._writeln("$name = %s->createName('%s', %s, %s);" % (parent, _escape(value),
+        self._writeln(u"$name = %s->createName('%s', %s, %s);" % (parent, _escape(value),
                                                                  type or 'null',
                                                                  _make_scope(scope)))
-        self._apply_reifier('$name', reifier)
-        self._apply_iids('$name', iids)
+        self._apply_reifier(u'$name', reifier)
+        self._apply_iids(u'$name', iids)
         for v in variants:
-            self._writeln("$var = $name->createVariant('%s', '%s', %s);" % (_escape(v.value), _escape(v.datatype),
+            self._writeln(u"$var = $name->createVariant('%s', '%s', %s);" % (_escape(v.value), _escape(v.datatype),
                                                                             _make_scope(v.scope)))
-            self._apply_reifier('$var', v.reifier)
-            self._apply_iids('$var', v.iids)
+            self._apply_reifier(u'$var', v.reifier)
+            self._apply_iids(u'$var', v.iids)
             
 
     #
@@ -134,15 +134,15 @@ class PHPTMAPIMapHandler(mio_handler.HamsterMapHandler):
     #
     def _apply_reifier(self, var, reifier):
         if reifier:
-            self._writeln('%s->setReifier(%s);' % (var, reifier))
+            self._writeln(u'%s->setReifier(%s);' % (var, reifier))
 
     def _apply_iids(self, var, iids):
         for iid in iids:
-            self._writeln("%s->addItemIdentifier('%s');" % (var, _escape(iid)))
+            self._writeln(u"%s->addItemIdentifier('%s');" % (var, _escape(iid)))
 
     def _make_topic_variable(self):
         self._counter+=1
-        return '$t_%d' % self._counter
+        return u'$t_%d' % self._counter
 
     def _writeln(self, s, indent='    '):
         self._out.write(indent)
@@ -153,17 +153,17 @@ class PHPTMAPIMapHandler(mio_handler.HamsterMapHandler):
 
 
 def _escape(s):
-    return s.replace("'", "\\'")
+    return s.replace(u"'", u"\\'")
 
 
 def _make_scope(scope):
     if not scope:
-        return '$_UCS'
-    return 'array(%s)' % ', '.join(scope)
+        return u'$_UCS'
+    return u'array(%s)' % ', '.join(scope)
 
 
 # PHP script fragments
-_HEADER = '''<?php
+_HEADER = u'''<?php
 /*
     DO NOT EDIT this file.
 
@@ -189,7 +189,7 @@ function populate_map($tm) {
 
 ''' % _SCRIPT_HOME
 
-_FOOTER = '''
+_FOOTER = u'''
 }
 
 function _get_topic_by_item_identifier($tm, $iri) {
