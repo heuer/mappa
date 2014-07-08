@@ -310,30 +310,3 @@ def is_ncname(name):
                 return False
         return True
     return False
-
-import sys
-if sys.platform[:4] == 'java':
-    # Jython's SAX implementation behaves differently from CPython. The Java
-    # SAX parsers expect an empty string not ``None`` for the namespace
-    # This work-around lets Jython accept "attrs.get((None, 'myattr')) instead
-    # of "attrs.get(('', 'myattr'))
-    # Fixed in Jython >= 2.5.2b1
-    from xml.sax.drivers2.drv_javasax import AttributesNSImpl #pylint: disable-msg=E0611, F0401
-    class AttrsImpl(AttributesNSImpl):
-        def __init__(self, attrs):
-            AttributesNSImpl.__init__(self, attrs._attrs) #pylint: disable-msg=W0212
-        def getValue(self, name):
-            return AttributesNSImpl.getValue(self, (name[0] or '', name[1]))
-    def attributes(attrs):
-        """\
-        Returns an AttributesNS implementation which accepts ``None`` for the
-        non-existent namespace IRI, i.e. ``getValue((None, 'myattr'))``
-        """
-        return AttrsImpl(attrs)
-else:
-    def attributes(attrs):
-        """\
-        Returns the attributes unmodified
-        """
-        return attrs
-del sys
