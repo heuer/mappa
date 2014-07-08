@@ -24,6 +24,7 @@ from phptmapi.miohandler import PHPTMAPIMapHandler
 from tm import Source
 from tm.mio import create_deserializer
 
+
 def _generate_phpfilename(source):
     filename = source + '.php'
     slash_idx = filename.rfind('/')
@@ -31,11 +32,13 @@ def _generate_phpfilename(source):
         filename = filename[slash_idx+1:]
     return filename
 
+
 def _extract_format(source):
     dot_idx = source.rfind('.')
     if dot_idx == -1:
         return None
     return source[dot_idx+1:]
+
 
 def main():
     usage = usage = 'usage: %prog args'

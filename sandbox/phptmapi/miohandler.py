@@ -129,8 +129,9 @@ class PHPTMAPIMapHandler(mio_handler.HamsterMapHandler):
             self._apply_iids('$var', v.iids)
             
 
-    # Internal methods
-
+    #
+    # -- Internal methods
+    #
     def _apply_reifier(self, var, reifier):
         if reifier:
             self._writeln('%s->setReifier(%s);' % (var, reifier))
