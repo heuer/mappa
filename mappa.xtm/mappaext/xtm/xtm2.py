@@ -14,7 +14,7 @@ and `XML Topic Maps (XTM) 2.1 <http://www.isotopicmaps.org/sam/sam-xtm/2009-11-1
 :organization: Semagia - http://www.semagia.com/
 :license:      BSD license
 """
-from cStringIO import StringIO
+import io
 from xml.sax import make_parser
 from xml.sax.xmlreader import InputSource
 import xml.sax.handler as sax_handler
@@ -237,7 +237,7 @@ class XTM2TopicMapWriter(object):
                     self._parser.setFeature(sax_handler.feature_namespaces, True)
                 self._parser.setContentHandler(AnyTypeContentHandler(xmlwriter_as_contenthandler(self._writer)))
                 src = InputSource()
-                src.setByteStream(StringIO(val))
+                src.setByteStream(io.BytesIO(val))
                 self._parser.parse(src)
             else:
                 characters(val)
