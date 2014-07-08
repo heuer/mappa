@@ -230,7 +230,7 @@ class SAXSimpleXMLWriter(object):
 
     def _startElementLXML(self, name, attrs=None):
         self._elements.append(name)
-        self._handler.startElement(name, _EMPTY_ATTRS if not attrs else dict([(k, v) for k, v in attrs.iteritems()]))
+        self._handler.startElement(name, _EMPTY_ATTRS if not attrs else dict([(k, v) for k, v in attrs.items()]))
 
     def endElement(self, name):
         assert name == self._elements.pop()
