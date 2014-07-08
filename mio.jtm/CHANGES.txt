@@ -4,6 +4,7 @@ Changes
 
 0.1.2 - yyyy-mm-dd
 ------------------
+* Moved package to mio.jtm
 * Added support for JTM 1.1
 * Changed implementation: JSON is read into memory and evaluated afterwards
 * Removed fallback to django.utils.simplejson (used by old Google AppEngine
