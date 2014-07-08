@@ -830,9 +830,7 @@ def _arguments_to_events(handler, args, stringtoiri=False):
 
 
 if __name__ == '__main__':
-    test_input = (
-
-    )
+    test_input = ()
     from tm import plyutils, xmlutils
     from tm.ply import yacc
     from mql.tolog import lexer as lexer_mod
@@ -853,7 +851,7 @@ if __name__ == '__main__':
             contenthandler = lxml.sax.ElementTreeContentHandler()
             handler = XMLParserHandler(xmlutils.SAXSimpleXMLWriter(contenthandler))
             parse(data, handler)
-            print etree.tostring(contenthandler.etree, pretty_print=True)
-        except Exception, ex:
-            print data
-            raise ex
+            print(etree.tostring(contenthandler.etree, pretty_print=True))
+        except:
+            print(data)
+            raise

@@ -282,8 +282,7 @@ def t_tm_content(t):
 
 
 if __name__ == '__main__':
-    test_data = [
-                 ]
+    test_data = []
     import tm.ply.lex as lex
     for data in test_data:
         lexer = lex.lex()
