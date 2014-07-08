@@ -15,9 +15,11 @@
 from mappaext.cxtm.cxtm_test import create_invalid_cxtm_cases, create_valid_cxtm_cases
 from mio.tmxml import create_deserializer
 
+
 def test_cxtm_valid():
     for test in create_valid_cxtm_cases(create_deserializer, 'tmxml', 'xml'):
         yield test
+
 
 def test_cxtm_invalid():
     for test in create_invalid_cxtm_cases(create_deserializer, 'tmxml', 'xml'):
