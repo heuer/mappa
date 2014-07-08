@@ -17,6 +17,9 @@ from tm import mio
 from mio.rdf.mapping import MappingHandler
 
 
+fail = AssertionError
+
+
 def test_mapping_handler():
     mh = MappingHandler()
     ok_(not mh.mapping)
@@ -69,14 +72,8 @@ def test_illegal_association_object():
         fail('Excpected an exception for object_role == None')
     except mio.MIOException:
         pass
-    
-    
-def fail(msg):
-    """\
 
-    """
-    raise AssertionError(msg)
-
+    
 if __name__ == '__main__':
     import nose
     nose.core.runmodule()
