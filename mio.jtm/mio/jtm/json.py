@@ -91,7 +91,7 @@ class JSONWriter(object):
             self._out.write(u',')
         self._indent()
         self._out.write(u'{')
-        self._depth+=1
+        self._depth += 1
         self._want_comma = False
 
     def end_object(self):
@@ -99,7 +99,7 @@ class JSONWriter(object):
         Indicates the end of an object.
         """
         self._out.write(u'}')
-        self._depth-=1
+        self._depth -= 1
         self._want_comma = True
 
     def start_array(self):
@@ -107,7 +107,7 @@ class JSONWriter(object):
         Indicates the start of an array.
         """
         self._out.write(u'[')
-        self._depth+=1
+        self._depth += 1
         self._want_comma = False
 
     def end_array(self):
@@ -115,7 +115,7 @@ class JSONWriter(object):
         Indicates the end of an array.
         """
         self._out.write(u']')
-        self._depth-=1
+        self._depth -= 1
         self._want_comma = True
 
     def array(self, key, iterable):
@@ -130,13 +130,13 @@ class JSONWriter(object):
         for c, e in enumerate(iterable):
             if not c:
                 self.key(key)
-                write('[')
+                write(u'[')
                 written = True
             else:
-                write(',')
+                write(u',')
             write(escape(e))
         if written:
-            write(']')
+            write(u']')
         self._want_comma = written or self._want_comma
 
     def _indent(self):

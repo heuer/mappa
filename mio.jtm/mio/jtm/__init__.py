@@ -26,30 +26,30 @@ _NS_XSD = XSD.string.replace('string', '')
 _DEFAULT_NAME_TYPE = mio.SUBJECT_IDENTIFIER, TMDM.topic_name
 
 _ITEM_TYPES_SUPPORTED = (
-    'topicmap',
-    'topic',
-    'association',
-    'occurrence',
-    'name'
+    u'topicmap',
+    u'topic',
+    u'association',
+    u'occurrence',
+    u'name'
 )
 
 _ITEM_TYPES_UNSUPPORTED = (
-    'role',
-    'variant'
+    u'role',
+    u'variant'
 )
 
 _ITEM_TYPES = _ITEM_TYPES_SUPPORTED + _ITEM_TYPES_UNSUPPORTED
 
 _IDENTITY2METHOD = {
-    mio.SUBJECT_IDENTIFIER: 'subjectIdentifier',
-    mio.SUBJECT_LOCATOR: 'subjectLocator',
-    mio.ITEM_IDENTIFIER: 'itemIdentifier',
+    mio.SUBJECT_IDENTIFIER: u'subjectIdentifier',
+    mio.SUBJECT_LOCATOR: u'subjectLocator',
+    mio.ITEM_IDENTIFIER: u'itemIdentifier',
 }
 
 _IDENTITYPREFIX2MIO = {
-    'ii': mio.ITEM_IDENTIFIER,
-    'si': mio.SUBJECT_IDENTIFIER,
-    'sl': mio.SUBJECT_LOCATOR,
+    u'ii': mio.ITEM_IDENTIFIER,
+    u'si': mio.SUBJECT_IDENTIFIER,
+    u'sl': mio.SUBJECT_LOCATOR,
 }
 
 def create_deserializer(version=None, **kw): # pylint: disable-msg=W0613
@@ -68,44 +68,45 @@ class JTMDeserializer(Deserializer):
             dct = json.load(source.stream)
         else:
             dct = json.load(source.iri)
-        version = dct.get('version', '1.0')
-        if version not in ('1.0', '1.1'):
+        version = dct.get(u'version', u'1.0')
+        if version not in (u'1.0', u'1.1'):
             raise mio.MIOException('Unknown JTM version "%s"' % version)
         _issue_events(self.handler, source.iri, dct, version)
 
+
 def _issue_events(handler, base_iri, dct, version):
     version = float(version)
-    prefixes = dct.get('prefixes', {})
+    prefixes = dct.get(u'prefixes', {})
     if prefixes and not version > 1.0:
         raise mio.MIOException('Prefixes are not allowed in JTM 1.0')
     prefixes[None] = base_iri
-    xsd_iri = prefixes.get('xsd', None)
+    xsd_iri = prefixes.get(u'xsd', None)
     if xsd_iri and xsd_iri != _NS_XSD:
         raise mio.MIOException('The prefix "xsd" is predefined and cannot be bound to "%s"' % xsd_iri)
     else:
-        prefixes['xsd'] = _NS_XSD
-    item_type = dct.get('item_type', '').lower()
+        prefixes[u'xsd'] = _NS_XSD
+    item_type = dct.get(u'item_type', u'').lower()
     if item_type not in _ITEM_TYPES:
         raise mio.MIOException('Unknown item type: "%s"' % item_type)
     if item_type not in _ITEM_TYPES_SUPPORTED:
         raise mio.MIOException('The item type "%s" is not supported' % item_type)
-    if item_type == 'association':
+    if item_type == u'association':
         _handle_association(handler, prefixes, dct)
-    elif item_type == 'topic':
+    elif item_type == u'topic':
         _handle_topic(handler, prefixes, dct)
-    elif item_type == 'occurrence':
+    elif item_type == u'occurrence':
         _handle_occurrence(handler, prefixes, dct)
-    elif item_type == 'name':
+    elif item_type == u'name':
         _handle_name(handler, prefixes, dct)
     else:
         _handle_reifier(handler, prefixes, dct)
-        for k, v in ((k, v) for k, v in dct.iteritems() if k not in ('version', 'prefixes', 'item_type', 'reifier')):
-            if k == 'item_identifiers':
+        for k, v in ((k, v) for k, v in dct.iteritems() if k not in (u'version', u'prefixes', u'item_type', u'reifier')):
+            if k == u'item_identifiers':
                 _handle_iids(handler, prefixes, dct)
-            elif k == 'topics':
+            elif k == u'topics':
                 for topic in v:
                     _handle_topic(handler, prefixes, topic, version)
-            elif k == 'associations':
+            elif k == u'associations':
                 for assoc in v:
                     _handle_association(handler, prefixes, assoc)
 
@@ -119,7 +120,7 @@ def _resolve_iri(prefixes, qiri):
     if qiri[0] == '[':
         if qiri[-1] != ']':
             raise mio.MIOException('Illegal QName: "%s"' % qiri)
-        colon_idx = qiri.find(':')
+        colon_idx = qiri.find(u':')
         if not colon_idx > 0:
             raise mio.MIOException('Illegal QName: "%s"' % qiri)
         prefix, local = qiri[1:colon_idx], qiri[colon_idx+1:-1]
@@ -132,11 +133,11 @@ def _resolve_iri(prefixes, qiri):
     return iri
 
 def _handle_topic(handler, prefixes, dct, version=1.0):
-    types = dct.get('instance_of', _EMPTY)
+    types = dct.get(u'instance_of', _EMPTY)
     if types and not version >= 1.1:
         raise mio.MIOException('"instance_of" is illegal in version "%s"' % version)
     kind, iri = None, None
-    sids, slos, iids = dct.get('subject_identifiers', _EMPTY), dct.get('subject_locators', _EMPTY), dct.get('item_identifiers', _EMPTY)
+    sids, slos, iids = dct.get(u'subject_identifiers', _EMPTY), dct.get(u'subject_locators', _EMPTY), dct.get(u'item_identifiers', _EMPTY)
     if sids:
         kind, iri = mio.SUBJECT_IDENTIFIER, sids[0]
         sids = sids[1:]
@@ -155,48 +156,53 @@ def _handle_topic(handler, prefixes, dct, version=1.0):
         handler.itemIdentifier(_resolve_iri(prefixes, iid))
     for typ in types:
         handler.isa(_resolve_topicref(prefixes, typ))
-    for occ in dct.get('occurrences', _EMPTY):
+    for occ in dct.get(u'occurrences', _EMPTY):
         _handle_occurrence(handler, prefixes, occ)
-    for name in dct.get('names', _EMPTY):
+    for name in dct.get(u'names', _EMPTY):
         _handle_name(handler, prefixes, name)
     handler.endTopic()
 
 def _get_type(prefixes, dct, default=None):
-    type_ = dct.get('type', None)
+    type_ = dct.get(u'type', None)
     if not type_:
         if default:
             return default
         raise mio.MIOException('Expected a type')
     return _resolve_topicref(prefixes, type_)
 
+
 def _handle_scope(handler, prefixes, dct):
-    scope = dct.get('scope', _EMPTY)
+    scope = dct.get(u'scope', _EMPTY)
     if scope:
         handler.startScope()
         for theme in scope:
             handler.theme(_resolve_topicref(prefixes, theme))
         handler.endScope()
 
+
 def _handle_iids(handler, prefixes, dct):
-    for iid in dct.get('item_identifiers', _EMPTY):
+    for iid in dct.get(u'item_identifiers', _EMPTY):
         handler.itemIdentifier(_resolve_iri(prefixes, iid))
 
+
 def _handle_reifier(handler, prefixes, dct):
-    reifier = dct.get('reifier', None)
+    reifier = dct.get(u'reifier', None)
     if reifier:
         handler.reifier(_resolve_topicref(prefixes, reifier))
 
+
 def _handle_value_datatype(handler, prefixes, dct):
-    value, datatype = dct['value'], _resolve_iri(prefixes, dct.get('datatype', XSD.string))
+    value, datatype = dct[u'value'], _resolve_iri(prefixes, dct.get(u'datatype', XSD.string))
     if datatype == XSD.anyURI:
         value = _resolve_iri(prefixes, value)
     handler.value(value, datatype)
 
+
 def _handle_association(handler, prefixes, dct):
     handler.startAssociation(_get_type(prefixes, dct))
-    for role in dct.get('roles', _EMPTY):
+    for role in dct.get(u'roles', _EMPTY):
         handler.startRole(_get_type(prefixes, role))
-        handler.player(_resolve_topicref(prefixes, role.get('player')))
+        handler.player(_resolve_topicref(prefixes, role.get(u'player')))
         _handle_reifier(handler, prefixes, role)
         _handle_iids(handler, prefixes, role)
         handler.endRole()
@@ -205,8 +211,9 @@ def _handle_association(handler, prefixes, dct):
     _handle_scope(handler, prefixes, dct)
     handler.endAssociation()
 
+
 def _start_parent(handler, prefixes, dct):
-    parent = dct.get('parent', _EMPTY)
+    parent = dct.get(u'parent', _EMPTY)
     if parent:
         handler.startTopic(_resolve_topicref(prefixes, parent[0]))
         for kind, iri in (_resolve_topicref(prefixes, iri) for iri in parent[1:]):
@@ -230,9 +237,9 @@ def _handle_name(handler, prefixes, dct):
     handler.startName(_get_type(prefixes, dct, default=_DEFAULT_NAME_TYPE))
     _handle_reifier(handler, prefixes, dct)
     _handle_scope(handler, prefixes, dct)
-    handler.value(dct['value'])
+    handler.value(dct[u'value'])
     _handle_iids(handler, prefixes, dct)
-    for var in dct.get('variants', _EMPTY):
+    for var in dct.get(u'variants', _EMPTY):
         handler.startVariant()
         _handle_scope(handler, prefixes, var)
         _handle_value_datatype(handler, prefixes, var)
