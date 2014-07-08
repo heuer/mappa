@@ -13,7 +13,7 @@ Linear Topic Maps Notation (LTM) 1.3.
 :license:      BSD license
 """
 import re
-from cStringIO import StringIO
+import io
 import codecs
 from urllib import urlopen
 from tm.mio import MIOException
@@ -31,12 +31,13 @@ def create_deserializer(legacy=False, **kw):
 
 _ENCODING = re.compile(r'^@"([^"]+)"').match
 
+
 class LTMDeserializer(Deserializer):
     """\
     
     """
     
-    version = '1.3'
+    version = u'1.3'
     
     def __init__(self, legacy=False, context=None, included_by=None):
         """\
@@ -89,4 +90,4 @@ class LTMDeserializer(Deserializer):
             encoding = m.group(1)
             if found_bom and encoding.lower() != 'utf-8':
                 raise MIOException('Found BOM, but encoding directive declares "%s"' % encoding)
-        return codecs.getreader(encoding)(StringIO(''.join([line, fileobj.read()]))).read()
+        return codecs.getreader(encoding)(io.BytesIO(''.join([line, fileobj.read()]))).read()
