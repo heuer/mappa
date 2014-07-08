@@ -14,31 +14,31 @@ Internal utility functions.
 """
 from mql.tolog import consts
 
-_INFIX_PREDICATES = ('/=', '<', '<=', '=', '>', '>=')
+_INFIX_PREDICATES = (u'/=', u'<', u'<=', u'=', u'>', u'>=')
 
 _BUILTIN_PREDICATES = _INFIX_PREDICATES + (
-    'association', 'association-role', 'base-locator',
-    'datatype', 'direct-instance-of', 'instance-of', 
-    'item-identifier', 'object-id', 'occurrence',
-    'reifies', 'resource', 'role-player', 'scope',
-    'subject-identifier', 'subject-locator', 'topic',
-    'topic-name', 'topicmap', 'type', 'value', 'value-like',
-    'variant',
+    u'association', u'association-role', u'base-locator',
+    u'datatype', u'direct-instance-of', u'instance-of',
+    u'item-identifier', u'object-id', u'occurrence',
+    u'reifies', u'resource', u'role-player', u'scope',
+    u'subject-identifier', u'subject-locator', u'topic',
+    u'topic-name', u'topicmap', u'type', u'value', u'value-like',
+    u'variant',
     # tolog 1.2
-    'coalesce', #'name',
+    u'coalesce', #'name',
     # deprecated
-    'source-locator', 
+    u'source-locator',
     )
 
 _TOLOG_UPDATE_FUNCTIONS = (
     # tolog 1.2
-    'value', 'resource',
+    u'value', u'resource',
 )
 
 _TOLOG_DELETE_FUNCTIONS = (
     # tolog 1.2
-    'subject-identifier', 'subject-locator', 'item-identifier',
-    'scope', 'reifies', 'direct-instance-of',
+    u'subject-identifier', u'subject-locator', u'item-identifier',
+    u'scope', u'reifies', u'direct-instance-of',
 )
 
 _DEFAULT_MODULES = (

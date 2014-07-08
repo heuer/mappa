@@ -24,7 +24,7 @@ TOLOG_NUMBER_MODULE_IRI = _TOLOG_BASE + u'numbers/'
 
 _TPLUS_BASE = u'http://psi.semagia.com/tplus/'
 TPLUS_EXPERIMENTAL_MODULE_IRI = _TPLUS_BASE + u'experimental/'
-TPLUS_EXPERIMENTAL_DATE_MODULE_IRI = TPLUS_EXPERIMENTAL_MODULE_IRI + 'date/'
+TPLUS_EXPERIMENTAL_DATE_MODULE_IRI = TPLUS_EXPERIMENTAL_MODULE_IRI + u'date/'
 
 
 #
@@ -57,28 +57,27 @@ MODULE = 114
 COUNT = 1000
 
 _CONST2NAME = {
-    VARIABLE: 'variable',
-    DECIMAL: 'decimal',
-    INTEGER: 'integer',
-    IDENT: 'identifier',
-    PARAM: 'parameter',
-    OID: 'objectid',
-    QNAME: 'qname',
-    CURIE: 'curie',
-    MODULE: 'module',
-    SID: 'iri',
-    SLO: 'subjectlocator',
-    IID: 'itemidentifier',
-    DATE: 'date',
-    DATE_TIME: 'datetime',
-    STRING: 'string',
-    LITERAL: 'literal',
-    ASC: 'ascending',
-    DESC: 'descending',
-    COUNT: 'count'
+    VARIABLE: u'variable',
+    DECIMAL: u'decimal',
+    INTEGER: u'integer',
+    IDENT: u'identifier',
+    PARAM: u'parameter',
+    OID: u'objectid',
+    QNAME: u'qname',
+    CURIE: u'curie',
+    MODULE: u'module',
+    SID: u'iri',
+    SLO: u'subjectlocator',
+    IID: u'itemidentifier',
+    DATE: u'date',
+    DATE_TIME: u'datetime',
+    STRING: u'string',
+    LITERAL: u'literal',
+    ASC: u'ascending',
+    DESC: u'descending',
+    COUNT: u'count',
 }
+
 
 def get_name(constant):
     return _CONST2NAME.get(constant)
-
-        
