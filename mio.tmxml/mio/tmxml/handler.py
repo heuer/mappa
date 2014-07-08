@@ -15,7 +15,6 @@ Provides deserialization of TM/XML topic maps.
 from xml.sax import handler as sax_handler
 from tm import TMDM, XSD
 from tm import mio
-from tm.xmlutils import attributes
 from tm.irilib import resolve_iri
 
 # Disable errors that the AttrsImpl has no 'get' method
@@ -83,7 +82,6 @@ class TMXMLContentHandler(sax_handler.ContentHandler):
         del self._prefixes[prefix]
 
     def startElementNS(self, (uri, name), qname, attrs):
-        attrs = attributes(attrs)
         state = self._state
         handler = self.map_handler
         topic_ref = self._topic_by_reference
