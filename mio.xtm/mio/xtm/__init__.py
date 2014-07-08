@@ -15,16 +15,16 @@ Provides deserialization of XML 1.0/2.0/2.1 topic maps.
 import xml.sax.handler as sax_handler
 import xml.sax as sax
 from tm.mio.deserializer import Deserializer, Context
-from tm.xmlutils import as_inputsource, attributes
+from tm.xmlutils import as_inputsource
 from mio.xtm.xtm1 import XTM10ContentHandler, NS_XTM as NS_XTM_10
 from mio.xtm.xtm2 import XTM2ContentHandler, NS_XTM as NS_XTM_2
 from mio.xtm.miohandler import XTM21Handler
 
 __all__ = ['create_deserializer', 'XTM21Handler']
 
-_CONTENT_HANDLERS = {'1.0': XTM10ContentHandler,
-                     '2.0': XTM2ContentHandler,
-                     '2.1': XTM2ContentHandler
+_CONTENT_HANDLERS = {u'1.0': XTM10ContentHandler,
+                     u'2.0': XTM2ContentHandler,
+                     u'2.1': XTM2ContentHandler
                      }
 
 
@@ -90,19 +90,18 @@ class XTMContentHandler(sax_handler.ContentHandler):
         self._content_handler.characters(content)
         
     def _create_content_handler(self, (uri, name), qname, attrs): #pylint: disable-msg=W0613
-        attrs = attributes(attrs)
         if uri == NS_XTM_2:
             handler = XTM2ContentHandler(self.map_handler)
-            self.version = attrs.get((None, 'version'))
+            self.version = attrs.get((None, u'version'))
         elif uri == NS_XTM_10:
             handler = XTM10ContentHandler(self.map_handler)
-            self.version = '1.0'
-        elif attrs.get((None, 'version')) in ('2.0', '2.1'):
+            self.version = u'1.0'
+        elif attrs.get((None, u'version')) in (u'2.0', u'2.1'):
             handler = XTM2ContentHandler(self.map_handler)
-            self.version = attrs.get((None, 'version'))
+            self.version = attrs.get((None, u'version'))
         else:
             handler = XTM10ContentHandler(self.map_handler)
-            self.version = '1.0'
+            self.version = u'1.0'
         # Provide missing info
         handler.map_handler = self.map_handler
         handler.strict = self.strict

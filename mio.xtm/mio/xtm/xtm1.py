@@ -17,7 +17,6 @@ import xml.sax as sax
 import xml.sax.handler as sax_handler
 from tm import TMDM, XSD, XTM_10, mio, voc
 from tm.mio.deserializer import Context
-from tm.xmlutils import attributes
 from tm.irilib import resolve_iri
 
 __all__ = ['XTM10ContentHandler']
@@ -111,7 +110,6 @@ class XTM10ContentHandler(object, sax_handler.ContentHandler):
     def startElementNS(self, (uri, name), qname, attrs):
         if uri != NS_XTM and uri != '':
             return
-        attrs = attributes(attrs)
         handler = self.map_handler
         stack = self._stack
         href = self._href
