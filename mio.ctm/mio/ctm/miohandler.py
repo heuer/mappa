@@ -458,7 +458,7 @@ class CTMHandler(mio_handler.HamsterMapHandler):
 
     def _write_string(self, value):
         write = self._out.write
-        if '"' in value and value[-1] != '"':
+        if u'"' in value and value[-1] != u'"':
             write(u'"""')
             for c in value:
                 if c == u'\\':
@@ -508,6 +508,7 @@ class CTMHandler(mio_handler.HamsterMapHandler):
             self._out.write(u'^^')
             self._write_uri(datatype)
 
+
 class _Topic(object):
     """\
     Internal class to keep track about a topic and its identities.
@@ -555,6 +556,7 @@ class _Topic(object):
     def identities(self):
         return tuple(self._refs)
 
+
 class _AssociationTemplate(object):
     """\
     
@@ -575,7 +577,8 @@ class _AssociationTemplate(object):
     @property
     def arity(self):
         return len(self.roles)
-    
+
+
 if __name__ == '__main__':
     import doctest
     doctest.testmod()
