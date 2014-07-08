@@ -13,8 +13,8 @@ Converts a topic map into a PHP script.
 :organization: Semagia - <http://www.semagia.com/>
 :license:      Public Domain
 """
+import io
 from optparse import OptionParser
-import codecs
 try:
     import phptmapi
 except ImportError:
@@ -64,7 +64,7 @@ def main():
     if not deser:
         parser.error('Cannot find a deserializer for "%s"' % format)
     src = Source(file=open(options.source, 'rb'), iri=options.base or options.source)
-    out = codecs.open(out_filename, 'wb', 'utf-8')
+    out = io.open(out_filename, 'wb', encoding='utf-8')
     deser.handler = PHPTMAPIMapHandler(out)
     deser.parse(src)
     out.close()
