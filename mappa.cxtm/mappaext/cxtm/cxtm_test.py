@@ -12,6 +12,7 @@ Utility functions to run CXTM tests.
 :organization: Semagia - http://www.semagia.com/
 :license:      BSD license
 """
+from __future__ import absolute_import
 import os
 import codecs
 import mappa

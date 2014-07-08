@@ -18,7 +18,7 @@ different serializations.
 :license:      BSD license
 """
 import codecs
-from mappa import XSD
+from tm.XSD import anyURI
 from mappa.utils import remove_duplicates, is_occurrence
 
 __all__ = ['CXTMTopicMapWriter']
@@ -243,7 +243,7 @@ class CXTMTopicMapWriter(object):
         """
         writer = self._writer
         value, dt = construct.value, construct.datatype
-        if dt == XSD.anyURI:
+        if dt == anyURI:
             value = self._normalize_iri(value)
         writer.newline()
         self._write_value(value)
