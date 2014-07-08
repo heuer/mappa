@@ -15,7 +15,7 @@ Utility functions to run CXTM tests.
 import os
 import codecs
 import mappa
-from StringIO import StringIO
+import io
 from tm import Source
 from tm.mio import MIOException
 from mappa import ModelConstraintViolation
@@ -155,7 +155,7 @@ def check_writer(writer_factory, deser_factory, filename, post_process):
     if post_process:
         post_process(tm)
     # 2. Write the topic map
-    out = StringIO()
+    out = io.BytesIO()
     writer = writer_factory(out, src.iri)
     writer.write(tm)
     # 3. Read the generated topic map
@@ -170,7 +170,7 @@ def check_writer(writer_factory, deser_factory, filename, post_process):
     f = codecs.open(get_baseline(filename), encoding='utf-8')
     expected = f.read()
     f.close()
-    result = StringIO()
+    result = io.BytesIO()
     c14n = CXTMTopicMapWriter(result, src.iri)
     c14n.write(tm2)
     res = unicode(result.getvalue(), 'utf-8')
@@ -188,7 +188,7 @@ def check_valid(deserializer, filename, post_process=None):
         post_process(tm)
     reference_file = os.path.abspath(os.path.dirname(filename) + '/../baseline/%s.cxtm' % os.path.basename(filename))
     expected = codecs.open(reference_file, 'r', encoding='utf-8').read()
-    result = StringIO()
+    result = io.BytesIO()
     c14n = CXTMTopicMapWriter(result, src.iri)
     c14n.write(tm)
     res = unicode(result.getvalue(), 'utf-8')

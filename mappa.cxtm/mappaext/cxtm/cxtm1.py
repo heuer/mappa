@@ -23,19 +23,13 @@ from mappa.utils import remove_duplicates, is_occurrence
 
 __all__ = ['CXTMTopicMapWriter']
 
-try:
-    enumerate([], start=0)
-except TypeError:
-    from itertools import count, izip
-    #pylint: disable-msg= W0622
-    def enumerate(iterable, start=0):
-        return izip(count(start), iterable)
 
 def enum(iterable):
     """\
     Same as ``enumerate`` but starts with ``1``.
     """
     return enumerate(iterable, start=1)
+
 
 class CXTMTopicMapWriter(object):
     """\
@@ -75,7 +69,7 @@ class CXTMTopicMapWriter(object):
         self._create_index(topicmap)
         writer = self._writer
         writer.startDocument()
-        writer.startElement('topicMap', self._add_reifier({}, topicmap))
+        writer.startElement(u'topicMap', self._add_reifier({}, topicmap))
         writer.newline()
         self._write_iids(topicmap)
         write_topic = self._write_topic
@@ -84,7 +78,7 @@ class CXTMTopicMapWriter(object):
         write_assoc = self._write_association
         for assoc in self._assocs:
             write_assoc(assoc)
-        writer.endElement('topicMap')
+        writer.endElement(u'topicMap')
         writer.newline()
         writer.endDocument()
         self._topics = None
@@ -131,10 +125,10 @@ class CXTMTopicMapWriter(object):
         """
         index_of = self._index
         startElement, endElement, newline = self._writer.startElement, self._writer.endElement, self._writer.newline
-        startElement('topic', {'number': index_of(topic)})
+        startElement(u'topic', {u'number': index_of(topic)})
         newline()
-        self._write_locators('subjectIdentifiers', topic.sids)
-        self._write_locators('subjectLocators', topic.slos)
+        self._write_locators(u'subjectIdentifiers', topic.sids)
+        self._write_locators(u'subjectLocators', topic.slos)
         self._write_iids(topic)
         write_name = self._write_name
         for pos, name in enum(self._names(topic)):
@@ -144,9 +138,9 @@ class CXTMTopicMapWriter(object):
             write_occurrence(occ, pos)
         emptyElement = self._writer.emptyElement
         for role in sorted(topic.roles_played, self._cmp_role):
-            emptyElement('rolePlayed', {'ref': 'association.%s.role.%s' % (index_of(role.parent), index_of(role))})
+            emptyElement(u'rolePlayed', {u'ref': u'association.%s.role.%s' % (index_of(role.parent), index_of(role))})
             newline()
-        endElement('topic')
+        endElement(u'topic')
         newline()
 
     def _write_association(self, association):
@@ -157,23 +151,23 @@ class CXTMTopicMapWriter(object):
         attrs = self._attributes
         startElement, endElement, newline = self._writer.startElement, self._writer.endElement, self._writer.newline
         topic_ref = self._topic_ref
-        startElement('association', attrs(association, index_of(association)))
+        startElement(u'association', attrs(association, index_of(association)))
         newline()
         write_type, write_iids = self._write_type, self._write_iids
         write_type(association)
         emptyElement = self._writer.emptyElement
         for role in self._roles(association):
-            startElement('role', attrs(role, index_of(role)))
+            startElement(u'role', attrs(role, index_of(role)))
             newline()
-            emptyElement('player', topic_ref(role.player))
+            emptyElement(u'player', topic_ref(role.player))
             newline()
             write_type(role)
             write_iids(role)
-            endElement('role')
+            endElement(u'role')
             newline()
         self._write_scope(association)
         write_iids(association)
-        endElement('association')
+        endElement(u'association')
         newline()
 
     def _write_name(self, name, pos):
@@ -187,19 +181,19 @@ class CXTMTopicMapWriter(object):
         """
         attrs = self._attributes
         startElement, endElement, newline = self._writer.startElement, self._writer.endElement, self._writer.newline
-        startElement('name', attrs(name, pos))
+        startElement(u'name', attrs(name, pos))
         newline()
         self._write_value(name.value)
         self._write_type(name)
         self._write_scope(name)
         write_datatyped_construct = self._write_datatyped_construct
         for vpos, variant in enum(self._variants(name)):
-            startElement('variant', attrs(variant, vpos))
+            startElement(u'variant', attrs(variant, vpos))
             write_datatyped_construct(variant)
-            endElement('variant')
+            endElement(u'variant')
             newline()
         self._write_iids(name)
-        endElement('name')
+        endElement(u'name')
         newline()
 
     def _write_occurrence(self, occurrence, pos):
@@ -212,16 +206,16 @@ class CXTMTopicMapWriter(object):
             The position of the occurrence within the parent topic.
         """
         writer = self._writer
-        writer.startElement('occurrence', self._attributes(occurrence, pos))
+        writer.startElement(u'occurrence', self._attributes(occurrence, pos))
         self._write_datatyped_construct(occurrence)
-        writer.endElement('occurrence')
+        writer.endElement(u'occurrence')
         writer.newline()
 
     def _write_iids(self, construct):
         """\
         Serializes the item identifiers of the ``construct``.
         """
-        self._write_locators('itemIdentifiers', construct.iids)
+        self._write_locators(u'itemIdentifiers', construct.iids)
 
     def _write_locators(self, name, locs):
         """\
@@ -235,7 +229,7 @@ class CXTMTopicMapWriter(object):
         normalize_iri = self._normalize_iri
         dataElement = self._writer.dataElement
         for loc in sorted([normalize_iri(loc) for loc in locs]):
-            dataElement('locator', loc)
+            dataElement(u'locator', loc)
             newline()
         self._writer.endElement(name)
         newline()
@@ -253,7 +247,7 @@ class CXTMTopicMapWriter(object):
             value = self._normalize_iri(value)
         writer.newline()
         self._write_value(value)
-        writer.dataElement('datatype', dt)
+        writer.dataElement(u'datatype', dt)
         writer.newline()
         if (is_occurrence(construct)):
             self._write_type(construct)
@@ -268,7 +262,7 @@ class CXTMTopicMapWriter(object):
             A string.
         """
         writer = self._writer
-        writer.dataElement('value', value)
+        writer.dataElement(u'value', value)
         writer.newline()
 
     def _write_type(self, typed):
@@ -279,7 +273,7 @@ class CXTMTopicMapWriter(object):
             An association, a role, an occurrence, or name.
         """
         writer = self._writer
-        writer.emptyElement('type', self._topic_ref(typed.type))
+        writer.emptyElement(u'type', self._topic_ref(typed.type))
         writer.newline()
 
     def _write_scope(self, scoped):
@@ -295,13 +289,13 @@ class CXTMTopicMapWriter(object):
         written = False
         for i, theme in enumerate(sorted(scoped.scope, self._cmp_topic)):
             if not i:
-                self._writer.startElement('scope')
+                self._writer.startElement(u'scope')
                 newline()
                 written = True
-            emptyElement('scopingTopic', self._topic_ref(theme))
+            emptyElement(u'scopingTopic', self._topic_ref(theme))
             newline()
         if written:
-            self._writer.endElement('scope')
+            self._writer.endElement(u'scope')
             newline()
 
     def _occs(self, topic):
@@ -338,7 +332,7 @@ class CXTMTopicMapWriter(object):
         `pos`
             The position of the reifiable construct within its parent context.
         """
-        return self._add_reifier({'number': pos}, reifiable)
+        return self._add_reifier({u'number': pos}, reifiable)
 
     def _add_reifier(self, attrs, reifiable):
         """\
@@ -346,7 +340,7 @@ class CXTMTopicMapWriter(object):
         """
         reifier = reifiable.reifier
         if reifier:
-            attrs['reifier'] = self._index(reifier)
+            attrs[u'reifier'] = self._index(reifier)
         return attrs
 
     def _topic_ref(self, topic):
@@ -356,7 +350,7 @@ class CXTMTopicMapWriter(object):
         `topic`
             A topic to which the ``topicref`` should point to.
         """
-        return {'topicref': self._index(topic)}
+        return {u'topicref': self._index(topic)}
 
     def _normalize_iri(self, iri):
         """\
@@ -404,13 +398,13 @@ class CXTMTopicMapWriter(object):
             removed and any trailing "/" character removed.[...]
         
         """
-        i = iri.rfind('#')
+        i = iri.rfind(u'#')
         if i > 0:
             iri = iri[:i]
-        i = iri.rfind('?')
+        i = iri.rfind(u'?')
         if i > 0:
             iri = iri[:i]
-        if iri[-1] == '/':
+        if iri[-1] == u'/':
             iri = iri[:-1]
         return iri
 
@@ -549,6 +543,7 @@ class CXTMTopicMapWriter(object):
         return self._cmp_size(scope_a, scope_b) \
                 or self._cmp_set_content(scope_a, scope_b, self._cmp_topic)
 
+
 class CXTMWriter(object):
     """\
     A canonical XML writer which provides a subset of C14N-XML.
@@ -576,7 +571,7 @@ class CXTMWriter(object):
         out = self._out
         out.write(u'<%s' % name)
         if attrs:
-            for name in sorted(attrs.keys()):
+            for name in sorted(attrs):
                 out.write(u' %s="%s"' % (name, _escape_attr_value(attrs[name])))
         out.write(u'>')
 
@@ -622,6 +617,7 @@ def _escape_text(val):
                 .replace(u'\r', u'&#xD;') \
                 .replace(u'<', u'&lt;') \
                 .replace(u'>', u'&gt;')
+
 
 def _escape_attr_value(val):
     """\
