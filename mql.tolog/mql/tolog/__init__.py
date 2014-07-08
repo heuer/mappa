@@ -57,6 +57,14 @@ def parse(src, handler, tolog_plus=False, **kw):
 
 
 def _make_lexer(tolog_plus):
+    """\
+    Creates and returns the lexer.
+
+    `tolog_plus`
+        Indicates if the lexer should read tolog+.
+        (Even if this parameter is ``False``, the lexer may switch to
+        tolog+-mode iff a %version directive is found).
+    """
     from mql.tolog import lexer as lexer_mod
     lexer = plyutils.make_lexer(lexer_mod)
     lexer.tolog_plus = tolog_plus
@@ -116,7 +124,7 @@ def parse_to_etree(src, tolog_plus=False, **kw):
         `tolog_plus` value
     """
     contenthandler = lxml.sax.ElementTreeContentHandler()
-    parse(src, handler_mod.XMLHandler(xmlutils.SAXSimpleXMLWriter(contenthandler)), tolog_plus, **kw)
+    parse(src, handler_mod.XMLParserHandler(xmlutils.SAXSimpleXMLWriter(contenthandler)), tolog_plus, **kw)
     return contenthandler.etree
 
 

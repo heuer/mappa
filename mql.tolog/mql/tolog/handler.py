@@ -36,7 +36,7 @@ class NoopParserHandler(ParserHandler):
 class LoggingParserHandler(ParserHandler):
     """\
     A ParserHandler which loggs all events and delegates the events to
-    an underlying TologHandler instance.
+    an underlying ParserHandler instance.
     """
     def __init__(self, handler, level=logging.INFO):
         """\
@@ -88,13 +88,14 @@ _PREFIXKIND2NAME = {
 
 class XMLParserHandler(ParserHandler):
     """\
-    TologHandler which translates the events to XML.
+    ParserHandler which translates the events to XML.
     """
     def __init__(self, writer):
         """\
 
         `writer`
-            An object which implements the methods of the ``tm.xmlutils.SimpleXMLWriter` class
+            An object which implements the methods of the
+            ``tm.xmlutils.SimpleXMLWriter` class
         """
         self._writer = writer
 

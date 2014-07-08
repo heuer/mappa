@@ -515,11 +515,10 @@ def p_rule(p):
     """\
     rule            : predclause IMPLIES _start_rule clauselist DOT
     """
-    handler = _handler(p)
-    handler.endBody()
-    handler.endRule()
+    _handler(p).endRule()
 
-def p__start_rule(p): # Inline action
+
+def p__start_rule(p):  # Inline action
     """\
     _start_rule     : 
     """
@@ -528,14 +527,13 @@ def p__start_rule(p): # Inline action
     if consts.IDENT != kind:
         raise InvalidQueryError('Invalid rule name "%s".' % name)
     p.parser.rule_names.append(name)
-    handler = _handler(p)
-    handler.startRule(name)
+    variables = []
     for arg in args:
         if arg[0] != consts.VARIABLE:
             raise InvalidQueryError('The rule head of "%s" contains a non-variable parameter' % name)
-        handler.variable(arg[1])
-    handler.startBody()
-    
+        variables.append(arg[1])
+    handler = _handler(p)
+    handler.startRule(name, variables)
 
 
 _PREDICATE = 'Predicate'
