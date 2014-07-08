@@ -12,8 +12,7 @@ Compact RTM (CRTM) lexer.
 :organization: Semagia - http://www.semagia.com/
 :license:      BSD license
 """
-from itertools import chain
-from ply.lex import TOKEN
+from tm.ply import TOKEN
 from tm import mio
 
 _DIRECTIVES = {
@@ -150,7 +149,7 @@ def t_kw_end(t):
     t.lexer.begin('INITIAL')
 
 if __name__ == '__main__':
-    import ply.lex as lex
+    import tm.ply.lex as lex
     lexer = lex.lex()
     test_data = [
                  'semagia',
