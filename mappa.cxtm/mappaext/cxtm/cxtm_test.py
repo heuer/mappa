@@ -137,11 +137,7 @@ def create_writer_cxtm_cases(writer_factory, deserializer_factory, directory, ex
         yield check_writer, writer_factory, deserializer_factory, filename, post_process
 
 
-def fail(msg):
-    """\
-
-    """
-    raise AssertionError(msg)
+fail = AssertionError
 
 
 def check_writer(writer_factory, deser_factory, filename, post_process):
