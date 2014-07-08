@@ -53,7 +53,7 @@ class XMLWriter(object):
         """\
         Writes the <?xml version="1.0" ... ?> declaration.
         """
-        self._out.write(u'<?xml version="1.0" encoding="%s" standalone="yes"?>' % self._encoding)
+        self._out.write(unicode('<?xml version="1.0" encoding="%s" standalone="yes"?>' % self._encoding))
         if not self.prettify:
             self._newline()
         self._depth = 0

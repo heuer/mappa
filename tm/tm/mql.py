@@ -14,11 +14,14 @@ Experimental module to provide common things for query languages.
 """
 __all__ = ['QueryError', 'InvalidQueryError']
 
+
 class QueryError(Exception):
     pass
 
+
 class InvalidQueryError(QueryError):
     pass
+
 
 class SyntaxQueryError(QueryError):
     pass

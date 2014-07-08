@@ -93,6 +93,7 @@ TRIX = Syntax('TriX', 'application/trix', ('trix', 'xml'))
 # RDF TriG syntax.
 TRIG = Syntax('TriG', 'application/x-trig', 'trig')
 
+
 def syntax_for_extension(ext, default=None):
     """\
     Returns a syntax for the given file extension.
