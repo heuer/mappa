@@ -49,7 +49,7 @@ setup(
     include_package_data=True,
     package_data={'': ['*.txt']},
     cmdclass={'sdist': sdist},
-    install_requires=['tm>=0.1.7', 'ply>=3.3', 'mio.xtm>=0.1.7'],
+    install_requires=['tm>=0.1.7', 'mio.xtm>=0.1.7'],
     keywords=['Topic Maps', 'Semantic Web', 'CTM'],
     classifiers=[
         'Intended Audience :: Developers',

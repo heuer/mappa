@@ -14,7 +14,7 @@ Compact Topic Maps (CTM) lexer.
 """
 # For some reason pylint thinks that ply.lex and ply.yacc do not exist
 # pylint: disable-msg=F0401, E0611
-from ply.lex import TOKEN
+from tm.ply import TOKEN
 from tm.mio import MIOException
 
 _DIRECTIVES = {
@@ -190,7 +190,7 @@ def t_STRING(t):
     return t
 
 if __name__ == '__main__':
-    import ply.lex as lex
+    import tm.ply.lex as lex
     lexer = lex.lex()
     test_data = [
                  'semagia.',
