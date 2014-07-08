@@ -12,9 +12,9 @@ Tests against the CTM 1.0 MIOHandler
 :organization: Semagia - http://www.semagia.com/
 :license:      BSD license
 """
-from nose.tools import eq_, ok_
+import io
 from StringIO import StringIO
-import codecs
+from nose.tools import eq_, ok_
 import mappa
 from mappa.miohandler import MappaMapHandler
 from mappaext.cxtm.cxtm_test import find_valid_cxtm_cases, get_baseline
@@ -25,8 +25,7 @@ from mio.ctm import create_deserializer, CTMHandler
 from mio import xtm
 
 
-def fail(msg):
-    raise AssertionError(msg)
+fail = AssertionError
 
 
 def check_handler(deserializer_factory, filename):
@@ -52,7 +51,7 @@ def check_handler(deserializer_factory, filename):
     except MIOException, ex:
         fail('failed: %s.\nError: %s\nGenerated CTM: %s' % (filename, ex, out.getvalue()))
     # 3. Generate the CXTM
-    f = codecs.open(get_baseline(filename), encoding='utf-8')
+    f = io.open(get_baseline(filename), encoding='utf-8')
     expected = f.read()
     f.close()
     result = StringIO()

@@ -13,7 +13,7 @@ Compact Topic Maps Syntax (CTM) 1.0.
 :license:      BSD license
 """
 import re
-from StringIO import StringIO
+import io
 import codecs
 from urllib import urlopen
 from tm.mio import MIOException
@@ -35,6 +35,7 @@ def create_deserializer(version=1.0, context=None, included_by=None, **kw): # py
     return CTMDeserializer(context=context, included_by=included_by, **kw)
 
 _ENCODING = re.compile(r'^%encoding\s*"([^"]+)"', re.UNICODE).match
+
 
 class CTMDeserializer(Deserializer):
     """\
@@ -91,4 +92,4 @@ class CTMDeserializer(Deserializer):
             encoding = m.group(1)
             if found_bom and encoding.lower() != 'utf-8':
                 raise MIOException('Found BOM, but encoding directive declares "%s"' % encoding)
-        return codecs.getreader(encoding)(StringIO(''.join([line, fileobj.read()]))).read()
+        return codecs.getreader(encoding)(io.BytesIO(''.join([line, fileobj.read()]))).read()
