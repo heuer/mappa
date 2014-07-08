@@ -11,10 +11,9 @@ Converts a topic map into a PHP script.
 
 :author:       Lars Heuer (heuer[at]semagia.com)
 :organization: Semagia - <http://www.semagia.com/>
-:version:      $Rev:$ - $Date:$
 :license:      Public Domain
 """
-from optparse import OptionParser, OptionGroup
+from optparse import OptionParser
 import codecs
 try:
     import phptmapi

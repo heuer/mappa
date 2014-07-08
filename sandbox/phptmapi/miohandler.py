@@ -26,12 +26,12 @@ I don't have a strong interest to fix the TODOs, contributions are welcome.
 
 :author:       Lars Heuer (heuer[at]semagia.com)
 :organization: Semagia - <http://www.semagia.com/>
-:version:      $Rev:$ - $Date:$
 :license:      Public Domain
 """
 import tm.mio.handler as mio_handler
 
 _SCRIPT_HOME = 'http://code.google.com/p/mappa/source/browse/sandbox/phptmapi/'
+
 
 class PHPTMAPIMapHandler(mio_handler.HamsterMapHandler):
     """\
@@ -153,6 +153,7 @@ class PHPTMAPIMapHandler(mio_handler.HamsterMapHandler):
 
 def _escape(s):
     return s.replace("'", "\\'")
+
 
 def _make_scope(scope):
     if not scope:
