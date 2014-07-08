@@ -53,7 +53,7 @@ def unescape_unicode(s):
                     unicode_value = int(xx, 16)
                     to_add = s[end-2:end]
                 except ValueError: # Invalid Unicode escape sequence
-                    buff.append('\\u')
+                    buff.append(u'\\u')
                     buff.append(s[start:end])
                     pos = match.end()-3
         if unicode_value is not None:

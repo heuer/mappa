@@ -15,12 +15,15 @@
 from mappaext.cxtm.cxtm_test import create_invalid_cxtm_cases, create_valid_cxtm_cases
 from mio import ltm
 
+
 def create_deserializer():
     return ltm.create_deserializer(legacy=True)
+
 
 def test_cxtm_valid():
     for test in create_valid_cxtm_cases(create_deserializer, 'ltm', 'ltm'):
         yield test
+
 
 def test_cxtm_invalid():
     for test in create_invalid_cxtm_cases(create_deserializer, 'ltm', 'ltm'):

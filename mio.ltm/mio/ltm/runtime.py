@@ -12,13 +12,11 @@ Linear Topic Maps Notation (LTM) 1.3 runtime environment.
 :organization: Semagia - http://www.semagia.com/
 :license:      BSD license
 """
+import tm
 from tm import mio
 from tm.irilib import resolve_iri
 from tm.mio.deserializer import Context
-try:
-    set
-except NameError:
-    from sets import Set as set # pylint: disable-msg=W0622
+
 
 class LTMContext(object):
     """\
@@ -54,7 +52,7 @@ class LTMContext(object):
                                 included_by=(included or set()))
         deser.handler = self.handler
         deser.subordinate = True
-        deser.parse(mio.Source(doc_iri))
+        deser.parse(tm.Source(doc_iri))
 
     def merge(self, iri, syntax='ltm'):
         if syntax.lower() == 'ltm':
@@ -70,7 +68,7 @@ class LTMContext(object):
             deser.subordinate = True
             deser.context = self._context
             deser.handler = self.handler
-            deser.parse(mio.Source(doc_iri))
+            deser.parse(tm.Source(doc_iri))
 
     def register_slo_prefix(self, prefix, iri):
         """\
@@ -106,14 +104,14 @@ class LTMContext(object):
         self._seen_base = True
 
     def check_version(self, version):
-        if version != '1.3':
+        if version != u'1.3':
             raise mio.MIOException('Version "%s" is not supported.' % version)
 
     def create_topic_by_iid(self, ident):
         """\
         
         """
-        frag = '#%s' % ident
+        frag = u'#%s' % ident
         ref = mio.ITEM_IDENTIFIER, resolve_iri(self._doc_iri, frag)
         if self._included_by:
             # Creating topic here to add the included by item identifiers
@@ -128,7 +126,7 @@ class LTMContext(object):
         """\
         
         """
-        if reference[0] == '#':
+        if reference[0] == u'#':
             return resolve_iri(self._doc_iri, reference)
         else:
             return resolve_iri(self._base_iri, reference)
@@ -167,7 +165,7 @@ class LTMContext(object):
             self.handler.reifier(reifier)
         else:
             handler = self.handler
-            iri = resolve_iri(self._base_iri, '#--reified--' + reifier_id)
+            iri = resolve_iri(self._base_iri, u'#--reified--' + reifier_id)
             handler.itemIdentifier(iri)
             handler.startReifier()
             handler.startTopic(reifier)

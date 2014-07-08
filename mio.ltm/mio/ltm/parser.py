@@ -22,6 +22,7 @@ _ROLE_TYPE = mio.SUBJECT_IDENTIFIER, XTM_10.DEFAULT_ROLE_TYPE
 del XTM_10
 del TMDM
 
+
 def _process_scope(handler, scope):
     if scope:
         handler.startScope()
