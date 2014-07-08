@@ -23,12 +23,14 @@ _SUPERTYPE_SUBTYPE = mio.SUBJECT_IDENTIFIER, TMDM.supertype_subtype
 _SUPERTYPE_SUBTYPE_SUPERTYPE = mio.SUBJECT_IDENTIFIER, TMDM.supertype
 _SUPERTYPE_SUBTYPE_SUBTYPE = mio.SUBJECT_IDENTIFIER, TMDM.subtype
 
+
 def _reference_from_object_iri(iri, is_blank_node):
     """\
     Returns either an item identifier (iff the IRI is a blank node)
     or subject identifier.
     """
     return mio.ITEM_IDENTIFIER, iri if is_blank_node else mio.SUBJECT_IDENTIFIER, iri 
+
 
 class AbstractMapper(object):
     """\
@@ -53,6 +55,7 @@ class AbstractMapper(object):
         Rejects an object
         """
         error_handler.reject_nonliteral(self.name, obj)
+
 
 class AbstractScopeTypeAwareMapper(AbstractMapper):
     """\
@@ -330,10 +333,12 @@ class MappingHandler(object):
     def handleItemIdentifier(self, predicate):
         self.mapping[predicate] = IdentityMapper(mio.ITEM_IDENTIFIER)
 
+
 def _sids(iris):
     if not iris:
         return None
     return [(mio.SUBJECT_IDENTIFIER, iri) for iri in iris]
+
 
 def _sid(iri):
     if not iri:

@@ -16,26 +16,26 @@ from tm.ply import TOKEN
 from tm import mio
 
 _DIRECTIVES = {
-    '%prefix': 'DIR_PREFIX',
-    '%include': 'DIR_INCLUDE',
-    '%version': 'DIR_VERSION',
-    '%langtoscope': 'DIR_LANG2SCOPE',
+    u'%prefix': u'DIR_PREFIX',
+    u'%include': u'DIR_INCLUDE',
+    u'%version': u'DIR_VERSION',
+    u'%langtoscope': u'DIR_LANG2SCOPE',
 }
 
 _KEYWORDS = {
-    'true': 'KW_TRUE',
-    'false': 'KW_FALSE',
-    'lang': 'KW_LANG',
+    u'true': u'KW_TRUE',
+    u'false': u'KW_FALSE',
+    u'lang': u'KW_LANG',
 }
 
 _KEYWORDS_MAPPING = {
-    'subject-identifier': 'KW_SID', 'sid': 'KW_SID',
-    'subject-locator': 'KW_SLO', 'slo': 'KW_SLO',
-    'item-identifier': 'KW_IID', 'iid': 'KW_IID',
-    'isa': 'KW_ISA',
-    'ako': 'KW_AKO',
-    'occurrence': 'KW_OCC', 'occ': 'KW_OCC',
-    'association': 'KW_ASSOC', 'assoc': 'KW_ASSOC',
+    u'subject-identifier': u'KW_SID', u'sid': u'KW_SID',
+    u'subject-locator': u'KW_SLO', u'slo': u'KW_SLO',
+    u'item-identifier': u'KW_IID', u'iid': u'KW_IID',
+    u'isa': u'KW_ISA',
+    u'ako': u'KW_AKO',
+    u'occurrence': u'KW_OCC', u'occ': u'KW_OCC',
+    u'association': u'KW_ASSOC', u'assoc': u'KW_ASSOC',
 }
 
 _ident_start = ur'[a-zA-Z_]|[\u00C0-\u00D6]|[\u00D8-\u00F6]' + \
@@ -51,11 +51,11 @@ _iri = ur'<[^<>\"\{\}\`\\ ]+>'
 
 
 tokens = tuple(_DIRECTIVES.values()) + tuple(_KEYWORDS.values()) + tuple(set(_KEYWORDS_MAPPING.values())) + (
-    'IDENT', 'QNAME', 'IRI',
+    u'IDENT', u'QNAME', u'IRI',
     # Brackets
-    'LPAREN', 'RPAREN', 'LCURLY', 'RCURLY',
+    u'LPAREN', u'RPAREN', u'LCURLY', u'RCURLY',
     # Delimiters
-    'AT', 'HYPHEN', 'COLON', 'COMMA', 'SEMI', 'EQ',
+    u'AT', u'HYPHEN', u'COLON', u'COMMA', u'SEMI', u'EQ',
     )
 
 t_LPAREN = r'\('
@@ -72,35 +72,42 @@ states = (
   ('lang', 'exclusive'),
 )
 
+
 def t_error(t):
     raise mio.MIOException('Unknown token "%r"' % t)
 
 t_lang_error = t_error
 t_kw_error = t_error
 
+
 def t_comment(t):
     r'\#[^\r\n]*'
 
+
 def t_ws(t):
     r'\s+'
-    t.lexer.lineno += t.value.count('\n')
+    t.lexer.lineno += t.value.count(u'\n')
+
 
 def t_SEMI(t):
     r';'
     t.lexer.begin('lang')
     return t
 
+
 def t_COLON(t):
     r':'
     t.lexer.begin('kw')
     return t
 
+
 @TOKEN('|'.join(_DIRECTIVES.keys()))
 def t_directive(t):
     t.type = _DIRECTIVES[t.value]
-    if t.value == '%langtoscope':
+    if t.value == u'%langtoscope':
         t.lexer.begin('lang')
     return t
+
 
 @TOKEN(_iri)
 def t_IRI(t):
@@ -109,8 +116,9 @@ def t_IRI(t):
 
 @TOKEN(_qname)
 def t_QNAME(t):
-    t.value = tuple(t.value.split(':'))
+    t.value = tuple(t.value.split(u':'))
     return t
+
 
 @TOKEN(_ident)
 def t_IDENT(t):
@@ -119,14 +127,15 @@ def t_IDENT(t):
 # State LANG
 def t_lang_ws(t):
     r'\s+'
-    t.lexer.lineno += t.value.count('\n')
+    t.lexer.lineno += t.value.count(u'\n')
 
 @TOKEN('|'.join(_KEYWORDS.keys()))
 def t_lang_commons(t):
     t.type = _KEYWORDS[t.value]
-    if t.value in ('true', 'false'):
+    if t.value in (u'true', u'false'):
         t.lexer.begin('INITIAL')
     return t
+
 
 def t_lang_end(t):
     r'.'
@@ -136,35 +145,37 @@ def t_lang_end(t):
 # State KW
 def t_kw_ws(t):
     r'\s+'
-    t.lexer.lineno += t.value.count('\n')
+    t.lexer.lineno += t.value.count(u'\n')
 
 @TOKEN('|'.join(_KEYWORDS_MAPPING.keys()))
 def t_kw_keyword(t):
     t.type = _KEYWORDS_MAPPING[t.value]
     return t
 
+
 def t_kw_end(t):
     r'.'
     t.lexer.lexpos = t.lexpos-1 # Pushback one char
     t.lexer.begin('INITIAL')
 
+
 if __name__ == '__main__':
     import tm.ply.lex as lex
     lexer = lex.lex()
     test_data = [
-                 'semagia',
-                 '<http://www.semagia.com/sid>',
-                 'something: occurrence',
-                 'q:name q:123 foaf:name q:12name q:12.2',
-                 'hello.again _1 lang name true false occurrence occ assoc association hello.ag.ain',
-                 '%langtoscope true true',
-                 "%prefix bla <http://psi.semagia.com/test>",
-                 "foaf:name: name",
-                 "web:site: occurrence web:site: occ"
-                 ";lang true false",
-                 "lang true false",
-                 "%prefix %include %version",
-                 'trara # ein Kommentar',
+                 u'semagia',
+                 u'<http://www.semagia.com/sid>',
+                 u'something: occurrence',
+                 u'q:name q:123 foaf:name q:12name q:12.2',
+                 u'hello.again _1 lang name true false occurrence occ assoc association hello.ag.ain',
+                 u'%langtoscope true true',
+                 u"%prefix bla <http://psi.semagia.com/test>",
+                 u"foaf:name: name",
+                 u"web:site: occurrence web:site: occ"
+                 u";lang true false",
+                 u"lang true false",
+                 u"%prefix %include %version",
+                 u'trara # ein Kommentar',
                  ]
     for data in test_data:
         lexer.input(data)
