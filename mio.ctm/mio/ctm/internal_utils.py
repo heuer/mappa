@@ -25,6 +25,7 @@ _CONST2IRI = {
     consts.CTM_INTEGER: u'http://psi.topicmaps.org/iso13250/ctm-integer'
     }
 
+
 def as_literal(lit):
     kind, val = lit
     iri = _CONST2IRI.get(kind)
@@ -33,6 +34,7 @@ def as_literal(lit):
     elif not iri:
         raise mio.MIOException('Illegal literal "%r"' % val)
     return val, iri
+
 
 def as_string_literal(lit):
     """\
@@ -43,6 +45,7 @@ def as_string_literal(lit):
     if not kind == consts.STRING:
         raise mio.MIOException('Expected a string literal, got: "(%s, %s)"' % (kind, val))
     return val, XSD.string
+
 
 def handle_identity(handler, ctx, identity):
     """\

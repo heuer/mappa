@@ -120,7 +120,8 @@ def is_valid_iri(iri):
     return True
 
 
-_QUOT = {u't': u'\t', u'n': u'\n', u'r': u'\r', u'\\': u'\\', u'"': u'"'}
+_CHARS_TO_QUOT = {u't': u'\t', u'n': u'\n', u'r': u'\r', u'\\': u'\\', u'"': u'"'}
+
 
 def unescape_string(s):
     """\
@@ -137,26 +138,26 @@ def unescape_string(s):
     length = len(s)
     while backslash != -1:
         buff.append(s[pos:backslash])
-        if backslash +1 >= length:
+        if backslash + 1 >= length:
             raise ValueError('Invalid escape syntax: in "%s"' % s)
         c = s[backslash+1]
-        if c in _QUOT:
-            buff.append(_QUOT[c])
+        if c in _CHARS_TO_QUOT:
+            buff.append(_CHARS_TO_QUOT[c])
             pos = backslash + 2
-        elif c == u'u': #uxxxx
+        elif c == u'u':  # uxxxx
             if backslash + 5 >= length:
                 raise ValueError('Incomplete Unicode escape sequence in: "%s"' % s)
             try:
-                xx = s[backslash + 2 : backslash + 6]
+                xx = s[backslash + 2:backslash + 6]
                 buff.append(unichr(int(xx, 16)))
                 pos = backslash + 6
             except ValueError:
                 raise ValueError('Illegal Unicode escape sequence "\\u%s" in "%s"' % (xx, s))
-        elif c == u'U': #Uxxxxxx
+        elif c == u'U':  # Uxxxxxx
             if backslash + 7 >= length:
                 raise ValueError('Incomplete Unicode escape sequence in: "%s"' % s)
             try:
-                xx = s[backslash + 2 : backslash + 8]
+                xx = s[backslash + 2:backslash + 8]
                 buff.append(unichr(int(xx, 16)))
                 pos = backslash + 8
             except ValueError:
