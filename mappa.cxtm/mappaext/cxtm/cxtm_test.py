@@ -41,8 +41,9 @@ def _download_cxtm_tests():
     sf_filename = _CXTM_TRUNK
     if not os.path.isfile(archive_name):
         import time
-        urllib.urlopen(u'http://sourceforge.net/p/cxtm-tests/code/HEAD/tarball?path=/trunk')
-        time.sleep(5)
+        urllib.urlopen(u'http://sourceforge.net/p/cxtm-tests/code/HEAD/tarball',
+                       urllib.urlencode({u'path': u'/trunk'}))
+        time.sleep(15)
         urllib.urlretrieve(u'http://sourceforge.net/code-snapshots/svn/c/cx/cxtm-tests/code/%s' % sf_filename, archive_name)
     archive = ZipFile(archive_name)
     archive.extractall(directory)
