@@ -65,6 +65,7 @@ def test_valid_localid_start():
     for c in data:
         eq_(True, is_valid_localid_start(c))
 
+
 def test_invalid_localid_start():
     data = (u'.', u'-')
     for c in data:
@@ -78,7 +79,7 @@ def test_valid_id_part():
 
 
 def test_invalid_id_part():
-    data = (' ',)
+    data = (u' ',)
     for c in data:
         eq_(False, is_valid_id_part(c))
 
@@ -87,6 +88,7 @@ def test_valid_id():
     data = (u'ident', u'_ident', u'ident.ifier', u'a1976-09-19', u'isa', u'öüä')
     for c in data:
         eq_(True, is_valid_id(c))
+
 
 def test_invalid_id():
     data = (u'ident.', u'-ident', u'2ident.ifier', u'.isa')
@@ -110,6 +112,7 @@ def test_valid_iri_part():
     data = (u'a', u')')
     for c in data:
         eq_(True, is_valid_iri_part(c))
+
 
 def test_invalid_iri_part():
     data = (u' ', u'"')
