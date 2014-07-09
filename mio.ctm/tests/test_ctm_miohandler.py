@@ -13,7 +13,6 @@ Tests against the CTM 1.0 MIOHandler
 :license:      BSD license
 """
 import io
-from StringIO import StringIO
 from nose.tools import eq_, ok_
 import mappa
 from mappa.miohandler import MappaMapHandler
@@ -31,7 +30,7 @@ fail = AssertionError
 def check_handler(deserializer_factory, filename):
     src = Source(file=open(filename))
     # 1. Generate CTM 1.0 via CTMHandler
-    out = StringIO()
+    out = io.BytesIO()
     deser = deserializer_factory()
     handler = CTMHandler(out)
     handler.add_prefix(u'_', src.iri + u'#')
@@ -54,7 +53,7 @@ def check_handler(deserializer_factory, filename):
     f = io.open(get_baseline(filename), encoding='utf-8')
     expected = f.read()
     f.close()
-    result = StringIO()
+    result = io.BytesIO()
     c14n = create_writer(result, src.iri)
     c14n.write(tm)
     res = unicode(result.getvalue(), 'utf-8')
@@ -107,7 +106,7 @@ class TestPrefixes:
 
     def make_handler(self, out=None):
         if out == None:
-            out = StringIO()
+            out = io.BytesIO()
         return CTMHandler(out)
 
     def test_registering(self):
@@ -166,7 +165,7 @@ class TestPrefixes:
             pass
 
     def test_illegal_removal(self):
-        out = StringIO()
+        out = io.BytesIO()
         handler = self.make_handler(out)
         prefix, iri = 'base', 'http://www.semagia.com/base'
         handler.add_prefix(prefix, iri)
@@ -178,7 +177,7 @@ class TestPrefixes:
             pass
 
     def test_illegal_add(self):
-        out = StringIO()
+        out = io.BytesIO()
         handler = self.make_handler(out)
         prefix, iri = 'base', 'http://www.semagia.com/base'
         handler.add_prefix(prefix, iri)
@@ -191,7 +190,7 @@ class TestPrefixes:
             fail('A prefix must not be modifiable once it is serialized')
         except MIOException:
             pass
-        out = StringIO()
+        out = io.BytesIO()
         handler = self.make_handler(out)
         handler.startTopicMap()
         handler.startTopic((SUBJECT_IDENTIFIER, 'http://psi.semagia.com/bla'))
@@ -202,7 +201,7 @@ class TestPrefixes:
             pass
 
     def test_legal_add_within_stream(self):
-        out = StringIO()
+        out = io.BytesIO()
         handler = self.make_handler(out)
         prefix, iri = 'base', 'http://www.semagia.com/base'
         handler.add_prefix(prefix, iri)
@@ -215,7 +214,7 @@ class TestPrefixes:
 
 
 def test_author():
-    out = StringIO()
+    out = io.BytesIO()
     handler = CTMHandler(out)
     ok_(handler.author is None)
     handler.author = 'Lars'
@@ -226,7 +225,7 @@ def test_author():
 
 
 def test_title():
-    out = StringIO()
+    out = io.BytesIO()
     handler = CTMHandler(out)
     ok_(handler.title is None)
     handler.title = u'Test'
