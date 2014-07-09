@@ -174,7 +174,7 @@ class CTMHandler(mio_handler.HamsterMapHandler):
                 logging.warn(msg)
             else:
                 self._something_written = True
-                self._out.write('~ ')
+                self._out.write(u'~ ')
                 self._write_topic_ref(reifier)
                 self._out.write(_NL)
 
@@ -279,7 +279,7 @@ class CTMHandler(mio_handler.HamsterMapHandler):
             if i > 0:
                 write(u', ')
             write_topic_ref(role.player)
-            i+=1
+            i += 1
         write(u')')
         write(_END_OF_STATEMENT)
         return True
@@ -397,7 +397,7 @@ class CTMHandler(mio_handler.HamsterMapHandler):
                 i -= 1
                 write(u': %s' % variables[0])
                 want_comma = True
-            i+=1
+            i += 1
         write(u')%s' % _NL)
         write(u'end%s%s' % (_NL, _NL))
 
@@ -406,7 +406,7 @@ class CTMHandler(mio_handler.HamsterMapHandler):
 
     def _write_reifier(self, reifier):
         if reifier:
-            self._out.write(' ~ ')
+            self._out.write(u' ~ ')
             self._write_topic_ref(reifier)
 
     def _write_scope(self, scope):
@@ -451,9 +451,9 @@ class CTMHandler(mio_handler.HamsterMapHandler):
     def _write_topic_ref(self, topicref):
         kind, iri = topicref
         if kind == SUBJECT_LOCATOR:
-            self._out.write('= ')
+            self._out.write(u'= ')
         elif kind == ITEM_IDENTIFIER:
-            self._out.write('^ ')
+            self._out.write(u'^ ')
         self._write_uri(iri)
 
     def _write_string(self, value):
@@ -491,7 +491,7 @@ class CTMHandler(mio_handler.HamsterMapHandler):
             if iri in self._pending_prefix_iris or len(iri) < 5:
                 return
             if iri in self._prefix_iri_candidates or is_valid_local_part(lp):
-                self._prefix_iri_candidates[iri]+=1
+                self._prefix_iri_candidates[iri] += 1
                 if self._prefix_iri_candidates[iri] >= self._min_prefix:
                     self._pending_prefix_iris.append(iri)
                     del self._prefix_iri_candidates[iri]
