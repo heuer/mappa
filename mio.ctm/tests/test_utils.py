@@ -124,7 +124,7 @@ def test_find_variables():
     def check(expected, res):
         eq_(expected, res)
     data = u"$a, $b, djddjd, $c, $______-d"
-    res = (u'$a', '$b', '$c', '$______-d')
+    res = (u'$a', u'$b', u'$c', u'$______-d')
     for i, v in enumerate(find_variables(data)):
         yield check, res[i], v
 
@@ -133,7 +133,7 @@ def test_find_variables_omit_dollar():
     def check(expected, res):
         eq_(expected, res)
     data = u"$a, $b, djddjd, $c, $______-d"
-    res = (u'a', 'b', 'c', '______-d')
+    res = (u'a', u'b', u'c', u'______-d')
     for i, v in enumerate(find_variables(data, True)):
         yield check, res[i], v
 
