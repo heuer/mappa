@@ -6,7 +6,9 @@
 # BSD license.
 #
 """\
+RDF mapping interfaces.
 
+For documentation purposes only.
 
 :author:       Lars Heuer (heuer[at]semagia.com)
 :organization: Semagia - http://www.semagia.com/
@@ -131,10 +133,13 @@ class IMappingReader(Interface):
     """
     def read(source):
         """\
-        
+        Reads the mapping `source` and issues events to the mapping handler.
+
+        `source`
+            An instance of ``tm.Source``.
         """
 
-    mapping_handler = Attribute("Returns/sets the mapping handler")
+    handler = Attribute("Returns/sets the mapping handler")
     prefix_listener = Attribute("Returns/sets the prefix listener")
 
 

@@ -40,7 +40,7 @@ setup(
     license='BSD',
     packages=find_packages(),
     namespace_packages=['mio'],
-    entry_points = """
+    entry_points="""
     [mio.reader]
     n3 = mio.rdf.n3
     n-triples = mio.rdf.nt
@@ -52,7 +52,7 @@ setup(
     include_package_data=True,
     package_data={'': ['*.txt']},
     cmdclass={'sdist': sdist},
-    install_requires=['tm>=0.1.7', 'rdflib>=3.1.0'],
+    install_requires=['tm>=0.1.7', 'rdflib>=4.1.2'],
     keywords=['Topic Maps', 'Semantic Web', 'RDF'],
     classifiers=[
         'Intended Audience :: Developers',

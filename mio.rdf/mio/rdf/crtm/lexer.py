@@ -58,30 +58,30 @@ tokens = tuple(_DIRECTIVES.values()) + tuple(_KEYWORDS.values()) + tuple(set(_KE
     u'AT', u'HYPHEN', u'COLON', u'COMMA', u'SEMI', u'EQ',
     )
 
-t_LPAREN = r'\('
-t_RPAREN = r'\)'
-t_LCURLY = r'{'
-t_RCURLY = r'}'
-t_COMMA = r','
-t_HYPHEN = '-'
-t_AT = r'@'
-t_lang_EQ  = r'='
+t_LPAREN = ur'\('
+t_RPAREN = ur'\)'
+t_LCURLY = ur'{'
+t_RCURLY = ur'}'
+t_COMMA = ur','
+t_HYPHEN = u'-'
+t_AT = ur'@'
+t_lang_EQ = ur'='
 
 states = (
-  ('kw', 'exclusive'),
-  ('lang', 'exclusive'),
+  (u'kw', u'exclusive'),
+  (u'lang', u'exclusive'),
 )
 
 
 def t_error(t):
-    raise mio.MIOException('Unknown token "%r"' % t)
+    raise mio.MIOException(u'Unknown token "%r"' % t)
 
 t_lang_error = t_error
 t_kw_error = t_error
 
 
 def t_comment(t):
-    r'\#[^\r\n]*'
+    ur'\#[^\r\n]*'
 
 
 def t_ws(t):
@@ -90,14 +90,14 @@ def t_ws(t):
 
 
 def t_SEMI(t):
-    r';'
-    t.lexer.begin('lang')
+    ur';'
+    t.lexer.begin(u'lang')
     return t
 
 
 def t_COLON(t):
-    r':'
-    t.lexer.begin('kw')
+    ur':'
+    t.lexer.begin(u'kw')
     return t
 
 
@@ -105,7 +105,7 @@ def t_COLON(t):
 def t_directive(t):
     t.type = _DIRECTIVES[t.value]
     if t.value == u'%langtoscope':
-        t.lexer.begin('lang')
+        t.lexer.begin(u'lang')
     return t
 
 
@@ -113,6 +113,7 @@ def t_directive(t):
 def t_IRI(t):
     t.value = t.value[1:-1]
     return t
+
 
 @TOKEN(_qname)
 def t_QNAME(t):
@@ -124,39 +125,43 @@ def t_QNAME(t):
 def t_IDENT(t):
     return t
 
+
 # State LANG
 def t_lang_ws(t):
-    r'\s+'
+    ur'\s+'
     t.lexer.lineno += t.value.count(u'\n')
 
-@TOKEN('|'.join(_KEYWORDS.keys()))
+
+@TOKEN(u'|'.join(_KEYWORDS.keys()))
 def t_lang_commons(t):
     t.type = _KEYWORDS[t.value]
     if t.value in (u'true', u'false'):
-        t.lexer.begin('INITIAL')
+        t.lexer.begin(u'INITIAL')
     return t
 
 
 def t_lang_end(t):
-    r'.'
+    ur'.'
     t.lexer.lexpos = t.lexpos-1 # Pushback one char
-    t.lexer.begin('INITIAL')
+    t.lexer.begin(u'INITIAL')
+
 
 # State KW
 def t_kw_ws(t):
-    r'\s+'
+    ur'\s+'
     t.lexer.lineno += t.value.count(u'\n')
 
-@TOKEN('|'.join(_KEYWORDS_MAPPING.keys()))
+
+@TOKEN(u'|'.join(_KEYWORDS_MAPPING.keys()))
 def t_kw_keyword(t):
     t.type = _KEYWORDS_MAPPING[t.value]
     return t
 
 
 def t_kw_end(t):
-    r'.'
+    ur'.'
     t.lexer.lexpos = t.lexpos-1 # Pushback one char
-    t.lexer.begin('INITIAL')
+    t.lexer.begin(u'INITIAL')
 
 
 if __name__ == '__main__':
@@ -181,6 +186,6 @@ if __name__ == '__main__':
         lexer.input(data)
         while True:
             tok = lexer.token()
-            if not tok: break
+            if not tok:
+                break
             print(tok)
-    

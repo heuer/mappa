@@ -13,7 +13,9 @@ Compact RTM (CRTM) parser.
 :license:      BSD license
 """
 from tm import mio
-from .lexer import tokens #pylint: disable-msg=E0611, F0401, W0611
+from .lexer import tokens
+assert tokens
+
 
 class Context(object):
     """\
@@ -116,12 +118,14 @@ def p_noop(p): # Handles all grammar rules where the result is unimportant
     """
     p[0] = None
 
+
 def p__process_characteristic(p):
     """\
     _process_characteristic
                 : 
     """
     _ctx(p).process_characteristic()
+
 
 def p__anonymous_prefix(p):
     """\
@@ -133,11 +137,13 @@ def p__anonymous_prefix(p):
     ctx.reset()
     ctx.register_anonymous_prefix(p[-2])
 
+
 def p__is_name(p):
     """\
     _is_name    :
     """
     _ctx(p).is_name = True
+
 
 def p_include_directive(p):
     """\
@@ -145,17 +151,20 @@ def p_include_directive(p):
     """
     _ctx(p).include(p[2])
 
+
 def p_lang2scope_directive(p):
     """\
     directive   : DIR_LANG2SCOPE bool
     """
     _ctx(p).global_lang2scope = p[2]
 
+
 def p_prefix_directive(p):
     """\
     prefix_directive : DIR_PREFIX IDENT IRI
     """
     _ctx(p).register_prefix(p[2], p[3])
+
 
 def p__remember_predicate(p):
     """\
@@ -166,6 +175,7 @@ def p__remember_predicate(p):
     ctx.add_predicate()
     ctx.reset()
 
+
 def p_local(p):
     """\
     local       : LOCAL_IDENT
@@ -174,11 +184,13 @@ def p_local(p):
     ctx = _ctx(p)
     p[0] = ctx.resolve_qname(p[1])
 
+
 def p_identity_sid(p):
     """\
     identity    : KW_SID
     """
     _ctx(p).process_sids()
+
 
 def p_identity_slo(p):
     """\
@@ -186,23 +198,27 @@ def p_identity_slo(p):
     """
     _ctx(p).process_slos()
 
+
 def p_identity_iid(p):
     """\
     identity    : KW_IID
     """
     _ctx(p).process_iids()
-        
+
+
 def p_isa(p):
     """\
     isa         : KW_ISA opt_scope
     """
     _ctx(p).process_type_instance()
 
+
 def p_ako(p):
     """\
     ako         : KW_AKO opt_scope
     """
     _ctx(p).process_supertype_subtype()
+
 
 def p_char_body_qiri(p):
     """\
@@ -212,6 +228,7 @@ def p_char_body_qiri(p):
     ctx.process_characteristic()
     ctx.reset()
     ctx.next_predicate = p[1]
+
 
 def p_opt_lang(p):
     """\
@@ -223,12 +240,14 @@ def p_opt_lang(p):
     else:
         _ctx(p).lang2scope = False
 
+
 def p_bool(p):
     """\
     bool        : KW_TRUE
                 | KW_FALSE
     """
     p[0] = p[1] == 'true'
+
 
 def p_association(p):
     """\
@@ -237,11 +256,13 @@ def p_association(p):
     """
     _ctx(p).process_association()
 
+
 def p_roles(p):
     """\
     roles       : LPAREN qiri COMMA qiri RPAREN
     """
     p[0] = p[2], p[4]
+
 
 def p_type(p):
     """\
@@ -249,11 +270,13 @@ def p_type(p):
     """
     _ctx(p).type = p[1]
 
+
 def p_scope(p):
     """\
     scope       : AT qiris
     """
     _ctx(p).scope = p[2]
+
 
 def p_qiri_qname(p):
     """\
@@ -261,11 +284,13 @@ def p_qiri_qname(p):
     """
     _ctx(p).resolve_qname(p[1])    
 
+
 def p_qiri_iri(p):
     """\
     qiri        : IRI
     """
     _ctx(p).resolve_iri(p[1])
+
 
 def p_qiris(p):
     """\
@@ -285,13 +310,15 @@ def _parser(p):
     """
     return p.parser
 
+
 def _handler(p):
     return _ctx(p).handler
+
 
 def _ctx(p):
     return _parser(p).context
 
+
 def p_error(p):
     #TODO: Better error reporting (line, col, token)
     raise mio.MIOException('Unexpected token "%r"' % p)
-
