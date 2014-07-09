@@ -91,4 +91,6 @@ VCARD = Namespace(u'http://www.w3.org/2006/vcard/ns#')
 VCard namespace.
 """
 
+MIO_PROPS = Namespace(u'http://psi.semagia.com/mio/property/')
+
 del Namespace
