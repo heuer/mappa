@@ -12,60 +12,69 @@ Tests against the XTM content handler.
 :organization: Semagia - http://www.semagia.com/
 :license:      BSD license
 """
-from unittest import TestCase
+from nose.tools import ok_
 from tm import Source
 from tm.mio.handler import MapHandler
 from mio.xtm import create_deserializer
 
 
-#pylint: disable-msg=W0212
-class TestXTMDeserializer(TestCase):
-    
-    def _parse(self, source):
-        deser = create_deserializer()
-        deser.handler = MapHandler()
-        deser.parse(Source(data=source, iri='http://www.semagia.com/'))
-        return deser
-    
-    def test_illegalstate(self):
-        deser = create_deserializer()
-        try:
-            deser.version
-            self.fail('The version should not be available yet')
-        except AttributeError:
-            pass
+fail = AssertionError
 
-    def test_xtm10(self):
-        deser = create_deserializer(version='1.0')
-        self.assert_('1.0' == deser.version)
 
-    def test_xtm20(self):
-        deser = create_deserializer(version='2.0')
-        self.assert_('2.0' == deser.version)
+def _parse(source):
+    deser = create_deserializer()
+    deser.handler = MapHandler()
+    deser.parse(Source(data=source, iri='http://www.semagia.com/'))
+    return deser
 
-    def test_xtm10_detection(self):
-        deser = self._parse(u'<topicMap xmlns="http://www.topicmaps.org/xtm/1.0/"></topicMap>')
-        self.assert_('1.0' == deser.version)
 
-    def test_xtm10_detection2(self):
-        deser = self._parse(u'<topicMap></topicMap>')
-        self.assert_('1.0' == deser.version)
+def test_illegalstate():
+    deser = create_deserializer()
+    try:
+        deser.version
+        fail('The version should not be available yet')
+    except AttributeError:
+        pass
 
-    def test_xtm20_detection1(self):
-        deser = self._parse(u'<topicMap version="2.0"></topicMap>')
-        self.assert_('2.0' == deser.version)
 
-    def test_xtm20_detection2(self):
-        deser = self._parse(u'<topicMap xmlns="http://www.topicmaps.org/xtm/" version="2.0"></topicMap>')
-        self.assert_('2.0' == deser.version)
+def test_xtm10():
+    deser = create_deserializer(version='1.0')
+    ok_('1.0' == deser.version)
 
-    def test_xtm21_detection1(self):
-        deser = self._parse(u'<topicMap version="2.1"></topicMap>')
-        self.assert_('2.1' == deser.version)
 
-    def test_xtm21_detection2(self):
-        deser = self._parse(u'<topicMap xmlns="http://www.topicmaps.org/xtm/" version="2.1"></topicMap>')
-        self.assert_('2.1' == deser.version)
+def test_xtm20():
+    deser = create_deserializer(version='2.0')
+    ok_('2.0' == deser.version)
+
+
+def test_xtm10_detection():
+    deser = _parse(u'<topicMap xmlns="http://www.topicmaps.org/xtm/1.0/"></topicMap>')
+    ok_('1.0' == deser.version)
+
+
+def test_xtm10_detection2():
+    deser = _parse(u'<topicMap></topicMap>')
+    ok_('1.0' == deser.version)
+
+
+def test_xtm20_detection1():
+    deser = _parse(u'<topicMap version="2.0"></topicMap>')
+    ok_('2.0' == deser.version)
+
+
+def test_xtm20_detection2():
+    deser = _parse(u'<topicMap xmlns="http://www.topicmaps.org/xtm/" version="2.0"></topicMap>')
+    ok_('2.0' == deser.version)
+
+
+def test_xtm21_detection1():
+    deser = _parse(u'<topicMap version="2.1"></topicMap>')
+    ok_('2.1' == deser.version)
+
+
+def test_xtm21_detection2():
+    deser = _parse(u'<topicMap xmlns="http://www.topicmaps.org/xtm/" version="2.1"></topicMap>')
+    ok_('2.1' == deser.version)
 
 
 if __name__ == '__main__':
