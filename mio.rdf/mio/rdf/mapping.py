@@ -146,7 +146,7 @@ class AssociationMapper(AbstractScopeTypeAwareMapper):
         """\
         
         """
-        super(AssociationMapper, self).__init__('rtm:association', scope=scope, type=type)
+        super(AssociationMapper, self).__init__(u'rtm:association', scope=scope, type=type)
         if not subject_role:
             raise mio.MIOException('The subject role must be provided')
         if not object_role:
@@ -171,7 +171,7 @@ class OccurrenceMapper(AbstractScopeTypeAwareMapper):
         """\
 
         """
-        super(OccurrenceMapper, self).__init__('rtm:occurrence', scope=scope, type=type)
+        super(OccurrenceMapper, self).__init__(u'rtm:occurrence', scope=scope, type=type)
         self._lang2scope = lang2scope
 
     def handle_literal(self, handler, error_handler, subject, predicate_iri, value, datatype, language):
@@ -196,7 +196,7 @@ class NameMapper(AbstractScopeTypeAwareMapper):
         """\
 
         """
-        super(NameMapper, self).__init__('rtm:basename', scope=scope, type=type)
+        super(NameMapper, self).__init__(u'rtm:basename', scope=scope, type=type)
         self._lang2scope = lang2scope
 
     def handle_literal(self, handler, error_handler, subject, predicate_iri, value, datatype, language):
@@ -217,11 +217,11 @@ class TypeInstanceMapper(AbstractMapper):
         return cls._the_instance
 
     def __init__(self):
-        super(TypeInstanceMapper, self).__init__('rtm:instance-of')
+        super(TypeInstanceMapper, self).__init__(u'rtm:instance-of')
 
     def handle_object(self, handler, error_handler, subject, predicate_iri, obj, is_blank_node):
         handler.startIsa()
-        handler.topicRef(_reference_from_object_iri(obj, is_blank_node));
+        handler.topicRef(_reference_from_object_iri(obj, is_blank_node))
         handler.endIsa()
 
 
@@ -230,7 +230,7 @@ class TypeInstanceScopedMapper(AbstractScopeTypeAwareMapper):
     rtm:instance-of implementation with an associated scope.
     """
     def __init__(self, scope):
-        super(TypeInstanceScopedMapper, self).__init__('rtm:instance-of', scope=scope, type=_TYPE_INSTANCE)
+        super(TypeInstanceScopedMapper, self).__init__(u'rtm:instance-of', scope=scope, type=_TYPE_INSTANCE)
 
     def handle_object(self, handler, error_handler, subject, predicate_iri, obj, is_blank_node):
         handler.startAssociation()
@@ -246,7 +246,7 @@ class SupertypeSubtypeMapper(AbstractScopeTypeAwareMapper):
     rtm:subtype-of implementation with an optional scope.
     """
     def __init__(self, scope):
-        super(SupertypeSubtypeMapper, self).__init__('rtm:subtype-of', scope=scope, type=_SUPERTYPE_SUBTYPE)
+        super(SupertypeSubtypeMapper, self).__init__(u'rtm:subtype-of', scope=scope, type=_SUPERTYPE_SUBTYPE)
 
     def handle_object(self, handler, error_handler, subject, predicate_iri, obj, is_blank_node):
         handler.startAssociation()
@@ -268,9 +268,9 @@ class IdentityMapper(AbstractMapper):
         return getattr(cls, attr)
 
     def __init__(self, kind):
-        super(IdentityMapper, self).__init__(kind == mio.SUBJECT_IDENTIFIER and 'rtm:subject-identifier' \
-                                             or kind == mio.SUBJECT_LOCATOR and 'rtm:subject-locator' \
-                                             or kind == mio.ITEM_IDENTIFIER and 'rtm:item-identifier')
+        super(IdentityMapper, self).__init__(kind == mio.SUBJECT_IDENTIFIER and u'rtm:subject-identifier' \
+                                             or kind == mio.SUBJECT_LOCATOR and u'rtm:subject-locator' \
+                                             or kind == mio.ITEM_IDENTIFIER and u'rtm:item-identifier')
         self._kind = kind
 
     def handle_object(self, handler, error_handler, subject, predicate_iri, obj, is_blank_node):
