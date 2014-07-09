@@ -102,115 +102,118 @@ def test_xtm_21():
         yield check_handler, xtm.create_deserializer, filename
 
 
-class TestPrefixes:
+def make_handler(out=None):
+    if out == None:
+        out = io.BytesIO()
+    return CTMHandler(out)
 
-    def make_handler(self, out=None):
-        if out == None:
-            out = io.BytesIO()
-        return CTMHandler(out)
 
-    def test_registering(self):
-        handler = self.make_handler()
-        eq_(0, len(handler.prefixes))
-        prefix, iri = 'base', 'http://www.semagia.com/base'
-        handler.add_prefix(prefix, iri)
-        prefixes = handler.prefixes
-        eq_(1, len(prefixes))
-        eq_(iri, prefixes[prefix])
-        new_iri = iri + '/something-different'
-        prefixes[prefix] = new_iri
-        eq_(new_iri, prefixes[prefix])
-        # The IRI must not have changed at the handler
-        eq_(iri, handler.prefixes[prefix])
+def test_registering():
+    handler = make_handler()
+    eq_(0, len(handler.prefixes))
+    prefix, iri = 'base', 'http://www.semagia.com/base'
+    handler.add_prefix(prefix, iri)
+    prefixes = handler.prefixes
+    eq_(1, len(prefixes))
+    eq_(iri, prefixes[prefix])
+    new_iri = iri + '/something-different'
+    prefixes[prefix] = new_iri
+    eq_(new_iri, prefixes[prefix])
+    # The IRI must not have changed at the handler
+    eq_(iri, handler.prefixes[prefix])
+    handler.remove_prefix(prefix)
+    ok_(prefix not in handler.prefixes)
+    handler.add_prefix(prefix, iri)
+    eq_(iri, handler.prefixes[prefix])
+    handler.add_prefix(prefix, iri)
+    eq_(iri, handler.prefixes[prefix])
+    handler.add_prefix(prefix, new_iri)
+    eq_(new_iri, handler.prefixes[prefix])
+
+
+def test_registering_illegal():
+    handler = make_handler()
+    try:
+        handler.add_prefix('.aaa', 'http://www.semagia.com/')
+        fail('Expected an exception, illegal CTM identifier as prefix')
+    except ValueError:
+        pass
+    try:
+        handler.add_prefix('', 'http://www.semagia.com/')
+        fail('Expected an exception, illegal CTM identifier as prefix')
+    except ValueError:
+        pass
+    try:
+        handler.add_prefix(None, 'http://www.semagia.com/')
+        fail('Expected an exception, illegal CTM identifier as prefix')
+    except ValueError:
+        pass
+    try:
+        handler.add_prefix('a', '')
+        fail('Expected an exception, illegal CTM IRI')
+    except ValueError:
+        pass
+    try:
+        handler.add_prefix('a', None)
+        fail('Expected an exception, illegal CTM IRI')
+    except ValueError:
+        pass
+    try:
+        handler.add_prefix('a', 'http://www.{semagia}.com/')
+        fail('Expected an exception, illegal CTM IRI')
+    except ValueError:
+        pass
+
+
+def test_illegal_removal():
+    out = io.BytesIO()
+    handler = make_handler(out)
+    prefix, iri = 'base', 'http://www.semagia.com/base'
+    handler.add_prefix(prefix, iri)
+    handler.startTopicMap()
+    try:
         handler.remove_prefix(prefix)
-        ok_(prefix not in handler.prefixes)
-        handler.add_prefix(prefix, iri)
-        eq_(iri, handler.prefixes[prefix])
-        handler.add_prefix(prefix, iri)
-        eq_(iri, handler.prefixes[prefix])
+        fail('A prefix must not be removable once it is serialized')
+    except MIOException:
+        pass
+
+
+def test_illegal_add():
+    out = io.BytesIO()
+    handler = make_handler(out)
+    prefix, iri = 'base', 'http://www.semagia.com/base'
+    handler.add_prefix(prefix, iri)
+    handler.startTopicMap()
+    # Legal: Reusing the prefix with the same IRI is allowed
+    handler.add_prefix(prefix, iri)
+    new_iri = iri + '/something-different'
+    try:
         handler.add_prefix(prefix, new_iri)
-        eq_(new_iri, handler.prefixes[prefix])
-
-    def test_registering_illegal(self):
-        handler = self.make_handler()
-        try:
-            handler.add_prefix('.aaa', 'http://www.semagia.com/')
-            fail('Expected an exception, illegal CTM identifier as prefix')
-        except ValueError:
-            pass
-        try:
-            handler.add_prefix('', 'http://www.semagia.com/')
-            fail('Expected an exception, illegal CTM identifier as prefix')
-        except ValueError:
-            pass
-        try:
-            handler.add_prefix(None, 'http://www.semagia.com/')
-            fail('Expected an exception, illegal CTM identifier as prefix')
-        except ValueError:
-            pass
-        try:
-            handler.add_prefix('a', '')
-            fail('Expected an exception, illegal CTM IRI')
-        except ValueError:
-            pass
-        try:
-            handler.add_prefix('a', None)
-            fail('Expected an exception, illegal CTM IRI')
-        except ValueError:
-            pass
-        try:
-            handler.add_prefix('a', 'http://www.{semagia}.com/')
-            fail('Expected an exception, illegal CTM IRI')
-        except ValueError:
-            pass
-
-    def test_illegal_removal(self):
-        out = io.BytesIO()
-        handler = self.make_handler(out)
-        prefix, iri = 'base', 'http://www.semagia.com/base'
+        fail('A prefix must not be modifiable once it is serialized')
+    except MIOException:
+        pass
+    out = io.BytesIO()
+    handler = make_handler(out)
+    handler.startTopicMap()
+    handler.startTopic((SUBJECT_IDENTIFIER, 'http://psi.semagia.com/bla'))
+    try:
         handler.add_prefix(prefix, iri)
-        handler.startTopicMap()
-        try:
-            handler.remove_prefix(prefix)
-            fail('A prefix must not be removable once it is serialized')
-        except MIOException:
-            pass
+        fail("Within a topic, adding a prefix shouldn't be allowed")
+    except MIOException:
+        pass
 
-    def test_illegal_add(self):
-        out = io.BytesIO()
-        handler = self.make_handler(out)
-        prefix, iri = 'base', 'http://www.semagia.com/base'
-        handler.add_prefix(prefix, iri)
-        handler.startTopicMap()
-        # Legal: Reusing the prefix with the same IRI is allowed
-        handler.add_prefix(prefix, iri)
-        new_iri = iri + '/something-different'
-        try:
-            handler.add_prefix(prefix, new_iri)
-            fail('A prefix must not be modifiable once it is serialized')
-        except MIOException:
-            pass
-        out = io.BytesIO()
-        handler = self.make_handler(out)
-        handler.startTopicMap()
-        handler.startTopic((SUBJECT_IDENTIFIER, 'http://psi.semagia.com/bla'))
-        try:
-            handler.add_prefix(prefix, iri)
-            fail("Within a topic, adding a prefix shouldn't be allowed")
-        except MIOException:
-            pass
 
-    def test_legal_add_within_stream(self):
-        out = io.BytesIO()
-        handler = self.make_handler(out)
-        prefix, iri = 'base', 'http://www.semagia.com/base'
-        handler.add_prefix(prefix, iri)
-        handler.startTopicMap()
-        prefix2, iri2 = 'p2', 'http://www.semagia.com/something-different'
-        handler.add_prefix(prefix2, iri2)
-        handler.endTopicMap()
-        ok_('%%prefix %s <%s>' % (prefix, iri) in out.getvalue())
-        ok_('%%prefix %s <%s>' % (prefix2, iri2) in out.getvalue())
+def test_legal_add_within_stream():
+    out = io.BytesIO()
+    handler = make_handler(out)
+    prefix, iri = 'base', 'http://www.semagia.com/base'
+    handler.add_prefix(prefix, iri)
+    handler.startTopicMap()
+    prefix2, iri2 = 'p2', 'http://www.semagia.com/something-different'
+    handler.add_prefix(prefix2, iri2)
+    handler.endTopicMap()
+    ok_('%%prefix %s <%s>' % (prefix, iri) in out.getvalue())
+    ok_('%%prefix %s <%s>' % (prefix2, iri2) in out.getvalue())
 
 
 def test_author():
