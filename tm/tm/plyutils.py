@@ -22,8 +22,6 @@ import tm.ply.lex as lex
 #   java.lang.ClassFormatError: Invalid method Code length <number-here>
 _yacc_pickle = sys.platform[:4] == 'java'
 del sys
-# For some reason pylint thinks that ply.lex and ply.yacc do not exist
-# pylint: disable-msg=F0401, E0611
 
 
 def make_lexer(module, debug=False, optimize=True):
@@ -58,6 +56,8 @@ def _make_parser_for_sdist(module):
     """\
     Prepare PLY parser modules for source distribution.
     """
+    #TODO: Provide pickled parser, too?
+    #TODO: Delete previously generated parsetab
     import re
     make_parser(module)
     filename = os.path.join(_get_tablocation(module), 'parser_parsetab.py')
