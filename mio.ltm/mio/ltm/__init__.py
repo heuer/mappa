@@ -23,6 +23,7 @@ from mio.ltm.runtime import LTMContext # pylint: disable-msg=E0611
 
 __all__ = ['create_deserializer']
 
+
 def create_deserializer(legacy=False, **kw):
     """\
     
