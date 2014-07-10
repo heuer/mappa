@@ -14,10 +14,11 @@ tolog parser.
 """
 from __future__ import absolute_import
 from tm.mql import InvalidQueryError
-from mql.tolog import consts, lexer
+from mql.tolog import consts
+from mql.tolog.lexer import tokens
 from mql.tolog.utils import is_builtin_predicate, is_module_iri
+assert tokens
 
-tokens = lexer.tokens # Just to get rid of unused import warnings
 
 def initialize_parser(parser, handler, tolog_plus=False):
     """\
@@ -30,6 +31,7 @@ def initialize_parser(parser, handler, tolog_plus=False):
     parser.prefixes = {}
     parser.rule_names = []
     parser.tolog_plus = tolog_plus
+
 
 def p_noop(p): # Handles all grammar rules where the result is not of interest
     """\
@@ -95,6 +97,7 @@ def p_noop(p): # Handles all grammar rules where the result is not of interest
     """
     p[0] = None
 
+
 def p_create(p):
     """\
     create          : KW_CREATE qiri
@@ -104,11 +107,13 @@ def p_create(p):
     _to_event(handler, p[2])
     handler.endCreate()
 
+
 def p_load(p):
     """\
     load            : KW_LOAD qiri _start_load opt_into
     """
     _handler(p).endLoad()
+
 
 def p__start_load(p): # Inline action
     """\
@@ -117,7 +122,8 @@ def p__start_load(p): # Inline action
     handler = _handler(p)
     handler.startLoad()
     _to_event(handler, p[-1])
-    
+
+
 def p_drop(p):
     """\
     drop            : KW_DROP qiris
@@ -127,12 +133,14 @@ def p_drop(p):
     for item in p[2]:
         _to_event(handler, item)
     handler.endDrop()
-    
+
+
 def p_delete(p):
     """\
     delete          : KW_DELETE _start_delete delete_element opt_from opt_where
     """
     _handler(p).endDelete()
+
 
 def p__start_delete(p): # Inline action
     """\
@@ -154,6 +162,7 @@ def p_function_call(p):
     _arguments_to_events(handler, p[3], stringtoiri=name in _IRI_FUNCTIONS)
     handler.endFunction()
 
+
 def p_paramlist(p):
     """\
     paramlist       : param
@@ -165,6 +174,7 @@ def p_paramlist(p):
         p[0] = p[1]
         p[0].append(p[3])
 
+
 def p_param(p):
     """\
     param           : variable
@@ -172,11 +182,13 @@ def p_param(p):
     """
     p[0] = p[1]
 
+
 def p_param_STRING(p):
     """\
     param           : STRING
     """
     p[0] = consts.STRING, p[1]
+
 
 def p_insert(p):
     """\
@@ -184,12 +196,14 @@ def p_insert(p):
     """
     _handler(p).endInsert()
 
+
 def p__start_insert(p): # Inline action
     """\
     _start_insert   : 
     """
     _handler(p).startInsert()
     
+
 def p_into_statement(p):
     """\
     into_statement  : KW_INTO qiris
@@ -199,6 +213,7 @@ def p_into_statement(p):
     for item in p[2]:
         _to_event(handler, item)
     handler.endInto()
+
 
 def p_qiris(p):
     """\
@@ -211,6 +226,7 @@ def p_qiris(p):
         p[0] = p[1]
         p[0].append(p[3])
         
+
 def p_fragment(p):
     """\
     fragment        : TM_FRAGMENT
@@ -224,11 +240,13 @@ def p_fragment(p):
     handler.fragmentContent(fragment)
     handler.endFragment()
 
+
 def p_update(p):
     """\
     update          : KW_UPDATE _start_update function_call opt_from opt_where
     """
     _handler(p).endUpdate()
+
 
 def p__start_update(p): # Inline action
     """\
@@ -236,17 +254,20 @@ def p__start_update(p): # Inline action
     """
     _handler(p).startUpdate()
 
+
 def p_merge(p):
     """\
     merge           : KW_MERGE _start_merge literal COMMA literal opt_from opt_where
     """
     _handler(p).endMerge()
 
-def p__start_merge(p): # Inline action
+
+def p__start_merge(p):  # Inline action
     """\
     _start_merge    :
     """
     _handler(p).startMerge()
+
 
 def p_literal_variable(p):
     """\
@@ -254,11 +275,13 @@ def p_literal_variable(p):
     """
     _handler(p).variable(p[1])
 
+
 def p_literal_topic_ref(p):
     """\
     literal         : ref
     """
     _to_event(_handler(p), p[1])
+
 
 def p_from_clause(p):
     """\
@@ -270,17 +293,20 @@ def p_from_clause(p):
         _to_event(handler, item)
     handler.endFrom()
 
+
 def p_where_clause(p):
     """\
     where_clause    : KW_WHERE _start_where clauselist    
     """
     _handler(p).endWhere()
 
-def p__start_where(p): # Inline action
+
+def p__start_where(p):  # Inline action
     """\
     _start_where    : 
     """
     _handler(p).startWhere()
+
 
 def p_using_directive(p):
     """\
@@ -289,11 +315,13 @@ def p_using_directive(p):
     kind, iri = p[4]
     _handle_prefix(p.parser, p[2], iri, kind)
 
+
 def p_prefix_directive(p):
     """\
     prefix_directive : DIR_PREFIX IDENT IRI
     """
     _handle_prefix(p.parser, p[2], p[3])
+
 
 def p_import_directive(p):
     """\
@@ -305,6 +333,7 @@ def p_import_directive(p):
     if not is_module_iri(iri):
         pass #TODO: Import 
 
+
 def p_version_directive(p):
     """\
     version_directive : DIR_VERSION DECIMAL
@@ -315,11 +344,13 @@ def p_version_directive(p):
     p.parser.tolog_plus = True
     p.lexer.tolog_plus = True
 
+
 def p_base_directive(p):
     """\
     base_directive  : DIR_BASE IRI
     """
     _handler(p).base(p[2])
+
 
 def p_x_directive(p):
     """\
@@ -327,11 +358,13 @@ def p_x_directive(p):
     """
     _handler(p).xdirective(p[1], p[2])
 
+
 def p_select_query(p):
     """\
     select_query    : KW_SELECT _start_select select_elements opt_from where_clause opt_tail opt_qm
     """
     _handler(p).endSelect()
+
 
 def p__start_select(p):
     """\
@@ -339,11 +372,13 @@ def p__start_select(p):
     """
     _handler(p).startSelect()
 
+
 def p_select_element(p):
     """\
     select_element  : VARIABLE
     """
     _handler(p).variable(p[1])
+
 
 def p_ref(p):
     """\
@@ -351,17 +386,20 @@ def p_ref(p):
     """
     p[0] = p[1]
 
+
 def p_qiri_IRI(p):
     """\
     qiri            : IRI
     """
     p[0] = consts.IRI, p[1]
 
+
 def p_qiri_qname(p):
     """\
     qiri            : qname
     """
     p[0] = p[1]
+
 
 def p_iri_or_string(p):
     """\
@@ -370,11 +408,13 @@ def p_iri_or_string(p):
     """
     p[0] = p[1]
 
+
 def p_ref_IDENT(p):
     """\
     ref             : IDENT
     """
     p[0] = consts.IDENT, p[1]
+
 
 def p_ref_OID(p):
     """\
@@ -382,11 +422,13 @@ def p_ref_OID(p):
     """
     p[0] = consts.OID, p[1]
 
+
 def p_variable(p):
     """\
     variable        : VARIABLE
     """
     p[0] = consts.VARIABLE, p[1]
+
 
 def p_qname_QNAME(p):
     """\
@@ -398,6 +440,7 @@ def p_qname_QNAME(p):
         raise InvalidQueryError('The prefix "%s" is not defined' % prefix)
     p[0] = consts.QNAME, (res[0], prefix, lp)
 
+
 def p_qname_CURIE(p):
     """\
     qname           : CURIE
@@ -408,6 +451,7 @@ def p_qname_CURIE(p):
         raise InvalidQueryError('The prefix "%s" is not defined' % prefix)
     p[0] = consts.CURIE, (res[0], prefix, lp)
 
+
 def p_uri_ref(p):
     """\
     uri_ref         : sid
@@ -416,17 +460,20 @@ def p_uri_ref(p):
     """
     p[0] = p[1]
 
+
 def p_sid_SID(p):
     """\
     sid             : SID
     """
     p[0] = consts.SID, p[1]
 
+
 def p_sid_qiri(p):
     """\
     sid             : qiri
     """
     p[0] = p[1]
+
 
 def p_slo(p):
     """\
@@ -435,12 +482,14 @@ def p_slo(p):
     """
     p[0] = consts.SLO, p[len(p)-1]
 
+
 def p_slo_QNAME(p):
     """\
     slo         : EQ qname
     """
     kind, (k, prefix, lp) = p[2]
     p[0] = kind, (consts.SLO, prefix, lp)
+
 
 def p_iid(p):
     """\
@@ -449,6 +498,7 @@ def p_iid(p):
     """
     p[0] = consts.IID, p[len(p)-1]
 
+
 def p_iid_QNAME(p):
     """\
     iid            : CIRCUMFLEX qname
@@ -456,11 +506,13 @@ def p_iid_QNAME(p):
     kind, (k, prefix, lp) = p[2]
     p[0] = kind, (consts.IID, prefix, lp)    
 
+
 def p_count_clause(p):
     """\
     count_clause    : KW_COUNT LPAREN VARIABLE RPAREN
     """
     _handler(p).count(p[3])
+
 
 def p_order_clause(p):
     """\
@@ -468,11 +520,13 @@ def p_order_clause(p):
     """
     _handler(p).endOrderBy()
 
+
 def p__start_order(p): # Inline action
     """\
     _start_order    : 
     """
     _handler(p).startOrderBy()
+
 
 def p_order_element(p):
     """\
@@ -483,6 +537,7 @@ def p_order_element(p):
     else:
         _handler(p).descending(p[1])
 
+
 def p_direction_ASC(p):
     """\
     direction       : 
@@ -490,11 +545,13 @@ def p_direction_ASC(p):
     """
     p[0] = consts.ASC  # Even if 'empty' since ASC is the default
 
+
 def p_direction_DESC(p):
     """\
     direction       : KW_DESC
     """
     p[0] = consts.DESC
+
 
 def p_limit_offset(p):
     """\
@@ -510,6 +567,7 @@ def p_limit_offset(p):
         handler.limit(int(p[2]))
         handler.offset(int(p[4]))
     handler.endPagination()
+
 
 def p_rule(p):
     """\
@@ -570,6 +628,7 @@ def p_clause_predcause(p):
         _arguments_to_events(handler, args)
         getattr(handler, 'end' + predicate_kind)()
 
+
 def p_clause_assoc_predicate(p):
     """\
     clause          : ref LPAREN _first_pair opt_more_pairs RPAREN
@@ -603,17 +662,20 @@ def p__first_pair(p): # Inline action
     handler.endName()
     _handle_pair(p, p[1], p[3])
 
+
 def p_pair(p):
     """\
     pair            : expr COLON expr
     """
     _handle_pair(p, p[1], p[3])
 
+
 def p_predclause(p):
     """\
     predclause      : ref LPAREN arguments RPAREN
     """
     p[0] = p[1], p[3]
+
 
 def p_arguments(p):
     """\
@@ -625,6 +687,7 @@ def p_arguments(p):
     else:
         p[0] = p[1]
         p[1].append(p[3])
+
 
 def p_expr(p):
     """\
@@ -661,6 +724,7 @@ def p_opclause(p):
     _to_event(handler, p[3])
     handler.endInfixPredicate()
 
+
 def p_orclause(p):
     """\
     orclause        : LCURLY _start_or clauselist RCURLY
@@ -670,6 +734,7 @@ def p_orclause(p):
     handler.endBranch()
     handler.endOr()
 
+
 def p__start_or(p): # Inline action
     """\
     _start_or       :
@@ -677,6 +742,7 @@ def p__start_or(p): # Inline action
     handler = _handler(p)
     handler.startOr()
     handler.startBranch(False)
+
 
 def p__start_branch(p): # Inline action
     """\
@@ -686,11 +752,13 @@ def p__start_branch(p): # Inline action
     handler.endBranch()
     handler.startBranch(p[-1] == '||')
 
+
 def p_notclause(p):
     """\
     notclause       : KW_NOT _start_not LPAREN clauselist RPAREN
     """
     _handler(p).endNot()
+
 
 def p__start_not(p): # Inline action
     """\
@@ -698,11 +766,13 @@ def p__start_not(p): # Inline action
     """
     _handler(p).startNot()
 
+
 def p_parameter(p):
     """\
     parameter       : PARAM
     """
     p[0] = consts.PARAM, p[1]
+
 
 def p_value_literal_iri(p):
     """\
@@ -710,11 +780,13 @@ def p_value_literal_iri(p):
     """
     p[0] = consts.LITERAL, (p[1], p[3])
 
+
 def p_datatype_iri(p):
     """\
     datatype        : IRI
     """
     p[0] = consts.IRI, p[1]
+
 
 def p_datatype_qname(p):
     """\
@@ -722,11 +794,13 @@ def p_datatype_qname(p):
     """
     p[0] = p[1]
 
+
 def p_value_STRING(p):
     """\
     value           : STRING
     """
     p[0] = consts.STRING, p[1]
+
 
 def p_value_INTEGER(p):
     """\
@@ -734,11 +808,13 @@ def p_value_INTEGER(p):
     """
     p[0] = consts.INTEGER, p[1]
 
+
 def p_value_DECIMAL(p):
     """\
     value           : DECIMAL
     """
     p[0] = consts.DECIMAL, p[1]
+
 
 def p_value_DATE(p):
     """\
@@ -746,11 +822,13 @@ def p_value_DATE(p):
     """
     p[0] = consts.DATE, p[1]
 
+
 def p_value_DATE_TIME(p):
     """\
     value           : DATE_TIME
     """
     p[0] = consts.DATE_TIME, p[1]
+
 
 def p_value_IRI(p):
     """\

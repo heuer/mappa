@@ -12,8 +12,10 @@ Tests against the mql.tolog.xsl module
 :organization: Semagia - <http://www.semagia.com/>
 :license:      BSD License
 """
+import os
+import io
 from nose.tools import ok_
-from mql.tolog import xsl
+from mql.tolog import parse_to_etree, xsl
 
 
 def test_get_transformator():
@@ -23,7 +25,17 @@ def test_get_transformator():
         yield check, n
 
 
+def test_transformation():
+    tolog_dir = os.path.abspath('./xsltests/in/')
+    for f in os.listdir(tolog_dir):
+        filename = os.path.join(tolog_dir, f)
+        tree = parse_to_etree(open(filename, 'rb'))
+        out = io.BytesIO()
+        tree.write_c14n(out)
+        print out.getvalue()
+        #raise out.getvalue()
+
+
 if __name__ == '__main__':
     import nose
     nose.core.runmodule()
-
