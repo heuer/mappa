@@ -1,0 +1,45 @@
+=======
+Changes
+=======
+
+0.1.5 - yyyy-mm-dd
+------------------
+* Moved the package from mio.reader.ltm to mio.ltm
+* Precompile PLY grammars
+* Require Python >= 2.6
+
+Bugfixes:
+* #57 --  LTM 1.3 parser makes no difference between #TOPICMAP id and 
+          #TOPICMAP ~ id. Fixed
+
+
+0.1.4 - 2010-01-28
+------------------
+* The LTM parser environment issues too many startTopic/endTopic
+  events. Even if the resulting topic map is correct, it's a 
+  perfomance issue. Fixed.
+
+
+0.1.3 - 2009-12-25
+------------------
+* Internal clean up of the PLY grammar
+
+Bugfixes:
+* #6 -- LTM: Encoding (the parser wasn't able to decode Unicode 
+        escape sequences with more than 4 hex digits)
+
+
+0.1.2 - 2009-12-20
+------------------
+* Use ``tm.plyutils`` instead of the deprecated ``tm.mio.plyutils``.
+
+
+0.1.1 - 2009-07-03
+------------------
+* PLY's lextab / parsetab files are stored into the 
+  module's directory.
+
+
+0.1.0 - 2009-06-28
+------------------
+* Initial release
