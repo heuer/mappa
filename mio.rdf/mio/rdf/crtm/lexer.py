@@ -34,7 +34,7 @@ _KEYWORDS_MAPPING = {
     u'item-identifier': u'KW_IID', u'iid': u'KW_IID',
     u'isa': u'KW_ISA',
     u'ako': u'KW_AKO',
-    u'occurrence': u'KW_OCC', u'occ': u'KW_OCC',
+    u'occurrence': u'KW_OCC', u'occ': u'KW_OCC', u'name': u'KW_NAME',
     u'association': u'KW_ASSOC', u'assoc': u'KW_ASSOC',
 }
 
@@ -51,7 +51,7 @@ _iri = ur'<[^<>\"\{\}\`\\ ]+>'
 
 
 tokens = tuple(_DIRECTIVES.values()) + tuple(_KEYWORDS.values()) + tuple(set(_KEYWORDS_MAPPING.values())) + (
-    u'IDENT', u'QNAME', u'IRI',
+    u'IDENT', u'LOCAL_IDENT', u'QNAME', u'IRI',
     # Brackets
     u'LPAREN', u'RPAREN', u'LCURLY', u'RCURLY',
     # Delimiters
@@ -123,6 +123,11 @@ def t_QNAME(t):
 
 @TOKEN(_ident)
 def t_IDENT(t):
+    return t
+
+
+@TOKEN(_local_part)
+def t_LOCAL_IDENT(t):
     return t
 
 

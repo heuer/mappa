@@ -17,12 +17,10 @@ from .lexer import tokens
 assert tokens
 
 
-class Context(object):
+class ParserContext(object):
     """\
 
     """
-    __slots__ = ('global_lang2scope', 'lang2scope', 'next_predicate', 'is_name', '_base', '_included_by')
-
     def __init__(self, base):
         self._base = base
         self._included_by = []
@@ -33,33 +31,60 @@ class Context(object):
         """\
 
         """
-        self.lang2scope = False
-        self.next_predicate = None
-        self.is_name = False
+        self._subject_role = None
+        self._object_role = None
+        self._lang2scope = False
+        self._next_predicate = None
+        self._is_name = False
+        self._name = None
+        self._predicates = []
+        self._scope = []
+        self._type = None
 
-    def process_association(self):
+    def process_association(self, handler):
+        subject_role = self._subject_role
+        object_role = self._object_role
+        scope = self._scope
+        type = self._type
+        for predicate in self._predicates:
+            handler.handleAssociation(predicate, subject_role, object_role,
+                                      scope, type)
+
+    def process_characteristics(self, handler):
+        scope = self._scope
+        type = self._type
+        lang2scope = self._lang2scope or self.global_lang2scope
+        if self._is_name:
+            for predicate in self._predicates:
+                handler.handleName(predicate, scope, type, lang2scope)
+        else:
+            for predicate in self._predicates:
+                handler.handleOccurrence(predicate, scope, type, lang2scope)
+
+
+    def process_sids(self, handler):
         pass
 
-    def process_sids(self):
+    def process_slos(self, handler):
         pass
 
-    def process_slos(self):
-        pass
-
-    def process_iids(self):
+    def process_iids(self, handler):
         pass
 
     def add_predicate(self):
         pass
 
-    def process_type_instance(self):
+    def process_type_instance(self, handler):
         pass
 
     def process_supertype_subtype(self):
         pass
 
+    def register_prefix(self, ident, iri):
+        pass
+
     def register_anonymous_prefix(self, iri):
-        self.name = ident
+        pass
         
     def resolve_qname(self, local):
         pass
@@ -79,27 +104,24 @@ def p_noop(p): # Handles all grammar rules where the result is unimportant
     """\
     instance    : prolog body
                 | body
+                | prolog
     body        : statement
                 | scoped_statement
                 | body statement
                 | body scoped_statement
                 | body prefix_directive
-                | body
     prolog      : directive
                 | prolog directive
     statement   : qiris COLON _remember_predicate statement_body
-    statement_body
-                : name
+    statement_body : name
                 | occurrence
                 | isa
                 | ako
                 | identity
                 | association
-    in_scope_statements
-                : in_scope_statement
+    in_scope_statements : in_scope_statement
                 | in_scope_statements in_scope_statement
-    in_scope_statement
-                : locals COLON _remember_predicate statement_body
+    in_scope_statement : locals COLON _remember_predicate statement_body
     occurrence  : KW_OCC opt_char_body
                 | char_body
     name        : KW_NAME _is_name opt_char_body
@@ -109,6 +131,8 @@ def p_noop(p): # Handles all grammar rules where the result is unimportant
                 | type
     opt_scope   :
                 | scope
+    opt_char_body :
+                | char_body
     char_body   : qiri COLON _process_characteristic statement_body
                 | IRI LCURLY _anonymous_prefix in_scope_statements RCURLY
                 | type scope opt_lang _process_characteristic
@@ -121,19 +145,17 @@ def p_noop(p): # Handles all grammar rules where the result is unimportant
 
 def p__process_characteristic(p):
     """\
-    _process_characteristic
-                : 
+    _process_characteristic :
     """
-    _ctx(p).process_characteristic()
+    _ctx(p).process_characteristics(_handler(p))
 
 
 def p__anonymous_prefix(p):
     """\
-    _anonymous_prefix
-                : 
+    _anonymous_prefix :
     """
     ctx = _ctx(p)
-    ctx.process_characteristic()
+    ctx.process_characteristic(_handler(p))
     ctx.reset()
     ctx.register_anonymous_prefix(p[-2])
 
@@ -185,39 +207,46 @@ def p_local(p):
     p[0] = ctx.resolve_qname(p[1])
 
 
+def p_locals(p):
+    """\
+    locals      : local
+                | locals COMMA local
+    """
+
+
 def p_identity_sid(p):
     """\
     identity    : KW_SID
     """
-    _ctx(p).process_sids()
+    _ctx(p).process_sids(_handler(p))
 
 
 def p_identity_slo(p):
     """\
     identity    : KW_SLO
     """
-    _ctx(p).process_slos()
+    _ctx(p).process_slos(_handler(p))
 
 
 def p_identity_iid(p):
     """\
     identity    : KW_IID
     """
-    _ctx(p).process_iids()
+    _ctx(p).process_iids(_handler(p))
 
 
 def p_isa(p):
     """\
     isa         : KW_ISA opt_scope
     """
-    _ctx(p).process_type_instance()
+    _ctx(p).process_type_instance(_handler(p))
 
 
 def p_ako(p):
     """\
     ako         : KW_AKO opt_scope
     """
-    _ctx(p).process_supertype_subtype()
+    _ctx(p).process_supertype_subtype(_handler(p))
 
 
 def p_char_body_qiri(p):
@@ -225,7 +254,7 @@ def p_char_body_qiri(p):
     char_body   : qiri COMMA
     """
     ctx = _ctx(p)
-    ctx.process_characteristic()
+    ctx.process_characteristics(_handler(p))
     ctx.reset()
     ctx.next_predicate = p[1]
 
@@ -254,7 +283,7 @@ def p_association(p):
     association : KW_ASSOC opt_type roles opt_scope
                 | opt_type roles opt_scope
     """
-    _ctx(p).process_association()
+    _ctx(p).process_association(_handler(p))
 
 
 def p_roles(p):
@@ -269,6 +298,22 @@ def p_type(p):
     type        : qiri
     """
     _ctx(p).type = p[1]
+
+
+def p_scoped_statement(p):
+    """\
+    scoped_statement : IDENT LCURLY in_scope_statements RCURLY
+                     | IRI LCURLY in_scope_statements RCURLY
+    """
+
+
+
+
+
+def p_in_scope_statement(p):
+    """\
+    in_scope_statement : locals COLON statement_body
+    """
 
 
 def p_scope(p):
@@ -312,7 +357,7 @@ def _parser(p):
 
 
 def _handler(p):
-    return _ctx(p).handler
+    return _parser(p).handler
 
 
 def _ctx(p):
