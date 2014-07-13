@@ -236,7 +236,7 @@ class XTM21Handler(mio_handler.HamsterMapHandler):
             append(u'\n')
             append(self.comment)
         if comment:
-            comment.append('')
+            comment.append(u'')
             self._out.comment(u'\n'.join(comment))
     
     def _finish_pending_topic(self):
