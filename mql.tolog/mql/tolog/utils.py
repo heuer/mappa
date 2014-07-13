@@ -25,7 +25,7 @@ _BUILTIN_PREDICATES = _INFIX_PREDICATES + (
     u'topic-name', u'topicmap', u'type', u'value', u'value-like',
     u'variant',
     # tolog 1.2
-    u'coalesce', #'name',
+    u'coalesce',
     # deprecated
     u'source-locator',
     )
@@ -49,11 +49,13 @@ _DEFAULT_MODULES = (
     consts.TPLUS_EXPERIMENTAL_DATE_MODULE_IRI,
 )
 
+
 def is_module_iri(iri):
     """\
     Returns if ``iri`` represents a default module.
     """
     return iri in _DEFAULT_MODULES
+
 
 def is_infix_predicate(name):
     """\
@@ -61,17 +63,20 @@ def is_infix_predicate(name):
     """
     return name in _INFIX_PREDICATES
 
+
 def is_builtin_predicate(name):
     """\
     Returns if ``name`` is a built-in predicate name
     """
     return name in _BUILTIN_PREDICATES
 
+
 def is_delete_function(name):
     """\
     Returns if ``name`` is a delete function.
     """
     return name in _TOLOG_DELETE_FUNCTIONS
+
 
 def is_update_function(name):
     """\

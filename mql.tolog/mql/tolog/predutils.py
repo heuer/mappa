@@ -34,6 +34,7 @@ def fill_column(res, idx, iterable):
     res[idx] = iterable
     return res
 
+
 def filter_column(res, idx, pred):
     """\
     Filters the column indicated by ``idx`` by invoking ``pred`` for each
@@ -43,6 +44,7 @@ def filter_column(res, idx, pred):
     """
     res[idx] = ifilter(pred, res[idx])
     return res
+
 
 def filter_columns(res, idx1, idx2, pred):
     """\
@@ -61,6 +63,7 @@ def filter_columns(res, idx1, idx2, pred):
     res[idx2] = imap(_second, iter2)
     return res
 
+
 def produce_column(res, idx1, idx2, func):
     """\
     Fills the column specified by `idx1` with values produced by
@@ -71,6 +74,7 @@ def produce_column(res, idx1, idx2, func):
     """
     res[idx1] = chain(*imap(func, res[idx2]))
     return res
+
 
 def produce_columns(res, idx1, idx2, iterable, func):
     """\

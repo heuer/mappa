@@ -18,6 +18,7 @@ responsible to adapt arbitrary objects.
 """
 from tm.proto import Interface, Attribute
 
+
 class ITologHandler(Interface):
     """\
     Event handler which receives notifications.
