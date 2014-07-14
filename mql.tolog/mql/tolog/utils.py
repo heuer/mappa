@@ -28,7 +28,8 @@ _BUILTIN_PREDICATES = _INFIX_PREDICATES + (
     u'coalesce',
     # deprecated
     u'source-locator',
-    )
+    #TODO? Add t+ role predicate as alias for association-role?
+)
 
 _TOLOG_UPDATE_FUNCTIONS = (
     # tolog 1.2
@@ -83,3 +84,4 @@ def is_update_function(name):
     Returns if ``name`` is a update function.
     """
     return name in _TOLOG_UPDATE_FUNCTIONS
+
