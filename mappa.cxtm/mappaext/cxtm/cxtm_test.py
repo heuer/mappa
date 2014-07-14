@@ -22,7 +22,7 @@ from mappa import ModelConstraintViolation
 from .cxtm1 import CXTMTopicMapWriter
 from mappa.miohandler import MappaMapHandler
 
-_CXTM_TRUNK = u'cxtm-tests-code-179-trunk.zip'
+_CXTM_TRUNK = u'master.zip'
 
 
 def get_baseline(filename):
@@ -37,17 +37,13 @@ def _download_cxtm_tests():
     import urllib, shutil
     directory = os.path.abspath(u'./cxtm/')
     archive_name = os.path.join(directory, _CXTM_TRUNK)
-    sf_filename = _CXTM_TRUNK
+    zip_filename = _CXTM_TRUNK
     if not os.path.isfile(archive_name):
-        import time
-        urllib.urlopen(u'http://sourceforge.net/p/cxtm-tests/code/HEAD/tarball',
-                       urllib.urlencode({u'path': u'/trunk'}))
-        time.sleep(15)
-        urllib.urlretrieve(u'http://sourceforge.net/code-snapshots/svn/c/cx/cxtm-tests/code/%s' % sf_filename, archive_name)
+        urllib.urlretrieve(u'https://github.com/heuer/cxtm/archive/%s' % zip_filename, archive_name)
     archive = ZipFile(archive_name)
     archive.extractall(directory)
     archive.close()
-    trunk_dir = os.path.join(directory, sf_filename[:sf_filename.rindex(u'.')])
+    trunk_dir = os.path.join(directory, u'cxtm-' + zip_filename[:zip_filename.rindex(u'.')])
     for f in os.listdir(trunk_dir):
         subdir = os.path.join(trunk_dir, f)
         if os.path.isdir(subdir) and f != u'web':
