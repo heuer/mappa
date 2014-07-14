@@ -61,16 +61,9 @@ def _make_parser_for_sdist(module):
     """\
     Prepare PLY parser modules for source distribution.
     """
-    #TODO: Provide pickled parser, too?
     #TODO: Delete previously generated parsetab
-    import re
     make_parser(module)
-    filename = os.path.join(_get_tablocation(module), 'parser_parsetab.py')
-    with open(filename, 'rb') as f:
-        s = f.read()
-    s = re.sub(ur"(\d\s*,)('[^']+',\s*').*?(parser.py')", ur"\1\2\3", s)
-    with open(filename, 'wb') as f:
-        f.write(s)
+    make_parser_pickled(module)
 
 
 def _get_tablocation(module):
