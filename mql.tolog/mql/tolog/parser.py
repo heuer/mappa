@@ -903,31 +903,3 @@ def _to_event(handler, arg, stringtoiri=False):
 def _arguments_to_events(handler, args, stringtoiri=False):
     for kind, name in args:
         _to_event(handler, (kind, name), stringtoiri)
-
-
-if __name__ == '__main__':
-    test_input = ()
-    from tm import plyutils, xmlutils
-    from tm.ply import yacc
-    from mql.tolog import lexer as lexer_mod
-    from mql.tolog.handler import XMLParserHandler
-    from lxml import etree
-    import lxml.sax
-    def parse(data, handler):
-        parser = yacc.yacc(debug=True)
-        initialize_parser(parser, handler)
-        handler.start()
-        parser.parse(data, lexer=plyutils.make_lexer(lexer_mod))
-        handler.end()
-
-    for cnt, data in enumerate(test_input):
-        print(cnt)
-        print(data)
-        try:
-            contenthandler = lxml.sax.ElementTreeContentHandler()
-            handler = XMLParserHandler(xmlutils.SAXSimpleXMLWriter(contenthandler))
-            parse(data, handler)
-            print(etree.tostring(contenthandler.etree, pretty_print=True))
-        except:
-            print(data)
-            raise

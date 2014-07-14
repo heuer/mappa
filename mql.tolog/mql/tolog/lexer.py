@@ -279,16 +279,3 @@ def t_tm_content(t):
     # Continue with tolog
     t.lexer.begin('INITIAL')
     return t
-
-
-if __name__ == '__main__':
-    test_data = []
-    import tm.ply.lex as lex
-    for data in test_data:
-        lexer = lex.lex()
-        lexer.input(data)
-        while True:
-            tok = lexer.token()
-            if not tok: break
-            print(tok)
-
