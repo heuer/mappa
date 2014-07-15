@@ -1,0 +1,1 @@
+<tolog xmlns="http://psi.semagia.com/tolog-xml/"><select><variable name="t"></variable><variable name="r"></variable><where><builtin-predicate name="role-player"><variable name="r"></variable><variable name="t"></variable></builtin-predicate></where></select></tolog>

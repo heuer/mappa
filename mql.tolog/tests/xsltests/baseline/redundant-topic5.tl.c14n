@@ -1,0 +1,1 @@
+<tolog xmlns="http://psi.semagia.com/tolog-xml/"><select><variable name="scoped"></variable><variable name="t"></variable><where><builtin-predicate name="scope"><variable name="scoped"></variable><variable name="t"></variable></builtin-predicate></where></select></tolog>
