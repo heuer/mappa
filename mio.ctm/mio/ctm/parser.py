@@ -27,7 +27,7 @@ def unescape_string(s):
         raise mio.MIOException(ex)
 
 
-def p_noop(p): # Handles all grammar rules where the result is unimportant
+def p_noop(p):  # Handles all grammar rules where the result is unimportant
     """\
     instance        : prolog header topicmap
                     | prolog header
