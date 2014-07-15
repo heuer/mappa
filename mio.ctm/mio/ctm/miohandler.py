@@ -414,7 +414,7 @@ class CTMHandler(mio_handler.HamsterMapHandler):
             write, write_topic_ref = self._out.write, self._write_topic_ref
             write(u' @')
             for i, theme in enumerate(scope):
-                if i > 0:
+                if i:
                     write(u', ')
                 write_topic_ref(theme)
 

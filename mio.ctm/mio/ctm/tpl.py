@@ -39,7 +39,7 @@ class Template(object):
             # 1st invocation: Compile the body into Python code.
             self._code = compile(u'\n'.join(self._body), u'%s-%d' % (self.name, len(self.args)), 'exec')
             del self._body # Not needed anymore.
-        eval(self._code, {'ctx': ctx, 'handler': ctx.handler})
+        eval(self._code, {u'ctx': ctx, u'handler': ctx.handler})
 
 
 class TemplateInvocation(object):

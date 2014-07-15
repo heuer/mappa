@@ -27,7 +27,7 @@ def make_statement(evt, arg=_UNDEFINED):
     a ``SimpleMapHandler`` instance and ``ctx`` which must be bound to 
     a ``TemplateContext`` instance.
     """
-    if evt == 'startTopic':
+    if evt == u'startTopic':
         kind, identity = arg
         res = []
         if kind not in (consts.SID, consts.SLO, consts.IID):
@@ -41,9 +41,9 @@ def make_statement(evt, arg=_UNDEFINED):
         res = u'\n'.join(res)
     elif evt == 'endTopic':
         res = u'handler.endTopic()\nctx.pop_focus()' 
-    elif evt in ('startVariant', 'startScope'): # Special treatment since these methods take no argument
+    elif evt in (u'startVariant', u'startScope'): # Special treatment since these methods take no argument
         res = u'handler.%s()' % evt
-    elif 'start' in evt or evt in ('isa', 'ako', 'player', 'reifier', 'theme'):
+    elif u'start' in evt or evt in (u'isa', u'ako', u'player', u'reifier', u'theme'):
         kind, identity = arg[0]
         if kind not in (consts.SID, consts.SLO, consts.IID):
             # Lookup the topic's identity
@@ -51,9 +51,9 @@ def make_statement(evt, arg=_UNDEFINED):
         else:
             # Constant identity
             res = u'handler.%s((%d, u"%s"))' % (evt, kind, identity)
-    elif 'end' in evt: # All 'end'-events but not 'endTopic'
+    elif u'end' in evt: # All 'end'-events but not 'endTopic'
         res = u'handler.%s()' % evt
-    elif evt == 'value':
+    elif evt == u'value':
         kind, val = arg[0]
         if kind not in (consts.VARIABLE, consts.LITERAL):
             res = u'handler.value(*utils.as_literal((%d, u"%s")))' % (kind, val)
@@ -65,7 +65,7 @@ def make_statement(evt, arg=_UNDEFINED):
                 #TODO: What are we doing here and why is this code not covered by the test cases? 
                 # Should raise an error, shouldn't it?
                 res = u'handler.value(utils.as_string(ctx.get_literal((%d, u"%s")))[0], ctx.get_literal((%d, u"%s"))[1])' % (value, datatype)
-    elif evt == 'name_value':
+    elif evt == u'name_value':
         val = arg[0]
         if isinstance(val, tuple):
             if val[0] is consts.STRING:
@@ -74,7 +74,7 @@ def make_statement(evt, arg=_UNDEFINED):
                 res = u'handler.value(utils.as_string_literal(ctx.get_literal((%d, u"%s")))[0])' % val
         else:
             res = u'handler.value(u"%s")' % val
-    elif evt == 'call_template':
+    elif evt == u'call_template':
         name, args = arg
         res = [u'ctx.call_template(u"%s", [' % name]
         arguments = []
@@ -83,17 +83,17 @@ def make_statement(evt, arg=_UNDEFINED):
         else:
             for kind, val in args:
                 if kind in (consts.NAMED_WILDCARD, consts.WILDCARD):
-                    arguments.append('ctx.get_topic_reference((%d, u"%s"))' % (kind, val))
+                    arguments.append(u'ctx.get_topic_reference((%d, u"%s"))' % (kind, val))
                 else:
                     arguments.append(u'(%r, %r)' % (kind, val))
         res.append(u', '.join(arguments))
         res.append(u'])')
         res = u''.join(res)
-    elif evt in ('itemIdentifier', 'subjectLocator', 'subjectIdentifier'):
+    elif evt in (u'itemIdentifier', u'subjectLocator', u'subjectIdentifier'):
         res = u'handler.%s(u"%s")' % (evt, arg[0])
-    elif '_variable' in evt:
-        res = u'handler.%s(ctx.get_literal((%d, u"%s"))[1])' % (evt.split('_')[0], consts.VARIABLE, arg[0])
-    elif evt == 'identity':
+    elif u'_variable' in evt:
+        res = u'handler.%s(ctx.get_literal((%d, u"%s"))[1])' % (evt.split(u'_')[0], consts.VARIABLE, arg[0])
+    elif evt == u'identity':
         var = arg[0]
         res = u'utils.handle_identity(handler, ctx, (%d, u"%s"))' % (var[0], var[1])
     else:

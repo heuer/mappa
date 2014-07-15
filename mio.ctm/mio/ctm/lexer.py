@@ -12,8 +12,6 @@ Compact Topic Maps (CTM) lexer.
 :organization: Semagia - http://www.semagia.com/
 :license:      BSD license
 """
-# For some reason pylint thinks that ply.lex and ply.yacc do not exist
-# pylint: disable-msg=F0401, E0611
 from tm.ply import TOKEN
 from tm.mio import MIOException
 
