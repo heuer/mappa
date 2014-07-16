@@ -1,1 +1,1 @@
-topic($t), item-identifier($t, $loc)?
+topic($t), item-identifier($t, "http://www.example.org/foo")?
