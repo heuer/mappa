@@ -153,7 +153,8 @@ def parse_to_tolog(src, tolog_plus=False, hints=False, optimizers=None, **kw):
         a default set of optimizers will be applied to the query.
         To omit any optimization, an empty iterable must be provided.
     """
-    return _back_to_tolog(src, False, tolog_plus=tolog_plus, hints=hints, optimizers=optimizers, **kw)
+    return _back_to_tolog(src, False, tolog_plus=tolog_plus, hints=hints,
+                          optimizers=optimizers, **kw)
     
 
 def parse_to_tologplus(src, tolog_plus=False, hints=False, optimizers=None, **kw):
@@ -179,7 +180,8 @@ def parse_to_tologplus(src, tolog_plus=False, hints=False, optimizers=None, **kw
         a default set of optimizers will be applied to the query.
         To omit any optimization, an empty iterable must be provided.
     """
-    return _back_to_tolog(src, True, tolog_plus=tolog_plus, hints=hints, optimizers=optimizers)
+    return _back_to_tolog(src, True, tolog_plus=tolog_plus, hints=hints,
+                          optimizers=optimizers)
 
 
 def _back_to_tolog(src, tolog_plus_out, tolog_plus=False, hints=False, optimizers=None, **kw):
@@ -210,7 +212,7 @@ def _back_to_tolog(src, tolog_plus_out, tolog_plus=False, hints=False, optimizer
     if optimizers is None:
         optimizers = xsl.DEFAULT_TRANSFORMERS
     transformers = tuple(optimizers) + ('back-to-tolog',)
-    return xsl.apply_transformations(parse_to_etree(src, tolog_plus, **kw), 
-                                        transformers,
-                                        **{'render-hints': '"true"' if hints else '"false"',
-                                           'tolog-plus': '"true"' if tolog_plus_out else '"false"'})
+    transform_kw = {'render-hints': '"true"' if hints else '"false"',
+                    'tolog-plus': '"true"' if tolog_plus_out else '"false"'}
+    return xsl.apply_transformations(parse_to_etree(src, tolog_plus, **kw),
+                                     transformers, **transform_kw)

@@ -13,7 +13,6 @@ tolog handler implementations.
 :license:      BSD License
 """
 import logging
-import xml.sax.handler as sax_handler
 from . import consts
 
 
