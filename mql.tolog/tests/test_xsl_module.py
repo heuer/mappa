@@ -14,7 +14,9 @@ Tests against the mql.tolog.xsl module
 """
 import os
 import io
-from nose.tools import ok_
+import json
+import glob
+from nose.tools import ok_, eq_
 from mql.tolog import parse_to_etree, xsl
 
 
@@ -26,14 +28,26 @@ def test_get_transformator():
 
 
 def test_transformation():
-    tolog_dir = os.path.abspath('./xsltests/in/')
-    for f in os.listdir(tolog_dir):
-        filename = os.path.join(tolog_dir, f)
+    base_dir = os.path.abspath('./xsltests/')
+    with open(os.path.join(base_dir, 'query2optimizers.json'), 'rb') as f:
+        query2optimizers = json.load(f)
+    tolog_dir = os.path.abspath(os.path.join(base_dir, './in/'))
+    found_files = set([os.path.basename(fn) for fn in glob.glob(tolog_dir + '/*.tl')])
+    baseline_dir = os.path.join(base_dir, './baseline/')
+    for fn in query2optimizers:
+        found_files.remove(fn)
+        optimizers = ['query-c14n']
+        optimizers.extend(query2optimizers[fn])
+        filename = os.path.join(tolog_dir, fn)
         tree = parse_to_etree(open(filename, 'rb'))
+        res = xsl.apply_transformations(tree, optimizers)
         out = io.BytesIO()
-        tree.write_c14n(out)
-        print out.getvalue()
-        #raise out.getvalue()
+        res.write_c14n(out)
+        expected = io.open(os.path.join(baseline_dir, fn + '.c14n'), encoding='utf-8').read()
+        yield eq_, expected, out.getvalue()
+    if found_files:
+        raise Exception('Found more files in the directory: %r' % found_files)
+
 
 
 if __name__ == '__main__':
