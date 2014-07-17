@@ -27,6 +27,11 @@ def test_get_transformator():
         yield check, n
 
 
+_IGNORE = (
+    'fold-type-assoc.tl',
+)
+
+
 def test_transformation():
     base_dir = os.path.abspath('./xsltests/')
     with open(os.path.join(base_dir, 'query2optimizers.json'), 'rb') as f:
@@ -45,6 +50,8 @@ def test_transformation():
         res.write_c14n(out)
         expected = io.open(os.path.join(baseline_dir, fn + '.c14n'), encoding='utf-8').read()
         yield eq_, expected, out.getvalue()
+    for fn in _IGNORE:
+        found_files.remove(fn)
     if found_files:
         raise Exception('Found more files in the directory: %r' % found_files)
 
