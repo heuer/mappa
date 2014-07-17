@@ -12,7 +12,7 @@
 :organization: Semagia - <http://www.semagia.com/>
 :license:      BSD License
 """
-from tm import ANY, UCS
+from tm import ANY
 from itertools import chain
 
 #TODO: This shouldn't belong to the mql.tolog package but to the generic mql package
@@ -270,7 +270,7 @@ class AdvancedTopicMapLayer(TopicMapLayer):
             #TODO: Exception
 
     def _topic(self, tmc):
-        return tmc if self.is_topic(tmc) else self.reifier(tmc)
+        return tmc if self.is_topic(tmc) else self.get_reifier(tmc)
         
     def get_occurrences(self, tmc, types=ANY, scope=ANY):
         topic = self._topic(tmc)
