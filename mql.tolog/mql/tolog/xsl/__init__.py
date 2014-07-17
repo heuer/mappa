@@ -20,11 +20,12 @@ _PATH = None
 _NOT_FOUND = object()
 _STYLESHEETS = None
 
-DEFAULT_TRANSFORMERS = (  #TODO
+DEFAULT_TRANSFORMERS = (
     u'query-c14n',
     u'inline-rules',
     u'annotate-predicates',
     u'remove-redundant-predicates',
+    u'fold-type',
     u'annotate-costs',
     u'reorder-predicates',
 )
