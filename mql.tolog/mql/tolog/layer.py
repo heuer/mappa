@@ -73,6 +73,8 @@ class TopicMapLayer(object):
 
         `types`
             An iterable of topics or ``ANY`` if the type is unconstrained.
+        `scope`
+            An iterable of topics or ``ANY`` if the scope is unconstrained.
         """
 
     def get_occurrences(self, topic, types=ANY, scope=ANY):
@@ -83,6 +85,8 @@ class TopicMapLayer(object):
             The context topic.
         `types`
             An iterable of topics or ``ANY`` if the type is unconstrained.
+        `scope`
+            An iterable of topics or ``ANY`` if the scope is unconstrained.
         """
 
     def get_names(self, topic, types=ANY, scope=ANY):
@@ -93,11 +97,15 @@ class TopicMapLayer(object):
             The context topic.
         `types`
             An iterable of topics or ``ANY`` if the type is unconstrained.
+        `scope`
+            An iterable of topics or ``ANY`` if the scope is unconstrained.
         """
 
     def get_variants(self, name, scope=ANY):
         """\
-        
+
+        `scope`
+            An iterable of topics or ``ANY`` if the scope is unconstrained.
         """
 
     def get_topic_children(self, topic, types=ANY, scope=ANY):
@@ -108,6 +116,8 @@ class TopicMapLayer(object):
             The context topic.
         `types`
             An iterable of topics or ``ANY`` if the type is unconstrained.
+        `scope`
+            An iterable of topics or ``ANY`` if the scope is unconstrained.
         """
         return chain(self.get_occurrences(topic, types, scope), self.get_names(topic, types, scope))
 
