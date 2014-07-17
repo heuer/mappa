@@ -299,7 +299,6 @@ class ETreeContentHandler(ContentHandler):
             element = self._makesubelement(element_stack[-1], el_name, attrs,
                                            self._new_mappings)
         element_stack.append(element)
-
         self._new_mappings.clear()
 
     def processingInstruction(self, target, data):
