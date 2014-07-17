@@ -1,0 +1,1 @@
+<tolog xmlns="http://psi.semagia.com/tolog-xml/"><select><variable name="r"></variable><where><builtin-predicate name="role-player"><variable name="r"></variable><identifier value="fixed-point"></identifier><identifier value="required-type"></identifier></builtin-predicate></where></select></tolog>
