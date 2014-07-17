@@ -25,8 +25,8 @@ DEFAULT_TRANSFORMERS = (
     u'inline-rules',
     u'annotate-predicates',
     u'remove-redundant-predicates',
-    u'fold-type',
     u'annotate-costs',
+    u'fold-type',  # TODO: Move up once annotate-costs can handle predictaes which were created here
     u'reorder-predicates',
 )
 

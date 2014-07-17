@@ -4,6 +4,8 @@
   This stylesheet calculates the costs of the query predicates and adds
   a "cost" attribute to the predicates.
 
+  TODO: Handle predicates created by "fold-type" and "fold-scope"
+
 
   Copyright (c) 2010 - 2012, Semagia - Lars Heuer <http://www.semagia.com/>
   All rights reserved.
