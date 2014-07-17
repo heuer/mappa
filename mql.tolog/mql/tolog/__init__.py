@@ -15,7 +15,6 @@ Provides functions to parse tolog queries.
 from __future__ import absolute_import
 from functools import partial
 from urllib2 import urlopen
-import lxml.sax #TODO: Any chance to remove this dependency (here)?
 from tm import Source, plyutils, xmlutils
 from . import handler as handler_mod, xsl
 
@@ -123,7 +122,7 @@ def parse_to_etree(src, tolog_plus=False, **kw):
         tolog+ mode is enabled automatically, regardless of the provided
         `tolog_plus` value
     """
-    contenthandler = lxml.sax.ElementTreeContentHandler()
+    contenthandler = xmlutils.ETreeContentHandler()
     parse(src, handler_mod.XMLParserHandler(xmlutils.SAXSimpleXMLWriter(contenthandler)), tolog_plus, **kw)
     return contenthandler.etree
 
