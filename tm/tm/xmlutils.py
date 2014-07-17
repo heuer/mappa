@@ -14,7 +14,7 @@ XML Utilities.
 """
 import codecs
 from xml.sax.saxutils import escape, quoteattr, XMLGenerator
-from xml.sax.xmlreader import InputSource
+from xml.sax.xmlreader import InputSource, AttributesImpl
 
 
 def as_inputsource(source):
@@ -204,7 +204,6 @@ except ImportError:
     def is_lxml_handler(handler):
         return False
 
-from xml.sax.xmlreader import AttributesImpl
 _EMPTY_ATTRS = {}
 
 
@@ -230,6 +229,7 @@ class SAXSimpleXMLWriter(object):
 
     def _startElementLXML(self, name, attrs=None):
         self._elements.append(name)
+        # lxml.sax.ElementTreeContentHandler handles a dict, no need for AttributesImpl
         self._handler.startElement(name, attrs or _EMPTY_ATTRS)
 
     def endElement(self, name):
@@ -278,8 +278,10 @@ def xmlwriter_as_contenthandler(writer):
     
     All events are serialized to the ``_out`` property of the `writer` using 
     the ``writer._encoding``.
+
+    `writer`
+        `XMLWriter` instance.
     """
-    # pylint: disable-msg=W0212
     return XMLGenerator(writer._out, writer._encoding)
 
 #
