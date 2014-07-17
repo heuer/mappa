@@ -71,7 +71,7 @@ def _make_lexer(tolog_plus):
     return lexer
 
 
-def parse_query(src, handler=None, factory=None, tolog_plus=False, optimizers=None, **kw):
+def parse_query(src, query_handler=None, factory=None, tolog_plus=False, optimizers=None, **kw):
     """\
     Parses and optimizes the query and returns an executable query.
     
@@ -85,7 +85,7 @@ def parse_query(src, handler=None, factory=None, tolog_plus=False, optimizers=No
         A string, a file object or a `tm.Source` instance to read the query from.
         If a string is used, this function expects an iri keyword which
         defines the base IRI.
-    `handler`
+    `query_handler`
         A `IQueryHandler` which receives events to construct a query
     `factory`
         A `IQueryFactory` which is used to construct the query.
@@ -100,13 +100,13 @@ def parse_query(src, handler=None, factory=None, tolog_plus=False, optimizers=No
         a default set of optimizers will be applied to the query.
         To omit any optimization, an empty iterable must be provided.
     """
-    handler = handler or handler_mod.make_queryhandler(factory)
-    handler.base_iri = src.iri
+    query_handler = query_handler or handler_mod.make_queryhandler(factory)
+    query_handler.base_iri = src.iri
     if optimizers is None:
         optimizers = xsl.DEFAULT_TRANSFORMERS
     xsl.apply_transformations(parse_to_etree(src, tolog_plus, **kw), optimizers,
-                                        partial(xsl.saxify, content_handler=handler_mod.XMLParserHandler(handler)))
-    return handler.query
+                              partial(xsl.saxify, handler=handler_mod.XMLParserHandler(query_handler)))
+    return query_handler.query
 
 
 def parse_to_etree(src, tolog_plus=False, **kw):
