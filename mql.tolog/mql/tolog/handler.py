@@ -12,6 +12,7 @@ tolog handler implementations.
 :organization: Semagia - <http://www.semagia.com/>
 :license:      BSD License
 """
+from __future__ import absolute_import
 import logging
 from . import consts
 
@@ -179,7 +180,7 @@ class XMLParserHandler(ParserHandler):
     def namespace(self, identifier, iri, kind):
         self._writer.emptyElement(u'namespace', {u'identifier': identifier,
                                                  u'iri': iri,
-                                                 u'kind': _PREFIXKIND2NAME[kind] # KeyError is intentional
+                                                 u'kind': _PREFIXKIND2NAME[kind]  # KeyError is intentional
                                                  }
                                   )
 
