@@ -22,17 +22,29 @@ class TopicMapLayer(object):
     """
     def get_topic_by_subject_identifier(self, sid):
         """\
+        Returns a topic by its subject identifier or ``None`` if no topic
+        could be found.
 
+        `sid`
+            An IRI.
         """
 
     def get_topic_by_subject_locator(self, slo):
         """\
+        Returns a topic by its subject locator or ``None`` if no topic
+        could be found.
 
+        `slo`
+            An IRI.
         """
 
     def get_topic_by_item_identifier(self, iid):
         """\
+        Returns a topic by its item identifier or ``None`` if no topic
+        could be found.
 
+        `iid`
+            An IRI.
         """
         obj = self.get_object_by_item_identifier(iid)
         return obj if self.is_topic(obj) else None
