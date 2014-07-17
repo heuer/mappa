@@ -1,6 +1,7 @@
 {
     "annotate-assoc-scope.tl": ["annotate-predicates"],
     "annotate-assoc-type.tl": ["annotate-predicates"],
+    "annotate-iid-topic.tl": ["annotate-predicates"],
     "annotate-name-type.tl": ["annotate-predicates"],
     "annotate-name-value.tl": ["annotate-predicates"],
     "annotate-occ-resource.tl": ["annotate-predicates"],

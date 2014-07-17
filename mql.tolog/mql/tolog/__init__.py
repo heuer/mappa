@@ -16,7 +16,7 @@ from __future__ import absolute_import
 from functools import partial
 from urllib2 import urlopen
 from tm import Source, plyutils, xmlutils
-from . import handler as handler_mod, xsl
+from . import lexer as lexer_mod, parser as parser_mod, handler as handler_mod, xsl
 
 __all__ = ('parse', 'parse_query')
 
@@ -37,7 +37,6 @@ def parse(src, handler, tolog_plus=False, **kw):
         tolog+ mode is enabled automatically, regardless of the provided
         `tolog_plus` value
     """
-    from mql.tolog import parser as parser_mod
     parser = plyutils.make_parser(parser_mod)
     parser_mod.initialize_parser(parser, handler, tolog_plus)
     if isinstance(src, basestring):
@@ -64,7 +63,6 @@ def _make_lexer(tolog_plus):
         (Even if this parameter is ``False``, the lexer may switch to
         tolog+-mode iff a %version directive is found).
     """
-    from mql.tolog import lexer as lexer_mod
     lexer = plyutils.make_lexer(lexer_mod)
     lexer.tolog_plus = tolog_plus
     return lexer

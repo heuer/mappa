@@ -3,7 +3,7 @@
   This stylesheet annotates predicates like "type" and "value" with
   a "hint" attribute that indicates which kind of Topic Maps statement
   is meant.
-  
+
   I.e.:
     
     association($a), type($a, $type)?
@@ -33,8 +33,9 @@
   * datatype
   * reifies
   * resource
+  * item-identifier
 
-  Copyright (c) 2010 - 2012, Semagia - Lars Heuer <http://www.semagia.com/>
+  Copyright (c) 2010 - 2014, Semagia - Lars Heuer <http://www.semagia.com/>
   All rights reserved.
   
   License: BSD
@@ -48,6 +49,10 @@
                 exclude-result-prefixes="tl">
 
   <xsl:output method="xml" encoding="utf-8" standalone="yes"/>
+
+  <xsl:key name="iids"
+            match="tl:builtin-predicate[@name='item-identifier']/tl:*[1][local-name(.) = 'variable']"
+            use="@name"/>
 
   <xsl:key name="assocs" 
             match="tl:builtin-predicate[@name='association' or @name='association-role']/tl:*[1][local-name(.) = 'variable']" 
@@ -81,7 +86,8 @@
                                             or @name='value'
                                             or @name='value-like'
                                             or @name='datatype'
-                                            or @name='resource'][tl:*[1][local-name(.)='variable']]">
+                                            or @name='resource'
+                                            or @name='item-identifier'][tl:*[1][local-name(.)='variable']]">
     <xsl:call-template name="annotate"/>
   </xsl:template>
 
@@ -100,6 +106,7 @@
         <occurrence apply="{count(key('occs', $key)) > 0}"/>
         <name apply="{count(key('names', $key)) > 0}"/>
         <variant apply="{count(key('variants', $key)) > 0}"/>
+        <topic apply="{count(key('iids', $key)) > 0}"/>
     </xsl:variable>
     <xsl:variable name="hint">
       <xsl:for-each select="exsl:node-set($hints)/tl:*[@apply='true']">
