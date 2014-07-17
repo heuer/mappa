@@ -18,6 +18,8 @@
     "create-dyn-occ4.tl": ["dynamic-occurrences"],
     "dontcreate-dyn-occ.tl": ["dynamic-occurrences"],
     "dontcreate-dyn-occ2.tl": ["dynamic-occurrences"],
+    "fold-scope-name.tl": ["fold-scope"],
+    "fold-scope-occ.tl": ["fold-scope"],
     "inline-rules.tl": ["inline-rules"],
     "inline-rules2.tl": ["inline-rules"],
     "non-redundant-topic.tl": ["remove-redundant-predicates"],
