@@ -20,6 +20,7 @@
     "dontcreate-dyn-occ2.tl": ["dynamic-occurrences"],
     "fold-scope-name.tl": ["fold-scope"],
     "fold-scope-occ.tl": ["fold-scope"],
+    "fold-type-name.tl": ["fold-type"],
     "fold-type-occ.tl": ["fold-type"],
     "fold-type-role.tl": ["fold-type"],
     "inline-rules.tl": ["inline-rules"],
