@@ -25,6 +25,7 @@ class ParserContext(object):
         self._base = base
         self._included_by = []
         self.global_lang2scope = False
+        self._prefixes = {}
         self.reset()
 
     def reset(self):
@@ -33,10 +34,10 @@ class ParserContext(object):
         """
         self._subject_role = None
         self._object_role = None
-        self._lang2scope = False
+        self.lang2scope = False
         self._next_predicate = None
-        self._is_name = False
-        self._name = None
+        self.is_name = False
+        self.name = None
         self._predicates = []
         self._scope = []
         self._type = None
@@ -50,17 +51,16 @@ class ParserContext(object):
             handler.handleAssociation(predicate, subject_role, object_role,
                                       scope, type)
 
-    def process_characteristics(self, handler):
+    def process_characteristic(self, handler):
         scope = self._scope
         type = self._type
-        lang2scope = self._lang2scope or self.global_lang2scope
-        if self._is_name:
+        lang2scope = self.lang2scope or self.global_lang2scope
+        if self.is_name:
             for predicate in self._predicates:
                 handler.handleName(predicate, scope, type, lang2scope)
         else:
             for predicate in self._predicates:
                 handler.handleOccurrence(predicate, scope, type, lang2scope)
-
 
     def process_sids(self, handler):
         pass
@@ -77,14 +77,32 @@ class ParserContext(object):
     def process_type_instance(self, handler):
         pass
 
-    def process_supertype_subtype(self):
+    def process_supertype_subtype(self, handler):
         pass
 
-    def register_prefix(self, ident, iri):
-        pass
+    def register_prefix(self, ident, iri, listener):
+        existing = self._prefixes.get(ident)
+        if existing and existing != iri:
+            raise mio.MIOException(u'The prefix "%s" is already bound to <%s>"' % (ident, self._prefixes[ident]))
+        self._prefixes[ident] = iri
+        if listener:
+            listener.handleNamespace(ident, iri)
 
-    def register_anonymous_prefix(self, iri):
-        pass
+    def register_anonymous_prefix(self, iri, listener):
+        ident = iri
+        if ident.endswith(u'/') or ident.endswith(u'#'):
+            ident = ident[:-1]
+        slash_idx = ident.rfind(u'/')
+        if slash_idx > -1:
+            ident = ident[slash_idx+1:]
+        existing_iri = self._prefixes.get(ident)
+        if existing_iri and existing_iri != iri:
+            cnt = 0
+            while existing_iri:
+                cnt += 1
+                ident += unicode(cnt)
+                existing_iri = self._prefixes.get(ident)
+        self.register_prefix(ident, iri, listener)
         
     def resolve_qname(self, local):
         pass
@@ -98,9 +116,7 @@ class ParserContext(object):
     included_by = property(lambda self: self._included_by, lambda self, included_by: self._set_included_by(included_by))
 
 
-# Disable unused 'p' warnings: pylint: disable-msg=W0613
-
-def p_noop(p): # Handles all grammar rules where the result is unimportant
+def p_noop(p):  # Handles all grammar rules where the result is unimportant
     """\
     instance    : prolog body
                 | body
@@ -112,7 +128,8 @@ def p_noop(p): # Handles all grammar rules where the result is unimportant
                 | body prefix_directive
     prolog      : directive
                 | prolog directive
-    statement   : qiris COLON _remember_predicate statement_body
+    directive   : prefix_directive
+    statement   : qiris COLON _remember_predicates statement_body
     statement_body : name
                 | occurrence
                 | isa
@@ -121,43 +138,52 @@ def p_noop(p): # Handles all grammar rules where the result is unimportant
                 | association
     in_scope_statements : in_scope_statement
                 | in_scope_statements in_scope_statement
-    in_scope_statement : locals COLON _remember_predicate statement_body
+    in_scope_statement : locals COLON _remember_predicates statement_body
     occurrence  : KW_OCC opt_char_body
                 | char_body
     name        : KW_NAME _is_name opt_char_body
                 | HYPHEN  _is_name opt_char_body
-    directive   : prefix_directive
     opt_type    :
                 | type
     opt_scope   :
                 | scope
     opt_char_body :
                 | char_body
-    char_body   : qiri COLON _process_characteristic statement_body
-                | IRI LCURLY _anonymous_prefix in_scope_statements RCURLY
-                | type scope opt_lang _process_characteristic
+    char_body   : type scope opt_lang _process_characteristic
                 | type opt_lang _process_characteristic
                 | scope opt_lang _process_characteristic
-    
+                | qiri COLON _char_body_qiri statement_body
+                | IRI LCURLY _char_body_iri in_scope_statements RCURLY
+
     """
     p[0] = None
+
+
+def p__char_body_qiri(p):  # Inline action
+    """\
+    _char_body_qiri :
+    """
+    ctx = _ctx(p)
+    ctx.process_characteristic()
+    ctx.reset()
+    ctx.predicates = [p[-2]]
+
+
+def p__char_body_iri(p):  # Inline action
+    """\
+    _char_body_iri :
+    """
+    ctx = _ctx(p)
+    ctx.process_characteristic()
+    ctx.reset()
+    ctx.register_anonymous_prefix(p[-2], _prefix_listener(p))
 
 
 def p__process_characteristic(p):
     """\
     _process_characteristic :
     """
-    _ctx(p).process_characteristics(_handler(p))
-
-
-def p__anonymous_prefix(p):
-    """\
-    _anonymous_prefix :
-    """
-    ctx = _ctx(p)
-    ctx.process_characteristic(_handler(p))
-    ctx.reset()
-    ctx.register_anonymous_prefix(p[-2])
+    _ctx(p).process_characteristic(_handler(p))
 
 
 def p__is_name(p):
@@ -185,16 +211,19 @@ def p_prefix_directive(p):
     """\
     prefix_directive : DIR_PREFIX IDENT IRI
     """
-    _ctx(p).register_prefix(p[2], p[3])
+    _ctx(p).register_prefix(p[2], p[3], _prefix_listener(p))
 
 
-def p__remember_predicate(p):
+def p__remember_predicates(p):
     """\
-    _remember_predicate : 
+    _remember_predicates :
     """
     ctx = _ctx(p)
-    ctx.predicates = p[-2]
-    ctx.add_predicate()
+    predicates = p[-2]
+    next_pred = _parser(p)
+    if next_pred:
+        predicates.append(next_pred)
+    ctx.predicates = predicates
     ctx.reset()
 
 
@@ -212,6 +241,11 @@ def p_locals(p):
     locals      : local
                 | locals COMMA local
     """
+    if len(p) == 2:
+        p[0] = [p[1]]
+    else:
+        p[0] = p[1]
+        p[0].append(p[3])
 
 
 def p_identity_sid(p):
@@ -254,7 +288,7 @@ def p_char_body_qiri(p):
     char_body   : qiri COMMA
     """
     ctx = _ctx(p)
-    ctx.process_characteristics(_handler(p))
+    ctx.process_characteristic(_handler(p))
     ctx.reset()
     ctx.next_predicate = p[1]
 
@@ -264,10 +298,7 @@ def p_opt_lang(p):
     opt_lang    :
                 | SEMI KW_LANG EQ bool
     """
-    if len(p) > 1:
-        _ctx(p).lang2scope = p[5]
-    else:
-        _ctx(p).lang2scope = False
+    _ctx(p).lang2scope = p[5] if len(p) > 1 else False
 
 
 def p_bool(p):
@@ -275,7 +306,7 @@ def p_bool(p):
     bool        : KW_TRUE
                 | KW_FALSE
     """
-    p[0] = p[1] == 'true'
+    p[0] = p[1] == u'true'
 
 
 def p_association(p):
@@ -303,17 +334,15 @@ def p_type(p):
 def p_scoped_statement(p):
     """\
     scoped_statement : IDENT LCURLY in_scope_statements RCURLY
-                     | IRI LCURLY in_scope_statements RCURLY
+                     | IRI LCURLY _anon_prefix in_scope_statements RCURLY
     """
 
 
-
-
-
-def p_in_scope_statement(p):
+def p__anon_prefix(p):  # Inline action
     """\
-    in_scope_statement : locals COLON statement_body
+    _anon_prefix :
     """
+    _ctx(p).register_anonymous_prefix(p[-2], _prefix_listener(p))
 
 
 def p_scope(p):
@@ -362,6 +391,10 @@ def _handler(p):
 
 def _ctx(p):
     return _parser(p).context
+
+
+def _prefix_listener(p):
+    return _parser(p).prefix_listener
 
 
 def p_error(p):
