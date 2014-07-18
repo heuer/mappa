@@ -205,7 +205,7 @@ class SimpleXMLWriter(XMLWriter):
         self.endElement(self._elements[-1], indent)
 
 
-# Taken from lxml.sax (but modified).
+# Taken from lxml.sax (but modified); license: BSD
 class ETreeContentHandler(ContentHandler):
     """\
     Build an ElementTree from SAX events.
