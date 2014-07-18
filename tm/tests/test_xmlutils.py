@@ -12,15 +12,15 @@ Tests against the ``xmlutils`` module.
 :organization: Semagia - http://www.semagia.com/
 :license:      BSD license
 """
+from nose.tools import ok_
 from StringIO import StringIO
 from xml.sax import saxutils
-import lxml
-import lxml.sax
 from tm import xmlutils
 
 
 def test_simplesaxhandler():
-    h = lxml.sax.ElementTreeContentHandler()
+    h = xmlutils.ETreeContentHandler()
+    ok_(h.etree is None)
     handler = xmlutils.SAXSimpleXMLWriter(h)
     handler.startDocument()
     handler.startElement('xml')
@@ -34,6 +34,7 @@ def test_simplesaxhandler():
     handler.dataElement('i', 'j', {'k': 'l'})
     handler.endElement('xml')
     handler.endDocument()
+    ok_(h.etree is not None)
 
 
 def test_simplesaxhandler2():
