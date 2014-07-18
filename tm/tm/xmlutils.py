@@ -365,7 +365,7 @@ class SAXSimpleXMLWriter(object):
 
     def _startElementLXML(self, name, attrs=None):
         self._elements.append(name)
-        # lxml.sax.ElementTreeContentHandler handles attributes as dict, no need for AttributesImpl
+        # lxml.sax.ElementTreeContentHandler and ETreeContentHandler handles attributes as dict, no need for AttributesImpl
         self._handler.startElement(name, attrs or _EMPTY_ATTRS)
 
     def endElement(self, name):
