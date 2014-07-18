@@ -210,7 +210,7 @@ class ETreeContentHandler(ContentHandler):
     """\
     Build an ElementTree from SAX events.
     """
-    def __init__(self, makeelement=None, makesubelement=None, makepi=None):
+    def __init__(self, makeelement=None, makesubelement=None, makepi=None, maketree=None):
         self._root = None
         self._root_siblings = []
         self._element_stack = []
@@ -226,12 +226,15 @@ class ETreeContentHandler(ContentHandler):
         if makepi is None:
             makepi = etree.ProcessingInstruction
         self._makepi = makepi
+        if maketree is None:
+            maketree = etree.ElementTree
+        self._maketree = maketree
 
     def _get_etree(self):
         """\
         Contains the generated ElementTree after parsing is finished.
         """
-        return etree.ElementTree(self._root)
+        return self._maketree(self._root) if self._root is not None else None
 
     etree = property(_get_etree, doc=_get_etree.__doc__)
 
