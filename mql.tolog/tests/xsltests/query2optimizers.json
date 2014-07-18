@@ -13,6 +13,7 @@
     "annotate-variant-value.tl": ["annotate-predicates"],
     "annotate-variant-resource.tl": ["annotate-predicates"],
     "c14n-predicate-gt.tl": [],
+    "count.tl": [],
     "create-dyn-occ.tl": ["dynamic-occurrences"],
     "create-dyn-occ2.tl": ["dynamic-occurrences"],
     "create-dyn-occ3.tl": ["dynamic-occurrences"],
