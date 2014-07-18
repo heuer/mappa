@@ -24,6 +24,7 @@
     "fold-type-name.tl": ["fold-type"],
     "fold-type-occ.tl": ["fold-type"],
     "fold-type-role.tl": ["fold-type"],
+    "ignore-after-qm.tl": [],
     "inline-rules.tl": ["inline-rules"],
     "inline-rules2.tl": ["inline-rules"],
     "non-redundant-topic.tl": ["remove-redundant-predicates"],
