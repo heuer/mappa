@@ -47,5 +47,6 @@
     "reorder-predicates3.tl": ["annotate-costs", "reorder-predicates"],
     "tolog-tut-2-4.tl": ["reduce-variables", "annotate-costs", "reorder-predicates"],
     "tolog-tut-2-4_2.tl": ["reduce-variables", "annotate-costs", "reorder-predicates"],
-    "topic-types.tl": ["reduce-variables"]
+    "topic-types.tl": ["reduce-variables"],
+    "topic-types2.tl": ["reduce-variables"]
 }
