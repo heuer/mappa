@@ -17,10 +17,6 @@
   <xsl:output method="xml" encoding="utf-8" standalone="yes"/>
 
   <xsl:variable name="MOD_EXPERIMENTAL" select="'http://psi.ontopia.net/tolog/experimental/'"/>
-  
-  <xsl:key name="namespaces"
-           match="tl:namespace[@kind='module']"
-           use="@identifier"/>
 
   <xsl:template match="@*|node()">
     <xsl:copy>
