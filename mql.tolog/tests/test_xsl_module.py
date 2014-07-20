@@ -29,6 +29,7 @@ def test_get_transformator():
 
 _IGNORE = (
     'fold-type-assoc.tl',
+    'tolog-tut-2-4_2.tl',
 )
 
 
@@ -40,6 +41,8 @@ def test_transformation():
     found_files = set([os.path.basename(fn) for fn in glob.glob(tolog_dir + '/*.tl')])
     baseline_dir = os.path.join(base_dir, './baseline/')
     for fn in query2optimizers:
+        if fn in _IGNORE:
+            continue
         found_files.remove(fn)
         optimizers = ['query-c14n']
         optimizers.extend(query2optimizers[fn])

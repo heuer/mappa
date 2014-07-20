@@ -1,0 +1,1 @@
+<tolog xmlns="http://psi.semagia.com/tolog-xml/"><select><variable name="OPERA"></variable><where><dynamic-predicate cost="1000"><name><identifier value="premiere-date"></identifier></name><variable name="OPERA"></variable><string value="1870 (22 Feb)"></string></dynamic-predicate></where></select></tolog>

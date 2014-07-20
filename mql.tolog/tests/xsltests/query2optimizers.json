@@ -30,6 +30,8 @@
     "inline-rules2.tl": ["inline-rules"],
     "non-redundant-topic.tl": ["remove-redundant-predicates"],
     "non-redundant-topic2.tl": ["remove-redundant-predicates"],
+    "ontopia-issue-93.tl": ["annotate-costs", "reorder-predicates"],
+    "ontopia-issue-103.tl": ["annotate-costs", "reorder-predicates"],
     "redundant-assoc.tl": ["remove-redundant-predicates"],
     "redundant-topic.tl": ["remove-redundant-predicates"],
     "redundant-topic2.tl": ["remove-redundant-predicates"],
@@ -42,5 +44,8 @@
     "redundant-topic9.tl": ["remove-redundant-predicates"],
     "reorder-predicates.tl": ["annotate-costs", "reorder-predicates"],
     "reorder-predicates2.tl": ["annotate-costs", "reorder-predicates"],
-    "reorder-predicates3.tl": ["annotate-costs", "reorder-predicates"]
+    "reorder-predicates3.tl": ["annotate-costs", "reorder-predicates"],
+    "tolog-tut-2-4.tl": ["reduce-variables", "annotate-costs", "reorder-predicates"],
+    "tolog-tut-2-4_2.tl": ["reduce-variables", "annotate-costs", "reorder-predicates"],
+    "topic-types.tl": ["reduce-variables"]
 }
