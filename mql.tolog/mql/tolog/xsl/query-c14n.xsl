@@ -18,6 +18,10 @@
 
   <xsl:variable name="MOD_EXPERIMENTAL" select="'http://psi.ontopia.net/tolog/experimental/'"/>
 
+  <xsl:key name="modns"
+           match="tl:namespace[@kind='module']"
+           use="@identifier"/>
+
   <xsl:template match="@*|node()">
     <xsl:copy>
       <xsl:apply-templates select="@*|node()"/>
@@ -48,7 +52,7 @@
   </xsl:template>
 
   <xsl:template match="tl:predicate[tl:name/tl:qname[@kind='module']]">
-    <xsl:variable name="iri" select="key('namespaces', tl:name/tl:qname/@prefix)/@iri"/>
+    <xsl:variable name="iri" select="key('modns', tl:name/tl:qname/@prefix)/@iri"/>
       <xsl:choose>
         <xsl:when test="$iri=$MOD_EXPERIMENTAL"><xsl:apply-templates select="." mode="module-experimental"/></xsl:when>
         <xsl:otherwise><xsl:copy-of select="."/></xsl:otherwise>
