@@ -17,7 +17,7 @@ import io
 import json
 import glob
 from nose.tools import ok_, eq_
-from mql.tolog import parse_to_etree, xsl
+from mql.tolog import parse_to_etree, xsl, convert_to_tologplus
 
 
 def test_get_transformator():
@@ -49,6 +49,9 @@ def test_transformation():
         filename = os.path.join(tolog_dir, fn)
         tree = parse_to_etree(open(filename, 'rb'))
         res = xsl.apply_transformations(tree, optimizers)
+        tolog_plus = convert_to_tologplus(open(filename, 'rb'), hints=True, optimizers=optimizers)
+        with io.open(os.path.join(baseline_dir, fn), 'wb') as f_tplus:
+            f_tplus.write(tolog_plus)
         out = io.BytesIO()
         res.write_c14n(out)
         expected = io.open(os.path.join(baseline_dir, fn + '.c14n'), encoding='utf-8').read()
