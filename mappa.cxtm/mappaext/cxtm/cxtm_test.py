@@ -15,7 +15,7 @@ Utility functions to run CXTM tests.
 from __future__ import absolute_import
 import os
 import io
-from tm import Source
+from tm import make_source
 from tm.mio import MIOException
 import mappa
 from mappa import ModelConstraintViolation
@@ -144,7 +144,7 @@ def check_writer(writer_factory, deser_factory, filename, post_process):
     conn = mappa.connect()
     tm = conn.create('http://www.semagia.com/mappa-test-tm')
     # 1. Read the source
-    src = Source(file=open(filename, 'rb'))
+    src = make_source(open(filename, 'rb'))
     deserializer = deser_factory()
     deserializer.handler = MappaMapHandler(tm)
     deserializer.parse(src)
@@ -156,7 +156,7 @@ def check_writer(writer_factory, deser_factory, filename, post_process):
     writer.write(tm)
     # 3. Read the generated topic map
     tm2 = conn.create('http://www.semagia.com/mappa-test-tm2')
-    src2 = Source(data=out.getvalue(), iri=src.iri)
+    src2 = make_source(out.getvalue(), iri=src.iri)
     deserializer = deser_factory()
     deserializer.handler = MappaMapHandler(tm2)
     deserializer.parse(src2)
@@ -177,7 +177,7 @@ def check_writer(writer_factory, deser_factory, filename, post_process):
 def check_valid(deserializer, filename, post_process=None):
     conn = mappa.connect()
     tm = conn.create('http://www.semagia.com/mappa-test-tm')
-    src = Source(file=open(filename, 'rb'))
+    src = make_source(open(filename, 'rb'))
     deserializer.handler = MappaMapHandler(tm)
     deserializer.parse(src)
     if post_process:
@@ -195,7 +195,7 @@ def check_valid(deserializer, filename, post_process=None):
 def check_invalid(deserializer, filename):
     conn = mappa.connect()
     tm = conn.create('http://www.semagia.com/mappa-test-tm')
-    src = Source(file=open(filename, 'rb'))
+    src = make_source(open(filename, 'rb'))
     deserializer.handler = MappaMapHandler(tm)
     try:
         deserializer.parse(src)
