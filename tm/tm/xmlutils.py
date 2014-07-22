@@ -73,6 +73,14 @@ class XMLWriter(object):
         """
         self._newline()
         self._out.flush()
+
+    def startPrefixMapping(self, prefix, uri):
+        # TODO
+        pass
+
+    def endPrefixMapping(self, prefix):
+        # TODO
+        pass
     
     def startElement(self, name, attrs=None):
         """\
@@ -211,6 +219,7 @@ class ETreeContentHandler(ContentHandler):
     Build an ElementTree from SAX events.
     """
     def __init__(self, makeelement=None, makesubelement=None, makepi=None, maketree=None):
+        ContentHandler.__init__(self)
         self._root = None
         self._root_siblings = []
         self._element_stack = []
