@@ -15,7 +15,7 @@ Provides functions to parse tolog queries.
 from __future__ import absolute_import
 from functools import partial
 from urllib2 import urlopen
-from tm import Source, plyutils, xmlutils
+from tm import make_source, plyutils, xmlutils
 from . import lexer as lexer_mod, parser as parser_mod, handler as handler_mod, xsl
 
 __all__ = ('parse', 'parse_query')
@@ -39,15 +39,9 @@ def parse(src, handler, tolog_plus=False, **kw):
     """
     parser = plyutils.make_parser(parser_mod)
     parser_mod.initialize_parser(parser, handler, tolog_plus)
-    if isinstance(src, basestring):
-        iri = kw.get('iri')
-        if not iri:
-            raise ValueError('If the query source is a string, an "iri" keyword is expected')
-        src = Source(data=src, iri=iri)
-    elif isinstance(src, file):
-        src = Source(file=src, iri=kw.get('iri'))
-    data = src.stream or urlopen(src.iri)
-    handler.base_iri = src.iri
+    source = make_source(src, kw.get('iri'))
+    data = source.stream or urlopen(source.iri)
+    handler.base_iri = source.iri
     handler.start()
     lexer = _make_lexer(tolog_plus)
     parser.parse(data.read(), lexer=lexer)
@@ -98,11 +92,12 @@ def parse_query(src, query_handler=None, factory=None, tolog_plus=False, optimiz
         To omit any optimization, an empty iterable must be provided.
     """
     query_handler = query_handler or handler_mod.make_queryhandler(factory)
-    query_handler.base_iri = src.iri
+    source = make_source(src)
+    query_handler.base_iri = source.iri
     if optimizers is None:
         optimizers = xsl.DEFAULT_TRANSFORMERS
-    xsl.apply_transformations(parse_to_etree(src, tolog_plus, **kw), optimizers,
-                              partial(xsl.saxify, handler=handler_mod.XMLParserHandler(query_handler)))
+    xsl.apply_transformations(parse_to_etree(source, tolog_plus, **kw), optimizers,
+                              partial(xsl.saxify, handler=handler_mod.SAXMediator(query_handler)))
     return query_handler.query
 
 
@@ -125,9 +120,9 @@ def parse_to_etree(src, tolog_plus=False, **kw):
     return contenthandler.etree
 
 
-def parse_to_tolog(src, tolog_plus=False, hints=False, optimizers=None, **kw):
+def convert_to_tolog(src, tolog_plus=False, hints=False, optimizers=None, **kw):
     """\
-    Parses the provided query and returns the query as an optimized tolog
+    Parses the provided query and returns the query as (an optimized) tolog
     query string. 
     
     This function is mainly useful for debugging purposes.
@@ -154,9 +149,9 @@ def parse_to_tolog(src, tolog_plus=False, hints=False, optimizers=None, **kw):
                           optimizers=optimizers, **kw)
     
 
-def parse_to_tologplus(src, tolog_plus=False, hints=False, optimizers=None, **kw):
+def convert_to_tologplus(src, tolog_plus=False, hints=False, optimizers=None, **kw):
     """\
-    Parses the provided query and returns the query as an optimized tolog+
+    Parses the provided query and returns the query as (an optimized) tolog+
     query string. 
     
     `src`
