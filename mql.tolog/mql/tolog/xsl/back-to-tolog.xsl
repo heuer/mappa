@@ -153,15 +153,15 @@
     <xsl:text>)</xsl:text>
   </xsl:template>
 
-  <xsl:template match="tl:builtin-predicate|tl:function">
-    <xsl:if test="@kind='internal'"><xsl:text>:</xsl:text></xsl:if>
+  <xsl:template match="tl:builtin-predicate|tl:function|tl:internal-predicate">
+    <xsl:if test="local-name(.) = 'internal-predicate'"><xsl:text>:</xsl:text></xsl:if>
     <xsl:value-of select="concat(@name, '(')"/>
     <xsl:call-template name="parameters">
       <xsl:with-param name="items" select="tl:*"/>
     </xsl:call-template>
     <xsl:text>)</xsl:text>
     <xsl:apply-templates select="." mode="annotate"/>
-    <xsl:if test="$render-hints = 'true' and @kind='internal'"><xsl:text>  /* optimizer */</xsl:text></xsl:if>
+    <xsl:if test="$render-hints = 'true' and local-name(.) = 'internal-predicate'"><xsl:text>  /* optimizer */</xsl:text></xsl:if>
   </xsl:template>
 
   <xsl:template match="tl:predicate|tl:dynamic-predicate">
