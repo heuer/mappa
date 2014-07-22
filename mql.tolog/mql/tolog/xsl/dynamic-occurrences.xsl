@@ -14,7 +14,7 @@
   CAUTION: This needs more work/tests.
 
 
-  Copyright (c) 2010 - 2012, Semagia - Lars Heuer <http://www.semagia.com/>
+  Copyright (c) 2010 - 2014, Semagia - Lars Heuer <http://www.semagia.com/>
   All rights reserved.
   
   License: BSD

@@ -3,7 +3,7 @@
   This stylesheet translates a tolog XML representation back to a tolog
   query string.
 
-  Copyright (c) 2010 - 2012, Semagia - Lars Heuer <http://www.semagia.com/>
+  Copyright (c) 2010 - 2014, Semagia - Lars Heuer <http://www.semagia.com/>
   All rights reserved.
   
   License: BSD

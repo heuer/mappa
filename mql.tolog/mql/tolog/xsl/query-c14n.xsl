@@ -3,7 +3,7 @@
   This stylesheet converts clause queries into select queries and renames
   the "source-locator" predicate into "item-identifier"
 
-  Copyright (c) 2010 - 2012, Semagia - Lars Heuer <http://www.semagia.com/>
+  Copyright (c) 2010 - 2014, Semagia - Lars Heuer <http://www.semagia.com/>
   All rights reserved.
   
   License: BSD
