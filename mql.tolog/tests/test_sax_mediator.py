@@ -18,7 +18,7 @@ import json
 import glob
 from nose.tools import eq_
 from tm import xmlutils
-from mql.tolog import parse_query, handler
+from mql.tolog import parse_query, handler, convert_to_tologplus
 
 
 _IGNORE = (
@@ -46,12 +46,15 @@ def test_mediator():
     found_files = set([os.path.basename(fn) for fn in glob.glob(tolog_dir + '/*.tl')])
     baseline_dir = os.path.join(base_dir, './baseline/')
     for fn in query2optimizers:
-        if fn in _IGNORE:
-            continue
-        found_files.remove(fn)
         optimizers = ['query-c14n']
         optimizers.extend(query2optimizers[fn])
         filename = os.path.join(tolog_dir, fn)
+        tolog_plus = convert_to_tologplus(open(filename, 'rb'), hints=True, optimizers=optimizers)
+        with io.open(os.path.join(baseline_dir, fn), 'wb') as f_tplus:
+            f_tplus.write(tolog_plus)
+        if fn in _IGNORE:
+            continue
+        found_files.remove(fn)
         qh = NoopQueryHandler()
         q = parse_query(io.open(filename, 'rb'), qh, optimizers=optimizers)
         out = io.BytesIO()
