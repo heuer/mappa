@@ -9,10 +9,10 @@ year($DATE, $YEAR) :-
 select
     $EVENT, $SDATE, $EDATE, $YEAR, count($PHOTO)
 where
-    not((ph:hidden: $EVENT) /* costs: 9 */), 
+    not(ph:hide(ph:hidden: $EVENT) /* costs: 9 */), 
     { ph:start-date($EVENT, $SDATE) /* costs: 1000 */ }, 
     { ph:end-date($EVENT, $EDATE) /* costs: 1000 */ }, 
     { year($SDATE, $YEAR) | not(year($SDATE, $YEAR)) }, 
-    (op:Image: $PHOTO, op:Event: $EVENT),  /* costs: 8 */
+    ph:taken-during(op:Image: $PHOTO, op:Event: $EVENT),  /* costs: 8 */
     instance-of($EVENT, op:Event) /* costs: 100 */
 order by $YEAR desc, $SDATE desc

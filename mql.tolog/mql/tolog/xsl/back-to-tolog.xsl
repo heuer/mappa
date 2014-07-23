@@ -144,7 +144,7 @@
   </xsl:template>
 
   <xsl:template match="tl:association-predicate">
-    <xsl:value-of select="tl:name/tl:*/@value"/>
+    <xsl:apply-templates select="tl:name/tl:*"/>
     <xsl:text>(</xsl:text>
     <xsl:for-each select="tl:pair">
       <xsl:apply-templates select="."/>

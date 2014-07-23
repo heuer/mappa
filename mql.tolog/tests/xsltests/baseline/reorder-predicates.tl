@@ -4,4 +4,4 @@ select
     $T
 where
     $T = @T25720,  /* costs: 0 */
-    (bk:vises-vindu: $T) /* costs: 9 */
+    bk:vises-nytt-vindu(bk:vises-vindu: $T) /* costs: 9 */

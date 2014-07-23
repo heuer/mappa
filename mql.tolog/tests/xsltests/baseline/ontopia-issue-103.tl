@@ -3,21 +3,21 @@
 %prefix tech <http://www.techquila.com/psi/thesaurus/#>
 
 descendant-of($ANCESTOR, $DESCENDANT) :-
-    { (tech:broader: $ANCESTOR, tech:narrower: $DESCENDANT) /* costs: 8 */ | (tech:broader: $ANCESTOR, tech:narrower: $MID),  /* costs: 8 */
+    { tech:broader-narrower(tech:broader: $ANCESTOR, tech:narrower: $DESCENDANT) /* costs: 8 */ | tech:broader-narrower(tech:broader: $ANCESTOR, tech:narrower: $MID),  /* costs: 8 */
     descendant-of($MID, $DESCENDANT) }
 .
 
 has-subject($CLIP, $TOPIC) :-
-    { { (nrk:verk: $CLIP, nrk:tema: $TOPIC) /* costs: 8 */ | (nrk:klassifisering: $TOPIC, nrk:klassifisert: $PERSON),  /* costs: 8 */
-    (nrk:verk: $CLIP, nrk:tema: $PERSON) /* costs: 8 */ } | { (nrk:verk: $CLIP, nrk:tema: $DESCENDANT) /* costs: 8 */ | (nrk:klassifisering: $DESCENDANT, nrk:klassifisert: $PERSON),  /* costs: 8 */
-    (nrk:verk: $CLIP, nrk:tema: $PERSON) /* costs: 8 */ }, 
+    { { nrk:omhandler(nrk:verk: $CLIP, nrk:tema: $TOPIC) /* costs: 8 */ | nrk:tilhoerer-emne(nrk:klassifisering: $TOPIC, nrk:klassifisert: $PERSON),  /* costs: 8 */
+    nrk:omhandler(nrk:verk: $CLIP, nrk:tema: $PERSON) /* costs: 8 */ } | { nrk:omhandler(nrk:verk: $CLIP, nrk:tema: $DESCENDANT) /* costs: 8 */ | nrk:tilhoerer-emne(nrk:klassifisering: $DESCENDANT, nrk:klassifisert: $PERSON),  /* costs: 8 */
+    nrk:omhandler(nrk:verk: $CLIP, nrk:tema: $PERSON) /* costs: 8 */ }, 
     descendant-of($TOPIC, $DESCENDANT) }instance-of($TOPIC, nrk:emne)
 .
 
 select
     $TOPLEVELTOPIC
 where
-    not((tech:broader: $PARENT, tech:narrower: $TOPLEVELTOPIC) /* costs: 8 */), 
+    not(tech:broader-narrower(tech:broader: $PARENT, tech:narrower: $TOPLEVELTOPIC) /* costs: 8 */), 
     has-subject($CLIP, $TOPLEVELTOPIC), 
     direct-instance-of($TOPLEVELTOPIC, nrk:emne),  /* costs: 100 */
     instance-of($CLIP, nrk:klipp),  /* costs: 100 */
