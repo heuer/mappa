@@ -32,7 +32,7 @@ def lex(data, expected, tolog_plus=True):
         expected_type, expected_value = expected[i]
         eq_(expected_type, tok.type)
         eq_(expected_value, tok.value)
-        i+=1
+        i += 1
 
 
 def simple_lex(data, tolog_plus=True):

@@ -17,11 +17,11 @@ from tm.ply import TOKEN
 from tm.mql import SyntaxQueryError
 
 # Start of an identifier
-_IDENT_START = ur'[a-zA-Z_]|[\u00C0-\u00D6]|[\u00D8-\u00F6]' + \
-                ur'|[\u00F8-\u02FF]|[\u0370-\u037D]' + \
-                ur'|[\u037F-\u1FFF]|[\u200C-\u200D]' + \
-                ur'|[\u2070-\u218F]|[\u2C00-\u2FEF]' + \
-                ur'|[\u3001-\uD7FF]|[\uF900-\uFDCF]|[\uFDF0-\uFFFD]'
+_IDENT_START = ur'[a-zA-Z_]|[\u00C0-\u00D6]|[\u00D8-\u00F6]' \
+               ur'|[\u00F8-\u02FF]|[\u0370-\u037D]' \
+               ur'|[\u037F-\u1FFF]|[\u200C-\u200D]' \
+               ur'|[\u2070-\u218F]|[\u2C00-\u2FEF]' \
+               ur'|[\u3001-\uD7FF]|[\uF900-\uFDCF]|[\uFDF0-\uFFFD]'
 
 _IDENT_PART = ur'%s|[\-0-9]|[\u00B7]|[\u0300-\u036F]|[\u203F-\u2040]' % _IDENT_START
 
@@ -203,7 +203,7 @@ def t_CURIE(t):
     t.value = t.value[1:-1]
     return t
 
-@TOKEN(r':'.join([_IDENT, r'[_\w\.-]+']))
+@TOKEN(ur'%s:(([0-9]+(%s)*)|%s)' % (_IDENT, _IDENT_PART, _IDENT))
 def t_QNAME(t):
     return t
 
