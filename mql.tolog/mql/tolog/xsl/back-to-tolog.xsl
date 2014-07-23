@@ -265,7 +265,7 @@
   </xsl:template>
 
   <xsl:template match="tl:limit|tl:offset">
-     <xsl:value-of select="concat(local-name(.), ' $', @value)"/> 
+     <xsl:value-of select="concat(local-name(.), ' ', @value)"/>
   </xsl:template>
 
   <xsl:template match="tl:variable|tl:ascending">
@@ -342,6 +342,7 @@
       </xsl:if>
        <xsl:apply-templates select="."/>
       <xsl:if test="position() != last()"><xsl:text>, </xsl:text></xsl:if>
+      <xsl:if test="$render-hints = 'true' and @cost"><xsl:text> /* costs: </xsl:text><xsl:value-of select="@cost"/><xsl:text> */</xsl:text></xsl:if>
     </xsl:for-each>
   </xsl:template>
 
