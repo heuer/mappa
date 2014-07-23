@@ -98,7 +98,7 @@ def test_invalid_id():
 
 
 def test_valid_local_part():
-    data = (u'1976-09-19', u'1semagia')
+    data = (u'1976-09-19', u'1semagia', u'reden-beëndiging-ambtsbekleding')
     for c in data:
         ok_(is_valid_local_part(c))
 
