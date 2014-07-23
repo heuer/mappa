@@ -24,7 +24,5 @@ descendant-of($TOPIC, $DESCENDANT)
 
 select $TOPLEVELTOPIC from  direct-instance-of($TOPLEVELTOPIC,nrk:emne),
 not(tech:broader-narrower($PARENT : tech:broader, $TOPLEVELTOPIC :
-tech:narrower)), $TOPLEVELTOPIC /= i"http://bogus.ontopia.net/nrk/emne/
-ukategoriserbart",  $TOPLEVELTOPIC /= i"http://bogus.ontopia.net/nrk/emne/
-nytt-emne",  has-subject($CLIP, $TOPLEVELTOPIC),  instance-of($CLIP,
+tech:narrower)), $TOPLEVELTOPIC /= i"http://bogus.ontopia.net/nrk/emne/ukategoriserbart",  $TOPLEVELTOPIC /= i"http://bogus.ontopia.net/nrk/emne/nytt-emne",  has-subject($CLIP, $TOPLEVELTOPIC),  instance-of($CLIP,
 nrk:klipp)  order by $TOPLEVELTOPIC ASC  limit 8 ?
