@@ -77,7 +77,7 @@
     </xsl:call-template>
   </xsl:template>
     
-  <xsl:template match="tl:builtin-predicate[@name='types' or @name='direct-types']">
+  <xsl:template match="tl:internal-predicate[@name='types' or @name='direct-types']">
     <xsl:variable name="costs">
         <xsl:choose>
             <xsl:when test="@name='direct-types'"><xsl:value-of select="$BIG_RESULT - 1"/></xsl:when>
