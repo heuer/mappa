@@ -43,8 +43,11 @@ def test_tolog_plus():
         optimizers.extend(query2optimizers[fn])
         filename = os.path.join(tolog_dir, fn)
         f = open(filename, 'rb')
+        # 1. Apply optimizers and return tolog+
         tl = tolog.convert_to_tologplus(f, optimizers=optimizers)
+        # 2. Parse created tolog+
         tree = tolog.parse_to_etree(tl, iri='file:' + pathname2url(f.name))
+        # 3. Apply optimizers to the newly parsed query
         res = xsl.apply_transformations(tree, optimizers)
         out = io.BytesIO()
         res.write_c14n(out)
@@ -71,8 +74,11 @@ def test_tolog():
         optimizers.extend(query2optimizers[fn])
         filename = os.path.join(tolog_dir, fn)
         f = open(filename, 'rb')
+        # 1. Apply optimizers and return tolog
         tl = tolog.convert_to_tolog(f, optimizers=optimizers)
+        # 2. Parse created tolog+
         tree = tolog.parse_to_etree(tl, iri='file:' + pathname2url(f.name))
+        # 3. Apply optimizers to the newly parsed query
         res = xsl.apply_transformations(tree, optimizers)
         out = io.BytesIO()
         res.write_c14n(out)
