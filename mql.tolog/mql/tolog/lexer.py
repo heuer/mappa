@@ -18,24 +18,18 @@ from tm.ply import TOKEN
 from tm.mql import SyntaxQueryError
 
 # Start of an identifier
-if sys.maxunicode == 0xffff:
+_IDENT_START = ur'[a-zA-Z_]' \
+               ur'|[\u00C0-\u00D6]|[\u00D8-\u00F6]' \
+               ur'|[\u00F8-\u02FF]|[\u0370-\u037D]' \
+               ur'|[\u037F-\u1FFF]|[\u200C-\u200D]' \
+               ur'|[\u2070-\u218F]|[\u2C00-\u2FEF]' \
+               ur'|[\u3001-\uD7FF]|[\uF900-\uFDCF]' \
+               ur'|[\uFDF0-\uFFFD]'
+
+if not sys.maxunicode == 0xffff:
     # <http://bugs.python.org/issue12729>, <http://bugs.python.org/issue12749>,
     # <http://bugs.python.org/issue3665>
-    _IDENT_START = ur'[a-zA-Z_]' \
-                   ur'|[\u00C0-\u00D6]|[\u00D8-\u00F6]' \
-                   ur'|[\u00F8-\u02FF]|[\u0370-\u037D]' \
-                   ur'|[\u037F-\u1FFF]|[\u200C-\u200D]' \
-                   ur'|[\u2070-\u218F]|[\u2C00-\u2FEF]' \
-                   ur'|[\u3001-\uD7FF]|[\uF900-\uFDCF]' \
-                   ur'|[\uFDF0-\uFFFD]'
-else:
-    _IDENT_START = ur'[a-zA-Z_]' \
-                   ur'|[\u00C0-\u00D6]|[\u00D8-\u00F6]' \
-                   ur'|[\u00F8-\u02FF]|[\u0370-\u037D]' \
-                   ur'|[\u037F-\u1FFF]|[\u200C-\u200D]' \
-                   ur'|[\u2070-\u218F]|[\u2C00-\u2FEF]' \
-                   ur'|[\u3001-\uD7FF]|[\uF900-\uFDCF]' \
-                   ur'|[\uFDF0-\uFFFD]|[\U00010000-\U000EFFFF]'
+    _IDENT_START += ur'|[\U00010000-\U000EFFFF]'
 del sys
 
 _IDENT_PART = ur'%s|[\-0-9]|[\u00B7]|[\u0300-\u036F]|[\u203F-\u2040]' % _IDENT_START

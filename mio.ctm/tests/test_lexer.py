@@ -12,7 +12,7 @@ Tests against mio.ctm.lexer.
 :organization: Semagia - http://www.semagia.com/
 :license:      BSD license
 """
-from nose.tools import eq_, ok_
+from nose.tools import eq_
 from mio.ctm import _make_lexer as make_lexer
 
 
@@ -49,6 +49,7 @@ def test_accept():
 
 
 _DATA = [
+                 u'k:reden-beëndiging-ambtsbekleding .',
                  'semagia.',
                  '<http://www.semagia.com/sid>.',
                  'http://www.semagia.com/sid.',
