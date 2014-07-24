@@ -119,6 +119,7 @@ def test_accept():
 # (input, (tokentype1, tokentype2, ...))
 _TEST_DATA = (
 ("instance-of($x, $y)", ('IDENT', 'LPAREN', 'VARIABLE', 'COMMA', 'VARIABLE', 'RPAREN')),
+(u'k:reden-beëndiging-ambtsbekleding($foo, $bar)?', ('QNAME', 'LPAREN', 'VARIABLE', 'COMMA', 'VARIABLE', 'RPAREN', 'QM')),
 
 ("select $x from instance-of($x, $y)", 
 ('KW_SELECT', 'VARIABLE', 'KW_FROM', 'IDENT', 'LPAREN', 'VARIABLE', 'COMMA', 'VARIABLE', 'RPAREN')),
@@ -180,7 +181,7 @@ Everything after an ? must be ignored a.k.a. do not produce tokens and failures 
 )
 
 _ACCEPT_DATA = (
-    
+                u'k:reden-beëndiging-ambtsbekleding($foo, $bar)?',
                  'select $x from instance-of($x, $y)?',
                  'homepage($t, "http://www.semagia.com/")?',
                  'homepage($t, "http://www.semagia.com/")? Ignore this text, please',
