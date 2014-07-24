@@ -28,6 +28,18 @@ TPLUS_EXPERIMENTAL_DATE_MODULE_IRI = TPLUS_EXPERIMENTAL_MODULE_IRI + u'date/'
 
 
 #
+#-- TM Constructs
+#
+KIND_TM = 1
+KIND_TOPIC = 2
+KIND_ASSOC = 3
+KIND_ROLE = 4
+KIND_OCC = 5
+KIND_NAME = 6
+KIND_VAR = 7
+
+
+#
 #-- Constants for grammar constructs
 #
 IID = mio.ITEM_IDENTIFIER
