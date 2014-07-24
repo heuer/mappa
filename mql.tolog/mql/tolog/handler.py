@@ -279,22 +279,19 @@ class SAXMediator(ContentHandler):
         elif name in _NAME_ELS:
             var_name = attrs.get(_NAME_ATTR)
             if name == u'variable' and self._states[-1] == u'Rule':
+                # Don't emit events, collect variables
                 self._rule_params.append(var_name)
                 return
-            evt = name
             args = [var_name]
             method = getattr(handler, name)
         elif name in _VALUE_ELS:
-            evt = name
             args = [attrs.get(_VALUE_ATTR)]
             method = getattr(handler, name)
         elif name == u'namespace':
-            evt = name
             args = [attrs.get((None, u'identifier')), attrs.get((None, u'iri')),
                     _PREFIXNAME2KIND[attrs.get(_KIND_ATTR)]]
             method = getattr(handler, name)
         elif name in (u'curie', u'qname'):
-            evt = name
             args = [_PREFIXNAME2KIND[attrs.get(_KIND_ATTR)],
                     attrs.get((None, u'prefix')), attrs.get((None, u'localpart'))]
             method = getattr(handler, name)
@@ -307,7 +304,6 @@ class SAXMediator(ContentHandler):
         elif name == u'function-call':
             args = [attrs.get(_NAME_ATTR)]
             evt = u'Function'
-        assert evt, name
         kw = {}
         costs, hints = attrs.get(_COST_ATTR), attrs.get(_HINT_ATTR)
         if costs:
@@ -320,12 +316,11 @@ class SAXMediator(ContentHandler):
         method(*args, **kw)
 
     def endElementNS(self, (uri, name), qname):
-        if name in _NO_END_EVENT_ELS:
+        if name in _NO_END_EVENT_ELS \
+                or name == u'body':  # Ignore body, fire "endRule" later
             return
         if name == u'tolog':
             self._handler.end()
-            return
-        if name == u'body':  # Ignore body, fire "endRule" later
             return
         state = self._states.pop()
         getattr(self._handler, u'end%s' % state)()
