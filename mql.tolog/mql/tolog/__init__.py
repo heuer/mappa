@@ -92,7 +92,7 @@ def parse_query(src, query_handler=None, factory=None, tolog_plus=False, optimiz
         To omit any optimization, an empty iterable must be provided.
     """
     query_handler = query_handler or handler_mod.make_queryhandler(factory)
-    source = make_source(src)
+    source = make_source(src, iri=kw.get('iri'))
     query_handler.base_iri = source.iri
     if optimizers is None:
         optimizers = xsl.DEFAULT_TRANSFORMERS
@@ -206,5 +206,6 @@ def _back_to_tolog(src, tolog_plus_out, tolog_plus=False, hints=False, optimizer
     transformers = tuple(optimizers) + ('back-to-tolog',)
     transform_kw = {'render-hints': '"true"' if hints else '"false"',
                     'tolog-plus': '"true"' if tolog_plus_out else '"false"'}
-    return xsl.apply_transformations(parse_to_etree(src, tolog_plus, **kw),
-                                     transformers, **transform_kw)
+    res = xsl.apply_transformations(parse_to_etree(src, tolog_plus, **kw),
+                                    transformers, **transform_kw)
+    return unicode(res) if res else None
