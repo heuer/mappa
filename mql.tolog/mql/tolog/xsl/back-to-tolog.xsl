@@ -139,7 +139,9 @@
       <xsl:with-param name="items" select="tl:variable"/>
     </xsl:call-template>
     <xsl:text>) :-&#xA;    </xsl:text>
-    <xsl:apply-templates select="tl:body/*"/>
+    <xsl:call-template name="predicates">
+      <xsl:with-param name="items" select="tl:body/*"/>
+    </xsl:call-template>
     <xsl:text>&#xA;.&#xA;&#xA;</xsl:text>
   </xsl:template>
 
