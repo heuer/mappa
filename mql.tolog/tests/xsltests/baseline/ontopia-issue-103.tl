@@ -11,7 +11,8 @@ has-subject($CLIP, $TOPIC) :-
     { { nrk:omhandler(nrk:verk: $CLIP, nrk:tema: $TOPIC) /* costs: 8 */ | nrk:tilhoerer-emne(nrk:klassifisering: $TOPIC, nrk:klassifisert: $PERSON),  /* costs: 8 */
     nrk:omhandler(nrk:verk: $CLIP, nrk:tema: $PERSON) /* costs: 8 */ } | { nrk:omhandler(nrk:verk: $CLIP, nrk:tema: $DESCENDANT) /* costs: 8 */ | nrk:tilhoerer-emne(nrk:klassifisering: $DESCENDANT, nrk:klassifisert: $PERSON),  /* costs: 8 */
     nrk:omhandler(nrk:verk: $CLIP, nrk:tema: $PERSON) /* costs: 8 */ }, 
-    descendant-of($TOPIC, $DESCENDANT) /* costs: 101 */ }instance-of($TOPIC, nrk:emne)
+    descendant-of($TOPIC, $DESCENDANT) /* costs: 101 */ }, 
+    instance-of($TOPIC, nrk:emne) /* costs: 100 */
 .
 
 select

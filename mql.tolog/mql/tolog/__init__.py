@@ -149,7 +149,7 @@ def convert_to_tolog(src, tolog_plus=False, hints=False, optimizers=None, **kw):
                           optimizers=optimizers, **kw)
     
 
-def convert_to_tologplus(src, tolog_plus=False, hints=False, optimizers=None, **kw):
+def convert_to_tolog_plus(src, tolog_plus=False, hints=False, optimizers=None, **kw):
     """\
     Parses the provided query and returns the query as (an optimized) tolog+
     query string. 

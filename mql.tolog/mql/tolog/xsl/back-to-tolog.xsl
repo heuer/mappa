@@ -278,6 +278,10 @@
     <xsl:value-of select="concat('@', @value)"/>
   </xsl:template>
 
+  <xsl:template match="tl:parameter">
+    <xsl:value-of select="concat('%', @name, '%')"/>
+  </xsl:template>
+
   <xsl:template match="tl:string">
     <xsl:value-of select="concat('&quot;', @value, '&quot;')"/>
   </xsl:template>

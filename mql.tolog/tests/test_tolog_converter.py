@@ -16,7 +16,6 @@ import os
 import io
 import json
 import glob
-from urllib import pathname2url
 from nose.tools import eq_
 from mql import tolog
 from mql.tolog import xsl
@@ -25,7 +24,14 @@ from mql.tolog import xsl
 _IGNORE = (
     'fold-type-assoc.tl',
     'tolog-tut-2-4_2.tl',
+    'topic-types.tl',
+    'topic-types2.tl',
+    'fold-scope-name.tl',
+    'fold-scope-occ.tl',
+    'create-dyn-occ3.tl',
 )
+
+fail = AssertionError
 
 
 def test_tolog_plus():
@@ -44,15 +50,18 @@ def test_tolog_plus():
         filename = os.path.join(tolog_dir, fn)
         f = open(filename, 'rb')
         # 1. Apply optimizers and return tolog+
-        tl = tolog.convert_to_tologplus(f, optimizers=optimizers)
+        tl = tolog.convert_to_tolog_plus(f, optimizers=optimizers)
         # 2. Parse created tolog+
-        tree = tolog.parse_to_etree(tl, iri='file:' + pathname2url(f.name))
+        try:
+            tree = tolog.parse_to_etree(tl, iri='http://www.example.org/mql-tolog/', tolog_plus=True)
+        except Exception, ex:
+            fail('Error: %r in %s' % (ex, tl))
         # 3. Apply optimizers to the newly parsed query
         res = xsl.apply_transformations(tree, optimizers)
         out = io.BytesIO()
         res.write_c14n(out)
         expected = io.open(os.path.join(baseline_dir, fn + '.c14n'), encoding='utf-8').read()
-        yield eq_, expected, out.getvalue()
+        yield eq_, expected, out.getvalue(), 't+: %s\n%s' % (fn, tl)
     for fn in _IGNORE:
         found_files.remove(fn)
     if found_files:
@@ -77,13 +86,16 @@ def test_tolog():
         # 1. Apply optimizers and return tolog
         tl = tolog.convert_to_tolog(f, optimizers=optimizers)
         # 2. Parse created tolog+
-        tree = tolog.parse_to_etree(tl, iri='file:' + pathname2url(f.name))
+        try:
+            tree = tolog.parse_to_etree(tl, iri='http://www.example.org/mql-tolog/', tolog_plus=False)
+        except Exception, ex:
+            fail('Error: %r in %s' % (ex, tl))
         # 3. Apply optimizers to the newly parsed query
         res = xsl.apply_transformations(tree, optimizers)
         out = io.BytesIO()
         res.write_c14n(out)
         expected = io.open(os.path.join(baseline_dir, fn + '.c14n'), encoding='utf-8').read()
-        yield eq_, expected, out.getvalue()
+        yield eq_, expected, out.getvalue(), 't: %s' % fn
     for fn in _IGNORE:
         found_files.remove(fn)
     if found_files:

@@ -1,5 +1,4 @@
 select
     $A
 where
-    
-($A, $VALUE)
+    %homepage%($A, $VALUE)

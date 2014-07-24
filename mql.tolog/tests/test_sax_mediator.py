@@ -18,7 +18,7 @@ import json
 import glob
 from nose.tools import eq_
 from tm import xmlutils
-from mql.tolog import parse_query, handler, convert_to_tologplus
+from mql.tolog import parse_query, handler, convert_to_tolog_plus
 
 
 _IGNORE = (
@@ -49,7 +49,7 @@ def test_mediator():
         optimizers = ['query-c14n']
         optimizers.extend(query2optimizers[fn])
         filename = os.path.join(tolog_dir, fn)
-        tolog_plus = convert_to_tologplus(open(filename, 'rb'), hints=True, optimizers=optimizers)
+        tolog_plus = convert_to_tolog_plus(open(filename, 'rb'), hints=True, optimizers=optimizers)
         with io.open(os.path.join(baseline_dir, fn), 'wb') as f_tplus:
             f_tplus.write(tolog_plus)
         if fn in _IGNORE:
