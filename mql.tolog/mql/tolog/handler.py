@@ -169,6 +169,12 @@ class XMLParserHandler(TologHandler):
                                              u'prefix': prefix,
                                              u'localpart': lp})
 
+    def startPredicate(self, costs=None):
+        attrs = {}
+        if costs is not None:
+            attrs[u'cost'] = costs
+        self._writer.startElement(u'predicate', attrs)
+
     def startBuiltinPredicate(self, name, costs=None, hints=None):
         attrs = {u'name': name}
         if costs is not None:

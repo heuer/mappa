@@ -293,6 +293,23 @@
       <xsl:otherwise><xsl:copy-of select="."/></xsl:otherwise>
     </xsl:choose>
   </xsl:template>
+
+  <xsl:template match="tl:predicate[tl:name/tl:identifier]">
+    <!--** Matches rule invocations -->
+    <xsl:variable name="open" select="count(tl:variable)"/>
+    <xsl:choose>
+      <xsl:when test="$open = 0">
+        <xsl:call-template name="annotate">
+          <xsl:with-param name="cost" select="$FILTER_RESULT"/>
+        </xsl:call-template>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:call-template name="annotate">
+          <xsl:with-param name="cost" select="$BIG_RESULT + $open - 1"/>
+        </xsl:call-template>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
     
   <!--
         Module: Experimental
