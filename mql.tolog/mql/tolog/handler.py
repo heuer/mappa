@@ -79,8 +79,12 @@ _VALUE_ELS = (u'string', u'iri', u'itemidentifier', u'subjectlocator',
               u'objectid', u'date', u'datetime', u'integer', u'decimal')
 
 # Elements/events which do not have an "end..." event
-_NO_END_EVENT_ELS = _NAME_ELS + _VALUE_ELS + (u'base', u'namespace', u'curie',
-                                              u'qname')
+_NO_END_EVENT_ELS = _NAME_ELS + _VALUE_ELS + \
+                    (u'base', u'namespace', u'curie', u'qname',
+                     # 'body' has also no start event since it is used to
+                     # distinguish the rule header from the rule body and
+                     # <body> issues the startRule event
+                     u'body')
 
 # Prefix 'kind' to name mapping
 _PREFIXKIND2NAME = {
@@ -316,8 +320,7 @@ class SAXMediator(ContentHandler):
         method(*args, **kw)
 
     def endElementNS(self, (uri, name), qname):
-        if name in _NO_END_EVENT_ELS \
-                or name == u'body':  # Ignore body, fire "endRule" later
+        if name in _NO_END_EVENT_ELS:
             return
         if name == u'tolog':
             self._handler.end()
