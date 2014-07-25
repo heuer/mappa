@@ -1,6 +1,10 @@
 {
     "annotate-assoc-scope.tl": ["annotate-predicates"],
     "annotate-assoc-type.tl": ["annotate-predicates"],
+    "annotate-iid-assoc.tl": ["annotate-predicates"],
+    "annotate-iid-name.tl": ["annotate-predicates"],
+    "annotate-iid-occ.tl": ["annotate-predicates"],
+    "annotate-iid-role.tl": ["annotate-predicates"],
     "annotate-iid-topic.tl": ["annotate-predicates"],
     "annotate-name-type.tl": ["annotate-predicates"],
     "annotate-name-value.tl": ["annotate-predicates"],

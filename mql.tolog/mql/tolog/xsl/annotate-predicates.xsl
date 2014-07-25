@@ -50,8 +50,8 @@
 
   <xsl:output method="xml" encoding="utf-8" standalone="yes"/>
 
-  <xsl:key name="iids"
-            match="tl:builtin-predicate[@name='item-identifier']/tl:*[1][local-name(.) = 'variable']"
+  <xsl:key name="topics"
+            match="tl:builtin-predicate[@name='topic']/tl:*[1][local-name(.) = 'variable']"
             use="@name"/>
 
   <xsl:key name="assocs" 
@@ -106,7 +106,7 @@
         <occurrence apply="{count(key('occs', $key)) > 0}"/>
         <name apply="{count(key('names', $key)) > 0}"/>
         <variant apply="{count(key('variants', $key)) > 0}"/>
-        <topic apply="{count(key('iids', $key)) > 0}"/>
+        <topic apply="{count(key('topics', $key)) > 0}"/>
     </xsl:variable>
     <xsl:variable name="hint">
       <xsl:for-each select="exsl:node-set($hints)/tl:*[@apply='true']">
