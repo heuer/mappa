@@ -1,0 +1,1 @@
+<tolog xmlns="http://psi.semagia.com/tolog-xml/"><select><variable name="v"></variable><where><builtin-predicate name="variant"><variable name="n"></variable><variable name="v"></variable></builtin-predicate><builtin-predicate hint="variant" name="reifies"><identifier value="r"></identifier><variable name="v"></variable></builtin-predicate></where></select></tolog>
