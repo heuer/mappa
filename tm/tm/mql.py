@@ -12,7 +12,7 @@ Experimental module to provide common things for query languages.
 :organization: Semagia - http://www.semagia.com/
 :license:      BSD license
 """
-__all__ = ['QueryError', 'InvalidQueryError']
+__all__ = ['QueryError', 'InvalidQueryError', 'SyntaxQueryError']
 
 
 class QueryError(Exception):

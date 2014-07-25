@@ -33,39 +33,37 @@ def make_lexer(module, debug=False, optimize=True):
                    outputdir=_get_tablocation(module), 
                    lextab='%s_lextab' % module.__name__)
 
+
+def make_parser(module, debug=False, optimize=True):
+    """\
+    Returns a parser. The parser table is called ``<module.__name__>_parsetab``
+    and placed into the same directory as the ``module``.
+    """
+    return yacc.yacc(module=module, debug=debug, optimize=optimize,
+                     outputdir=_get_tablocation(module),
+                     tabmodule='%s_parsetab' % module.__name__)
+
+
+def make_parser_pickled(module, debug=False, optimize=True):
+    """\
+    Returns a parser. The parser table is called ``<module.__name__>_parsetab.pickled``
+    and placed into the same directory as the ``module``.
+    """
+    return yacc.yacc(module=module, debug=debug, optimize=optimize,
+                     picklefile='%s/%s_parsetab.pickled' % (_get_tablocation(module), module.__name__))
+
+
 if _yacc_pickle:
-    def make_parser(module, debug=False, optimize=True):
-        """\
-        Returns a parser. The parser table is called ``<module.__name__>_parsetab`` 
-        and placed into the same directory as the ``module``.
-        """
-        return yacc.yacc(module=module, debug=debug, optimize=optimize,
-                         picklefile='%s/%s_parsetab.p' % (_get_tablocation(module), module.__name__))
-else:
-    def make_parser(module, debug=False, optimize=True):
-        """\
-        Returns a parser. The parser table is called ``<module.__name__>_parsetab`` 
-        and placed into the same directory as the ``module``.
-        """
-        return yacc.yacc(module=module, debug=debug, optimize=optimize,
-                         outputdir=_get_tablocation(module),
-                         tabmodule='%s_parsetab' % module.__name__)
+    make_parser = make_parser_pickled
 
 
 def _make_parser_for_sdist(module):
     """\
     Prepare PLY parser modules for source distribution.
     """
-    #TODO: Provide pickled parser, too?
     #TODO: Delete previously generated parsetab
-    import re
     make_parser(module)
-    filename = os.path.join(_get_tablocation(module), 'parser_parsetab.py')
-    with open(filename, 'rb') as f:
-        s = f.read()
-    s = re.sub(ur"(\d\s*,)('[^']+',\s*').*?(parser.py')", ur"\1\2\3", s)
-    with open(filename, 'wb') as f:
-        f.write(s)
+    make_parser_pickled(module)
 
 
 def _get_tablocation(module):

@@ -18,7 +18,6 @@ from tm import mio
 _DIRECTIVES = {
     u'%prefix': u'DIR_PREFIX',
     u'%include': u'DIR_INCLUDE',
-    u'%version': u'DIR_VERSION',
     u'%langtoscope': u'DIR_LANG2SCOPE',
 }
 
@@ -39,10 +38,10 @@ _KEYWORDS_MAPPING = {
 }
 
 _ident_start = ur'[a-zA-Z_]|[\u00C0-\u00D6]|[\u00D8-\u00F6]' + \
-                ur'|[\u00F8-\u02FF]|[\u0370-\u037D]' + \
-                ur'|[\u037F-\u1FFF]|[\u200C-\u200D]' + \
-                ur'|[\u2070-\u218F]|[\u2C00-\u2FEF]' + \
-                ur'|[\u3001-\uD7FF]|[\uF900-\uFDCF]|[\uFDF0-\uFFFD]'
+               ur'|[\u00F8-\u02FF]|[\u0370-\u037D]' + \
+               ur'|[\u037F-\u1FFF]|[\u200C-\u200D]' + \
+               ur'|[\u2070-\u218F]|[\u2C00-\u2FEF]' + \
+               ur'|[\u3001-\uD7FF]|[\uF900-\uFDCF]|[\uFDF0-\uFFFD]'
 _ident_char = ur'%s|[\-0-9]|\u00B7|[\u0300-\u036F]|[\u203F-\u2040]' % _ident_start
 _ident = ur'(%s)+(\.*(%s))*' % (_ident_start, _ident_char)
 _local_part = ur'([0-9]+(\.*(%s))*)' % _ident_char
@@ -68,8 +67,8 @@ t_AT = ur'@'
 t_lang_EQ = ur'='
 
 states = (
-  (u'kw', u'exclusive'),
-  (u'lang', u'exclusive'),
+    (u'kw', u'exclusive'),
+    (u'lang', u'exclusive'),
 )
 
 
@@ -85,7 +84,7 @@ def t_comment(t):
 
 
 def t_ws(t):
-    r'\s+'
+    ur'\s+'
     t.lexer.lineno += t.value.count(u'\n')
 
 
@@ -168,29 +167,3 @@ def t_kw_end(t):
     t.lexer.lexpos = t.lexpos-1 # Pushback one char
     t.lexer.begin(u'INITIAL')
 
-
-if __name__ == '__main__':
-    import tm.ply.lex as lex
-    lexer = lex.lex()
-    test_data = [
-                 u'semagia',
-                 u'<http://www.semagia.com/sid>',
-                 u'something: occurrence',
-                 u'q:name q:123 foaf:name q:12name q:12.2',
-                 u'hello.again _1 lang name true false occurrence occ assoc association hello.ag.ain',
-                 u'%langtoscope true true',
-                 u"%prefix bla <http://psi.semagia.com/test>",
-                 u"foaf:name: name",
-                 u"web:site: occurrence web:site: occ"
-                 u";lang true false",
-                 u"lang true false",
-                 u"%prefix %include %version",
-                 u'trara # ein Kommentar',
-                 ]
-    for data in test_data:
-        lexer.input(data)
-        while True:
-            tok = lexer.token()
-            if not tok:
-                break
-            print(tok)

@@ -13,7 +13,7 @@
 :license:      BSD license
 """
 from nose.tools import ok_
-from mio.rdf.crtm import make_parser, make_lexer
+from mio.rdf.crtm import _make_parser as make_parser, _make_lexer as make_lexer
 from mio.rdf.mapping import MappingHandler
 
 

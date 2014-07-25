@@ -12,8 +12,7 @@ Compact Topic Maps (CTM) lexer.
 :organization: Semagia - http://www.semagia.com/
 :license:      BSD license
 """
-# For some reason pylint thinks that ply.lex and ply.yacc do not exist
-# pylint: disable-msg=F0401, E0611
+import sys
 from tm.ply import TOKEN
 from tm.mio import MIOException
 
@@ -45,24 +44,32 @@ tokens = tuple(_DIRECTIVES.values()) + tuple(_KEYWORDS.values()) + (
     )
 
 # Start of an identifier
-_ident_start = ur'[a-zA-Z_]|[\u00C0-\u00D6]|[\u00D8-\u00F6]' + \
-                ur'|[\u00F8-\u02FF]|[\u0370-\u037D]' + \
-                ur'|[\u037F-\u1FFF]|[\u200C-\u200D]' + \
-                ur'|[\u2070-\u218F]|[\u2C00-\u2FEF]' + \
-                ur'|[\u3001-\uD7FF]|[\uF900-\uFDCF]|[\uFDF0-\uFFFD]'
+_IDENT_START = ur'[a-zA-Z_]' \
+               ur'|[\u00C0-\u00D6]|[\u00D8-\u00F6]' \
+               ur'|[\u00F8-\u02FF]|[\u0370-\u037D]' \
+               ur'|[\u037F-\u1FFF]|[\u200C-\u200D]' \
+               ur'|[\u2070-\u218F]|[\u2C00-\u2FEF]' \
+               ur'|[\u3001-\uD7FF]|[\uF900-\uFDCF]' \
+               ur'|[\uFDF0-\uFFFD]'
 
-_ident_part = ur'%s|[\-0-9]|[\u00B7]|[\u0300-\u036F]|[\u203F-\u2040]' % _ident_start
+if not sys.maxunicode == 0xffff:
+    # <http://bugs.python.org/issue12729>, <http://bugs.python.org/issue12749>,
+    # <http://bugs.python.org/issue3665>
+    _IDENT_START += ur'|[\U00010000-\U000EFFFF]'
+del sys
+
+_IDENT_PART = ur'%s|[\-0-9]|[\u00B7]|[\u0300-\u036F]|[\u203F-\u2040]' % _IDENT_START
 
 # Identifier
-_ident = ur'(%s)+(\.*(%s))*' % (_ident_start, _ident_part)
+_IDENT = ur'(%s)+(\.*(%s))*' % (_IDENT_START, _IDENT_PART)
 
-_date = r'\-?(000[1-9]|00[1-9][0-9]|0[1-9][0-9][0-9]|[1-9][0-9][0-9][0-9]+)\-(0[1-9]|1[0-2])\-(0[1-9]|1[0-9]|2[0-9]|3[0-1])'
+_DATE = r'\-?(000[1-9]|00[1-9][0-9]|0[1-9][0-9][0-9]|[1-9][0-9][0-9][0-9]+)\-(0[1-9]|1[0-2])\-(0[1-9]|1[0-9]|2[0-9]|3[0-1])'
 # Timezone
-_tz = r'Z|((\+|\-)[0-9]{2}:[0-9]{2})'
+_TZ = r'Z|((\+|\-)[0-9]{2}:[0-9]{2})'
 # Time
-_time = r'[0-9]{2}:[0-9]{2}:[0-9]{2}(\.[0-9]+)?(%s)?' % _tz
+_TIME = r'[0-9]{2}:[0-9]{2}:[0-9]{2}(\.[0-9]+)?(%s)?' % _TZ
 
-VARIABLE = r'(\$%s)' % _ident
+VARIABLE = r'(\$%s)' % _IDENT
 
 t_WILDCARD = r'\?'
 t_LPAREN = r'\('
@@ -140,12 +147,12 @@ def t_directive(t):
     t.type = directive
     return t 
 
-@TOKEN(ur'%s:(([0-9]+(%s)*)|%s)' % (_ident, _ident_part, _ident))
+@TOKEN(ur'%s:(([0-9]+(%s)*)|%s)' % (_IDENT, _IDENT_PART, _IDENT))
 def t_QNAME(t):
     t.value = tuple(t.value.split(':'))
     return t
 
-@TOKEN(_ident)
+@TOKEN(_IDENT)
 def t_IDENT(t):
     t.type = _KEYWORDS.get(t.value, 'IDENT')
     return t
@@ -155,16 +162,16 @@ def t_VARIABLE(t):
     t.value = t.value[1:]
     return t
 
-@TOKEN(ur'\?%s' % _ident)
+@TOKEN(ur'\?%s' % _IDENT)
 def t_NAMED_WILDCARD(t):
     t.value = t.value[1:]
     return t
 
-@TOKEN(r'%sT%s' % (_date, _time))
+@TOKEN(r'%sT%s' % (_DATE, _TIME))
 def t_DATE_TIME(t):
     return t
 
-@TOKEN(_date)
+@TOKEN(_DATE)
 def t_DATE(t):
     return t
 
@@ -188,68 +195,3 @@ def t_STRING(t):
     t.value = t.value[1:-1]
     t.lexer.lineno += t.value.count('\n')
     return t
-
-if __name__ == '__main__':
-    import tm.ply.lex as lex
-    lexer = lex.lex()
-    test_data = [
-                 'semagia.',
-                 '<http://www.semagia.com/sid>.',
-                 'http://www.semagia.com/sid.',
-                 'http://www.semagia.com/sid(',
-                 'http://www.semagia.com/sid)',
-                 'http://www.semagia.com/sid[',
-                 'http://www.semagia.com/sid]',
-                 '^<#iid>',
-                 'q:name ',
-                 'another:0ne',
-                 'next:123',
-                 'next-one:.123..1',
-                 '-1976-09-19',
-                 '1976-09-19',
-                 '1976-09-19T24:24:24',
-                 '1 -1  +1',
-                 '1.1 +1.1 -1.1 .12',
-                 'Semagia - "Semagia".',
-                 '_semagia-id',
-                 's123456',
-                 '@attention, please',
-                 '([)]:,.^-^^=~*',
-                 u'üäö',
-                 u'ün.test - "Ün test".',
-                 '%include %mergemap %prefix %encoding %version',
-                 'def end isa ako',
-                 '?who ?',
-                 u'$variable $variüble $ün.variüble',
-                 u'?ün.wüldcard',
-                 'ui #a comment! :)))',
-                 '''hey #( This
-                 is a multiline comment #( nested )# )# ho''',
-                 '''"""This is
-                 a "string<p class="stupid"/>"""''',
-                 '''"This is 
-                 also a string"''',
-                 '"Quote (\\") character"',
-                 '''%prefix 
-
-#(
-
-a
-
-)#
-
-ex 
-
-# A comment
-
-http://psi.example.org/ ex:fake.''',
-                 u'yippiieehhya...yeah___3..2...1...----0...boom',
-                 'a123',
-                 u'ü͡ØΨ㬟͡.'
-                 ]
-    for data in test_data:
-        lexer.input(data)
-        while True:
-            tok = lexer.token()
-            if not tok: break
-            print(tok)

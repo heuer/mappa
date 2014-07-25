@@ -86,7 +86,7 @@ def test_invalid_id_part():
 
 def test_valid_id():
     data = (u'ident', u'_ident', u'ident.ifier', u'a1976-09-19', u'isa',
-            u'öüä', u'MAIN-タイトル読み')
+            u'öüä', u'MAIN-タイトル読み', u'タイトル読み', u'ü͡ØΨ㬟͡')
     for c in data:
         ok_(is_valid_id(c))
 
@@ -98,7 +98,7 @@ def test_invalid_id():
 
 
 def test_valid_local_part():
-    data = (u'1976-09-19', u'1semagia')
+    data = (u'1976-09-19', u'1semagia', u'reden-beëndiging-ambtsbekleding')
     for c in data:
         ok_(is_valid_local_part(c))
 

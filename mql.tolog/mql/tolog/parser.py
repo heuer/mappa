@@ -149,9 +149,6 @@ def p__start_delete(p): # Inline action
     _handler(p).startDelete()
 
 
-_IRI_FUNCTIONS = ('subject-identifier', 'subject-locator',
-                  'item-identifier', 'resource')
-
 def p_function_call(p):
     """\
     function_call   : IDENT LPAREN paramlist RPAREN
@@ -159,7 +156,7 @@ def p_function_call(p):
     handler = _handler(p)
     name = p[1]
     handler.startFunction(name)
-    _arguments_to_events(handler, p[3], stringtoiri=name in _IRI_FUNCTIONS)
+    _arguments_to_events(handler, p[3], stringtoiri=_want_string_as_iri(name))
     handler.endFunction()
 
 
@@ -596,8 +593,6 @@ def p__start_rule(p):  # Inline action
 
 _PREDICATE = 'Predicate'
 _DYN_PREDICATE = 'Dynamic' + _PREDICATE
-_IRI_PREDICATES = ('base-locator', 'datatype', 'item-identifier',
-             'subject-locator', 'subject-identifier', 'resource')
 
 def p_clause_predcause(p):
     """\
@@ -607,7 +602,7 @@ def p_clause_predcause(p):
     handler = _handler(p)
     if kind == consts.IDENT and is_builtin_predicate(name):
         handler.startBuiltinPredicate(name)
-        _arguments_to_events(handler, args, stringtoiri=name in _IRI_PREDICATES)
+        _arguments_to_events(handler, args, stringtoiri=_want_string_as_iri(name))
         handler.endBuiltinPredicate()
     else:
         predicate_kind = None
@@ -905,29 +900,7 @@ def _arguments_to_events(handler, args, stringtoiri=False):
         _to_event(handler, (kind, name), stringtoiri)
 
 
-if __name__ == '__main__':
-    test_input = ()
-    from tm import plyutils, xmlutils
-    from tm.ply import yacc
-    from mql.tolog import lexer as lexer_mod
-    from mql.tolog.handler import XMLParserHandler
-    from lxml import etree
-    import lxml.sax
-    def parse(data, handler):
-        parser = yacc.yacc(debug=True)
-        initialize_parser(parser, handler)
-        handler.start()
-        parser.parse(data, lexer=plyutils.make_lexer(lexer_mod))
-        handler.end()
-
-    for cnt, data in enumerate(test_input):
-        print(cnt)
-        print(data)
-        try:
-            contenthandler = lxml.sax.ElementTreeContentHandler()
-            handler = XMLParserHandler(xmlutils.SAXSimpleXMLWriter(contenthandler))
-            parse(data, handler)
-            print(etree.tostring(contenthandler.etree, pretty_print=True))
-        except:
-            print(data)
-            raise
+def _want_string_as_iri(name):
+    return name in (u'subject-identifier', u'subject-locator',
+                    u'item-identifier', u'resource', u'datatype',
+                    u'base-locator')

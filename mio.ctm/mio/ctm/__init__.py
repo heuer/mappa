@@ -19,10 +19,10 @@ from urllib import urlopen
 from tm.mio import MIOException
 from tm.mio.deserializer import Deserializer, Context
 from tm import plyutils
-# pylint: disable-msg=E0611
-from .environment import Environment 
+from .environment import Environment
 from .contenthandler import MainContentHandler
 from .miohandler import CTMHandler
+from . import lexer as lexer_mod, parser as parser_mod
 
 __all__ = ['create_deserializer', 'CTMHandler']
 
@@ -35,7 +35,16 @@ def create_deserializer(version=1.0, context=None, included_by=None, **kw): # py
         raise MIOException('Unsupported version "%s"' % version)
     return CTMDeserializer(context=context, included_by=included_by, **kw)
 
-_ENCODING = re.compile(r'^%encoding\s*"([^"]+)"', re.UNICODE).match
+
+def _make_parser():
+    return plyutils.make_parser(parser_mod)
+
+
+def _make_lexer():
+    return plyutils.make_lexer(lexer_mod)
+
+
+_ENCODING = re.compile(ur'^%encoding\s*"([^"]+)"').match
 
 
 class CTMDeserializer(Deserializer):
@@ -63,9 +72,7 @@ class CTMDeserializer(Deserializer):
         """\
         
         """
-        # pylint: disable-msg=E0611, F0401
-        from mio.ctm import lexer as lexer_mod, parser as parser_mod
-        parser = plyutils.make_parser(parser_mod)
+        parser = _make_parser()
         env = Environment(handler=self.handler, iri=source.iri,
                           subordinate=self.subordinate, included_by=self._included_by,
                           context=self.context, wildcard_counter=self._wildcard_counter)
@@ -77,7 +84,7 @@ class CTMDeserializer(Deserializer):
                 data = urlopen(source.iri)
             except IOError:
                 raise MIOException('Cannot read from "%s"' % source.iri)
-        parser.parse(self._reader(data, source.encoding), lexer=plyutils.make_lexer(lexer_mod))
+        parser.parse(self._reader(data, source.encoding), lexer=_make_lexer())
         self.wildcard_counter = self.environment.wildcard_counter
 
     def _reader(self, fileobj, encoding=None):

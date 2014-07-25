@@ -3,7 +3,7 @@
   This stylesheet converts clause queries into select queries and renames
   the "source-locator" predicate into "item-identifier"
 
-  Copyright (c) 2010 - 2012, Semagia - Lars Heuer <http://www.semagia.com/>
+  Copyright (c) 2010 - 2014, Semagia - Lars Heuer <http://www.semagia.com/>
   All rights reserved.
   
   License: BSD
@@ -17,8 +17,8 @@
   <xsl:output method="xml" encoding="utf-8" standalone="yes"/>
 
   <xsl:variable name="MOD_EXPERIMENTAL" select="'http://psi.ontopia.net/tolog/experimental/'"/>
-  
-  <xsl:key name="namespaces"
+
+  <xsl:key name="modns"
            match="tl:namespace[@kind='module']"
            use="@identifier"/>
 
@@ -52,7 +52,7 @@
   </xsl:template>
 
   <xsl:template match="tl:predicate[tl:name/tl:qname[@kind='module']]">
-    <xsl:variable name="iri" select="key('namespaces', tl:name/tl:qname/@prefix)/@iri"/>
+    <xsl:variable name="iri" select="key('modns', tl:name/tl:qname/@prefix)/@iri"/>
       <xsl:choose>
         <xsl:when test="$iri=$MOD_EXPERIMENTAL"><xsl:apply-templates select="." mode="module-experimental"/></xsl:when>
         <xsl:otherwise><xsl:copy-of select="."/></xsl:otherwise>

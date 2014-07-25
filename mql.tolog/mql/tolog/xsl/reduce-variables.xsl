@@ -4,7 +4,7 @@
   non-standard tolog predicates.
 
 
-  Copyright (c) 2010 - 2012, Semagia - Lars Heuer <http://www.semagia.com/>
+  Copyright (c) 2010 - 2014, Semagia - Lars Heuer <http://www.semagia.com/>
   All rights reserved.
   
   License: BSD
@@ -45,12 +45,12 @@
     <xsl:variable name="instance-var" select="tl:variable[1]/@name"/>
     <xsl:choose>
       <xsl:when test="count(key('query-variables', $instance-var)) = 0 and count(key('where-variables', $instance-var)) = 1">
-        <builtin-predicate kind="internal">
+        <internal-predicate>
             <xsl:copy-of select="@*"/>
             <xsl:attribute name="name"><xsl:value-of select="concat(substring-before(@name, 'instance-of'), 'types')"/></xsl:attribute>
             <xsl:attribute name="removed-variables"><xsl:value-of select="$instance-var"/></xsl:attribute>
             <xsl:apply-templates select="tl:*[2]"/>
-        </builtin-predicate>  
+        </internal-predicate>
       </xsl:when>
       <xsl:otherwise><xsl:copy-of select="."/></xsl:otherwise>
     </xsl:choose>

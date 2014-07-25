@@ -393,4 +393,3 @@ class AnyTypeContentHandler(sax_handler.ContentHandler):
 
     def processingInstruction(self, target, data):
         self._handler.processingInstruction(target, data)
-

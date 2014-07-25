@@ -52,7 +52,7 @@ def is_valid_id_start(c):
             or u'\u3001' <= c <= u'\uD7FF' \
             or u'\uF900' <= c <= u'\uFDCF' \
             or u'\uFDF0' <= c <= u'\uFFFD' \
-            or u'\u10000' <= c <= u'\uEFFFF'
+            or u'\U00010000' <= c <= u'\U000EFFFF'
 
 
 def is_valid_localid_start(c):

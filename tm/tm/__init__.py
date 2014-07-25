@@ -37,6 +37,24 @@ Constant for any type, scope, player or any other "I don't care"-value.
 """
 
 
+def make_source(src=None, iri=None):
+    """\
+    EXPERIMENTAL: Returns a tm.Source instance.
+
+    `src`
+        A file-like object, a string or a `tm.Source` instance.
+    `iri`
+        Optional base IRI.
+    """
+    if isinstance(src, Source):
+        return src
+    if isinstance(src, basestring):
+        return Source(data=src, iri=iri)
+    if hasattr(src, 'read'):
+        return Source(file=src, iri=iri)
+    return Source(iri)
+
+
 class Source(object):
     """\
     Represents an immutable source to read a stream from.

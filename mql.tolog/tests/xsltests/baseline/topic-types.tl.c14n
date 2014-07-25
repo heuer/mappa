@@ -1,0 +1,1 @@
+<tolog xmlns="http://psi.semagia.com/tolog-xml/"><select><variable name="type"></variable><where><internal-predicate name="types" removed-variables="i"><variable name="type"></variable></internal-predicate></where></select></tolog>

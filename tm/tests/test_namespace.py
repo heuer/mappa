@@ -6,19 +6,20 @@
 # BSD license.
 #
 """\
-Tests against ``tm.mio.Source``.
+Tests against Namespace.
 
 :author:       Lars Heuer (heuer[at]semagia.com)
 :organization: Semagia - http://www.semagia.com/
 :license:      BSD license
 """
+from nose.tools import eq_
 from tm import Namespace
 
 
 def test_namespace_string():
     iri = 'http://www.example.org/bla'
     ns = Namespace(iri)
-    assert(iri == ns)
+    eq_(iri, ns)
 
 
 if __name__ == '__main__':

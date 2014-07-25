@@ -15,9 +15,8 @@ Provides functions to parse tolog queries.
 from __future__ import absolute_import
 from functools import partial
 from urllib2 import urlopen
-import lxml.sax #TODO: Any chance to remove this dependency (here)?
-from tm import Source, plyutils, xmlutils
-from . import handler as handler_mod, xsl
+from tm import make_source, plyutils, xmlutils
+from . import lexer as lexer_mod, parser as parser_mod, handler as handler_mod, xsl
 
 __all__ = ('parse', 'parse_query')
 
@@ -38,18 +37,11 @@ def parse(src, handler, tolog_plus=False, **kw):
         tolog+ mode is enabled automatically, regardless of the provided
         `tolog_plus` value
     """
-    from mql.tolog import parser as parser_mod
     parser = plyutils.make_parser(parser_mod)
     parser_mod.initialize_parser(parser, handler, tolog_plus)
-    if isinstance(src, basestring):
-        iri = kw.get('iri')
-        if not iri:
-            raise ValueError('If the query source is a string, an "iri" keyword is expected')
-        src = Source(data=src, iri=iri)
-    elif isinstance(src, file):
-        src = Source(file=src, iri=kw.get('iri'))
-    data = src.stream or urlopen(src.iri)
-    handler.base_iri = src.iri
+    source = make_source(src, kw.get('iri'))
+    data = source.stream or urlopen(source.iri)
+    handler.base_iri = source.iri
     handler.start()
     lexer = _make_lexer(tolog_plus)
     parser.parse(data.read(), lexer=lexer)
@@ -65,13 +57,12 @@ def _make_lexer(tolog_plus):
         (Even if this parameter is ``False``, the lexer may switch to
         tolog+-mode iff a %version directive is found).
     """
-    from mql.tolog import lexer as lexer_mod
     lexer = plyutils.make_lexer(lexer_mod)
     lexer.tolog_plus = tolog_plus
     return lexer
 
 
-def parse_query(src, handler=None, factory=None, tolog_plus=False, optimizers=None, **kw):
+def parse_query(src, query_handler=None, factory=None, tolog_plus=False, optimizers=None, **kw):
     """\
     Parses and optimizes the query and returns an executable query.
     
@@ -85,7 +76,7 @@ def parse_query(src, handler=None, factory=None, tolog_plus=False, optimizers=No
         A string, a file object or a `tm.Source` instance to read the query from.
         If a string is used, this function expects an iri keyword which
         defines the base IRI.
-    `handler`
+    `query_handler`
         A `IQueryHandler` which receives events to construct a query
     `factory`
         A `IQueryFactory` which is used to construct the query.
@@ -100,13 +91,14 @@ def parse_query(src, handler=None, factory=None, tolog_plus=False, optimizers=No
         a default set of optimizers will be applied to the query.
         To omit any optimization, an empty iterable must be provided.
     """
-    handler = handler or handler_mod.make_queryhandler(factory)
-    handler.base_iri = src.iri
+    query_handler = query_handler or handler_mod.make_queryhandler(factory)
+    source = make_source(src, iri=kw.get('iri'))
+    query_handler.base_iri = source.iri
     if optimizers is None:
         optimizers = xsl.DEFAULT_TRANSFORMERS
-    xsl.apply_transformations(parse_to_etree(src, tolog_plus, **kw), optimizers,
-                                        partial(xsl.saxify, handler=handler_mod.TologXMLContentHandler(handler)))
-    return handler.query
+    xsl.apply_transformations(parse_to_etree(source, tolog_plus, **kw), optimizers,
+                              partial(xsl.saxify, handler=handler_mod.SAXMediator(query_handler)))
+    return query_handler.query
 
 
 def parse_to_etree(src, tolog_plus=False, **kw):
@@ -123,14 +115,14 @@ def parse_to_etree(src, tolog_plus=False, **kw):
         tolog+ mode is enabled automatically, regardless of the provided
         `tolog_plus` value
     """
-    contenthandler = lxml.sax.ElementTreeContentHandler()
+    contenthandler = xmlutils.ETreeContentHandler()
     parse(src, handler_mod.XMLParserHandler(xmlutils.SAXSimpleXMLWriter(contenthandler)), tolog_plus, **kw)
     return contenthandler.etree
 
 
-def parse_to_tolog(src, tolog_plus=False, hints=False, optimizers=None, **kw):
+def convert_to_tolog(src, tolog_plus=False, hints=False, optimizers=None, **kw):
     """\
-    Parses the provided query and returns the query as an optimized tolog
+    Parses the provided query and returns the query as (an optimized) tolog
     query string. 
     
     This function is mainly useful for debugging purposes.
@@ -153,12 +145,13 @@ def parse_to_tolog(src, tolog_plus=False, hints=False, optimizers=None, **kw):
         a default set of optimizers will be applied to the query.
         To omit any optimization, an empty iterable must be provided.
     """
-    return _back_to_tolog(src, False, tolog_plus=tolog_plus, hints=hints, optimizers=optimizers, **kw)
+    return _back_to_tolog(src, False, tolog_plus=tolog_plus, hints=hints,
+                          optimizers=optimizers, **kw)
     
 
-def parse_to_tologplus(src, tolog_plus=False, hints=False, optimizers=None, **kw):
+def convert_to_tolog_plus(src, tolog_plus=False, hints=False, optimizers=None, **kw):
     """\
-    Parses the provided query and returns the query as an optimized tolog+
+    Parses the provided query and returns the query as (an optimized) tolog+
     query string. 
     
     `src`
@@ -179,7 +172,8 @@ def parse_to_tologplus(src, tolog_plus=False, hints=False, optimizers=None, **kw
         a default set of optimizers will be applied to the query.
         To omit any optimization, an empty iterable must be provided.
     """
-    return _back_to_tolog(src, True, tolog_plus=tolog_plus, hints=hints, optimizers=optimizers)
+    return _back_to_tolog(src, True, tolog_plus=tolog_plus, hints=hints,
+                          optimizers=optimizers)
 
 
 def _back_to_tolog(src, tolog_plus_out, tolog_plus=False, hints=False, optimizers=None, **kw):
@@ -210,7 +204,8 @@ def _back_to_tolog(src, tolog_plus_out, tolog_plus=False, hints=False, optimizer
     if optimizers is None:
         optimizers = xsl.DEFAULT_TRANSFORMERS
     transformers = tuple(optimizers) + ('back-to-tolog',)
-    return xsl.apply_transformations(parse_to_etree(src, tolog_plus, **kw), 
-                                        transformers,
-                                        **{'render-hints': '"true"' if hints else '"false"',
-                                           'tolog-plus': '"true"' if tolog_plus_out else '"false"'})
+    transform_kw = {'render-hints': '"true"' if hints else '"false"',
+                    'tolog-plus': '"true"' if tolog_plus_out else '"false"'}
+    res = xsl.apply_transformations(parse_to_etree(src, tolog_plus, **kw),
+                                    transformers, **transform_kw)
+    return unicode(res) if res else None

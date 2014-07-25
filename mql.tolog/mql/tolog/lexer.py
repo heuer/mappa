@@ -12,16 +12,25 @@ tolog lexer.
 :organization: Semagia - <http://www.semagia.com/>
 :license:      BSD License
 """
+import sys
 import re
 from tm.ply import TOKEN
 from tm.mql import SyntaxQueryError
 
 # Start of an identifier
-_IDENT_START = ur'[a-zA-Z_]|[\u00C0-\u00D6]|[\u00D8-\u00F6]' + \
-                ur'|[\u00F8-\u02FF]|[\u0370-\u037D]' + \
-                ur'|[\u037F-\u1FFF]|[\u200C-\u200D]' + \
-                ur'|[\u2070-\u218F]|[\u2C00-\u2FEF]' + \
-                ur'|[\u3001-\uD7FF]|[\uF900-\uFDCF]|[\uFDF0-\uFFFD]'
+_IDENT_START = ur'[a-zA-Z_]' \
+               ur'|[\u00C0-\u00D6]|[\u00D8-\u00F6]' \
+               ur'|[\u00F8-\u02FF]|[\u0370-\u037D]' \
+               ur'|[\u037F-\u1FFF]|[\u200C-\u200D]' \
+               ur'|[\u2070-\u218F]|[\u2C00-\u2FEF]' \
+               ur'|[\u3001-\uD7FF]|[\uF900-\uFDCF]' \
+               ur'|[\uFDF0-\uFFFD]'
+
+if not sys.maxunicode == 0xffff:
+    # <http://bugs.python.org/issue12729>, <http://bugs.python.org/issue12749>,
+    # <http://bugs.python.org/issue3665>
+    _IDENT_START += ur'|[\U00010000-\U000EFFFF]'
+del sys
 
 _IDENT_PART = ur'%s|[\-0-9]|[\u00B7]|[\u0300-\u036F]|[\u203F-\u2040]' % _IDENT_START
 
@@ -203,7 +212,7 @@ def t_CURIE(t):
     t.value = t.value[1:-1]
     return t
 
-@TOKEN(r':'.join([_IDENT, r'[_\w\.-]+']))
+@TOKEN(ur'%s:(([0-9]+(%s)*)|%s)' % (_IDENT, _IDENT_PART, _IDENT))
 def t_QNAME(t):
     return t
 
@@ -279,16 +288,3 @@ def t_tm_content(t):
     # Continue with tolog
     t.lexer.begin('INITIAL')
     return t
-
-
-if __name__ == '__main__':
-    test_data = []
-    import tm.ply.lex as lex
-    for data in test_data:
-        lexer = lex.lex()
-        lexer.input(data)
-        while True:
-            tok = lexer.token()
-            if not tok: break
-            print(tok)
-

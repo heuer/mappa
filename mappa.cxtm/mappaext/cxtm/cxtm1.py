@@ -378,12 +378,12 @@ class CXTMTopicMapWriter(object):
             slash_pos = -1
             max_len = min(len(normalized), len(base))
             while i < max_len and base[i] == normalized[i]:
-                if base[i] == '/':
+                if base[i] == u'/':
                     slash_pos = i
-                i+=1
+                i += 1
             if slash_pos > -1:
                 normalized = normalized[slash_pos:]
-        if normalized and normalized[0] == '/':
+        if normalized and normalized[0] == u'/':
             normalized = normalized[1:]
         normalized = clean(normalized)
         self._iri2norm[iri] = normalized

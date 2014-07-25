@@ -4,8 +4,10 @@
   occurrence(t, $x), type($x, z) into occurrence(t, $x, z)
   and topic-name(t, $x), type($x, z) into topic-name(t, $x, z)
 
+  TODO: association($a), type($a, t) into association($a, t)
+
   
-  Copyright (c) 2010 - 2011, Semagia - Lars Heuer <http://www.semagia.com/>
+  Copyright (c) 2010 - 2014, Semagia - Lars Heuer <http://www.semagia.com/>
   All rights reserved.
   
   License: BSD

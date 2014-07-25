@@ -12,7 +12,8 @@
 :organization: Semagia - http://www.semagia.com/
 :license:      BSD license
 """
-from mappaext.xtm import xtm1, xtm2
+from __future__ import absolute_import
+from . import xtm1, xtm2
 
 
 def create_writer(out, base, version=None, prettify=False, export_iids=True, **kw):

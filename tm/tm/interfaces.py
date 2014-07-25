@@ -14,8 +14,6 @@ Interfaces for the PyTM package; mainly for documentation purposes.
 """
 from tm.proto import Interface, Attribute
 
-# Get rid of missing 'self' as first arg errors
-#pylint: disable-msg=E0213
 
 class ISource(Interface):
     """\
@@ -41,6 +39,7 @@ class ISource(Interface):
     
     This attribute is read-only.
     """)
+
 
 class IDeserializer(Interface):
     """\

@@ -4,8 +4,10 @@
   This stylesheet calculates the costs of the query predicates and adds
   a "cost" attribute to the predicates.
 
+  TODO: Handle predicates created by "fold-type" and "fold-scope"
 
-  Copyright (c) 2010 - 2012, Semagia - Lars Heuer <http://www.semagia.com/>
+
+  Copyright (c) 2010 - 2014, Semagia - Lars Heuer <http://www.semagia.com/>
   All rights reserved.
   
   License: BSD
@@ -75,7 +77,7 @@
     </xsl:call-template>
   </xsl:template>
     
-  <xsl:template match="tl:builtin-predicate[@name='types' or @name='direct-types']">
+  <xsl:template match="tl:internal-predicate[@name='types' or @name='direct-types']">
     <xsl:variable name="costs">
         <xsl:choose>
             <xsl:when test="@name='direct-types'"><xsl:value-of select="$BIG_RESULT - 1"/></xsl:when>
@@ -289,6 +291,23 @@
       <xsl:when test="$iri=$MOD_EXPERIMENTAL"><xsl:apply-templates select="." mode="module-experimental"/></xsl:when>
       <xsl:when test="$iri=$MOD_NUMBER"><xsl:apply-templates select="." mode="module-number"/></xsl:when>
       <xsl:otherwise><xsl:copy-of select="."/></xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+
+  <xsl:template match="tl:predicate[tl:name/tl:identifier]">
+    <!--** Matches rule invocations -->
+    <xsl:variable name="open" select="count(tl:variable)"/>
+    <xsl:choose>
+      <xsl:when test="$open = 0">
+        <xsl:call-template name="annotate">
+          <xsl:with-param name="cost" select="$FILTER_RESULT"/>
+        </xsl:call-template>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:call-template name="annotate">
+          <xsl:with-param name="cost" select="$BIG_RESULT + $open - 1"/>
+        </xsl:call-template>
+      </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
     

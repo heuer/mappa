@@ -1,0 +1,1 @@
+<tolog xmlns="http://psi.semagia.com/tolog-xml/"><select><variable name="A"></variable><where><dynamic-predicate><name><identifier value="homepage"></identifier></name><variable name="A"></variable><string value="foo"></string></dynamic-predicate></where></select></tolog>

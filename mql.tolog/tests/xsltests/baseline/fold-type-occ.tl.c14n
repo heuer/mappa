@@ -1,0 +1,1 @@
+<tolog xmlns="http://psi.semagia.com/tolog-xml/"><select><variable name="o"></variable><where><builtin-predicate name="occurrence"><identifier value="t"></identifier><variable name="o"></variable><identifier value="required-type"></identifier></builtin-predicate></where></select></tolog>

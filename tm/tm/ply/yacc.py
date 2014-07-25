@@ -3118,6 +3118,7 @@ def yacc(method='LALR', debug=yaccdebug, module=None, tabmodule=tab_module, star
     # Add productions to the grammar
     for funcname, gram in pinfo.grammar:
         file, line, prodname, syms = gram
+        file = os.path.basename(file) #LH 2014-07-14: Added this to abbreviate file name of parser module.
         try:
             grammar.add_production(prodname,syms,funcname,file,line)
         except GrammarError:

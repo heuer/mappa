@@ -3,7 +3,7 @@
   This stylesheet translates a tolog XML representation back to a tolog
   query string.
 
-  Copyright (c) 2010 - 2012, Semagia - Lars Heuer <http://www.semagia.com/>
+  Copyright (c) 2010 - 2014, Semagia - Lars Heuer <http://www.semagia.com/>
   All rights reserved.
   
   License: BSD
@@ -139,12 +139,14 @@
       <xsl:with-param name="items" select="tl:variable"/>
     </xsl:call-template>
     <xsl:text>) :-&#xA;    </xsl:text>
-    <xsl:apply-templates select="tl:body/*"/>
+    <xsl:call-template name="predicates">
+      <xsl:with-param name="items" select="tl:body/*"/>
+    </xsl:call-template>
     <xsl:text>&#xA;.&#xA;&#xA;</xsl:text>
   </xsl:template>
 
   <xsl:template match="tl:association-predicate">
-    <xsl:value-of select="tl:name/tl:*/@value"/>
+    <xsl:apply-templates select="tl:name/tl:*"/>
     <xsl:text>(</xsl:text>
     <xsl:for-each select="tl:pair">
       <xsl:apply-templates select="."/>
@@ -153,15 +155,15 @@
     <xsl:text>)</xsl:text>
   </xsl:template>
 
-  <xsl:template match="tl:builtin-predicate|tl:function">
-    <xsl:if test="@kind='internal'"><xsl:text>:</xsl:text></xsl:if>
+  <xsl:template match="tl:builtin-predicate|tl:function|tl:internal-predicate">
+    <xsl:if test="local-name(.) = 'internal-predicate'"><xsl:text>:</xsl:text></xsl:if>
     <xsl:value-of select="concat(@name, '(')"/>
     <xsl:call-template name="parameters">
       <xsl:with-param name="items" select="tl:*"/>
     </xsl:call-template>
     <xsl:text>)</xsl:text>
     <xsl:apply-templates select="." mode="annotate"/>
-    <xsl:if test="$render-hints = 'true' and @kind='internal'"><xsl:text>  /* optimizer */</xsl:text></xsl:if>
+    <xsl:if test="$render-hints = 'true' and local-name(.) = 'internal-predicate'"><xsl:text>  /* optimizer */</xsl:text></xsl:if>
   </xsl:template>
 
   <xsl:template match="tl:predicate|tl:dynamic-predicate">
@@ -265,7 +267,7 @@
   </xsl:template>
 
   <xsl:template match="tl:limit|tl:offset">
-     <xsl:value-of select="concat(local-name(.), ' $', @value)"/> 
+     <xsl:value-of select="concat(local-name(.), ' ', @value)"/>
   </xsl:template>
 
   <xsl:template match="tl:variable|tl:ascending">
@@ -274,6 +276,10 @@
 
   <xsl:template match="tl:objectid">
     <xsl:value-of select="concat('@', @value)"/>
+  </xsl:template>
+
+  <xsl:template match="tl:parameter">
+    <xsl:value-of select="concat('%', @name, '%')"/>
   </xsl:template>
 
   <xsl:template match="tl:string">
@@ -342,6 +348,7 @@
       </xsl:if>
        <xsl:apply-templates select="."/>
       <xsl:if test="position() != last()"><xsl:text>, </xsl:text></xsl:if>
+      <xsl:if test="$render-hints = 'true' and @cost"><xsl:text> /* costs: </xsl:text><xsl:value-of select="@cost"/><xsl:text> */</xsl:text></xsl:if>
     </xsl:for-each>
   </xsl:template>
 

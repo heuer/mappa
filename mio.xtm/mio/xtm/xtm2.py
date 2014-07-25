@@ -88,7 +88,7 @@ class XTM2ContentHandler(sax_handler.ContentHandler):
         self.subordinate = False
         self.context = Context()
         self.reset(locator)
-        self.version = '2.0'
+        self.version = u'2.0'
         self._seen_identity = False
         self.strict = True
 

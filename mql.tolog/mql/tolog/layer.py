@@ -12,7 +12,7 @@
 :organization: Semagia - <http://www.semagia.com/>
 :license:      BSD License
 """
-from tm import ANY, UCS
+from tm import ANY
 from itertools import chain
 
 #TODO: This shouldn't belong to the mql.tolog package but to the generic mql package
@@ -22,17 +22,29 @@ class TopicMapLayer(object):
     """
     def get_topic_by_subject_identifier(self, sid):
         """\
+        Returns a topic by its subject identifier or ``None`` if no topic
+        could be found.
 
+        `sid`
+            An IRI.
         """
 
     def get_topic_by_subject_locator(self, slo):
         """\
+        Returns a topic by its subject locator or ``None`` if no topic
+        could be found.
 
+        `slo`
+            An IRI.
         """
 
     def get_topic_by_item_identifier(self, iid):
         """\
+        Returns a topic by its item identifier or ``None`` if no topic
+        could be found.
 
+        `iid`
+            An IRI.
         """
         obj = self.get_object_by_item_identifier(iid)
         return obj if self.is_topic(obj) else None
@@ -61,6 +73,8 @@ class TopicMapLayer(object):
 
         `types`
             An iterable of topics or ``ANY`` if the type is unconstrained.
+        `scope`
+            An iterable of topics or ``ANY`` if the scope is unconstrained.
         """
 
     def get_occurrences(self, topic, types=ANY, scope=ANY):
@@ -71,6 +85,8 @@ class TopicMapLayer(object):
             The context topic.
         `types`
             An iterable of topics or ``ANY`` if the type is unconstrained.
+        `scope`
+            An iterable of topics or ``ANY`` if the scope is unconstrained.
         """
 
     def get_names(self, topic, types=ANY, scope=ANY):
@@ -81,11 +97,15 @@ class TopicMapLayer(object):
             The context topic.
         `types`
             An iterable of topics or ``ANY`` if the type is unconstrained.
+        `scope`
+            An iterable of topics or ``ANY`` if the scope is unconstrained.
         """
 
     def get_variants(self, name, scope=ANY):
         """\
-        
+
+        `scope`
+            An iterable of topics or ``ANY`` if the scope is unconstrained.
         """
 
     def get_topic_children(self, topic, types=ANY, scope=ANY):
@@ -96,6 +116,8 @@ class TopicMapLayer(object):
             The context topic.
         `types`
             An iterable of topics or ``ANY`` if the type is unconstrained.
+        `scope`
+            An iterable of topics or ``ANY`` if the scope is unconstrained.
         """
         return chain(self.get_occurrences(topic, types, scope), self.get_names(topic, types, scope))
 
@@ -270,7 +292,7 @@ class AdvancedTopicMapLayer(TopicMapLayer):
             #TODO: Exception
 
     def _topic(self, tmc):
-        return tmc if self.is_topic(tmc) else self.reifier(tmc)
+        return tmc if self.is_topic(tmc) else self.get_reifier(tmc)
         
     def get_occurrences(self, tmc, types=ANY, scope=ANY):
         topic = self._topic(tmc)
