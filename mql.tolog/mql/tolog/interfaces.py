@@ -539,17 +539,17 @@ class IQueryFactory(Interface):
     """\
     
     """
-    def create_create_query(self, iri):
+    def create_create_query(iri):
         """\
         
         """
         
-    def create_drop_query(self, iri):
+    def create_drop_query(iri):
         """\
         
         """
         
-    def create_load_query(self, iri, into=None):
+    def create_load_query(iri, into=None):
         """\
         
         `into`
