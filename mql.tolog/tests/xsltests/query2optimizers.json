@@ -7,6 +7,8 @@
     "annotate-resource-occ.tl": ["annotate-predicates"],
     "annotate-resource-variant.tl": ["annotate-predicates"],
     "annotate-scope-assoc.tl": ["annotate-predicates"],
+    "annotate-scope-name.tl": ["annotate-predicates"],
+    "annotate-scope-occ.tl": ["annotate-predicates"],
     "annotate-type.tl": ["annotate-predicates"],
     "annotate-type2.tl": ["annotate-predicates"],
     "annotate-type-assoc.tl": ["annotate-predicates"],
