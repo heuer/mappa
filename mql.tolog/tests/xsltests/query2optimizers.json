@@ -4,6 +4,7 @@
     "annotate-iid-occ.tl": ["annotate-predicates"],
     "annotate-iid-role.tl": ["annotate-predicates"],
     "annotate-iid-topic.tl": ["annotate-predicates"],
+    "annotate-iid-topic2.tl": ["annotate-predicates"],
     "annotate-reifies-assoc.tl": ["annotate-predicates"],
     "annotate-reifies-name.tl": ["annotate-predicates"],
     "annotate-reifies-occ.tl": ["annotate-predicates"],

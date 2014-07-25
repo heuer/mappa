@@ -51,7 +51,8 @@
   <xsl:output method="xml" encoding="utf-8" standalone="yes"/>
 
   <xsl:key name="topics"
-            match="tl:builtin-predicate[@name='topic']/tl:*[1][local-name(.) = 'variable']"
+            match="tl:builtin-predicate[@name='topic' or @name='topic-name' or @name='reifies' or @name='subject-identifier' or @name='subject-locator' or @name='occurrence' or @name='instance-of' or @name='direct-instance-of']/tl:*[1][local-name(.) = 'variable']
+                   |tl:builtin-predicate[@name='type' or @name='scope' or @name='role-player' or @name='instance-of' or @name='direct-instance-of']/tl:*[2][local-name(.) = 'variable']"
             use="@name"/>
 
   <xsl:key name="assocs" 
