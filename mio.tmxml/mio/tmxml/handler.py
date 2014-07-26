@@ -17,9 +17,6 @@ from tm import TMDM, XSD
 from tm import mio
 from tm.irilib import resolve_iri
 
-# Disable errors that the AttrsImpl has no 'get' method
-# pylint: disable-msg=E1103
-
 __all__ = ['TMXMLContentHandler']
 
 _NS_TMXML = u'http://psi.ontopia.net/xml/tm-xml/'

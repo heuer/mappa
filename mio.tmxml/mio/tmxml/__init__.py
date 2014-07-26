@@ -20,12 +20,14 @@ from .handler import TMXMLContentHandler
 
 __all__ = ['create_deserializer']
 
+
 def create_deserializer():
     """\
     Creates and returns a deserializer that is able to parse
     `TM/XML <http://www.ontopia.net/topicmaps/tmxml.html>`_ topic maps.
     """
     return TMXMLDeserializer()
+
 
 class TMXMLDeserializer(Deserializer):
     """\
