@@ -1,0 +1,1 @@
+<tolog xmlns="http://psi.semagia.com/tolog-xml/"><select><variable name="t"></variable><where><builtin-predicate cost="1" name="item-identifier"><variable name="t"></variable><iri value="http://www.example.org/foo"></iri></builtin-predicate><builtin-predicate cost="1000" name="topic"><variable name="t"></variable></builtin-predicate></where></select></tolog>

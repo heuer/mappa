@@ -1,0 +1,1 @@
+<tolog xmlns="http://psi.semagia.com/tolog-xml/"><select><variable name="a"></variable><where><builtin-predicate name="association"><variable name="a"></variable></builtin-predicate><builtin-predicate hint="association" name="reifies"><identifier value="r"></identifier><variable name="a"></variable></builtin-predicate></where></select></tolog>

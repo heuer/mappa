@@ -1,0 +1,5 @@
+syntax: glob
+*.pyc
+lexer_lextab.py
+parser_parsetab.py
+tests/cxtm/

@@ -1,0 +1,1 @@
+select $type from instance-of($i, $type)?

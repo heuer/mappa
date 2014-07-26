@@ -1,0 +1,1 @@
+select $o where occurrence($t, $o), reifies(r, $o)

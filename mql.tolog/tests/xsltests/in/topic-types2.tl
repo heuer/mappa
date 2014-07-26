@@ -1,0 +1,1 @@
+select $type where direct-instance-of($i, $type)?
