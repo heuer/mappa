@@ -294,9 +294,7 @@ class XTM10ContentHandler(object, sax_handler.ContentHandler):
         handler = self.map_handler
         if INSTANCE_OF == parent_el:
             stack = self._stack 
-            if ASSOCIATION in stack \
-                or OCCURRENCE in stack \
-                or (BASE_NAME in stack and not self.strict): # instanceOf in name is invalid but Ontopia uses it
+            if ASSOCIATION in stack or OCCURRENCE in stack:
                 handler.type(ref)
                 self._seen_type = True
             elif TOPIC in stack:

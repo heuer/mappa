@@ -90,7 +90,6 @@ class XTM2ContentHandler(sax_handler.ContentHandler):
         self.reset(locator)
         self.version = u'2.0'
         self._seen_identity = False
-        self.strict = True
 
     def reset(self, locator=None):
         self._state = _STATE_INITIAL

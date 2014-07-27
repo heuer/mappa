@@ -29,17 +29,16 @@ _CONTENT_HANDLERS = {u'1.0': XTM10ContentHandler,
 
 
 def create_deserializer(version=None, strict=True, **kw):
-    return XTMDeserializer(version=version, strict=strict)
+    return XTMDeserializer(version=version)
 
 
 class XTMDeserializer(Deserializer):
     """\
     Generic XTM deserializer that supports XTM 1.0, XTM 2.0 and 2.1.
     """
-    def __init__(self, version=None, strict=True):
+    def __init__(self, version=None):
         super(XTMDeserializer, self).__init__()
         self._version = version
-        self._strict = strict
 
     @property        
     def version(self):
@@ -52,7 +51,6 @@ class XTMDeserializer(Deserializer):
         
         """
         content_handler = _CONTENT_HANDLERS.get(self._version, XTMContentHandler)()
-        content_handler.strict = self._strict
         content_handler.map_handler = self.handler
         content_handler.doc_iri = source.iri
         content_handler.subordinate = self.subordinate
@@ -76,8 +74,7 @@ class XTMContentHandler(sax_handler.ContentHandler):
         self.doc_iri = None
         self.context = Context()
         self.version = None
-        self.strict = True
-    
+
     def startElementNS(self, name, qname, attrs):
         if not self._content_handler:
             self._content_handler = self._create_content_handler(name, qname, attrs)
@@ -104,7 +101,6 @@ class XTMContentHandler(sax_handler.ContentHandler):
             self.version = u'1.0'
         # Provide missing info
         handler.map_handler = self.map_handler
-        handler.strict = self.strict
         handler.subordinate = self.subordinate
         handler.doc_iri = self.doc_iri
         handler.context= self.context
