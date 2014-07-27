@@ -83,6 +83,7 @@ class XTM21Handler(mio_handler.HamsterMapHandler):
         >>> out.getvalue()
         '<?xml version="1.0" encoding="utf-8" standalone="yes"?>\\n<topicMap xmlns="http://www.topicmaps.org/xtm/" version="2.1">\\n  <topic>\\n    <subjectIdentifier href="http://psi.example.org/something"/>\\n  </topic>\\n</topicMap>\\n'
         """
+        super(XTM21Handler, self).__init__()
         self._out = writer if writer else XMLWriter(fileobj, encoding, prettify)
         self._state = _STATE_ILLEGAL
         self._last_topic = None

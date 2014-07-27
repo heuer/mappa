@@ -70,7 +70,7 @@ _STATE_NAME = 9
 _STATE_VARIANT = 10
 _STATE_REIFIER = 11 # 2.1
 
-#pylint: disable-msg=E1103
+
 class XTM2ContentHandler(sax_handler.ContentHandler):
     """\
     Content handler for `XTM 2.0 <http://www.isotopicmaps.org/sam/sam-xtm/2006-06-19/>`_

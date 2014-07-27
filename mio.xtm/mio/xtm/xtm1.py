@@ -57,8 +57,8 @@ TOPIC_REF = u'topicRef'
 SUBJECT_IDENTITY = u'subjectIdentity'
 SUBJECT_INDICATOR_REF = u'subjectIndicatorRef'
 
-#pylint: disable-msg=E1103
-class XTM10ContentHandler(object, sax_handler.ContentHandler):
+
+class XTM10ContentHandler(sax_handler.ContentHandler):
     """\
     XTM 1.0 content handler.
 
