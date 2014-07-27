@@ -58,7 +58,7 @@ SUBJECT_IDENTITY = u'subjectIdentity'
 SUBJECT_INDICATOR_REF = u'subjectIndicatorRef'
 
 
-class XTM10ContentHandler(sax_handler.ContentHandler):
+class XTM10ContentHandler(object, sax_handler.ContentHandler):
     """\
     XTM 1.0 content handler.
 
@@ -80,7 +80,6 @@ class XTM10ContentHandler(sax_handler.ContentHandler):
         self.subordinate = False
         self.context = Context()
         self.reset(locator)
-        self.strict = True
 
     def reset(self, locator=None):
         self._stack = []    # Stack of element names
@@ -391,6 +390,7 @@ class XTM10ContentHandler(sax_handler.ContentHandler):
     
     doc_iri = property(_get_doc_iri, _set_doc_iri)
 
+
 class Variant(object):
     """\
     Internally used object to keep track about variants.
@@ -407,6 +407,7 @@ class Variant(object):
 
     def __str__(self):
         return 'Variant(iid=%s, literal=%s, scope=%s)' % (self.iid, self.literal, self.scope)
+
 
 class MergeMap(object):
     
