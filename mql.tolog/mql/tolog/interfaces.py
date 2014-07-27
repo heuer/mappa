@@ -672,7 +672,7 @@ class IQueryFactory(Interface):
             An iterable of (type, player) pairs.
         """
 
-    def create_dynamic_predicate(type, topic, value):
+    def create_dynamic_occurrence_predicate(type, topic, value):
         """\
         Returns a dynamic predicate.
         
