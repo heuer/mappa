@@ -6,7 +6,7 @@
 # BSD license.
 #
 """\
-
+XTM 1.0 CXTM test cases
 
 :author:       Lars Heuer (heuer[at]semagia.com)
 :organization: Semagia - http://www.semagia.com/
