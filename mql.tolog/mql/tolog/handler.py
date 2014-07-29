@@ -155,13 +155,13 @@ class XMLParserHandler(TologHandler):
         self._writer.pop()  # rule
 
     def literal(self, value, datatype_iri=None, datatype_prefix=None, datatype_lp=None):
-        attrs = {u'value': value}
+        attrs = {}
         if datatype_iri:
             attrs[u'datatype-iri'] = datatype_iri
         else:
             attrs[u'datatype-prefix'] = datatype_prefix
             attrs[u'datatype-localpart'] = datatype_lp
-        self._writer.emptyElement(u'literal', attrs)
+        self._writer.dataElement(u'literal', value, attrs)
 
     def curie(self, kind, prefix, lp):
         self._writer.emptyElement(u'curie', {u'kind': _PREFIXKIND2NAME[kind],
