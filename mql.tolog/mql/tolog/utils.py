@@ -84,4 +84,3 @@ def is_update_function(name):
     Returns if ``name`` is a update function.
     """
     return name in _TOLOG_UPDATE_FUNCTIONS
-
