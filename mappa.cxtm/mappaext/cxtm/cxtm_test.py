@@ -38,8 +38,9 @@ def _download_cxtm_tests():
     directory = os.path.abspath(u'./cxtm/')
     archive_name = os.path.join(directory, _CXTM_TRUNK)
     zip_filename = _CXTM_TRUNK
-    if not os.path.isfile(archive_name):
-        urllib.urlretrieve(u'https://github.com/heuer/cxtm/archive/%s' % zip_filename, archive_name)
+    if os.path.isfile(archive_name):
+        return
+    urllib.urlretrieve(u'https://github.com/heuer/cxtm/archive/%s' % zip_filename, archive_name)
     archive = ZipFile(archive_name)
     archive.extractall(directory)
     archive.close()
@@ -163,13 +164,12 @@ def check_writer(writer_factory, deser_factory, filename, post_process):
     if post_process:
         post_process(tm2)
     # 4. Generate the CXTM
-    f = io.open(get_baseline(filename), encoding='utf-8')
-    expected = f.read()
-    f.close()
+    with io.open(get_baseline(filename), 'rb') as f:
+        expected = f.read()
     result = io.BytesIO()
     c14n = CXTMTopicMapWriter(result, src.iri)
     c14n.write(tm2)
-    res = unicode(result.getvalue(), 'utf-8')
+    res = result.getvalue()#, 'utf-8')
     if expected != res:
         fail('failed: %s.\nExpected: %s\nGot: %s\nGenerated topic map: %s' % (filename, expected, res, out.getvalue()))
 
@@ -183,13 +183,14 @@ def check_valid(deserializer, filename, post_process=None):
     if post_process:
         post_process(tm)
     reference_file = os.path.abspath(os.path.dirname(filename) + '/../baseline/%s.cxtm' % os.path.basename(filename))
-    expected = io.open(reference_file, 'r', encoding='utf-8').read()
+    with io.open(reference_file, 'rb') as f:
+        expected = f.read()
     result = io.BytesIO()
     c14n = CXTMTopicMapWriter(result, src.iri)
     c14n.write(tm)
-    res = unicode(result.getvalue(), 'utf-8')
+    res = result.getvalue()
     if expected != res:
-        fail(u'failed: %s.\nExpected: %s\nGot: %s' % (filename, expected, res))
+        raise fail('failed: %s.\nExpected: %s\nGot: %s' % (filename, expected, res))
 
 
 def check_invalid(deserializer, filename):

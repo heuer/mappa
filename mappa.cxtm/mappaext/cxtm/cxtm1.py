@@ -90,7 +90,7 @@ class CXTMTopicMapWriter(object):
     def _index(self, construct):
         """\
         Returns the index of the Topic Maps ``construct``.
-        
+
         `construct`
             A topic, an association or a role.
         """
@@ -100,7 +100,7 @@ class CXTMTopicMapWriter(object):
         """\
         Creates an index for the topics and associations (with the roles) which
         belong to the ``topicmap``.
-        
+
         `topicmap`
             The topic map to create the index for.
         """
@@ -173,7 +173,7 @@ class CXTMTopicMapWriter(object):
     def _write_name(self, name, pos):
         """\
         Serializes the ``name``.
-        
+
         `name`
             The name to serialize.
         `pos`
@@ -199,7 +199,7 @@ class CXTMTopicMapWriter(object):
     def _write_occurrence(self, occurrence, pos):
         """\
         Serializes the ``occurrence``.
-        
+
         `occurrence`
             The occurrence to serialize.
         `pos`
@@ -237,7 +237,7 @@ class CXTMTopicMapWriter(object):
     def _write_datatyped_construct(self, construct):
         """\
         Writes the characteristics of an occurrence or variant.
-        
+
         `construct`
             An occurrence or variant.
         """
@@ -257,7 +257,7 @@ class CXTMTopicMapWriter(object):
     def _write_value(self, value):
         """\
         Writes the specified value.
-        
+
         `value`
             A string.
         """
@@ -268,7 +268,7 @@ class CXTMTopicMapWriter(object):
     def _write_type(self, typed):
         """\
         Writes the type of a ``typed`` Topic Maps construct.
-        
+
         `typed`
             An association, a role, an occurrence, or name.
         """
@@ -278,9 +278,9 @@ class CXTMTopicMapWriter(object):
 
     def _write_scope(self, scoped):
         """\
-        Serializes the scope of the ``scoped`` Topic Maps construct if the 
+        Serializes the scope of the ``scoped`` Topic Maps construct if the
         scope is not the unconstrained scope.
-        
+
         `scoped`
             An association, an occurrence, a name, or variant.
         """
@@ -324,9 +324,9 @@ class CXTMTopicMapWriter(object):
 
     def _attributes(self, reifiable, pos):
         """\
-        Returns a ``dict`` with the number of the ``reifiable`` Topic Maps 
+        Returns a ``dict`` with the number of the ``reifiable`` Topic Maps
         construct and the index of the reifier (if any).
-        
+
         `reifiable`
             A reifiable Topic Maps construct.
         `pos`
@@ -346,7 +346,7 @@ class CXTMTopicMapWriter(object):
     def _topic_ref(self, topic):
         """\
         Returns a ``dict`` with a ``topicref`` attribute.
-        
+
         `topic`
             A topic to which the ``topicref`` should point to.
         """
@@ -391,12 +391,12 @@ class CXTMTopicMapWriter(object):
 
     def _normalize_baseiri(self, iri):
         """\
-        Normalizes the base locator according to the following procedure 
+        Normalizes the base locator according to the following procedure
         (CXTM 3.19 - 1.):
-        
-            [...] the base locator with any fragment identifier and query 
+
+            [...] the base locator with any fragment identifier and query
             removed and any trailing "/" character removed.[...]
-        
+
         """
         i = iri.rfind(u'#')
         if i > 0:
@@ -429,7 +429,7 @@ class CXTMTopicMapWriter(object):
         if a == b:
             return 0
         return self._cmp_topic(a.player, b.player) or self._cmp_topic(a.type, b.type)
-    
+
     def _cmp_role(self, a, b):
         """\
         Canonical sort order:
@@ -440,7 +440,7 @@ class CXTMTopicMapWriter(object):
         if a == b:
             return 0
         return self._cmp_role_ignore_parent(a, b) or self._cmp_assoc(a.parent, b.parent)
-    
+
     def _cmp_assoc(self, a, b):
         """\
         Canonical sort order:
@@ -502,11 +502,11 @@ class CXTMTopicMapWriter(object):
         Compares the size of ``a`` and ``b``.
         """
         return len(a) - len(b)
-    
+
     def _cmp_set_content(self, a, b, comparator=cmp):
         """\
-        Compares the content of ``a`` and ``b``. 
-        
+        Compares the content of ``a`` and ``b``.
+
         Both must have the same size.
         """
         coll_a = sorted(a, comparator)
@@ -523,17 +523,17 @@ class CXTMTopicMapWriter(object):
         """
         normalize_iri = self._normalize_iri
         return self._cmp_size(a, b) \
-                or self._cmp_set_content([normalize_iri(iri) for iri in a], 
+                or self._cmp_set_content([normalize_iri(iri) for iri in a],
                                          [normalize_iri(iri) for iri in b])
 
     def _cmp_roles(self, a, b):
         """\
-        Compares the collections `a` and `b`. Both collections must consist 
+        Compares the collections `a` and `b`. Both collections must consist
         of roles.
         """
         return self._cmp_size(a, b) \
                 or self._cmp_set_content(a, b, self._cmp_role_ignore_parent)
-    
+
     def _cmp_scope(self, a, b):
         """\
         Compares the scope of the scoped constructs `a` and `b`.
