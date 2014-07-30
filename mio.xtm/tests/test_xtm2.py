@@ -6,7 +6,7 @@
 # BSD license.
 #
 """\
-
+XTM 2.0 and XTM 2.1 CXTM test cases
 
 :author:       Lars Heuer (heuer[at]semagia.com)
 :organization: Semagia - http://www.semagia.com/
@@ -16,7 +16,7 @@ from mappaext.cxtm.cxtm_test import create_invalid_cxtm_cases, create_valid_cxtm
 from mio.xtm import create_deserializer
 
 _EXCLUDED_INVALID_TESTS = (
-    'id-invalid.xtm', # This should be detected by the XML parser, but expat accepts it
+    'id-invalid.xtm',  # Requires a validating XML parser
 )
 
 
