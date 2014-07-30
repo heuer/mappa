@@ -273,6 +273,18 @@ class AdvancedTopicMapLayer(TopicMapLayer):
     """\
     
     """
+    def __init__(self, layer):
+        self._layer = layer
+
+    def get_topic_by_subject_identifier(self, sid):
+        return self._layer.get_topic_by_subject_identifier(sid)
+
+    def get_topic_by_subject_locator(self, slo):
+        return self._layer.get_topic_by_subject_locator(slo)
+
+    def get_topic_by_item_identifier(self, iid):
+        return self._layer.get_topic_by_item_identifier(iid)
+
     def get_children(self, tmc, types=ANY):
         """\
         Returns the children of the provided Topic Maps construct
@@ -289,27 +301,92 @@ class AdvancedTopicMapLayer(TopicMapLayer):
         return self.get_topic_children(topic, types=types)
 
     def _topic(self, tmc, force=False):
-        topic = tmc if self.is_topic(tmc) else self.get_reifier(tmc)
+        topic = tmc if self._layer.is_topic(tmc) else self.get_reifier(tmc)
         if force and topic is None:
             raise mql.InvalidQueryError()  #TODO: Msg.
         return topic
         
     def get_occurrences(self, tmc, types=ANY, scope=ANY):
         topic = self._topic(tmc)
-        return () if not topic else super(AdvancedTopicMapLayer, self).get_occurrences(topic, types, scope)
+        return () if not topic else self._layer.get_occurrences(topic, types, scope)
     
     def get_names(self, tmc, types=ANY, scope=ANY):
         topic = self._topic(tmc)
-        return () if not topic else super(AdvancedTopicMapLayer, self).get_names(topic, types, scope)
+        return () if not topic else self._layer.get_names(topic, types, scope)
 
     def get_roles_played(self, tmc, types=ANY):
         topic = self._topic(tmc)
-        return () if not topic else super(AdvancedTopicMapLayer, self).get_roles_played(topic, types)
+        return () if not topic else self._layer.get_roles_played(topic, types)
 
     def get_subject_identifiers(self, tmc):
         topic = self._topic(tmc)
-        return () if not topic else super(AdvancedTopicMapLayer, self).get_subject_identifiers(topic)
+        return () if not topic else self._layer.get_subject_identifiers(topic)
 
     def get_subject_locators(self, tmc):
         topic = self._topic(tmc)
-        return () if not topic else super(AdvancedTopicMapLayer, self).get_subject_locators(topic)
+        return () if not topic else self._layer.get_subject_locators(topic)
+
+    def get_object_by_item_identifier(self, iid):
+        return self._layer.get_object_by_item_identifier(iid)
+
+    def get_names_by_value(self, value):
+        return self._layer.get_names_by_value(value)
+
+    def get_occurrences_by_value(self, value, datatype):
+        return self._layer.get_occurrences_by_value(value, datatype)
+
+    def get_variants_by_value(self, value, datatype):
+        return self._layer.get_variants_by_value(value, datatype)
+
+    def get_topic_direct_types(self):
+        return self._layer.get_topic_direct_types()
+
+    def get_topic_types(self):
+        return self._layer.get_topic_types()
+
+    def get_association_types(self):
+        return self._layer.get_association_types()
+
+    def get_role_types(self):
+        return self._layer.get_role_types()
+
+    def get_occurrence_types(self):
+        return self._layer.get_occurrence_types()
+
+    def get_name_types(self):
+        return self._layer.get_name_types()
+
+    def is_parent_of(self, parent, child):
+        res = self._layer.is_parent_of(parent, child)
+        if not res and self.is_topic(child):
+            reified = self._layer.get_reified(child)
+            res = self._layer.is_parent_of(parent, reified) if reified else False
+        return res
+
+    def is_instance_of(self, instance, type, scope=ANY):
+        return self._layer.is_instance_of(instance, type, scope)
+
+    def _is(self, obj, is_expected_type):
+        res = is_expected_type(obj)
+        if not res and self.is_topic(obj):
+            reified = self._layer.get_reified(obj)
+            res = is_expected_type(reified) if reified is not None else None
+        return res
+
+    def is_topicmap(self, obj):
+        return self._is(obj, self._layer.is_topicmap)
+
+    def is_association(self, obj):
+        return self._is(obj, self._layer.is_association)
+
+    def is_role(self, obj):
+        return self._is(obj, self._layer.is_role)
+
+    def is_occurrence(self, obj):
+        return self._is(obj, self._layer.is_occurrence)
+
+    def is_name(self, obj):
+        return self._is(obj, self._layer.is_name)
+
+    def is_variant(self, obj):
+        return self._is(obj, self._layer.is_variant)

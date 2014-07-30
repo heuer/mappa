@@ -57,6 +57,13 @@ class Deserializer(object):
         self._subordinate = False
         self._handler = None
         self.context = Context()
+        self._properties = {}
+
+    def set_property(self, name, value):
+        self._properties[name] = value
+
+    def get_property(self, name):
+        return self._properties.get(name)
 
     def _set_handler(self, handler):
         self._handler = simplify(handler)

@@ -49,6 +49,17 @@ class IDeserializer(Interface):
         """\
         Parses the `source`.
         """
+
+    def set_property(name, value):
+        """\
+
+        """
+
+    def get_property(name):
+        """\
+
+        """
+
     handler = Attribute("""\
     Sets / returns the ``mio.handler.MapHandler`` instance this deserializer
     operates on.
