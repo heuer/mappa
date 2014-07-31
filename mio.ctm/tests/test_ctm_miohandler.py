@@ -28,7 +28,7 @@ fail = AssertionError
 
 
 def check_handler(deserializer_factory, filename):
-    src = Source(file=open(filename))
+    src = Source(file=io.open(filename, 'rb'))
     # 1. Generate CTM 1.0 via CTMHandler
     out = io.BytesIO()
     deser = deserializer_factory()
@@ -44,7 +44,7 @@ def check_handler(deserializer_factory, filename):
     tm = conn.create(u'http://www.semagia.com/test-ctm-handler')
     deser = create_deserializer()
     deser.handler = MappaMapHandler(tm)
-    new_src = Source(data=out.getvalue(), iri=src.iri)
+    new_src = Source(data=out.getvalue(), iri='http://www.example.org/')
     try:
         deser.parse(new_src)
     except MIOException, ex:
@@ -53,7 +53,7 @@ def check_handler(deserializer_factory, filename):
     with io.open(get_baseline(filename), 'rb') as f:
         expected = f.read()
     result = io.BytesIO()
-    c14n = create_writer(result, src.iri)
+    c14n = create_writer(result, 'http://www.example.org/')
     c14n.write(tm)
     res = result.getvalue()
     if expected != res:
