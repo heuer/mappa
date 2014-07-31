@@ -10,7 +10,6 @@ Tests against the XTM 2.1 MIOHandler
 
 :author:       Lars Heuer (heuer[at]semagia.com)
 :organization: Semagia - http://www.semagia.com/
-:version:      $Rev: 168 $ - $Date: 2009-06-26 14:22:56 +0200 (Fr, 26 Jun 2009) $
 :license:      BSD license
 """
 import io
@@ -41,12 +40,12 @@ def check_handler(deserializer_factory, filename):
     except Exception, ex:
         fail('failed: %s.\nError: %s\nGenerated XTM 2.1: %s' % (filename, ex, out.getvalue()))
     # 3. Generate the CXTM
-    with io.open(get_baseline(filename), encoding='utf-8') as f:
+    with io.open(get_baseline(filename), 'rb') as f:
         expected = f.read()
     result = io.BytesIO()
     c14n = create_writer(result, src.iri)
     c14n.write(tm)
-    res = unicode(result.getvalue(), 'utf-8')
+    res = result.getvalue()
     if expected != res:
         fail('failed: %s.\nExpected: %s\nGot: %s\nGenerated XTM 2.1: %s' % (filename, expected, res, out.getvalue()))
 
@@ -56,6 +55,7 @@ def test_ctm():
                "string-escape.ctm",
                # Topic is serialized in advance of the tm reifier
                "tm-reifier2.ctm",
+               'topic-identifier-unicode.ctm',  # CTM reader does not support this due to limitations of the re module
                ]
     try:
         from mio import ctm
@@ -66,8 +66,7 @@ def test_ctm():
 
 
 def test_jtm():
-    exclude = [
-               ]
+    exclude = []
     try:
         from mio import jtm
         for filename in find_valid_cxtm_cases('jtm', 'jtm', exclude=exclude):

@@ -50,19 +50,20 @@ def check_handler(deserializer_factory, filename):
     except MIOException, ex:
         fail('failed: %s.\nError: %s\nGenerated CTM: %s' % (filename, ex, out.getvalue()))
     # 3. Generate the CXTM
-    f = io.open(get_baseline(filename), encoding='utf-8')
-    expected = f.read()
-    f.close()
+    with io.open(get_baseline(filename), 'rb') as f:
+        expected = f.read()
     result = io.BytesIO()
     c14n = create_writer(result, src.iri)
     c14n.write(tm)
-    res = unicode(result.getvalue(), 'utf-8')
+    res = result.getvalue()
     if expected != res:
         fail('failed: %s.\nExpected: %s\nGot: %s\nGenerated CTM: %s' % (filename, expected, res, out.getvalue()))
 
 
 def test_ctm():
-    excluded = ['occurrence-string-multiline2.ctm', 'tm-reifier2.ctm']
+    excluded = ['occurrence-string-multiline2.ctm', 'tm-reifier2.ctm',
+               'topic-identifier-unicode.ctm',  # CTM reader does not support this due to limitations of the re module
+               ]
     for filename in find_valid_cxtm_cases('ctm', 'ctm', exclude=excluded):
         yield check_handler, create_deserializer, filename
 
@@ -90,6 +91,18 @@ _EXCLUDE_XTM = [
                 "role-duplicate-iid2.xtm",
                 "variant-duplicate-iid.xtm"
     ]
+
+
+def test_jtm():
+    exclude = []
+    try:
+        from mio import jtm
+        for filename in find_valid_cxtm_cases('jtm', 'jtm', exclude=exclude):
+            yield check_handler, jtm.create_deserializer, filename
+        for filename in find_valid_cxtm_cases('jtm11', 'jtm', exclude=exclude):
+            yield check_handler, jtm.create_deserializer, filename
+    except ImportError:
+        pass
 
 
 def test_xtm_20():
