@@ -12,7 +12,7 @@ This module provides some PyTM constants and classes.
 :organization: Semagia - http://www.semagia.com/
 :license:      BSD license
 """
-from StringIO import StringIO
+import io
 from operator import attrgetter
 from urllib import pathname2url
 from . namespace import Namespace
@@ -87,7 +87,7 @@ class Source(object):
             else:
                 if isinstance(data, unicode):
                     data = data.encode('utf-8')
-                self._stream = StringIO(data)
+                self._stream = io.BytesIO(data)
             if not iri:
                 raise ValueError('An IRI is required if "data" is specified')
         if not iri:

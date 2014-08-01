@@ -14,7 +14,7 @@ and `XML Topic Maps (XTM) 2.1 <http://www.isotopicmaps.org/sam/sam-xtm/2009-11-1
 :organization: Semagia - http://www.semagia.com/
 :license:      BSD license
 """
-from StringIO import StringIO
+import io
 import xml.sax.handler as sax_handler
 from xml.sax.saxutils import XMLGenerator
 from tm import TMDM, XSD, voc, mio, Source
@@ -100,11 +100,9 @@ class XTM2ContentHandler(sax_handler.ContentHandler):
         self.doc_iri = locator
         self._accept_xml = False
         self._accept_content = False
-        # The ``_content`` used to keep "ordinary" string content and it is
-        # used by the XMLGenerator, so ``_content.truncate(0)`` effects also
-        # the output of the XMLGenerator
-        self._content = StringIO()
-        self._xml_handler = XMLGenerator(self._content)
+        self._content = None
+        self._xml_content = io.BytesIO()
+        self._xml_handler = XMLGenerator(self._xml_content)
 
     def startDocument(self):
         pass
@@ -190,12 +188,15 @@ class XTM2ContentHandler(sax_handler.ContentHandler):
             self._state = _STATE_ROLE
         elif VALUE == name:
             self._accept_content = True
-            self._content.truncate(0)
+            self._content = []
         elif RESOURCE_DATA == name:
             self._datatype = attrs.get(_DATATYPE, XSD.string)
             self._accept_content = True
-            self._content.truncate(0)
+            self._content = []
             self._accept_xml = self._datatype == XSD.anyType
+            if self._accept_xml:
+                self._xml_content.truncate(0)
+                self._xml_content.seek(0)
         elif RESOURCE_REF == name:
             handler.value(href(attrs), XSD.anyURI)
         elif OCCURRENCE == name:
@@ -274,16 +275,18 @@ class XTM2ContentHandler(sax_handler.ContentHandler):
             self._state = _STATE_NAME
         elif RESOURCE_DATA == name:
             if self._accept_xml:
-                self._content.flush()
-                handler.value(self._content.getvalue(), XSD.anyType)
-            elif XSD.anyURI == self._datatype:
-                handler.value(self._create_locator(self._content.getvalue()), XSD.anyURI)
+                self._xml_content.flush()
+                handler.value(self._xml_content.getvalue(), XSD.anyType)
             else:
-                handler.value(self._content.getvalue(), self._datatype)
+                val = u''.join(self._content)
+                if XSD.anyURI == self._datatype:
+                    handler.value(self._create_locator(val), XSD.anyURI)
+                else:
+                    handler.value(val, self._datatype)
             self._accept_content = False
             self._accept_xml = False
         elif VALUE == name:
-            handler.value(self._content.getvalue())
+            handler.value(u''.join(self._content))
             self._accept_content = False
 
     def endDocument(self):
@@ -293,7 +296,7 @@ class XTM2ContentHandler(sax_handler.ContentHandler):
         if self._accept_xml:
             self._xml_handler.characters(content)
         elif self._accept_content:
-            self._content.write(content)
+            self._content.append(content)
 
     def _handle_topic_reference(self, ref):
         """\

@@ -1092,7 +1092,7 @@ class HamsterMapHandler(MapHandler):
         var = self._constructs.pop()
         if not var.scope:
             raise mio.MIOException('The variant has no scope')
-        if var.value is None: # Important: Check for None, not 'not value' since an empty string is allowed
+        if var.value is None:  # Important: Check for None, not 'not value' since an empty string is allowed
             raise mio.MIOException('The variant has no value')
         name = self._constructs[-1]
         name.add_variant(var)

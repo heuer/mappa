@@ -20,7 +20,7 @@ from mappaext.cxtm import create_writer
 from tm import Source
 from mio.xtm import create_deserializer, XTM21Handler
 
-fail = AssertionError
+def fail(msg): raise AssertionError(msg)
 
 
 def check_handler(deserializer_factory, filename):
@@ -34,7 +34,7 @@ def check_handler(deserializer_factory, filename):
     tm = mappa.connect().create(u'http://www.semagia.com/test-xtm-handler')
     deser = create_deserializer()
     deser.handler = MappaMapHandler(tm)
-    new_src = Source(data=out.getvalue(), iri='http://www.example.org/')
+    new_src = Source(data=out.getvalue(), iri=src.iri)
     try:
         deser.parse(new_src)
     except Exception, ex:
@@ -43,7 +43,7 @@ def check_handler(deserializer_factory, filename):
     with io.open(get_baseline(filename), 'rb') as f:
         expected = f.read()
     result = io.BytesIO()
-    c14n = create_writer(result, 'http://www.example.org/')
+    c14n = create_writer(result, src.iri)
     c14n.write(tm)
     res = result.getvalue()
     if expected != res:

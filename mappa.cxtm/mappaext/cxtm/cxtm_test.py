@@ -138,46 +138,50 @@ def create_writer_cxtm_cases(writer_factory, deserializer_factory, directory, ex
         yield check_writer, writer_factory, deserializer_factory, filename, post_process
 
 
-fail = AssertionError
+def fail(msg):
+    raise AssertionError(msg)
 
 
 def check_writer(writer_factory, deser_factory, filename, post_process):
     conn = mappa.connect()
     tm = conn.create('http://www.semagia.com/mappa-test-tm')
     # 1. Read the source
-    src = make_source(open(filename, 'rb'))
     deserializer = deser_factory()
     deserializer.handler = MappaMapHandler(tm)
-    deserializer.parse(src)
+    with io.open(filename, 'rb') as f:
+        src = make_source(f)
+        deserializer.parse(src)
     if post_process:
         post_process(tm)
     # 2. Write the topic map
     out = io.BytesIO()
-    writer = writer_factory(out, src.iri)
+    writer = writer_factory(out, 'http://www.example.org/xxx')
     writer.write(tm)
     # 3. Read the generated topic map
     tm2 = conn.create('http://www.semagia.com/mappa-test-tm2')
-    src2 = make_source(out.getvalue(), iri=src.iri)
+    out.seek(0)
+    src2 = make_source(out, iri=src.iri)
     deserializer = deser_factory()
     deserializer.handler = MappaMapHandler(tm2)
     deserializer.parse(src2)
     if post_process:
         post_process(tm2)
     # 4. Generate the CXTM
-    with io.open(get_baseline(filename), 'rb') as f:
+    baseline_filename = get_baseline(filename)
+    with io.open(baseline_filename, 'rb') as f:
         expected = f.read()
     result = io.BytesIO()
     c14n = CXTMTopicMapWriter(result, src.iri)
     c14n.write(tm2)
-    res = result.getvalue()#, 'utf-8')
+    res = result.getvalue()
     if expected != res:
-        fail('failed: %s.\nExpected: %s\nGot: %s\nGenerated topic map: %s' % (filename, expected, res, out.getvalue()))
+        fail('failed: %s - %s.\nExpected: %s\nGot: %s\nGenerated topic map: %s' % (filename, baseline_filename, expected, res, out.getvalue()))
 
 
 def check_valid(deserializer, filename, post_process=None):
     conn = mappa.connect()
     tm = conn.create('http://www.semagia.com/mappa-test-tm')
-    src = make_source(open(filename, 'rb'))
+    src = make_source(io.open(filename, 'rb'))
     deserializer.handler = MappaMapHandler(tm)
     deserializer.parse(src)
     if post_process:

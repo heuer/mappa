@@ -18,7 +18,7 @@ from tm.mio.handler import MapHandler
 from mio.xtm import create_deserializer
 
 
-fail = AssertionError
+def fail(msg): raise AssertionError(msg)
 
 
 def _parse(source):
