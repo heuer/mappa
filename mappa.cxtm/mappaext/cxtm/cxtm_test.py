@@ -155,7 +155,7 @@ def check_writer(writer_factory, deser_factory, filename, post_process):
         post_process(tm)
     # 2. Write the topic map
     out = io.BytesIO()
-    writer = writer_factory(out, 'http://www.example.org/xxx')
+    writer = writer_factory(out, src.iri)
     writer.write(tm)
     # 3. Read the generated topic map
     tm2 = conn.create('http://www.semagia.com/mappa-test-tm2')
