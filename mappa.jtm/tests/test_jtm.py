@@ -20,7 +20,7 @@ from mio.jtm import create_deserializer
 from mappaext.jtm import create_writer
 
 
-fail = AssertionError
+def fail(msg): raise AssertionError(msg)
 
 
 def create_jtm10_writer(out, base):
