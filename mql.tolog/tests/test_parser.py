@@ -23,7 +23,7 @@ def parse(data, handler=None, tolog_plus=True):
                 tolog_plus=tolog_plus)
 
 
-fail = AssertionError
+def fail(msg): raise AssertionError(msg)
 
 
 def test_duplicate_prefixes_invalid():

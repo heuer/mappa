@@ -59,7 +59,6 @@ def test_transformation():
         raise Exception('Found more files in the directory: %r' % found_files)
 
 
-
 if __name__ == '__main__':
     import nose
     nose.core.runmodule()

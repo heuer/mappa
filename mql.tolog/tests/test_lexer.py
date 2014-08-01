@@ -57,7 +57,7 @@ def lex_tokenlist(data, tolog_plus=True):
     return tokens
 
 
-fail = AssertionError
+def fail(msg): raise AssertionError(msg)
 
 
 def test_tm_fragment_from():

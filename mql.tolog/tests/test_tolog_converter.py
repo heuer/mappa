@@ -31,7 +31,7 @@ _IGNORE = (
     'create-dyn-occ3.tl',
 )
 
-fail = AssertionError
+def fail(msg): raise AssertionError(msg)
 
 
 def test_tolog_plus():
