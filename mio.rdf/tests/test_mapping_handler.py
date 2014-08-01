@@ -17,7 +17,7 @@ from tm import mio
 from mio.rdf.mapping import MappingHandler
 
 
-fail = AssertionError
+def fail(msg): raise AssertionError(msg)
 
 
 def test_mapping_handler():
