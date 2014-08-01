@@ -18,7 +18,7 @@ from urlparse import urljoin
 from tm import irilib, Source
 
 
-fail = AssertionError
+def fail(msg): raise AssertionError(msg)
 
 def test_file():
     f = open(__file__)
