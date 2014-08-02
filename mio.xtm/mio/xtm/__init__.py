@@ -12,7 +12,6 @@ Provides deserialization of XML 1.0/2.0/2.1 topic maps.
 :organization: Semagia - http://www.semagia.com/
 :license:      BSD license
 """
-import xml.sax.handler as sax_handler
 import xml.sax as sax
 from tm.mio.deserializer import Deserializer, Context
 from tm.xmlutils import as_inputsource
@@ -62,12 +61,12 @@ class XTMDeserializer(Deserializer):
         self._version = self._version or content_handler.version
 
 
-class XTMContentHandler(sax_handler.ContentHandler):
+class XTMContentHandler(sax.ContentHandler):
     """\
     Content handler that can handle XTM 1.0 and XTM 2.0/2.1 topic maps.
     """
     def __init__(self):
-        sax_handler.ContentHandler.__init__(self)
+        sax.ContentHandler.__init__(self)
         self._content_handler = None
         self.map_handler = None
         self.subordinate = False
