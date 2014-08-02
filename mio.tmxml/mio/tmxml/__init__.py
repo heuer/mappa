@@ -12,7 +12,6 @@
 :organization: Semagia - http://www.semagia.com/
 :license:      BSD license
 """
-import xml.sax.handler as sax_handler
 import xml.sax as sax
 from tm.mio.deserializer import Deserializer
 from tm.xmlutils import as_inputsource

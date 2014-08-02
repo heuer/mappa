@@ -12,7 +12,7 @@ Provides deserialization of TM/XML topic maps.
 :organization: Semagia - http://www.semagia.com/
 :license:      BSD license
 """
-from xml.sax import handler as sax_handler
+import xml.sax as sax
 from tm import TMDM, XSD
 from tm import mio
 from tm.irilib import resolve_iri
@@ -44,12 +44,12 @@ _ATTR_TOPIC_REF = None, u'topicref'
 _ATTR_OTHER_ROLE = None, u'otherrole'
 
 
-class TMXMLContentHandler(sax_handler.ContentHandler):
+class TMXMLContentHandler(sax.handler.ContentHandler):
     """\
     Content handler for TM/XML topic maps.
     """
     def __init__(self):
-        sax_handler.ContentHandler.__init__(self)
+        sax.handler.ContentHandler.__init__(self)
         self.map_handler = None
         self._prefixes = {}
         self._content = []
@@ -141,10 +141,9 @@ class TMXMLContentHandler(sax_handler.ContentHandler):
             state = _VARIANT
         self._state = state
 
-    def endElementNS(self, name, qname):
+    def endElementNS(self, (uri, name), qname):
         state = self._state
         handler = self.map_handler
-        uri, name = name
         if _TOPICMAP is state:
             state = _INITIAL
         elif _TOPIC is state:
