@@ -44,12 +44,12 @@ _ATTR_TOPIC_REF = None, u'topicref'
 _ATTR_OTHER_ROLE = None, u'otherrole'
 
 
-class TMXMLContentHandler(sax.handler.ContentHandler):
+class TMXMLContentHandler(sax.ContentHandler):
     """\
     Content handler for TM/XML topic maps.
     """
     def __init__(self):
-        sax.handler.ContentHandler.__init__(self)
+        sax.ContentHandler.__init__(self)
         self.map_handler = None
         self._prefixes = {}
         self._content = []

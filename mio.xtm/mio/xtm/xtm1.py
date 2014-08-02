@@ -57,7 +57,7 @@ SUBJECT_IDENTITY = u'subjectIdentity'
 SUBJECT_INDICATOR_REF = u'subjectIndicatorRef'
 
 
-class XTM10ContentHandler(object, sax.handler.ContentHandler):
+class XTM10ContentHandler(object, sax.ContentHandler):
     """\
     XTM 1.0 content handler.
 

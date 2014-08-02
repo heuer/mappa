@@ -71,7 +71,7 @@ _STATE_VARIANT = 10
 _STATE_REIFIER = 11 # 2.1
 
 
-class XTM2ContentHandler(sax.handler.ContentHandler):
+class XTM2ContentHandler(sax.ContentHandler):
     """\
     Content handler for `XTM 2.0 <http://www.isotopicmaps.org/sam/sam-xtm/2006-06-19/>`_
     and `XTM 2.1 <http://www.isotopicmaps.org/sam/sam-xtm/2009-11-19/>`_ topic maps.

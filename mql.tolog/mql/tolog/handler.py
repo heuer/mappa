@@ -14,8 +14,8 @@ tolog handler implementations.
 """
 from __future__ import absolute_import
 import logging
+import xml.sax as sax
 from . import consts
-from xml.sax import ContentHandler
 
 
 class TologHandler(object):
@@ -235,7 +235,7 @@ class XMLParserHandler(TologHandler):
                                    })
 
 
-class SAXMediator(ContentHandler):
+class SAXMediator(sax.ContentHandler):
     """\
     Translates SAX events to `ITologHandler` events.
     """
@@ -245,7 +245,7 @@ class SAXMediator(ContentHandler):
         `handler`
             `ITologHandler` instance.
         """
-        ContentHandler.__init__(self)
+        sax.ContentHandler.__init__(self)
         self._handler = handler
         self._states = []
         self._rule_name = None
