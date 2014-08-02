@@ -14,14 +14,14 @@ Linear Topic Maps Notation (LTM) 1.3 parser.
 """
 from tm import mio, XSD
 from tm import TMDM, XTM_10
-from mio.ltm.lexer import tokens #pylint: disable-msg=E0611, F0401, W0611
+from mio.ltm.lexer import tokens
 _TOPICNAME = mio.SUBJECT_IDENTIFIER, TMDM.topic_name
 _SORT = mio.SUBJECT_IDENTIFIER, XTM_10.SORT
 _DISPLAY = mio.SUBJECT_IDENTIFIER, XTM_10.DISPLAY
 _ROLE_TYPE = mio.SUBJECT_IDENTIFIER, XTM_10.DEFAULT_ROLE_TYPE
 del XTM_10
 del TMDM
-
+assert tokens
 
 def _process_scope(handler, scope):
     if scope:

@@ -97,25 +97,3 @@ def t_directive(t):
     if not t.type:
         raise MIOException('Unknown directive "%s"' % t.value)
     return t
-
-
-if __name__ == '__main__':
-    # For some reason pylint thinks that ply.lex and ply.yacc do not exist
-    # pylint: disable-msg=F0401, E0611
-    import tm.ply.lex as lex
-    lexer = lex.lex()
-    test_data = [
-                 '[semagia]', 
-                 '[semagia = /* This is a comment */ "Semagia"]'
-                 '[semagia = "\u0022Semagia\u0022"]',
-                 '[semagia = "\u0022Sem""agia\u0022"]',
-                 '[semagia = "\u0022\u0022Sem""agia\u0022"]',
-                 '[beg = "Bjørg"]',
-                 '[hiragana = "らがな"]'
-                 ]
-    for data in test_data:
-        lexer.input(data)
-        while True:
-            tok = lexer.token()
-            if not tok: break
-            print tok
