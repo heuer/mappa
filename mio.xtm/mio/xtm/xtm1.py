@@ -14,7 +14,6 @@ This module provides classes to read
 :license:      BSD license
 """
 import xml.sax as sax
-import xml.sax.handler as sax_handler
 from tm import TMDM, XSD, XTM_10, mio, voc
 from tm.mio.deserializer import Context
 from tm.irilib import resolve_iri
@@ -58,7 +57,7 @@ SUBJECT_IDENTITY = u'subjectIdentity'
 SUBJECT_INDICATOR_REF = u'subjectIndicatorRef'
 
 
-class XTM10ContentHandler(object, sax_handler.ContentHandler):
+class XTM10ContentHandler(object, sax.handler.ContentHandler):
     """\
     XTM 1.0 content handler.
 
