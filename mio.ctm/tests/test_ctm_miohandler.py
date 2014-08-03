@@ -61,7 +61,7 @@ def check_handler(deserializer_factory, filename):
 
 
 def test_ctm():
-    excluded = ['occurrence-string-multiline2.ctm', 'tm-reifier2.ctm',
+    excluded = ['tm-reifier2.ctm',
                'topic-identifier-unicode.ctm',  # CTM reader does not support this due to limitations of the re module
                ]
     for filename in find_valid_cxtm_cases('ctm', 'ctm', exclude=excluded):
