@@ -54,10 +54,90 @@ class TopicMapLayer(object):
 
         """
 
+    def get_topicmap_by_item_identifier(self, iid):
+        """\
+        Returns a topic map by its item identifier or ``None`` if no
+        topic map could be found.
+
+        `iid`
+            An IRI.
+        """
+        obj = self.get_object_by_item_identifier(iid)
+        return obj if self.is_topicmap(obj) else None
+
+    def get_association_by_item_identifier(self, iid):
+        """\
+        Returns an association by its item identifier or ``None`` if no
+        association could be found.
+
+        `iid`
+            An IRI.
+        """
+        obj = self.get_object_by_item_identifier(iid)
+        return obj if self.is_association(obj) else None
+
+    def get_role_by_item_identifier(self, iid):
+        """\
+        Returns an association role by its item identifier or ``None`` if no
+        association role could be found.
+
+        `iid`
+            An IRI.
+        """
+        obj = self.get_object_by_item_identifier(iid)
+        return obj if self.is_role(obj) else None
+
+    def get_occurrence_by_item_identifier(self, iid):
+        """\
+        Returns an occurrence by its item identifier or ``None`` if no
+        occurrence could be found.
+
+        `iid`
+            An IRI.
+        """
+        obj = self.get_object_by_item_identifier(iid)
+        return obj if self.is_occurrence(obj) else None
+
+    def get_name_by_item_identifier(self, iid):
+        """\
+        Returns a name by its item identifier or ``None`` if no
+        name could be found.
+
+        `iid`
+            An IRI.
+        """
+        obj = self.get_object_by_item_identifier(iid)
+        return obj if self.is_name(obj) else None
+
+    def get_variant_by_item_identifier(self, iid):
+        """\
+        Returns a variant by its item identifier or ``None`` if no
+        variant could be found.
+
+        `iid`
+            An IRI.
+        """
+        obj = self.get_object_by_item_identifier(iid)
+        return obj if self.is_variant(obj) else None
+
     def get_parent(self, tmc):
         """\
         Returns the parent of the provided Topic Maps construct.
         """
+
+    def get_children(self, tmc, types=ANY):
+        """\
+        Returns the children of the provided Topic Maps construct
+        """
+        if self.is_topic(tmc):
+            return self.get_topic_children(tmc, types=types)
+        elif self.is_association(tmc):
+            return self.get_roles(tmc, types=types)
+        elif self.is_name(tmc):
+            return self.get_variants(tmc)
+        elif self.is_topicmap(tmc):
+            return chain(self.get_topics(types=types), self.get_associations(types=types))
+        raise mql.InvalidQueryError()  #TODO: Msg.
 
     def get_topics(self, types=ANY):
         """\
@@ -284,21 +364,6 @@ class AdvancedTopicMapLayer(TopicMapLayer):
 
     def get_topic_by_item_identifier(self, iid):
         return self._layer.get_topic_by_item_identifier(iid)
-
-    def get_children(self, tmc, types=ANY):
-        """\
-        Returns the children of the provided Topic Maps construct
-        """
-        if self.is_topic(tmc):
-            return self.get_topic_children(tmc, types=types)
-        elif self.is_association(tmc):
-            return self.get_roles(tmc, types=types)
-        elif self.is_name(tmc):
-            return self.get_variants(tmc)
-        elif self.is_topicmap(tmc):
-            return chain(self.get_topics(types=types), self.get_associations(types=types))
-        topic = self._topic(tmc, force=True)
-        return self.get_topic_children(topic, types=types)
 
     def _topic(self, tmc, force=False):
         topic = tmc if self._layer.is_topic(tmc) else self.get_reifier(tmc)
