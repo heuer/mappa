@@ -14,6 +14,7 @@ CTM related utilities.
 """
 from tm import mio, XSD
 from . import consts
+from .utils import CTM_INTEGER
 
 _CONST2IRI = {
     consts.STRING: XSD.string,
@@ -22,7 +23,7 @@ _CONST2IRI = {
     consts.INTEGER: XSD.integer,
     consts.DATE: XSD.date,
     consts.DATE_TIME: XSD.dateTime,
-    consts.CTM_INTEGER: u'http://psi.topicmaps.org/iso13250/ctm-integer'
+    consts.CTM_INTEGER: CTM_INTEGER,
     }
 
 

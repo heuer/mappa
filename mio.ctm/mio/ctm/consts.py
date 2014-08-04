@@ -12,12 +12,12 @@ Constants.
 :organization: Semagia - http://www.semagia.com/
 :license:      BSD license
 """
-from tm.mio import ITEM_IDENTIFIER, SUBJECT_IDENTIFIER, SUBJECT_LOCATOR
+from tm import mio
 
-IID     = ITEM_IDENTIFIER
-SID     = SUBJECT_IDENTIFIER
-SLO     = SUBJECT_LOCATOR
-IRI     = SID
+IID = mio.ITEM_IDENTIFIER
+SID = mio.SUBJECT_IDENTIFIER
+SLO = mio.SUBJECT_LOCATOR
+IRI = SID
 IDENT   = 1000
 VARIABLE= 1001
 STRING  = 1002
