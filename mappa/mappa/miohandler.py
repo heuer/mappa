@@ -12,13 +12,15 @@
 :organization: Semagia - <http://www.semagia.com/>
 :license:      BSD License
 """
+from __future__ import absolute_import
 from tm import mio, UCS, TMDM
 import tm.mio.handler as mio_handler
 from mappa import utils, ModelConstraintViolation, IdentityViolation
-from mappa._internal import mergeutils, kind
-from mappa.utils import _kind
+from ._internal import mergeutils, kind
+from .utils import _kind
 
 __all__ = ['MappaMapHandler']
+
 
 class MappaMapHandler(mio_handler.HamsterMapHandler):
     """\
@@ -143,6 +145,7 @@ def _apply_reifier(reifiable, reifier):
                 raise mio.MIOException('The topic "%s" reifies another construct' % reifier)
     return reifiable
 
+
 def _apply_iids(reifiable, iids):
     """\
     Adds the item identifiers ``iids`` to the specified ``reifiable``.
@@ -157,6 +160,7 @@ def _apply_iids(reifiable, iids):
             else:
                 raise mio.MIOException('The item identifier "%s" is already assigned to another construct' % iid)
 
+
 def _mergable(a, b):
     """\
     Returns if the constructs a and b are mergable.
@@ -166,6 +170,7 @@ def _mergable(a, b):
     if kind_a in (kind.ROLE, kind.VARIANT):
         res = res and a.parent.__sig__() == b.parent.__sig__()
     return res
+
 
 def _merge_reifiables(source, target):
     """\
