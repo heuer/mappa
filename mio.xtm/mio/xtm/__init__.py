@@ -27,7 +27,7 @@ _CONTENT_HANDLERS = {u'1.0': XTM10ContentHandler,
                      }
 
 
-def create_deserializer(version=None, strict=True, **kw):
+def create_deserializer(version=None, **kw):
     return XTMDeserializer(version=version)
 
 
