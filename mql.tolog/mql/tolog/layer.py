@@ -139,6 +139,11 @@ class TopicMapLayer(object):
             return chain(self.get_topics(types=types), self.get_associations(types=types))
         raise mql.InvalidQueryError()  #TODO: Msg.
 
+    def get_topic_map(self):
+        """\
+        Returns the underlying topic map, never ``None``.
+        """
+
     def get_topics(self, types=ANY):
         """\
         Returns an iterable of topics.
