@@ -23,6 +23,7 @@ del XTM_10
 del TMDM
 assert tokens
 
+
 def _process_scope(handler, scope):
     if scope:
         handler.startScope()
@@ -30,25 +31,23 @@ def _process_scope(handler, scope):
             handler.theme(theme)
         handler.endScope()
 
-# pylint does not like PLY, ignore all 'unused' msgs
-#pylint: disable-msg=W0613
 
-def p_noop(p): # Handles all grammar rules where the result is unimportant
+def p_noop(p):  # Handles all grammar rules where the result is unimportant
     """\
-    instance        : prolog tm
-                    | prolog
-    tm              : tm topic
-                    | tm assoc
-                    | tm occ
-                    | tm directive
-                    | topic
+    instance        : prolog
+                    | prolog tm
+    tm              : topic
                     | assoc
                     | occ
                     | directive
-    prolog          : 
-                    | encoding_directive version_directive
-                    | version_directive
+                    | tm topic
+                    | tm assoc
+                    | tm occ
+                    | tm directive
+    prolog          :
                     | encoding_directive
+                    | version_directive
+                    | encoding_directive version_directive
     directive       : tm_directive
                     | prefix_directive
                     | mergemap_directive
@@ -65,7 +64,7 @@ def p_noop(p): # Handles all grammar rules where the result is unimportant
                     | names
     names           : name
                     | names name
-    opt_variants    : 
+    opt_variants    :
                     | variants
     variants        : variant
                     | variants variant
@@ -73,6 +72,7 @@ def p_noop(p): # Handles all grammar rules where the result is unimportant
                     | roles COMMA role
     """
     p[0] = None
+
 
 def p_tm_directive(p):
     """\
@@ -84,11 +84,13 @@ def p_tm_directive(p):
     else:
         _context(p).tm_reifier(p[3])
 
+
 def p_version_directive(p):
     """\
     version_directive : DIR_VERSION STRING
     """
     _context(p).check_version(p[2])
+
 
 def p_prefix_directive_slo(p):
     """\
@@ -96,17 +98,20 @@ def p_prefix_directive_slo(p):
     """
     _context(p).register_slo_prefix(p[2], p[4])
 
+
 def p_prefix_directive_sid(p):
     """\
     prefix_directive : DIR_PREFIX IDENT AT STRING
     """
     _context(p).register_sid_prefix(p[2], p[4])
 
+
 def p_baseuri_directive(p):
     """\
     baseuri_directive : DIR_BASEURI STRING
     """
     _context(p).set_baseuri(p[2])
+
 
 def p_mergemap_directive(p):
     """\
@@ -119,11 +124,13 @@ def p_mergemap_directive(p):
     else:
         _context(p).merge(iri, p[3])
 
+
 def p_include_directive(p):
     """\
     include_directive : DIR_INCLUDE STRING
     """
     _context(p).include(p[2])
+
 
 def p_tid_IDENT(p):
     """\
@@ -131,11 +138,13 @@ def p_tid_IDENT(p):
     """
     p[0] = _context(p).create_topic_by_iid(p[1])
 
+
 def p_tid_QNAME(p):
     """\
     tid             : QNAME
     """
     p[0] = _context(p).create_topic_by_qname(*p[1])
+
 
 def p_tids(p):
     """\
@@ -148,11 +157,13 @@ def p_tids(p):
         p[0] = p[1]
         p[1].append(p[2])
 
+
 def p_topic(p):
     """\
     topic           : LBRACK tid _start_topic opt_types opt_names opt_slo opt_sids RBRACK
     """
     _handler(p).endTopic()
+
 
 def p__start_topic(p): # Inline action
     """\
@@ -160,12 +171,14 @@ def p__start_topic(p): # Inline action
     """
     _handler(p).startTopic(p[-1]) # -1 is a topic identifier
 
+
 def p_types(p):
     """\
     types           : tid
                     | types tid
     """
     _handler(p).isa(len(p) > 2 and p[2] or p[1])
+
 
 def p_opt_slo(p):
     """\
@@ -176,12 +189,14 @@ def p_opt_slo(p):
         slo = _context(p).resolve_iri(p[2])
         _handler(p).subjectLocator(slo)
 
+
 def p_sid(p):
     """\
     sid             : AT STRING
     """
     context = _context(p)
     context.handler.subjectIdentifier(context.resolve_iri(p[2]))
+
 
 def p_name(p):
     """\
@@ -199,6 +214,7 @@ def p_name(p):
     _context(p).reifier(p[6])
     handler.endName()
 
+
 def p_start_name(p):
     """\
     _start_name : 
@@ -207,6 +223,7 @@ def p_start_name(p):
     handler.startName(_TOPICNAME)
     handler.value(p[-1]) # -1 is a string
 
+
 def p_opt_name_scope(p):
     """\
     opt_name_scope  :
@@ -214,6 +231,7 @@ def p_opt_name_scope(p):
     """
     if len(p) == 3:
         _process_scope(_handler(p), p[2])
+
 
 def p_opt_sort_display(p):
     """\
@@ -231,6 +249,7 @@ def p_opt_sort_display(p):
     else:
         p[0] = [] # empty
 
+
 def p_sortname(p):
     """\
     sortname        : SEMI STRING
@@ -238,12 +257,14 @@ def p_sortname(p):
     # value, scope, reifier, iids
     p[0] = p[2], _SORT
 
+
 def p_displayname(p):
     """\
     displayname     : SEMI STRING
     """
     # value, scope, reifier, iids
     p[0] = p[2], _DISPLAY
+
 
 def p_variant(p):
     """\
@@ -259,6 +280,7 @@ def p_variant(p):
     _context(p).reifier(p[5])
     handler.endVariant()
 
+
 def p_assoc(p):
     """\
     assoc           : tid LPAREN _start_assoc roles RPAREN opt_scope opt_reifier
@@ -268,11 +290,13 @@ def p_assoc(p):
     _context(p).reifier(p[7])
     handler.endAssociation()
 
+
 def p_start_assoc(p):
     """\
     _start_assoc : 
     """
     _handler(p).startAssociation(p[-2]) # -2 is a topic identifier
+
 
 def p_role(p):
     """\
@@ -282,6 +306,7 @@ def p_role(p):
     _context(p).reifier(p[4])
     handler.endRole()
 
+
 def p_start_role(p):
     """\
     _start_role :
@@ -289,6 +314,7 @@ def p_start_role(p):
     handler = _handler(p)
     handler.startRole()
     handler.startPlayer()
+
 
 def p_player(p):
     """\
@@ -300,6 +326,7 @@ def p_player(p):
         handler.topicRef(p[1])
     handler.endPlayer()
 
+
 def p_opt_role_type(p):
     """\
     opt_role_type   : 
@@ -310,6 +337,7 @@ def p_opt_role_type(p):
     else:
         typ = _ROLE_TYPE
     _handler(p).type(typ)
+
 
 def p_occ(p):
     """\
@@ -324,17 +352,20 @@ def p_occ(p):
     handler.endOccurrence()
     handler.endTopic()
 
+
 def p_resource_uri(p):
     """\
     resource        : STRING
     """
     p[0] = _context(p).resolve_iri(p[1]), XSD.anyURI
 
+
 def p_resource_string(p):
     """\
     resource        : DATA
     """
     p[0] = p[1], XSD.string
+
 
 def p_opt_scope(p):
     """\
@@ -346,39 +377,42 @@ def p_opt_scope(p):
     else:
         p[0] = p[2]
 
+
 def p_themes(p):
     """\
     themes          : tids
+                    | tids assoc
     """
-    p[0] = p[1]
+    if len(p) == 2:
+        p[0] = p[1]
+    else:
+        #    # occ / assoc scope followed by an assoc. Just keep the collected themes
+        #    # see p_themes
+        p[0] = p[1]
 
-def p_themes_assoc(p):
-    """\
-    themes          : tids assoc
-    """
-    # occ / assoc scope followed by an assoc. Just keep the collected themes
-    # see p_themes
-    p[0] = p[1]
 
 def p_opt_reifier(p):
     """\
     opt_reifier     : 
                     | TILDE IDENT
     """
-    if len(p) == 3:
-        p[0] = p[2]
-    else:
+    if len(p) == 1:
         p[0] = None
+    else:
+        p[0] = p[2]
+
 
 def p_error(p):
     #TODO: Better error reporting (line, col, token)
     raise mio.MIOException('Unexpected token "%r"' % p)
+
 
 def _context(p):
     """\
     Returns the parser context.
     """
     return p.parser.context
+
 
 def _handler(p):
     """\

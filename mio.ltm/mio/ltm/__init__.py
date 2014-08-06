@@ -12,6 +12,7 @@ Linear Topic Maps Notation (LTM) 1.3.
 :organization: Semagia - http://www.semagia.com/
 :license:      BSD license
 """
+from __future__ import absolute_import
 import re
 import io
 import codecs
@@ -19,7 +20,8 @@ from urllib import urlopen
 from tm.mio import MIOException
 from tm.mio.deserializer import Deserializer, Context
 from tm import plyutils
-from mio.ltm.runtime import LTMContext # pylint: disable-msg=E0611
+from .runtime import LTMContext
+from . import lexer as lexer_mod, parser as parser_mod
 
 __all__ = ['create_deserializer']
 
@@ -31,7 +33,6 @@ def create_deserializer(legacy=False, **kw):
     return LTMDeserializer(legacy=legacy)
 
 _ENCODING = re.compile(r'^@"([^"]+)"').match
-
 
 class LTMDeserializer(Deserializer):
     """\
@@ -60,10 +61,7 @@ class LTMDeserializer(Deserializer):
         """\
         
         """
-        # pylint: disable-msg=E0611, F0401
-        from mio.ltm import lexer
-        from mio.ltm import parser
-        parser = plyutils.make_parser(parser)
+        parser = plyutils.make_parser(parser_mod)
         parser.context = LTMContext(handler=self.handler, 
                                     iri=source.iri, 
                                     subordinate=self.subordinate, 
@@ -76,7 +74,7 @@ class LTMDeserializer(Deserializer):
                 data = urlopen(source.iri)
             except IOError:
                 raise MIOException('Cannot read from ' + source.iri)
-        parser.parse(self._reader(data, source.encoding), lexer=plyutils.make_lexer(lexer))
+        parser.parse(self._reader(data, source.encoding), lexer=_make_lexer())
 
     def _reader(self, fileobj, encoding=None):
         found_bom = False
@@ -92,3 +90,11 @@ class LTMDeserializer(Deserializer):
             if found_bom and encoding.lower() != 'utf-8':
                 raise MIOException('Found BOM, but encoding directive declares "%s"' % encoding)
         return codecs.getreader(encoding)(io.BytesIO(''.join([line, fileobj.read()]))).read()
+
+
+def _make_lexer():
+    return plyutils.make_lexer(lexer_mod)
+
+
+def _make_parser():
+    return plyutils.make_parser(parser_mod)
