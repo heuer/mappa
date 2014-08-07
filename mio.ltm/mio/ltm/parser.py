@@ -165,11 +165,11 @@ def p_topic(p):
     _handler(p).endTopic()
 
 
-def p__start_topic(p): # Inline action
+def p__start_topic(p):  # Inline action
     """\
     _start_topic :
     """
-    _handler(p).startTopic(p[-1]) # -1 is a topic identifier
+    _handler(p).startTopic(p[-1])  # -1 is a topic identifier
 
 
 def p_types(p):
@@ -243,11 +243,11 @@ def p_opt_sort_display(p):
     l = len(p)
     if l > 1:
         if l > 2:
-            p[0] = p[1] == ';' and [p[2]] or [p[1], p[2]]
+            p[0] = [p[2]] if p[1] == u';' else [p[1], p[2]]
         else:
             p[0] = [p[1]]  # sortname
     else:
-        p[0] = [] # empty
+        p[0] = []  # empty
 
 
 def p_sortname(p):
@@ -295,7 +295,7 @@ def p_start_assoc(p):
     """\
     _start_assoc : 
     """
-    _handler(p).startAssociation(p[-2]) # -2 is a topic identifier
+    _handler(p).startAssociation(p[-2])  # -2 is a topic identifier
 
 
 def p_role(p):
@@ -332,10 +332,7 @@ def p_opt_role_type(p):
     opt_role_type   : 
                     | COLON tid
     """
-    if len(p) == 3:
-        typ = p[2]
-    else:
-        typ = _ROLE_TYPE
+    typ = p[2] if len(p) == 3 else _ROLE_TYPE
     _handler(p).type(typ)
 
 
@@ -372,10 +369,7 @@ def p_opt_scope(p):
     opt_scope       : 
                     | SLASH themes
     """
-    if len(p) == 1:
-        p[0] = []
-    else:
-        p[0] = p[2]
+    p[0] = p[2] if len(p) > 1 else []
 
 
 def p_themes(p):
@@ -383,12 +377,7 @@ def p_themes(p):
     themes          : tids
                     | tids assoc
     """
-    if len(p) == 2:
-        p[0] = p[1]
-    else:
-        #    # occ / assoc scope followed by an assoc. Just keep the collected themes
-        #    # see p_themes
-        p[0] = p[1]
+    p[0] = p[1]
 
 
 def p_opt_reifier(p):
@@ -396,10 +385,7 @@ def p_opt_reifier(p):
     opt_reifier     : 
                     | TILDE IDENT
     """
-    if len(p) == 1:
-        p[0] = None
-    else:
-        p[0] = p[2]
+    p[0] = p[2] if len(p) > 1 else None
 
 
 def p_error(p):
