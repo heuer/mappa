@@ -96,5 +96,5 @@ def _make_lexer():
     return plyutils.make_lexer(lexer_mod)
 
 
-def _make_parser():
-    return plyutils.make_parser(parser_mod)
+def _make_parser(debug=False):
+    return plyutils.make_parser(parser_mod, debug=debug)
