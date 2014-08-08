@@ -35,7 +35,7 @@ class NoopParserHandler(TologHandler):
 
 class LoggingParserHandler(TologHandler):
     """\
-    A ParserHandler which loggs all events and delegates the events to
+    A ParserHandler which logs all events and delegates the events to
     an underlying ParserHandler instance.
     """
     def __init__(self, handler, level=logging.INFO):
