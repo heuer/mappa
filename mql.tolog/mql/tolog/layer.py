@@ -120,6 +120,25 @@ class TopicMapLayer(object):
         obj = self.get_object_by_item_identifier(iid)
         return obj if self.is_variant(obj) else None
 
+    def get_construct_by_id(self, tmc_id):
+        """\
+        Returns a Topic Maps construct by its unique identifier.
+
+        `tmc_id`
+            A unique identifier which identifies a Topic Maps construct.
+        """
+        #TODO: Remove/deprecate this or move it to a TologLayer
+
+    def get_construct_id(self, tmc):
+        """\
+        Returns an internal, unique identifier for the provided Topic Maps
+        construct.
+
+        `tmc`
+            The Topic Maps construct.
+        """
+        #TODO: Remove/deprecate this or move it to a TologLayer
+
     def get_parent(self, tmc):
         """\
         Returns the parent of the provided Topic Maps construct.
