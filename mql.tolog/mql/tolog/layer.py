@@ -46,10 +46,10 @@ class TopicMapLayer(object):
         `iid`
             An IRI.
         """
-        obj = self.get_object_by_item_identifier(iid)
+        obj = self.get_construct_by_item_identifier(iid)
         return obj if self.is_topic(obj) else None
 
-    def get_object_by_item_identifier(self, iid):
+    def get_construct_by_item_identifier(self, iid):
         """\
 
         """
@@ -62,7 +62,7 @@ class TopicMapLayer(object):
         `iid`
             An IRI.
         """
-        obj = self.get_object_by_item_identifier(iid)
+        obj = self.get_construct_by_item_identifier(iid)
         return obj if self.is_topicmap(obj) else None
 
     def get_association_by_item_identifier(self, iid):
@@ -73,7 +73,7 @@ class TopicMapLayer(object):
         `iid`
             An IRI.
         """
-        obj = self.get_object_by_item_identifier(iid)
+        obj = self.get_construct_by_item_identifier(iid)
         return obj if self.is_association(obj) else None
 
     def get_role_by_item_identifier(self, iid):
@@ -84,7 +84,7 @@ class TopicMapLayer(object):
         `iid`
             An IRI.
         """
-        obj = self.get_object_by_item_identifier(iid)
+        obj = self.get_construct_by_item_identifier(iid)
         return obj if self.is_role(obj) else None
 
     def get_occurrence_by_item_identifier(self, iid):
@@ -95,7 +95,7 @@ class TopicMapLayer(object):
         `iid`
             An IRI.
         """
-        obj = self.get_object_by_item_identifier(iid)
+        obj = self.get_construct_by_item_identifier(iid)
         return obj if self.is_occurrence(obj) else None
 
     def get_name_by_item_identifier(self, iid):
@@ -117,7 +117,7 @@ class TopicMapLayer(object):
         `iid`
             An IRI.
         """
-        obj = self.get_object_by_item_identifier(iid)
+        obj = self.get_construct_by_item_identifier(iid)
         return obj if self.is_variant(obj) else None
 
     def get_construct_by_id(self, tmc_id):
@@ -415,8 +415,8 @@ class AdvancedTopicMapLayer(TopicMapLayer):
         topic = self._topic(tmc)
         return () if not topic else self._layer.get_subject_locators(topic)
 
-    def get_object_by_item_identifier(self, iid):
-        return self._layer.get_object_by_item_identifier(iid)
+    def get_construct_by_item_identifier(self, iid):
+        return self._layer.get_construct_by_item_identifier(iid)
 
     def get_names_by_value(self, value):
         return self._layer.get_names_by_value(value)
