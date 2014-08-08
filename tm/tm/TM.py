@@ -19,9 +19,7 @@ the hyphen (``-``) in the PSIs is replaced by an underscore character (``_``)
 """
 from tm.voc import TM
 
-__all__ = () # Avoid to expose something that pollutes the namespace, i.e. `type`
-
-#pylint: disable-msg=W0622
+__all__ = ()  # Avoid to expose something that pollutes the namespace, i.e. `type`
 
 ctm = TM['ctm']
 xtm = TM['xtm']

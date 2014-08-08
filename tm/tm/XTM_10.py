@@ -16,6 +16,8 @@ These PSIs can be used to work with topic maps which assume a XTM 1.0 model.
 """
 from tm.voc import XTM_10
 
+__all__ = ()  # Avoid to expose something that pollutes the namespace
+
 DISPLAY = XTM_10[u'core.xtm#display']
 
 SORT = XTM_10[u'core.xtm#sort']

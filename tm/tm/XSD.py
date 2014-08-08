@@ -19,7 +19,7 @@ the hyphen (``-``) in the PSIs is replaced by an underscore character (``_``)
 """
 from tm.voc import XSD
 
-__all__ = () # Avoid to expose something that pollutes the namespace
+__all__ = ()  # Avoid to expose something that pollutes the namespace
 
 anyType = XSD.anyType
 anySimpleType = XSD.anySimpleType

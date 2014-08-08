@@ -14,8 +14,6 @@ Vocabularies.
 """
 from tm import Namespace
 
-#pylint: disable-msg=W0105
-
 XSD = Namespace(u'http://www.w3.org/2001/XMLSchema#')
 """\
 Namespace for the XML Schema Datatypes
@@ -92,5 +90,8 @@ VCard namespace.
 """
 
 MIO_PROPS = Namespace(u'http://psi.semagia.com/mio/property/')
+"""\
+MIO Properties namespace.
+"""
 
 del Namespace
