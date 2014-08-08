@@ -14,6 +14,7 @@ This is more or less a straight port of the Java MIO package to Python.
 :organization: Semagia - http://www.semagia.com/
 :license:      BSD license
 """
+import logging
 from tm import mio, TMDM, XSD
 
 _DEFAULT_NAME_TYPE = mio.SUBJECT_IDENTIFIER, TMDM.topic_name
@@ -353,10 +354,161 @@ class DelegatingMapHandler(MapHandler):
     def value(self, val, datatype=None):
         self._handler.value(val, datatype)
 
-class NoTopicMapEventsMapHandler(MapHandler):
+
+class LoggingMapHandler(MapHandler):
+    """\
+    A MapHandler which logs all events and delegates the events to
+    an underlying MapHandler instance.
+    """
+    __slots__ = ['level', '_handler', '_logging_function', '_level']
+
+    def __init__(self, handler, level=logging.INFO):
+        """\
+        `handler`
+            The MapHandler instance which should receive the events.
+        `level`
+            The logging level (default: logging.INFO)
+        """
+        self._handler = handler
+        self._logging_function = None
+        self.level = level
+
+    def startTopicMap(self):
+        self._logging_function(u'startTopicMap')
+        self._handler.startTopicMap()
+
+    def endTopicMap(self):
+        self._logging_function(u'endTopicMap')
+        self._handler.endTopicMap()
+
+    def startTopic(self, identity):
+        self._logging_function(u'startTopic, kind=%r, iri=%r' % identity)
+        self._handler.startTopic(identity)
+
+    def endTopic(self):
+        self._logging_function(u'endTopic')
+        self._handler.endTopic()
+
+    def topicRef(self, identity):
+        self._logging_function(u'topicRef, kind=%r, iri=%r' % identity)
+        self._handler.topicRef(identity)
+
+    def subjectIdentifier(self, iri):
+        self._logging_function(u'subjectIdentifier, iri=%r' % iri)
+        self._handler.subjectIdentifier(iri)
+
+    def subjectLocator(self, iri):
+        self._logging_function(u'subjectLocator, iri=%r' % iri)
+        self._handler.subjectLocator(iri)
+
+    def itemIdentifier(self, iri):
+        self._logging_function(u'itemIdentifier, iri=%r' % iri)
+        self._handler.itemIdentifier(iri)
+
+    def startAssociation(self):
+        self._logging_function(u'startAssociation')
+        self._handler.startAssociation()
+
+    def endAssociation(self):
+        self._logging_function(u'endAssociation')
+        self._handler.endAssociation()
+
+    def startRole(self):
+        self._logging_function(u'startRole')
+        self._handler.startRole()
+
+    def endRole(self):
+        self._logging_function(u'endRole')
+        self._handler.endRole()
+
+    def startOccurrence(self):
+        self._logging_function(u'startOccurrence')
+        self._handler.startOccurrence()
+
+    def endOccurrence(self):
+        self._logging_function(u'endOccurrence')
+        self._handler.endOccurrence()
+
+    def startName(self):
+        self._logging_function(u'startName')
+        self._handler.startName()
+
+    def endName(self):
+        self._logging_function(u'endName')
+        self._handler.endName()
+
+    def startVariant(self):
+        self._logging_function(u'startVariant')
+        self._handler.startVariant()
+
+    def endVariant(self):
+        self._logging_function(u'endVariant')
+        self._handler.endVariant()
+
+    def startScope(self):
+        self._logging_function(u'startScope')
+        self._handler.startScope()
+
+    def endScope(self):
+        self._logging_function(u'endScope')
+        self._handler.endScope()
+
+    def startTheme(self):
+        self._logging_function(u'startTheme')
+        self._handler.startTheme()
+
+    def endTheme(self):
+        self._logging_function(u'endTheme')
+        self._handler.endTheme()
+
+    def startType(self):
+        self._logging_function(u'startType')
+        self._handler.startType()
+
+    def endType(self):
+        self._logging_function(u'endType')
+        self._handler.endType()
+
+    def startPlayer(self):
+        self._logging_function(u'startPlayer')
+        self._handler.startPlayer()
+
+    def endPlayer(self):
+        self._logging_function(u'endPlayer')
+        self._handler.endPlayer()
+
+    def startReifier(self):
+        self._logging_function(u'startReifier')
+        self._handler.startReifier()
+
+    def endReifier(self):
+        self._logging_function(u'endReifier')
+        self._handler.endReifier()
+
+    def startIsa(self):
+        self._logging_function(u'startIsa')
+        self._handler.startIsa()
+
+    def endIsa(self):
+        self._logging_function(u'endIsa')
+        self._handler.endIsa()
+
+    def value(self, val, datatype=None):
+        self._logging_function(u'value val=%r, datatype=%r' % (val, datatype))
+        self._handler.value(val, datatype)
+
+    def _set_level(self, level):
+        self._level = level
+        self._logging_function = getattr(logging, logging.getLevelName(level).lower())
+
+    level = property(lambda self: self._level, _set_level)
+
+
+class NoTopicMapEventsMapHandler(DelegatingMapHandler):
     """\
     A ``MapHandler`` implementation where the `startTopicMap` and `endTopicMap`
-    events are not delegated to the underlying `MapHandler`. They do nothing by default.
+    events are not delegated to the underlying `MapHandler`. They do nothing by
+    default.
     To issue the events, call `start_tm` and `end_tm`.
     """
     __slots__ = ['_handler']
@@ -381,6 +533,7 @@ class NoTopicMapEventsMapHandler(MapHandler):
         Issues the `endTopicMap` event to the underlying MapHandler.
         """
         self._handler.endTopicMap()
+
 
 class TeeMapHandler(MapHandler):
     """\
@@ -1179,7 +1332,6 @@ def simplify(handler):
 
 _java_compatible = False
 
-#pylint: disable-msg=F0401
 import sys
 if sys.platform[:4] == 'java':
     _java_compatible = True
