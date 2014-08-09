@@ -796,3 +796,47 @@ class IQueryFactory(Interface):
         `reference`
             A string representing an IRI.
         """
+
+
+class IResult(Interface):
+    """\
+    Query result set.
+    """
+    def __iter__():
+        """\
+        Returns an iterator over all contained rows.
+        """
+
+    def keys():
+        """\
+        Return the current set of string keys (column names) for rows.
+        """
+
+    def first():
+        """\
+        Fetch the first row and then close the result set.
+
+        Returns ``None`` if no row is present.
+        """
+
+    def scalar():
+        """\
+        Fetch the first column of the first row, and close the result set.
+
+        Returns ``None`` if no row is present.
+        """
+
+    def close():
+        """\
+        Closes the result and tries to free any used resource.
+        """
+
+
+class IRow(Interface):
+    """\
+    Represents a single row within a `IResult` set.
+    """
+    def keys():
+        """\
+        Returns the current set of string keys (column names).
+        """
