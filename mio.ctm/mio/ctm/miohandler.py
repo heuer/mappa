@@ -30,6 +30,7 @@ del TMDM
 _NL = u'\n'
 _END_OF_STATEMENT = u';\n'
 
+
 class CTMHandler(mio_handler.HamsterMapHandler):
     """\
     
@@ -90,7 +91,7 @@ class CTMHandler(mio_handler.HamsterMapHandler):
         existing = self._prefixes.get(prefix)
         if self._header_written and existing and existing != iri:
             raise MIOException('The prefix "%s" is already bound to <%s>' % (prefix, existing))
-        if not existing == iri:
+        if existing != iri:
             self._prefixes[prefix] = iri
             if self._header_written:
                 self._write_prefix(prefix, iri)
