@@ -6,7 +6,7 @@
 # BSD license.
 #
 """\
-
+Tests against the JTM 1.0/1.1 deserializer.
 
 :author:       Lars Heuer (heuer[at]semagia.com)
 :organization: Semagia - http://www.semagia.com/
