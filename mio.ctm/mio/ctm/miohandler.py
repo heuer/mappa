@@ -58,6 +58,7 @@ class CTMHandler(mio_handler.HamsterMapHandler):
         self.title = None
         self.author = None
         self.date = None
+        self.modification_date = None
         self.license = None
         self.comment = None
 
@@ -264,9 +265,8 @@ class CTMHandler(mio_handler.HamsterMapHandler):
         if not tpl:
             return False
         tpl_roles = tpl.roles
-        comp = lambda x, y: cmp(tpl_roles.index(x.type), tpl_roles.index(y.type))
         try:
-            roles_ = sorted(roles, comp)
+            roles_ = sorted(roles, key=lambda r: tpl_roles.index(r.type))
         except ValueError:
             return False
         write, write_topic_ref = self._out.write, self._write_topic_ref
@@ -325,7 +325,8 @@ class CTMHandler(mio_handler.HamsterMapHandler):
         write = self._out.write
         if self._encoding != u'utf-8':
             write(u'%%encoding "%s"%s' % (self._encoding, _NL))
-        if self.title or self.author or self.date or self.license or self.comment:
+        if self.title or self.author or self.date or self.modification_date \
+                or self.license or self.comment:
             write(u'#(%s' % _NL)
             if self.title:
                 title = self.title
@@ -339,6 +340,8 @@ class CTMHandler(mio_handler.HamsterMapHandler):
                 write(u'Author:   %s%s' % (self.author, _NL))
             if self.date:
                 write(u'Date:     %s%s' % (self.date, _NL))
+            if self.modification_date:
+                write(u'Modified: %s%s' % (self.modification_date, _NL))
             if self.license:
                 write(u'License:  %s%s' % (self.license, _NL))
             if self.comment:
