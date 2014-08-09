@@ -4,8 +4,8 @@ Changes
 
 0.1.7 - yyyy-mm-dd
 ------------------
-* Added XTM21Handler which translates MIO events into XTM 2.1
 * Moved package from mio.reader.xtm into mio.xtm
+* Added XTM21Handler which translates MIO events into XTM 2.1
 
 
 0.1.6 - 2009-11-29
