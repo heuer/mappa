@@ -169,7 +169,7 @@ def _handle_topic(handler, prefixes, dct, version=1.0):
 
 
 def _get_type(prefixes, dct, default=None):
-    type_ = dct.get(u'type', None)
+    type_ = dct.get(u'type')
     if not type_:
         if default:
             return default
@@ -219,7 +219,7 @@ def _handle_association(handler, prefixes, dct):
 
 
 def _start_parent(handler, prefixes, dct):
-    parent = dct.get(u'parent', _EMPTY)
+    parent = dct.get(u'parent')
     if parent:
         handler.startTopic(_resolve_topicref(prefixes, parent[0]))
         for kind, iri in (_resolve_topicref(prefixes, iri) for iri in parent[1:]):
