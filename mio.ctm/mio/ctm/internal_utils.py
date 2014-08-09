@@ -43,7 +43,7 @@ def as_string_literal(lit):
     it with the correct xsd:string URI.
     """
     kind, val = lit
-    if not kind == consts.STRING:
+    if kind != consts.STRING:
         raise mio.MIOException('Expected a string literal, got: "(%s, %s)"' % (kind, val))
     return val, XSD.string
 
@@ -60,6 +60,6 @@ def handle_identity(handler, ctx, identity):
         A tuple (VARIABLE, name)
     """
     kind, iri = ctx.get_topic_reference(identity)
-    if not kind == consts.IRI:
+    if kind != consts.IRI:
         raise mio.MIOException('Expected an IRI, got: (%s, %s)' % (kind, iri))
     handler.subjectIdentifier(iri)

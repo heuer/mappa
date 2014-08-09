@@ -233,7 +233,6 @@ class Environment(object):
         ctx, self._tpl_context = self._tpl_context, self._tpl_context.parent
         ctx.parent = None
     
-    #pylint: disable-msg=W0212
     maphandler = property(lambda self: self._maphandler)
     subordinate = property(lambda self: self._subordinate)
 
