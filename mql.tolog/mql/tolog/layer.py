@@ -12,6 +12,8 @@
 :organization: Semagia - <http://www.semagia.com/>
 :license:      BSD License
 """
+from __future__ import absolute_import
+from abc import abstractmethod, ABCMeta
 from tm import ANY, mql
 from itertools import chain
 
@@ -20,6 +22,9 @@ class TopicMapLayer(object):
     """\
 
     """
+    __metaclass__ = ABCMeta
+
+    @abstractmethod
     def get_topic_by_subject_identifier(self, sid):
         """\
         Returns a topic by its subject identifier or ``None`` if no topic
@@ -29,6 +34,7 @@ class TopicMapLayer(object):
             An IRI.
         """
 
+    @abstractmethod
     def get_topic_by_subject_locator(self, slo):
         """\
         Returns a topic by its subject locator or ``None`` if no topic
@@ -49,6 +55,7 @@ class TopicMapLayer(object):
         obj = self.get_construct_by_item_identifier(iid)
         return obj if self.is_topic(obj) else None
 
+    @abstractmethod
     def get_construct_by_item_identifier(self, iid):
         """\
 
@@ -120,6 +127,7 @@ class TopicMapLayer(object):
         obj = self.get_construct_by_item_identifier(iid)
         return obj if self.is_variant(obj) else None
 
+    @abstractmethod
     def get_construct_by_id(self, tmc_id):
         """\
         Returns a Topic Maps construct by its unique identifier.
@@ -129,6 +137,7 @@ class TopicMapLayer(object):
         """
         #TODO: Remove/deprecate this or move it to a TologLayer
 
+    @abstractmethod
     def get_construct_id(self, tmc):
         """\
         Returns an internal, unique identifier for the provided Topic Maps
@@ -139,6 +148,7 @@ class TopicMapLayer(object):
         """
         #TODO: Remove/deprecate this or move it to a TologLayer
 
+    @abstractmethod
     def get_parent(self, tmc):
         """\
         Returns the parent of the provided Topic Maps construct.
@@ -158,11 +168,13 @@ class TopicMapLayer(object):
             return chain(self.get_topics(types=types), self.get_associations(types=types))
         raise mql.InvalidQueryError()  #TODO: Msg.
 
+    @abstractmethod
     def get_topicmap(self):
         """\
         Returns the underlying topic map, never ``None``.
         """
 
+    @abstractmethod
     def get_topics(self, types=ANY):
         """\
         Returns an iterable of topics.
@@ -171,6 +183,7 @@ class TopicMapLayer(object):
             An iterable of topics or ``ANY`` if the type is unconstrained.
         """
 
+    @abstractmethod
     def get_associations(self, types=ANY, scope=ANY):
         """\
         Returns an iterable of associations.
@@ -181,6 +194,7 @@ class TopicMapLayer(object):
             An iterable of topics or ``ANY`` if the scope is unconstrained.
         """
 
+    @abstractmethod
     def get_occurrences(self, topic, types=ANY, scope=ANY):
         """\
         Returns an iterable of occurrences of the provided topic.
@@ -193,6 +207,7 @@ class TopicMapLayer(object):
             An iterable of topics or ``ANY`` if the scope is unconstrained.
         """
 
+    @abstractmethod
     def get_names(self, topic, types=ANY, scope=ANY):
         """\
         Returns an iterable of names of the provided topic.
@@ -205,6 +220,7 @@ class TopicMapLayer(object):
             An iterable of topics or ``ANY`` if the scope is unconstrained.
         """
 
+    @abstractmethod
     def get_variants(self, name, scope=ANY):
         """\
 
@@ -225,6 +241,7 @@ class TopicMapLayer(object):
         """
         return chain(self.get_occurrences(topic, types, scope), self.get_names(topic, types, scope))
 
+    @abstractmethod
     def get_roles_played(self, topic, types=ANY):
         """\
         Returns an iterable of roles which the `topic` plays.
@@ -235,6 +252,7 @@ class TopicMapLayer(object):
             An iterable of topics or ``ANY`` if the type is unconstrained.
         """
 
+    @abstractmethod
     def get_subject_identifiers(self, topic):
         """\
         Returns an iterable of subject identifiers of the `topic`.
@@ -243,6 +261,7 @@ class TopicMapLayer(object):
             The context topic.
         """
 
+    @abstractmethod
     def get_subject_locators(self, topic):
         """\
         Returns an iterable of subject locators of the `topic`.
@@ -251,6 +270,7 @@ class TopicMapLayer(object):
             The context topic.
         """
 
+    @abstractmethod
     def get_item_identifiers(self, tmc):
         """\
         Returns an iterable of item identifiers of `tmc`.
@@ -259,6 +279,7 @@ class TopicMapLayer(object):
             The context Topic Maps construct.
         """
 
+    @abstractmethod
     def get_roles(self, assoc, types=ANY):
         """\
         Returns an iterable of roles from the provided association.
@@ -269,58 +290,69 @@ class TopicMapLayer(object):
             An iterable of topics or ``ANY`` if the type is unconstrained.
         """
 
+    @abstractmethod
     def get_reifier(self, reified):
         """\
         Returns the reifier of `reified` or ``None``.
         """
 
+    @abstractmethod
     def get_reified(self, reifier):
         """\
         Returns the reified Topic Maps construct of `reifier` or ``None``.
         """
 
+    @abstractmethod
     def get_names_by_value(self, value):
         """\
         Return an iterable of names which have the provided value.
         """
-    
+
+    @abstractmethod
     def get_occurrences_by_value(self, value, datatype):
         """\
         Returns an iterable of occurrences which have the provided value/datatype.
         """
-        
+
+    @abstractmethod
     def get_variants_by_value(self, value, datatype):
         """\
         Returns an iterable of variants which have the provided value/datatype.
         """
 
+    @abstractmethod
     def get_topic_direct_types(self):
         """\
         Returns an iterable of topic which play the ``type`` role within 
         a type-instance association.
         """
 
+    @abstractmethod
     def get_topic_types(self):
         """\
         Returns an iterable of topics which play the ``type`` role within
         a type-instance association and their supertypes.
         """
 
+    @abstractmethod
     def get_association_types(self):
         """\
         Returns an iterable of association types.
         """
 
+    @abstractmethod
     def get_role_types(self):
         """\
         Returns an iterable of role types.
         """
 
+    @abstractmethod
     def get_occurrence_types(self):
         """\
         Returns an iterable of occurrence types.
         """
 
+    @abstractmethod
     def get_name_types(self):
         """\
         Returns an iterable of name types.
@@ -332,41 +364,49 @@ class TopicMapLayer(object):
         """
         return self.get_parent(child) == parent
 
+    @abstractmethod
     def is_instance_of(self, instance, type, scope=ANY):
         """\
         Returns if `instance` is an instance of `type`.
         """
 
+    @abstractmethod
     def is_topicmap(self, obj):
         """\
         Indicates if the provided object is a topic map.
         """
 
+    @abstractmethod
     def is_topic(self, obj):
         """\
         Indicates if the provided object is a topic.
         """
 
+    @abstractmethod
     def is_association(self, obj):
         """\
         Indicates if the provided object is an association.
         """
 
+    @abstractmethod
     def is_role(self, obj):
         """"\
         Indicates if the provided object is a role.
         """
 
+    @abstractmethod
     def is_occurrence(self, obj):
         """\
         Indicates if the provided object is an occurrences.
         """
 
+    @abstractmethod
     def is_name(self, obj):
         """\
         Indicates if the provided object is a name.
         """
 
+    @abstractmethod
     def is_variant(self, obj):
         """\
         Indicates if the provided object is a variant.
