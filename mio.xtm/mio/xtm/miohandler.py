@@ -63,8 +63,8 @@ class XTM21Handler(mio_handler.HamsterMapHandler):
             Indicates if the XML should be prettified or written in one line (default)
             (ignored iff `writer` is provided)
 
-        >>> from StringIO import StringIO
-        >>> out = StringIO()
+        >>> import io
+        >>> out = io.BytesIO()
         >>> handler = XTM21Handler(out)
         >>> handler.prettify
         False
@@ -73,8 +73,8 @@ class XTM21Handler(mio_handler.HamsterMapHandler):
         >>> handler.endTopic()
         >>> handler.endTopicMap()
         >>> out.getvalue()
-        '<?xml version="1.0" encoding="utf-8" standalone="yes"?>\\n<topicMap xmlns="http://www.topicmaps.org/xtm/" version="2.1"><topic><subjectIdentifier href="http://psi.example.org/something"/></topic></topicMap>\\n'
-        >>> out = StringIO()
+        u'<?xml version="1.0" encoding="utf-8" standalone="yes"?>\\n<topicMap xmlns="http://www.topicmaps.org/xtm/" version="2.1"><topic><subjectIdentifier href="http://psi.example.org/something"/></topic></topicMap>\\n'
+        >>> out = io.BytesIO()
         >>> handler = XTM21Handler(out, prettify=True)
         >>> handler.startTopicMap()
         >>> handler.startTopic((SUBJECT_IDENTIFIER, 'http://psi.example.org/something'))
