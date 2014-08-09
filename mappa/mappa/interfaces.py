@@ -25,7 +25,6 @@ These interfaces exist for documentation purposes.
 from tm.proto import Interface, Attribute
 from mappa import UCS, ANY
 
-# pylint: disable-msg=E0213, E0211, W0622
 
 class IConnection(Interface):
     """\
@@ -221,12 +220,14 @@ class IConnection(Interface):
     This attribute is read-only.
     """)
 
+
 class IItem(Interface):
     """\
     The smallest entity in the Mappa world. 
     
     This interface has no meaning for the end user.
     """
+
 
 class IConstruct(IItem):
     """\
@@ -309,6 +310,7 @@ class IConstruct(IItem):
     """
     )
 
+
 class IReifiable(IConstruct):
     """\
     Interface for all reifiable Topic Maps constructs (all constructs which
@@ -324,6 +326,7 @@ class IReifiable(IConstruct):
     """
     )
 
+
 class ITyped(IConstruct):
     """\
     Interface for all typed Topic Maps constructs (association, role,
@@ -337,6 +340,7 @@ class ITyped(IConstruct):
     The type is never ``None`` and cannot be set to ``None``.
     """
     )
+
 
 class IScoped(IConstruct):
     """\
@@ -352,6 +356,7 @@ class IScoped(IConstruct):
     It is allowed to set the scope to a single topic and to an iterable.
     """
     )
+
 
 class ITopicMap(IConstruct, IReifiable):
     """\
@@ -577,6 +582,7 @@ class ITopicMap(IConstruct, IReifiable):
     """
     )
 
+
 class ITopic(IConstruct):
     """\
     Represents a TMDM topic.
@@ -783,6 +789,7 @@ class ITopic(IConstruct):
     """
     )
 
+
 class IAssociation(IScoped, ITyped, IReifiable):
     """\
     Represents a TMDM association.
@@ -884,6 +891,7 @@ class IAssociation(IScoped, ITyped, IReifiable):
     """
     )
 
+
 class IRole(ITyped, IReifiable):
     """\
     Represents a TMDM association role.
@@ -898,6 +906,7 @@ class IRole(ITyped, IReifiable):
     Returns / sets the player.
     """
     )
+
 
 class IDatatyped(IScoped, IReifiable):
     """\
@@ -955,6 +964,7 @@ class IDatatyped(IScoped, IReifiable):
     """
     )
 
+
 class IOccurrence(IDatatyped, ITyped):
     """\
     Represents a TMDM occurrence.
@@ -965,6 +975,7 @@ class IOccurrence(IDatatyped, ITyped):
         """\
         Removes this occurrence from its parent.
         """
+
 
 class IName(IScoped, ITyped, IReifiable):
     """\
@@ -1002,6 +1013,7 @@ class IName(IScoped, ITyped, IReifiable):
     This attribute is read-only.
     """
     )
+
 
 class IVariant(IDatatyped):
     """\
