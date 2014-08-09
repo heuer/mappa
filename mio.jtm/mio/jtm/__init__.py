@@ -53,7 +53,7 @@ _IDENTITYPREFIX2MIO = {
 }
 
 
-def create_deserializer(version=None, **kw): # pylint: disable-msg=W0613
+def create_deserializer(version=None, **kw):
     return JTMDeserializer()
 
 
