@@ -17,8 +17,6 @@ from . import utils, consts
 from .lexer import tokens
 assert tokens
 
-# Disable unused 'p' warnings: pylint: disable-msg=W0613
-
 
 def unescape_string(s):
     try:
