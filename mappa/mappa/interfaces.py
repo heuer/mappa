@@ -555,6 +555,10 @@ class ITopicMap(IConstruct, IReifiable):
             An iterable of topics which should become the scope of the
             occurrence.
         """
+    def close():
+        """\
+        Closes this topic map instance.
+        """
     iri = Attribute("""\
     The storage address of this topic map.
     
@@ -726,10 +730,6 @@ class ITopic(IConstruct):
         Returns names or occurrences with the specified type.
         
         
-        """
-    def close():
-        """\
-        Closes this topic map instance.
         """
     types = Attribute("""\
     Returns the types of this topic.
