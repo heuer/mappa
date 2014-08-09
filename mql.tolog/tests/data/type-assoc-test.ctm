@@ -1,0 +1,3 @@
+musician(musician: john)
+
+member-of(member: john, group: the-beatles)
