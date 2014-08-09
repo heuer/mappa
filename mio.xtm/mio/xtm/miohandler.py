@@ -90,7 +90,8 @@ class XTM21Handler(mio_handler.HamsterMapHandler):
         # Optional properties
         self.title = None
         self.author = None
-        self.date = None
+        self.creation_date = None
+        self.modification_date = None
         self.license = None
         self.comment = None
 
@@ -229,8 +230,10 @@ class XTM21Handler(mio_handler.HamsterMapHandler):
             append(u'\n')
         if self.author:
             append(u'Author:    %s' % self.author)
-        if self.date:
-            append(u'Date:      %s' % self.date)
+        if self.creation_date:
+            append(u'Created:   %s' % self.creation_date)
+        if self.modification_date:
+            append(u'Modified:  %s' % self.modification_date)
         if self.license:
             append(u'License:   %s' % self.license)
         if self.comment:
