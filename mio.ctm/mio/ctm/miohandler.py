@@ -307,10 +307,10 @@ class CTMHandler(mio_handler.HamsterMapHandler):
         if self._pending_prefix_iris:
             self._out.write(_NL)
         while self._pending_prefix_iris:
-            self._prefix_counter+=1
+            self._prefix_counter += 1
             prefix = u'ns%d' % self._prefix_counter
             while prefix in self._prefixes:
-                self._prefix_counter+=1
+                self._prefix_counter += 1
                 prefix = u'ns%d' % self._prefix_counter
             self.add_prefix(prefix, self._pending_prefix_iris.pop())
 

@@ -63,30 +63,30 @@ _IDENT_PART = ur'%s|[\-0-9]|[\u00B7]|[\u0300-\u036F]|[\u203F-\u2040]' % _IDENT_S
 # Identifier
 _IDENT = ur'(%s)+(\.*(%s))*' % (_IDENT_START, _IDENT_PART)
 
-_DATE = r'\-?(000[1-9]|00[1-9][0-9]|0[1-9][0-9][0-9]|[1-9][0-9][0-9][0-9]+)\-(0[1-9]|1[0-2])\-(0[1-9]|1[0-9]|2[0-9]|3[0-1])'
+_DATE = ur'\-?(000[1-9]|00[1-9][0-9]|0[1-9][0-9][0-9]|[1-9][0-9][0-9][0-9]+)\-(0[1-9]|1[0-2])\-(0[1-9]|1[0-9]|2[0-9]|3[0-1])'
 # Timezone
-_TZ = r'Z|((\+|\-)[0-9]{2}:[0-9]{2})'
+_TZ = ur'Z|((\+|\-)[0-9]{2}:[0-9]{2})'
 # Time
-_TIME = r'[0-9]{2}:[0-9]{2}:[0-9]{2}(\.[0-9]+)?(%s)?' % _TZ
+_TIME = ur'[0-9]{2}:[0-9]{2}:[0-9]{2}(\.[0-9]+)?(%s)?' % _TZ
 
-VARIABLE = r'(\$%s)' % _IDENT
+VARIABLE = ur'(\$%s)' % _IDENT
 
-t_WILDCARD = r'\?'
-t_LPAREN = r'\('
-t_RPAREN = r'\)'
-t_LBRACK = r'\['
-t_RBRACK = r'\]'
-t_COMMA = r','
-t_SEMI = r';'
-t_COLON = r':'
-t_DOT = r'\.'
-t_DOUBLE_CIRCUMFLEX = r'\^\^'
-t_EQ  = r'='
-t_CIRCUMFLEX = r'\^'
-t_TILDE = r'~'
-t_HYPHEN = '-'
-t_AT = r'@'
-t_STAR = r'\*'
+t_WILDCARD = ur'\?'
+t_LPAREN = ur'\('
+t_RPAREN = ur'\)'
+t_LBRACK = ur'\['
+t_RBRACK = ur'\]'
+t_COMMA = ur','
+t_SEMI = ur';'
+t_COLON = ur':'
+t_DOT = ur'\.'
+t_DOUBLE_CIRCUMFLEX = ur'\^\^'
+t_EQ = ur'='
+t_CIRCUMFLEX = ur'\^'
+t_TILDE = ur'~'
+t_HYPHEN = ur'-'
+t_AT = ur'@'
+t_STAR = ur'\*'
 
 
 states = (
@@ -97,50 +97,60 @@ states = (
 def t_error(t):
     raise MIOException('Unexpected token "%r"' % t)
 
+
 def t_mlcomment(t):
-    r'\#\('
+    ur'\#\('
     t.lexer.comment_level = 1
     t.lexer.begin('mlcomment')
 
+
 def t_mlcomment_content(t):
-    r'[^#\(\)]+'
+    ur'[^#\(\)]+'
     t.lexer.lineno += t.value.count('\n')
 
+
 def t_mlcomment_start(t):
-    r'\#\('
+    ur'\#\('
     t.lexer.comment_level += 1
 
+
 def t_mlcomment_end(t):
-    r'\)\#'
+    ur'\)\#'
     t.lexer.comment_level -= 1
     if t.lexer.comment_level == 0:
         t.lexer.begin('INITIAL')
 
+
 def t_mlcomment_content2(t):
-    r'\#|\(|\)'
+    ur'\#|\(|\)'
 
 def t_mlcomment_error(t):
     raise MIOException('Unexpected token "%r"' % t)
 
+
 def t_comment(t):
-    r'\#[^\r\n]*'
+    ur'\#[^\r\n]*'
+
 
 def t_ws(t):
-    r'\s+'
+    ur'\s+'
     t.lexer.lineno += t.value.count('\n')
 
+
 def t_IRI(t):
-    r'[a-zA-Z]+[a-zA-Z0-9\+\-\.]*://([;\.\)]*[^\s;\]\.\(\)]+)+'
+    ur'[a-zA-Z]+[a-zA-Z0-9\+\-\.]*://([;\.\)]*[^\s;\]\.\(\)]+)+'
     return t
 
+
 def t_iri2(t):
-    '<[^<>\"\{\}\`\\ ]+>'
+    u'<[^<>\"\{\}\`\\ ]+>'
     t.value = t.value[1:-1]
     t.type = 'IRI'
     return t
 
+
 def t_directive(t):
-    r'%[a-z]+'
+    ur'%[a-z]+'
     directive = _DIRECTIVES.get(t.value)
     if not directive:
         raise MIOException('Unknown directive %s' % t.value)
@@ -167,7 +177,7 @@ def t_NAMED_WILDCARD(t):
     t.value = t.value[1:]
     return t
 
-@TOKEN(r'%sT%s' % (_DATE, _TIME))
+@TOKEN(ur'%sT%s' % (_DATE, _TIME))
 def t_DATE_TIME(t):
     return t
 
@@ -175,23 +185,27 @@ def t_DATE_TIME(t):
 def t_DATE(t):
     return t
 
+
 def t_DECIMAL(t):
-    r'(\-|\+)?([0-9]+\.[0-9]+|\.([0-9])+)'
+    ur'(\-|\+)?([0-9]+\.[0-9]+|\.([0-9])+)'
     return t
+
 
 def t_INTEGER(t):
-    r'(\-|\+)?[0-9]+'
+    ur'(\-|\+)?[0-9]+'
     return t
 
+
 def t_triple_string(t):
-    r'"{3}([^"\\]|(\\[\\"rntuU])|"|"")*"{3}'
+    ur'"{3}([^"\\]|(\\[\\"rntuU])|"|"")*"{3}'
     t.value = t.value[3:-3]
     t.type = 'STRING'
     t.lexer.lineno += t.value.count('\n')
     return t
 
+
 def t_STRING(t):
-    r'"([^"\\]|(\\[\\"rntuU]))*"'
+    ur'"([^"\\]|(\\[\\"rntuU]))*"'
     t.value = t.value[1:-1]
     t.lexer.lineno += t.value.count('\n')
     return t
