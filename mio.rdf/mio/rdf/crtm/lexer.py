@@ -36,17 +36,27 @@ _KEYWORDS_MAPPING = {
     u'occurrence': u'KW_OCC', u'occ': u'KW_OCC', u'name': u'KW_NAME',
     u'association': u'KW_ASSOC', u'assoc': u'KW_ASSOC',
 }
+# Start of an identifier
+_IDENT_START = ur'[a-zA-Z_]' \
+               ur'|[\u00C0-\u00D6]|[\u00D8-\u00F6]' \
+               ur'|[\u00F8-\u02FF]|[\u0370-\u037D]' \
+               ur'|[\u037F-\u1FFF]|[\u200C-\u200D]' \
+               ur'|[\u2070-\u218F]|[\u2C00-\u2FEF]' \
+               ur'|[\u3001-\uD7FF]|[\uF900-\uFDCF]' \
+               ur'|[\uFDF0-\uFFFD]'
 
-_ident_start = ur'[a-zA-Z_]|[\u00C0-\u00D6]|[\u00D8-\u00F6]' + \
-               ur'|[\u00F8-\u02FF]|[\u0370-\u037D]' + \
-               ur'|[\u037F-\u1FFF]|[\u200C-\u200D]' + \
-               ur'|[\u2070-\u218F]|[\u2C00-\u2FEF]' + \
-               ur'|[\u3001-\uD7FF]|[\uF900-\uFDCF]|[\uFDF0-\uFFFD]'
-_ident_char = ur'%s|[\-0-9]|\u00B7|[\u0300-\u036F]|[\u203F-\u2040]' % _ident_start
-_ident = ur'(%s)+(\.*(%s))*' % (_ident_start, _ident_char)
-_local_part = ur'([0-9]+(\.*(%s))*)' % _ident_char
-_qname = ur'(%s):((%s)|(%s))' % (_ident, _local_part, _ident)
-_iri = ur'<[^<>\"\{\}\`\\ ]+>'
+import sys
+if not sys.maxunicode == 0xffff:
+    # <http://bugs.python.org/issue12729>, <http://bugs.python.org/issue12749>,
+    # <http://bugs.python.org/issue3665>
+    _IDENT_START += ur'|[\U00010000-\U000EFFFF]'
+del sys
+
+_IDENT_PART = ur'%s|[\-0-9]|[\u00B7]|[\u0300-\u036F]|[\u203F-\u2040]' % _IDENT_START
+
+# Identifier
+_IDENT = ur'(%s)+(\.*(%s))*' % (_IDENT_START, _IDENT_PART)
+_LOCAL_PART = ur'([0-9]+(\.*(%s))*)' % _IDENT_PART
 
 
 tokens = tuple(_DIRECTIVES.values()) + tuple(_KEYWORDS.values()) + tuple(set(_KEYWORDS_MAPPING.values())) + (
@@ -62,7 +72,7 @@ t_RPAREN = ur'\)'
 t_LCURLY = ur'{'
 t_RCURLY = ur'}'
 t_COMMA = ur','
-t_HYPHEN = u'-'
+t_HYPHEN = ur'-'
 t_AT = ur'@'
 t_lang_EQ = ur'='
 
@@ -108,24 +118,24 @@ def t_directive(t):
     return t
 
 
-@TOKEN(_iri)
+@TOKEN(ur'<[^<>\"\{\}\`\\ ]+>')
 def t_IRI(t):
     t.value = t.value[1:-1]
     return t
 
 
-@TOKEN(_qname)
+@TOKEN(ur'%s:((%s)|%s)' % (_IDENT, _LOCAL_PART, _IDENT))
 def t_QNAME(t):
     t.value = tuple(t.value.split(u':'))
     return t
 
 
-@TOKEN(_ident)
+@TOKEN(_IDENT)
 def t_IDENT(t):
     return t
 
 
-@TOKEN(_local_part)
+@TOKEN(_LOCAL_PART)
 def t_LOCAL_IDENT(t):
     return t
 
