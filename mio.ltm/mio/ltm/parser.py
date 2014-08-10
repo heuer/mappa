@@ -186,23 +186,24 @@ def p_opt_slo(p):
                     | PERCENT STRING
     """
     if len(p) > 1:
-        slo = _context(p).resolve_iri(p[2])
-        _handler(p).subjectLocator(slo)
+        ctx = _context(p)
+        ctx.handler.subjectLocator(ctx.resolve_iri(p[2]))
 
 
 def p_sid(p):
     """\
     sid             : AT STRING
     """
-    context = _context(p)
-    context.handler.subjectIdentifier(context.resolve_iri(p[2]))
+    ctx = _context(p)
+    ctx.handler.subjectIdentifier(ctx.resolve_iri(p[2]))
 
 
 def p_name(p):
     """\
     name            : EQ STRING _start_name opt_sort_display opt_name_scope opt_reifier opt_variants
     """
-    handler = _handler(p)
+    ctx = _context(p)
+    handler = ctx.handler
     # Process display/sortname
     for v, t in p[4]:
         handler.startVariant()
@@ -211,7 +212,7 @@ def p_name(p):
         handler.endScope()
         handler.value(v, XSD.string)
         handler.endVariant()
-    _context(p).reifier(p[6])
+    ctx.reifier(p[6])
     handler.endName()
 
 
@@ -221,7 +222,7 @@ def p_start_name(p):
     """
     handler = _handler(p)
     handler.startName(_TOPICNAME)
-    handler.value(p[-1]) # -1 is a string
+    handler.value(p[-1])  # -1 is a string
 
 
 def p_opt_name_scope(p):
@@ -254,7 +255,7 @@ def p_sortname(p):
     """\
     sortname        : SEMI STRING
     """
-    # value, scope, reifier, iids
+    # value, scope
     p[0] = p[2], _SORT
 
 
@@ -262,7 +263,7 @@ def p_displayname(p):
     """\
     displayname     : SEMI STRING
     """
-    # value, scope, reifier, iids
+    # value, scope
     p[0] = p[2], _DISPLAY
 
 
@@ -270,14 +271,15 @@ def p_variant(p):
     """\
     variant         : LPAREN STRING SLASH tids opt_reifier RPAREN
     """
-    handler = _handler(p)
+    ctx = _context(p)
+    handler = ctx.handler
     handler.startVariant()
     handler.startScope()
     for theme in p[4]:
         handler.theme(theme)
     handler.endScope()
     handler.value(p[2], XSD.string)
-    _context(p).reifier(p[5])
+    ctx.reifier(p[5])
     handler.endVariant()
 
 
@@ -285,9 +287,10 @@ def p_assoc(p):
     """\
     assoc           : tid LPAREN _start_assoc roles RPAREN opt_scope opt_reifier
     """
-    handler = _handler(p)
+    ctx = _context(p)
+    handler = ctx.handler
     _process_scope(handler, p[6])
-    _context(p).reifier(p[7])
+    ctx.reifier(p[7])
     handler.endAssociation()
 
 
@@ -302,9 +305,9 @@ def p_role(p):
     """\
     role            : _start_role player opt_role_type opt_reifier
     """
-    handler = _handler(p)
-    _context(p).reifier(p[4])
-    handler.endRole()
+    ctx = _context(p)
+    ctx.reifier(p[4])
+    ctx.handler.endRole()
 
 
 def p_start_role(p):
@@ -340,12 +343,13 @@ def p_occ(p):
     """\
     occ             : LCURLY tid COMMA tid COMMA resource RCURLY opt_scope opt_reifier
     """
-    handler = _handler(p)
+    ctx = _context(p)
+    handler = ctx.handler
     handler.startTopic(p[2])
     handler.startOccurrence(p[4])
     handler.value(*p[6])
     _process_scope(handler, p[8])
-    _context(p).reifier(p[9])
+    ctx.reifier(p[9])
     handler.endOccurrence()
     handler.endTopic()
 
