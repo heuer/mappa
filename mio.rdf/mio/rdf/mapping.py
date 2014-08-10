@@ -92,7 +92,8 @@ class AbstractScopeTypeAwareMapper(AbstractMapper):
         type_ = self._type if self._type else mio.SUBJECT_IDENTIFIER, pred
         self._handle_type(handler, type_)
 
-    def _handle_type(self, handler, type):
+    @staticmethod
+    def _handle_type(handler, type):
         handler.startType()
         handler.topicRef(type)
         handler.endType()
@@ -235,7 +236,7 @@ class TypeInstanceScopedMapper(AbstractScopeTypeAwareMapper):
     def handle_object(self, handler, error_handler, subject, predicate_iri, obj, is_blank_node):
         handler.startAssociation()
         self.type(handler)
-        self.role(handler, _TYPE_INSTANCE_INSTANCE, subject);
+        self.role(handler, _TYPE_INSTANCE_INSTANCE, subject)
         self.role(handler, _TYPE_INSTANCE_TYPE, _reference_from_object_iri(obj, is_blank_node))
         self.process_scope(handler)
         handler.endAssociation()
@@ -251,7 +252,7 @@ class SupertypeSubtypeMapper(AbstractScopeTypeAwareMapper):
     def handle_object(self, handler, error_handler, subject, predicate_iri, obj, is_blank_node):
         handler.startAssociation()
         self.type(handler)
-        self.role(handler, _SUPERTYPE_SUBTYPE_SUBTYPE, subject);
+        self.role(handler, _SUPERTYPE_SUBTYPE_SUBTYPE, subject)
         self.role(handler, _SUPERTYPE_SUBTYPE_SUPERTYPE, _reference_from_object_iri(obj, is_blank_node))
         self.process_scope(handler)
         handler.endAssociation()
@@ -259,7 +260,8 @@ class SupertypeSubtypeMapper(AbstractScopeTypeAwareMapper):
 
 class IdentityMapper(AbstractMapper):
     """\
-    rtm:subject-identifier, rtm:subject-locator, and rtm:source-locator mapping implementation.
+    rtm:subject-identifier, rtm:subject-locator, and rtm:source-locator mapping
+    implementation.
     """
     def __new__(cls, kind):
         attr = '_the_instance_%s' % kind
