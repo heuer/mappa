@@ -6,10 +6,8 @@ Changes
 ------------------
 * Moved package from mio.reader.ctm to mio.ctm
 * Fixed CTM grammar
-* Moved to PLY >= 3.3
 * Fixed several CTM bugs
-* Added (experimental) mio.ctm.CTMHandler which translates MIO events 
-  into CTM syntax
+* Added (experimental) mio.ctm.CTMHandler which translates MIO events into CTM
 * Precompile PLY grammars
 * Require Python >= 2.6
 
