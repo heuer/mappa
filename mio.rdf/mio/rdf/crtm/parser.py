@@ -13,6 +13,7 @@ Compact RTM (CRTM) parser.
 :license:      BSD license
 """
 from tm import mio
+from tm.irilib import resolve_iri
 from .lexer import tokens
 assert tokens
 
@@ -26,6 +27,7 @@ class ParserContext(object):
         self._included_by = []
         self.global_lang2scope = False
         self._prefixes = {}
+        self.name = None
         self.reset()
 
     def reset(self):
@@ -34,10 +36,9 @@ class ParserContext(object):
         """
         self._subject_role = None
         self._object_role = None
-        self.lang2scope = False
-        self._next_predicate = None
+        self.lang2scope = None
+        self.next_predicate = None
         self.is_name = False
-        self.name = None
         self._predicates = []
         self._scope = []
         self._type = None
@@ -54,7 +55,7 @@ class ParserContext(object):
     def process_characteristic(self, handler):
         scope = self._scope
         type = self._type
-        lang2scope = self.lang2scope or self.global_lang2scope
+        lang2scope = self.lang2scope if self.lang2scope is not None else self.global_lang2scope
         if self.is_name:
             for predicate in self._predicates:
                 handler.handleName(predicate, scope, type, lang2scope)
@@ -63,22 +64,26 @@ class ParserContext(object):
                 handler.handleOccurrence(predicate, scope, type, lang2scope)
 
     def process_sids(self, handler):
-        pass
+        for predicate in self._predicates:
+            handler.handleSubjectIdentifier(predicate)
 
     def process_slos(self, handler):
-        pass
+        for predicate in self._predicates:
+            handler.handleSubjectLocator(predicate)
 
     def process_iids(self, handler):
-        pass
-
-    def add_predicate(self):
-        pass
+        for predicate in self._predicates:
+            handler.handleItemIdentifier(predicate)
 
     def process_type_instance(self, handler):
-        pass
+        scope = self._scope
+        for predicate in self._predicates:
+            handler.handleInstanceOf(predicate, scope)
 
     def process_supertype_subtype(self, handler):
-        pass
+        scope = self._scope
+        for predicate in self._predicates:
+            handler.handleSubtypeOf(predicate, scope)
 
     def register_prefix(self, ident, iri, listener):
         existing = self._prefixes.get(ident)
@@ -98,17 +103,23 @@ class ParserContext(object):
         existing_iri = self._prefixes.get(ident)
         if existing_iri and existing_iri != iri:
             cnt = 0
+            new_prefix = ident
             while existing_iri:
                 cnt += 1
-                ident += unicode(cnt)
-                existing_iri = self._prefixes.get(ident)
+                new_prefix = u'%s%d' % (ident, cnt)
+                existing_iri = self._prefixes.get(new_prefix)
+            ident = new_prefix
         self.register_prefix(ident, iri, listener)
+        self.name = ident
         
-    def resolve_qname(self, local):
-        pass
+    def resolve_qname(self, prefix, local):
+        iri = self._prefixes.get(prefix)
+        if iri is None:
+            raise mio.MIOException('Unknown prefix "%s"' % prefix)
+        return self.resolve_iri(iri + local)
 
     def resolve_iri(self, iri):
-        pass
+        return resolve_iri(self._base, iri)
 
     def _set_included_by(self, included_by):
         pass
@@ -220,7 +231,7 @@ def p__remember_predicates(p):
     """
     ctx = _ctx(p)
     predicates = p[-2]
-    next_pred = _parser(p)
+    next_pred = ctx.next_predicate
     if next_pred:
         predicates.append(next_pred)
     ctx.predicates = predicates
@@ -233,7 +244,7 @@ def p_local(p):
                 | IDENT
     """
     ctx = _ctx(p)
-    p[0] = ctx.resolve_qname(p[1])
+    p[0] = ctx.resolve_qname(ctx.name, p[1])
 
 
 def p_locals(p):
@@ -333,9 +344,16 @@ def p_type(p):
 
 def p_scoped_statement(p):
     """\
-    scoped_statement : IDENT LCURLY in_scope_statements RCURLY
+    scoped_statement : IDENT LCURLY _name_scoped_stmt in_scope_statements RCURLY
                      | IRI LCURLY _anon_prefix in_scope_statements RCURLY
     """
+
+
+def p__name_scoped_stmt(p):  # Inline action
+    """\
+    _name_scoped_stmt :
+    """
+    _ctx(p).name = p[-2]
 
 
 def p__anon_prefix(p):  # Inline action
@@ -356,7 +374,7 @@ def p_qiri_qname(p):
     """\
     qiri        : QNAME
     """
-    _ctx(p).resolve_qname(p[1])    
+    _ctx(p).resolve_qname(*p[1])
 
 
 def p_qiri_iri(p):
