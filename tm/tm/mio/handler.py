@@ -223,7 +223,7 @@ class MapHandler(object):
         Notification about the the start of ``type-instance`` relationships.
         
         After this event there may occurr at minimum one `topicRef` 
-        or one `startTopic` (with the correspondending `endTopic`
+        or one `startTopic` (with the correspondending `endTopic`)
         event.
         
         The reported topics after a `startIsa` event are meant as
