@@ -75,13 +75,11 @@ class ParserContext(object):
         for predicate in self._predicates:
             handler.handleItemIdentifier(predicate)
 
-    def process_type_instance(self, handler):
-        scope = self._scope
+    def process_type_instance(self, handler, scope):
         for predicate in self._predicates:
             handler.handleInstanceOf(predicate, scope)
 
-    def process_supertype_subtype(self, handler):
-        scope = self._scope
+    def process_supertype_subtype(self, handler, scope):
         for predicate in self._predicates:
             handler.handleSubtypeOf(predicate, scope)
 
@@ -156,8 +154,6 @@ def p_noop(p):  # Handles all grammar rules where the result is unimportant
                 | HYPHEN  _is_name opt_char_body
     opt_type    :
                 | type
-    opt_scope   :
-                | scope
     opt_char_body :
                 | char_body
     char_body   : type scope opt_lang _process_characteristic
@@ -284,14 +280,14 @@ def p_isa(p):
     """\
     isa         : KW_ISA opt_scope
     """
-    _ctx(p).process_type_instance(_handler(p))
+    _ctx(p).process_type_instance(_handler(p), p[2])
 
 
 def p_ako(p):
     """\
     ako         : KW_AKO opt_scope
     """
-    _ctx(p).process_supertype_subtype(_handler(p))
+    _ctx(p).process_supertype_subtype(_handler(p), p[2])
 
 
 def p_char_body_qiri(p):
@@ -363,25 +359,34 @@ def p__anon_prefix(p):  # Inline action
     _ctx(p).register_anonymous_prefix(p[-2], _prefix_listener(p))
 
 
+def p_opt_scope(p):
+    """\
+    opt_scope :
+              | scope
+    """
+    p[0] = p[2] if len(p) == 2 else None
+
+
 def p_scope(p):
     """\
     scope       : AT qiris
     """
     _ctx(p).scope = p[2]
+    p[0] = p[2]
 
 
 def p_qiri_qname(p):
     """\
     qiri        : QNAME
     """
-    _ctx(p).resolve_qname(*p[1])
+    p[0] = _ctx(p).resolve_qname(*p[1])
 
 
 def p_qiri_iri(p):
     """\
     qiri        : IRI
     """
-    _ctx(p).resolve_iri(p[1])
+    p[0] = _ctx(p).resolve_iri(p[1])
 
 
 def p_qiris(p):
