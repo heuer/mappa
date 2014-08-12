@@ -34,53 +34,53 @@ class ParserContext(object):
         """\
 
         """
-        self._subject_role = None
-        self._object_role = None
+        self.subject_role = None
+        self.object_role = None
         self.lang2scope = None
         self.next_predicate = None
         self.is_name = False
-        self._predicates = []
-        self._scope = []
-        self._type = None
+        self.predicates = []
+        self.scope = []
+        self.type = None
 
     def process_association(self, handler):
-        subject_role = self._subject_role
-        object_role = self._object_role
-        scope = self._scope
-        type = self._type
-        for predicate in self._predicates:
+        subject_role = self.subject_role
+        object_role = self.object_role
+        scope = self.scope
+        type = self.type
+        for predicate in self.predicates:
             handler.handleAssociation(predicate, subject_role, object_role,
                                       scope, type)
 
     def process_characteristic(self, handler):
-        scope = self._scope
-        type = self._type
+        scope = self.scope
+        type = self.type
         lang2scope = self.lang2scope if self.lang2scope is not None else self.global_lang2scope
         if self.is_name:
-            for predicate in self._predicates:
+            for predicate in self.predicates:
                 handler.handleName(predicate, scope, type, lang2scope)
         else:
-            for predicate in self._predicates:
+            for predicate in self.predicates:
                 handler.handleOccurrence(predicate, scope, type, lang2scope)
 
     def process_sids(self, handler):
-        for predicate in self._predicates:
+        for predicate in self.predicates:
             handler.handleSubjectIdentifier(predicate)
 
     def process_slos(self, handler):
-        for predicate in self._predicates:
+        for predicate in self.predicates:
             handler.handleSubjectLocator(predicate)
 
     def process_iids(self, handler):
-        for predicate in self._predicates:
+        for predicate in self.predicates:
             handler.handleItemIdentifier(predicate)
 
     def process_type_instance(self, handler, scope):
-        for predicate in self._predicates:
+        for predicate in self.predicates:
             handler.handleInstanceOf(predicate, scope)
 
     def process_supertype_subtype(self, handler, scope):
-        for predicate in self._predicates:
+        for predicate in self.predicates:
             handler.handleSubtypeOf(predicate, scope)
 
     def register_prefix(self, ident, iri, listener):
@@ -145,6 +145,8 @@ def p_noop(p):  # Handles all grammar rules where the result is unimportant
                 | ako
                 | identity
                 | association
+    scoped_statement : IDENT LCURLY _name_scoped_stmt in_scope_statements RCURLY
+                | IRI LCURLY _anon_prefix in_scope_statements RCURLY
     in_scope_statements : in_scope_statement
                 | in_scope_statements in_scope_statement
     in_scope_statement : locals COLON _remember_predicates statement_body
@@ -221,15 +223,15 @@ def p_prefix_directive(p):
     _ctx(p).register_prefix(p[2], p[3], _prefix_listener(p))
 
 
-def p__remember_predicates(p):
+def p__remember_predicates(p):  # Inline action
     """\
     _remember_predicates :
     """
     ctx = _ctx(p)
     predicates = p[-2]
-    next_pred = ctx.next_predicate
-    if next_pred:
-        predicates.append(next_pred)
+    pred = ctx.next_predicate
+    if pred:
+        predicates.append(pred)
     ctx.predicates = predicates
     ctx.reset()
 
@@ -328,7 +330,9 @@ def p_roles(p):
     """\
     roles       : LPAREN qiri COMMA qiri RPAREN
     """
-    p[0] = p[2], p[4]
+    ctx = _ctx(p)
+    ctx.subject_role = p[2]
+    ctx.object_role = p[4]
 
 
 def p_type(p):
@@ -336,13 +340,6 @@ def p_type(p):
     type        : qiri
     """
     _ctx(p).type = p[1]
-
-
-def p_scoped_statement(p):
-    """\
-    scoped_statement : IDENT LCURLY _name_scoped_stmt in_scope_statements RCURLY
-                     | IRI LCURLY _anon_prefix in_scope_statements RCURLY
-    """
 
 
 def p__name_scoped_stmt(p):  # Inline action
