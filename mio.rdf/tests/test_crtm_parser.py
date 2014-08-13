@@ -18,9 +18,8 @@ from mio.rdf.mapping import MappingHandler
 
 
 def mk_parser(handler=None):
-    base = u'http://mio.semagia.com/'
-    parser = make_parser(base, debug=True)
-    parser.handler = handler
+    base = u'http://mio.semagia.com/test'
+    parser = make_parser(base, handler=handler, debug=True)
     return parser
 
 
@@ -28,7 +27,10 @@ def parse(data):
     """\
 
     """
-    parser = mk_parser(handler=MappingHandler())
+    handler = MappingHandler()
+    parser = mk_parser(handler=handler)
+    ok_(parser.handler is not None)
+    ok_(not handler.mapping)
     parser.parse(data, lexer=make_lexer())
 
 
@@ -42,7 +44,9 @@ def test_make_parser():
 
 
 def test_accept():
-    data = [u'''%prefix ident <iri>''',
+    data = [u'''
+            ''',
+            u'''%prefix ident <iri>''',
             u'''%prefix ident <iri> ident:local: occ''',
             u'''%prefix ident <iri> ident:local: occurrence''',
             u'''%prefix ident <iri> ident:local: occ <bla:type>''',

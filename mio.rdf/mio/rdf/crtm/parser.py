@@ -28,6 +28,7 @@ class ParserContext(object):
         self.global_lang2scope = False
         self._prefixes = {}
         self.name = None
+        self.predicates = []
         self.reset()
 
     def reset(self):
@@ -39,7 +40,6 @@ class ParserContext(object):
         self.lang2scope = None
         self.next_predicate = None
         self.is_name = False
-        self.predicates = []
         self.scope = []
         self.type = None
 
@@ -130,6 +130,7 @@ def p_noop(p):  # Handles all grammar rules where the result is unimportant
     instance    : prolog body
                 | body
                 | prolog
+                |
     body        : statement
                 | scoped_statement
                 | body statement
@@ -156,11 +157,12 @@ def p_noop(p):  # Handles all grammar rules where the result is unimportant
                 | HYPHEN  _is_name opt_char_body
     opt_type    :
                 | type
-    opt_char_body :
+    opt_char_body : _process_characteristic
                 | char_body
     char_body   : type scope opt_lang _process_characteristic
                 | type opt_lang _process_characteristic
                 | scope opt_lang _process_characteristic
+                | qiri COMMA _char_body_qiri_comma
                 | qiri COLON _char_body_qiri statement_body
                 | IRI LCURLY _char_body_iri in_scope_statements RCURLY
 
@@ -168,12 +170,22 @@ def p_noop(p):  # Handles all grammar rules where the result is unimportant
     p[0] = None
 
 
+def p__char_body_qiri_comma(p):  # Inline action
+    """\
+    _char_body_qiri_comma :
+    """
+    ctx = _ctx(p)
+    ctx.process_characteristic(_handler(p))
+    ctx.reset()
+    ctx.next_predicate = p[-2]
+
+
 def p__char_body_qiri(p):  # Inline action
     """\
     _char_body_qiri :
     """
     ctx = _ctx(p)
-    ctx.process_characteristic()
+    ctx.process_characteristic(_handler(p))
     ctx.reset()
     ctx.predicates = [p[-2]]
 
@@ -183,7 +195,7 @@ def p__char_body_iri(p):  # Inline action
     _char_body_iri :
     """
     ctx = _ctx(p)
-    ctx.process_characteristic()
+    ctx.process_characteristic(_handler(p))
     ctx.reset()
     ctx.register_anonymous_prefix(p[-2], _prefix_listener(p))
 
@@ -292,16 +304,6 @@ def p_ako(p):
     _ctx(p).process_supertype_subtype(_handler(p), p[2])
 
 
-def p_char_body_qiri(p):
-    """\
-    char_body   : qiri COMMA
-    """
-    ctx = _ctx(p)
-    ctx.process_characteristic(_handler(p))
-    ctx.reset()
-    ctx.next_predicate = p[1]
-
-
 def p_opt_lang(p):
     """\
     opt_lang    :
@@ -398,23 +400,16 @@ def p_qiris(p):
         p[0].append(p[3])
 
 
-def _parser(p):
-    """\
-    
-    """
-    return p.parser
-
-
 def _handler(p):
-    return _parser(p).handler
+    return p.parser.handler
 
 
 def _ctx(p):
-    return _parser(p).context
+    return p.parser.context
 
 
 def _prefix_listener(p):
-    return _parser(p).prefix_listener
+    return p.parser.prefix_listener
 
 
 def p_error(p):

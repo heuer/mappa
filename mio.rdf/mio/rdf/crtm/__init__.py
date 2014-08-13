@@ -14,14 +14,14 @@
 """
 from __future__ import absolute_import
 from tm import plyutils
-from mio.rdf.crtm import parser as parser_mod, lexer as lexer_mod
+from . import parser as parser_mod, lexer as lexer_mod
 
 
-def _make_parser(base_iri, debug=False):
+def _make_parser(base_iri, handler=None, prefix_listener=None, debug=False):
     parser = plyutils.make_parser(parser_mod, debug=debug)
     parser.context = parser_mod.ParserContext(base_iri)
-    parser.handler = None
-    parser.prefix_listener = None
+    parser.handler = handler
+    parser.prefix_listener = prefix_listener
     return parser
 
 
