@@ -156,7 +156,7 @@ class IErrorHandler(Interface):
             The IRI of the datatype.
         """
 
-    def reject_nonliteral(name, obj_iri):
+    def reject_non_literal(name, obj_iri):
         """\
         
         `obj_iri`

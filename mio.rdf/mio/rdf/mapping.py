@@ -12,6 +12,7 @@
 :organization: Semagia - http://www.semagia.com/
 :license:      BSD license
 """
+import logging
 from tm import mio, XSD, TMDM
 
 __all__ = ['MappingHandler']
@@ -54,7 +55,7 @@ class AbstractMapper(object):
         """\
         Rejects an object
         """
-        error_handler.reject_nonliteral(self.name, obj)
+        error_handler.reject_non_literal(self.name, obj)
 
 
 class AbstractScopeTypeAwareMapper(AbstractMapper):
@@ -286,6 +287,31 @@ class IdentityMapper(AbstractMapper):
             else:
                 handler.itemIdentifier(obj)
 
+class DefaultErrorHandler(object):
+    """\
+    Default IErrorHandler implementation which logs errors and raises
+    exceptions (configurable)
+    """
+    def __init__(self, stop_on_error=True):
+        self._stop_on_error = stop_on_error
+
+    def reject_blank_node(self, name):
+        msg = u'The object of "%s" must not be a blank node' % name
+        logging.warn(msg)
+        if self._stop_on_error:
+            raise mio.MIOException(msg)
+
+    def reject_literal(self, name, value, datatype):
+        msg = u'The object of "%s" must not be a literal, got: "%s"^^<%s>' % (name, value, datatype)
+        logging.warn(msg)
+        if self._stop_on_error:
+            raise mio.MIOException(msg)
+
+    def reject_non_literal(self, name, obj):
+        msg = u'The object of "%s" must be a literal, got: <%s>' % (name, obj)
+        logging.warn(msg)
+        if self._stop_on_error:
+            raise mio.MIOException(msg)
 
 class MappingHandler(object):
     """\
