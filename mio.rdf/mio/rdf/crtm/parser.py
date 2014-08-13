@@ -47,21 +47,21 @@ class ParserContext(object):
         subject_role = self.subject_role
         object_role = self.object_role
         scope = self.scope
-        type = self.type
+        typ = self.type
         for predicate in self.predicates:
             handler.handleAssociation(predicate, subject_role, object_role,
-                                      scope, type)
+                                      scope, typ)
 
     def process_characteristic(self, handler):
         scope = self.scope
-        type = self.type
+        typ = self.type
         lang2scope = self.lang2scope if self.lang2scope is not None else self.global_lang2scope
         if self.is_name:
             for predicate in self.predicates:
-                handler.handleName(predicate, scope, type, lang2scope)
+                handler.handleName(predicate, scope, typ, lang2scope)
         else:
             for predicate in self.predicates:
-                handler.handleOccurrence(predicate, scope, type, lang2scope)
+                handler.handleOccurrence(predicate, scope, typ, lang2scope)
 
     def process_sids(self, handler):
         for predicate in self.predicates:

@@ -17,16 +17,18 @@ from mio.rdf.crtm import _make_parser as make_parser, _make_lexer as make_lexer
 from mio.rdf.mapping import MappingHandler
 
 
-def mk_parser():
+def mk_parser(handler=None):
     base = u'http://mio.semagia.com/'
-    return make_parser(base, debug=True)
+    parser = make_parser(base, debug=True)
+    parser.handler = handler
+    return parser
 
 
 def parse(data):
     """\
 
     """
-    parser = mk_parser()
+    parser = mk_parser(handler=MappingHandler())
     parser.parse(data, lexer=make_lexer())
 
 
