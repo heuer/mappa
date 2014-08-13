@@ -56,6 +56,9 @@ CTM = Syntax('CTM', ('application/x-tm+ctm', 'text/plain'), ('ctm', 'tmcl'))
 # Canonical XML Topic Maps (CXTM).
 CXTM = Syntax('CXTM', ('application/x-tm+cxtm', 'application/xml'), 'cxtm')
 
+# Compact RDF to Topic Maps mapping syntax (CRTM)
+CRTM = Syntax('CRTM', ('application/x-tm+crtm', 'text/plain'), 'crtm')
+
 # JSON Topic Maps (JTM).
 JTM = Syntax('JTM', ('application/x-tm+jtm', 'application/json'), 'jtm')
 
