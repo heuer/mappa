@@ -16,10 +16,10 @@ from __future__ import absolute_import
 import collections
 from rdflib import store as rdflibstore, graph as rdflibgraph
 from rdflib.parser import create_input_source as rdflib_create_input_source
-from mio.rdf import interfaces
 from tm.proto import implements
 from tm import mio, RDF2TM
 from tm.voc import RDF2TM as NS_RDF2TM
+from . import interfaces
 
 _ASSOC = 1
 _OCC = 2
@@ -43,17 +43,12 @@ class RDFMappingReader(rdflibstore.Store):
     def __init__(self, handler=None):
         super(RDFMappingReader, self).__init__(configuration=None, identifier=None)
         self.handler = handler
-        self.prefix_listener = None
         self._mappings = collections.defaultdict(_Mapping)
 
     def read(self, source):
         """\
         Implements ``IMappingReader.read()``.
         """
-        def as_rdflib_source(src):
-            if src.stream is not None:
-                return rdflib_create_input_source(file=src.stream, publicID=src.iri)
-            return rdflib_create_input_source(publicID=src.iri)
         graph = rdflibgraph.Graph(store=self)
         self.handler.start()
         graph.parse(as_rdflib_source(source))
@@ -83,9 +78,8 @@ class RDFMappingReader(rdflibstore.Store):
     # RDFLib Store implementations
     #
     def bind(self, prefix, namespace):
-        if self.prefix_listener:
-            self.prefix_listener.handleNamespace(prefix, namespace)
         super(RDFMappingReader, self).bind(prefix, namespace)
+        self.handler.handlePrefix(prefix, namespace)
 
     def add(self, (subject, predicate, obj), context, quoted=False):
         if not predicate.startswith(NS_RDF2TM):
@@ -122,3 +116,9 @@ class _Mapping(object):
         self.scope = []
         self.subj = None
         self.obj = None
+
+
+def as_rdflib_source(src):
+    if src.stream is not None:
+        return rdflib_create_input_source(file=src.stream, publicID=src.iri)
+    return rdflib_create_input_source(publicID=src.iri)
