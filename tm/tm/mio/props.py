@@ -45,6 +45,9 @@ rdf2tm_report_unhandled_statements = MIO_PROPS[u'rdf2tm-report-unhandled-stateme
 # Indicates if the translation process should be stopped if an error occurs.
 rdf2tm_stop_on_error = MIO_PROPS[u'rdf2tm-stop-on-error']
 
+# Indicates the language tag provider
+rdf2tm_language_provider = MIO_PROPS[u'rdf2tm-language-provider']
+
 # Indicates that the LTM deserializer should act in the legacy mode
 # if set to ``True``.
 ltm_legacy = MIO_PROPS[u'ltm-legacy']
