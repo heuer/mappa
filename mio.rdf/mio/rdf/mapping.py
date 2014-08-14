@@ -287,6 +287,7 @@ class IdentityMapper(AbstractMapper):
             else:
                 handler.itemIdentifier(obj)
 
+
 class DefaultErrorHandler(object):
     """\
     Default IErrorHandler implementation which logs errors and raises
@@ -312,6 +313,7 @@ class DefaultErrorHandler(object):
         logging.warn(msg)
         if self._stop_on_error:
             raise mio.MIOException(msg)
+
 
 class MappingHandler(object):
     """\

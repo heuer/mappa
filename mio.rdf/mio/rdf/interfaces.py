@@ -63,8 +63,7 @@ class IMapper(Interface):
 
 class IMappingHandler(Interface):
     """\
-    
-    
+    Handler to read / write RDF2TM mappings.
     """
     def start():
         """\
@@ -140,7 +139,6 @@ class IMappingReader(Interface):
         """
 
     handler = Attribute("Returns/sets the mapping handler")
-    prefix_listener = Attribute("Returns/sets the prefix listener")
 
 
 class IErrorHandler(Interface):

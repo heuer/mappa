@@ -83,15 +83,14 @@ class ParserContext(object):
         for predicate in self.predicates:
             handler.handleSubtypeOf(predicate, scope)
 
-    def register_prefix(self, ident, iri, listener):
+    def register_prefix(self, handler, ident, iri):
         existing = self._prefixes.get(ident)
         if existing and existing != iri:
             raise mio.MIOException(u'The prefix "%s" is already bound to <%s>"' % (ident, self._prefixes[ident]))
         self._prefixes[ident] = iri
-        if listener:
-            listener.handleNamespace(ident, iri)
+        handler.handlePrefix(ident, iri)
 
-    def register_anonymous_prefix(self, iri, listener):
+    def register_anonymous_prefix(self, handler, iri):
         ident = iri
         if ident.endswith(u'/') or ident.endswith(u'#'):
             ident = ident[:-1]
@@ -107,7 +106,7 @@ class ParserContext(object):
                 new_prefix = u'%s%d' % (ident, cnt)
                 existing_iri = self._prefixes.get(new_prefix)
             ident = new_prefix
-        self.register_prefix(ident, iri, listener)
+        self.register_prefix(handler, ident, iri)
         self.name = ident
         
     def resolve_qname(self, prefix, local):
@@ -197,7 +196,7 @@ def p__char_body_iri(p):  # Inline action
     ctx = _ctx(p)
     ctx.process_characteristic(_handler(p))
     ctx.reset()
-    ctx.register_anonymous_prefix(p[-2], _prefix_listener(p))
+    ctx.register_anonymous_prefix(_handler(p), p[-2])
 
 
 def p__process_characteristic(p):
@@ -232,7 +231,7 @@ def p_prefix_directive(p):
     """\
     prefix_directive : DIR_PREFIX IDENT IRI
     """
-    _ctx(p).register_prefix(p[2], p[3], _prefix_listener(p))
+    _ctx(p).register_prefix(_handler(p), p[2], p[3])
 
 
 def p__remember_predicates(p):  # Inline action
@@ -355,7 +354,7 @@ def p__anon_prefix(p):  # Inline action
     """\
     _anon_prefix :
     """
-    _ctx(p).register_anonymous_prefix(p[-2], _prefix_listener(p))
+    _ctx(p).register_anonymous_prefix(_handler(p), p[-2])
 
 
 def p_opt_scope(p):
@@ -406,10 +405,6 @@ def _handler(p):
 
 def _ctx(p):
     return p.parser.context
-
-
-def _prefix_listener(p):
-    return p.parser.prefix_listener
 
 
 def p_error(p):
