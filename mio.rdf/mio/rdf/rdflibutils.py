@@ -118,30 +118,33 @@ class RDFSourceReader(rdflibstore.Store):
         self.default_mapper = default_mapper
         self._mappings = {}
 
-    def resolve_uri(self, uri):
-        #TODO
-        pass
+    def resolve_uri(self, uri, is_bnode=None):
+        if is_bnode is None:
+            is_bnode = isinstance(uri, BNode)
+        if is_bnode:
+            return (mio.ITEM_IDENTIFIER, 'xxxx')
+        return (mio.SUBJECT_IDENTIFIER, 'xxxx')
 
     #
     # RDFLib Store implementations
     #
     def add(self, (subject, predicate, obj), context, quoted=False):
-        mapper = self._mappings.get(predicate)
-        if not mapper:
-            mapper = self.default_mapper
+        mapper = self._mappings.get(predicate, self.default_mapper)
         if not mapper:
             return
-        ident = self.resolve_uri(subject)
         handler = self.handler
-        handler.startTopic(ident)
+        subj = (mio.SUBJECT_IDENTIFIER, 'xxx')
+        if isinstance(subject, BNode):
+            pass #TODO
+        handler.startTopic(subj)
         if isinstance(obj, Literal):
-            mapper.handle_literal(handler, self.error_handler, subject,
+            mapper.handle_literal(handler, self.error_handler, subj,
                                   predicate, obj.value, obj.datatype,
                                   obj.language)
         else:
             is_bnode = isinstance(obj, BNode)
-            handler.handle_uri(handler, self.error_handler, subject,
-                                  predicate, self.resolve_uri(obj), is_bnode)
+            handler.handle_uri(handler, self.error_handler, subj, predicate,
+                               self.resolve_uri(obj, is_bnode), is_bnode)
         handler.endTopic()
 
 
