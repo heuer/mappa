@@ -6,7 +6,7 @@
 # BSD license.
 #
 """\
-
+RTM mapping related classes.
 
 :author:       Lars Heuer (heuer[at]semagia.com)
 :organization: Semagia - http://www.semagia.com/
@@ -29,6 +29,11 @@ def _reference_from_object_iri(iri, is_blank_node):
     """\
     Returns either an item identifier (iff the IRI is a blank node)
     or subject identifier.
+
+    `iri`
+        Unicode string representing an absolute IRI.
+    `is_blank_node`
+        Indicating if the IRI was built by an blank node.
     """
     return mio.ITEM_IDENTIFIER, iri if is_blank_node else mio.SUBJECT_IDENTIFIER, iri 
 

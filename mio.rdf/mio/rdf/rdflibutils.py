@@ -6,7 +6,8 @@
 # BSD license.
 #
 """\
-
+INTERNAL module which utilises RDFLib to parse RDF -> Topic Maps mappings
+and RDF sources.
 
 :author:       Lars Heuer (heuer[at]semagia.com)
 :organization: Semagia - http://www.semagia.com/
