@@ -14,6 +14,7 @@
 """
 from __future__ import absolute_import
 import collections
+from rdflib import BNode, Literal
 from rdflib import store as rdflibstore, graph as rdflibgraph
 from rdflib.parser import create_input_source as rdflib_create_input_source
 from tm.proto import implements
@@ -58,8 +59,7 @@ class RDFMappingReader(rdflibstore.Store):
 
     def _build_mapping(self):
         handler = self.handler
-        for predicate in self._mappings:
-            mapping = self._mappings[predicate]
+        for predicate, mapping in self._mappings.iteritems():
             if mapping.kind is _NAME:
                 handler.handleName(predicate, scope=mapping.scope,
                                    type=mapping.type)
@@ -105,6 +105,44 @@ class RDFMappingReader(rdflibstore.Store):
             self._mappings[subject].obj = obj
         else:
             raise mio.MIOException(u'Unknown predicate: <%s>' % predicate)
+
+
+class RDFSourceReader(rdflibstore.Store):
+    """\
+    RDF reader which translates RDF into MIO events.
+    """
+    def __init__(self, handler, error_handler, default_mapper=None):
+        super(RDFSourceReader, self).__init__(configuration=None, identifier=None)
+        self.handler = handler
+        self.error_handler = error_handler
+        self.default_mapper = default_mapper
+        self._mappings = {}
+
+    def resolve_uri(self, uri):
+        #TODO
+        pass
+
+    #
+    # RDFLib Store implementations
+    #
+    def add(self, (subject, predicate, obj), context, quoted=False):
+        mapper = self._mappings.get(predicate)
+        if not mapper:
+            mapper = self.default_mapper
+        if not mapper:
+            return
+        ident = self.resolve_uri(subject)
+        handler = self.handler
+        handler.startTopic(ident)
+        if isinstance(obj, Literal):
+            mapper.handle_literal(handler, self.error_handler, subject,
+                                  predicate, obj.value, obj.datatype,
+                                  obj.language)
+        else:
+            is_bnode = isinstance(obj, BNode)
+            handler.handle_uri(handler, self.error_handler, subject,
+                                  predicate, self.resolve_uri(obj), is_bnode)
+        handler.endTopic()
 
 
 class _Mapping(object):

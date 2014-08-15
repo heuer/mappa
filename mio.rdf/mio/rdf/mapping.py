@@ -51,7 +51,7 @@ class AbstractMapper(object):
         """
         error_handler.reject_literal(self.name, value, datatype)
 
-    def handle_object(self, handler, error_handler, subject, predicate_iri, obj, is_blank_node):
+    def handle_uri(self, handler, error_handler, subject, predicate_iri, obj, is_blank_node):
         """\
         Rejects an object
         """
@@ -156,7 +156,7 @@ class AssociationMapper(AbstractScopeTypeAwareMapper):
         self._subject_role = subject_role
         self._object_role = object_role
 
-    def handle_object(self, handler, error_handler, subject, predicate_iri, obj, is_blank_node):
+    def handle_uri(self, handler, error_handler, subject, predicate_iri, obj, is_blank_node):
         handler.startAssociation()
         self.type(handler, predicate_iri)
         self.role(handler, self._subject_role, subject)
@@ -183,7 +183,7 @@ class OccurrenceMapper(AbstractScopeTypeAwareMapper):
         self.process_scope(handler, language if self._lang2scope else None)
         handler.endOccurrence()
 
-    def handle_object(self, handler, error_handler, subject, predicate_iri, obj, is_blank_node):
+    def handle_uri(self, handler, error_handler, subject, predicate_iri, obj, is_blank_node):
         if is_blank_node:
             error_handler.reject_blank_node(self.name)
         else:
@@ -221,7 +221,7 @@ class TypeInstanceMapper(AbstractMapper):
     def __init__(self):
         super(TypeInstanceMapper, self).__init__(u'rtm:instance-of')
 
-    def handle_object(self, handler, error_handler, subject, predicate_iri, obj, is_blank_node):
+    def handle_uri(self, handler, error_handler, subject, predicate_iri, obj, is_blank_node):
         handler.startIsa()
         handler.topicRef(_reference_from_object_iri(obj, is_blank_node))
         handler.endIsa()
@@ -234,7 +234,7 @@ class TypeInstanceScopedMapper(AbstractScopeTypeAwareMapper):
     def __init__(self, scope):
         super(TypeInstanceScopedMapper, self).__init__(u'rtm:instance-of', scope=scope, type=_TYPE_INSTANCE)
 
-    def handle_object(self, handler, error_handler, subject, predicate_iri, obj, is_blank_node):
+    def handle_uri(self, handler, error_handler, subject, predicate_iri, obj, is_blank_node):
         handler.startAssociation()
         self.type(handler)
         self.role(handler, _TYPE_INSTANCE_INSTANCE, subject)
@@ -250,7 +250,7 @@ class SupertypeSubtypeMapper(AbstractScopeTypeAwareMapper):
     def __init__(self, scope):
         super(SupertypeSubtypeMapper, self).__init__(u'rtm:subtype-of', scope=scope, type=_SUPERTYPE_SUBTYPE)
 
-    def handle_object(self, handler, error_handler, subject, predicate_iri, obj, is_blank_node):
+    def handle_uri(self, handler, error_handler, subject, predicate_iri, obj, is_blank_node):
         handler.startAssociation()
         self.type(handler)
         self.role(handler, _SUPERTYPE_SUBTYPE_SUBTYPE, subject)
@@ -276,7 +276,7 @@ class IdentityMapper(AbstractMapper):
                                              or kind == mio.ITEM_IDENTIFIER and u'rtm:item-identifier')
         self._kind = kind
 
-    def handle_object(self, handler, error_handler, subject, predicate_iri, obj, is_blank_node):
+    def handle_uri(self, handler, error_handler, subject, predicate_iri, obj, is_blank_node):
         if is_blank_node:
             error_handler.reject_blank_node(self.name)
         else:

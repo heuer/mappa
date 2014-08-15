@@ -42,9 +42,9 @@ class IMapper(Interface):
             The literal's language or ``None``.
         """
 
-    def handle_object(handler, error_handler, subject, predicate, obj, is_blank_node):
+    def handle_uri(handler, error_handler, subject, predicate, obj, is_blank_node):
         """\
-        Handles a statement with an object.
+        Handles a statement with a URI.
 
         `handler`
             IMapHandler instance.
