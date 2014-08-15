@@ -19,6 +19,7 @@ from rdflib import store as rdflibstore, graph as rdflibgraph
 from rdflib.parser import create_input_source as rdflib_create_input_source
 from tm.proto import implements
 from tm import mio, RDF2TM
+from tm.irilib import resolve_iri
 from tm.voc import RDF2TM as NS_RDF2TM
 from . import interfaces
 
@@ -61,16 +62,14 @@ class RDFMappingReader(rdflibstore.Store):
         handler = self.handler
         for predicate, mapping in self._mappings.iteritems():
             if mapping.kind is _NAME:
-                handler.handleName(predicate, scope=mapping.scope,
-                                   type=mapping.type)
+                handler.handleName(predicate, mapping.scope, mapping.type)
             elif mapping.kind is _OCC:
-                handler.handleOccurrence(predicate, scope=mapping.scope,
-                                         type=mapping.type)
+                handler.handleOccurrence(predicate, mapping.scope, mapping.type)
             elif mapping.kind is _ISA:
-                handler.handleInstanceOf(predicate, scope=mapping.scope)
+                handler.handleInstanceOf(predicate, mapping.scope)
             elif mapping.kind is _ASSOC:
                 handler.handleAssociation(predicate, mapping.subj, mapping.obj,
-                                          scope=mapping.scope, type=mapping.type)
+                                          mapping.scope, mapping.type)
             else:
                 raise mio.MIOException(u'Invalid mapping for <%s>' % predicate)
 
@@ -81,7 +80,8 @@ class RDFMappingReader(rdflibstore.Store):
         super(RDFMappingReader, self).bind(prefix, namespace)
         self.handler.handlePrefix(prefix, namespace)
 
-    def add(self, (subject, predicate, obj), context, quoted=False):
+    def add(self, (s, p, o), context, quoted=False):
+        subject, predicate, obj = unicode(s), unicode(p), unicode(o)
         if not predicate.startswith(NS_RDF2TM):
             return
         if RDF2TM.maps_to == predicate:
@@ -117,34 +117,34 @@ class RDFSourceReader(rdflibstore.Store):
         self.error_handler = error_handler
         self.default_mapper = default_mapper
         self._mappings = {}
+        self._doc_iri = None
 
     def resolve_uri(self, uri, is_bnode=None):
+        u = unicode(uri)
         if is_bnode is None:
             is_bnode = isinstance(uri, BNode)
         if is_bnode:
-            return (mio.ITEM_IDENTIFIER, 'xxxx')
-        return (mio.SUBJECT_IDENTIFIER, 'xxxx')
+            return mio.ITEM_IDENTIFIER, resolve_iri(self._doc_iri, u'#' + u)
+        return mio.SUBJECT_IDENTIFIER, resolve_iri(self._doc_iri, u)
 
     #
     # RDFLib Store implementations
     #
-    def add(self, (subject, predicate, obj), context, quoted=False):
+    def add(self, (s, p, o), context, quoted=False):
+        predicate = unicode(p)
         mapper = self._mappings.get(predicate, self.default_mapper)
         if not mapper:
             return
         handler = self.handler
-        subj = (mio.SUBJECT_IDENTIFIER, 'xxx')
-        if isinstance(subject, BNode):
-            pass #TODO
+        subj = self.resolve_uri(s)
         handler.startTopic(subj)
-        if isinstance(obj, Literal):
-            mapper.handle_literal(handler, self.error_handler, subj,
-                                  predicate, obj.value, obj.datatype,
-                                  obj.language)
+        if isinstance(o, Literal):
+            mapper.handle_literal(handler, self.error_handler, subj, predicate,
+                                  o.value, o.datatype, o.language)
         else:
-            is_bnode = isinstance(obj, BNode)
+            is_bnode = isinstance(o, BNode)
             handler.handle_uri(handler, self.error_handler, subj, predicate,
-                               self.resolve_uri(obj, is_bnode), is_bnode)
+                               self.resolve_uri(o, is_bnode), is_bnode)
         handler.endTopic()
 
 
