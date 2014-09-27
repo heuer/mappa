@@ -118,15 +118,15 @@ class RDFSourceReader(rdflibstore.Store):
         self.error_handler = error_handler
         self.default_mapper = default_mapper
         self._mappings = {}
-        self._doc_iri = None
+        self._base_uri = None
 
     def resolve_uri(self, uri, is_bnode=None):
         u = unicode(uri)
         if is_bnode is None:
             is_bnode = isinstance(uri, BNode)
         if is_bnode:
-            return mio.ITEM_IDENTIFIER, resolve_iri(self._doc_iri, u'#' + u)
-        return mio.SUBJECT_IDENTIFIER, resolve_iri(self._doc_iri, u)
+            return mio.ITEM_IDENTIFIER, resolve_iri(self._base_uri, u'#' + u)
+        return mio.SUBJECT_IDENTIFIER, resolve_iri(self._base_uri, u)
 
     #
     # RDFLib Store implementations

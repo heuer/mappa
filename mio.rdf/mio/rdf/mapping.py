@@ -50,13 +50,15 @@ class AbstractMapper(object):
         """
         self.name = name
 
-    def handle_literal(self, handler, error_handler, subject, predicate_iri, value, datatype, language):
+    def handle_literal(self, handler, error_handler, subject, predicate_iri,
+                       value, datatype, language):
         """\
         Rejects the literal.
         """
         error_handler.reject_literal(self.name, value, datatype)
 
-    def handle_uri(self, handler, error_handler, subject, predicate_iri, obj, is_blank_node):
+    def handle_uri(self, handler, error_handler, subject, predicate_iri, obj,
+                   is_blank_node):
         """\
         Rejects an object
         """
@@ -153,7 +155,7 @@ class AssociationMapper(AbstractScopeTypeAwareMapper):
         """\
         
         """
-        super(AssociationMapper, self).__init__(u'rtm:association', scope=scope, type=type)
+        super(AssociationMapper, self).__init__(u'rtm:association', scope, type)
         if not subject_role:
             raise mio.MIOException('The subject role must be provided')
         if not object_role:
@@ -161,11 +163,13 @@ class AssociationMapper(AbstractScopeTypeAwareMapper):
         self._subject_role = subject_role
         self._object_role = object_role
 
-    def handle_uri(self, handler, error_handler, subject, predicate_iri, obj, is_blank_node):
+    def handle_uri(self, handler, error_handler, subject, predicate_iri, obj,
+                   is_blank_node):
         handler.startAssociation()
         self.type(handler, predicate_iri)
         self.role(handler, self._subject_role, subject)
-        self.role(handler, self._object_role, _reference_from_object_iri(obj, is_blank_node))
+        self.role(handler, self._object_role,
+                  _reference_from_object_iri(obj, is_blank_node))
         self.process_scope(handler)
         handler.endAssociation()
 
@@ -178,21 +182,24 @@ class OccurrenceMapper(AbstractScopeTypeAwareMapper):
         """\
 
         """
-        super(OccurrenceMapper, self).__init__(u'rtm:occurrence', scope=scope, type=type)
+        super(OccurrenceMapper, self).__init__(u'rtm:occurrence', scope, type)
         self._lang2scope = lang2scope
 
-    def handle_literal(self, handler, error_handler, subject, predicate_iri, value, datatype, language):
+    def handle_literal(self, handler, error_handler, subject, predicate_iri,
+                       value, datatype, language):
         handler.startOccurrence()
         self.type(handler, predicate_iri)
         handler.value(value, datatype)
         self.process_scope(handler, language if self._lang2scope else None)
         handler.endOccurrence()
 
-    def handle_uri(self, handler, error_handler, subject, predicate_iri, obj, is_blank_node):
+    def handle_uri(self, handler, error_handler, subject, predicate_iri, obj,
+                   is_blank_node):
         if is_blank_node:
             error_handler.reject_blank_node(self.name)
         else:
-            self.handle_literal(handler, error_handler, subject, predicate_iri, obj, XSD.anyURI, None)       
+            self.handle_literal(handler, error_handler, subject, predicate_iri,
+                                obj, XSD.anyURI, None)
 
 
 class NameMapper(AbstractScopeTypeAwareMapper):
@@ -203,10 +210,11 @@ class NameMapper(AbstractScopeTypeAwareMapper):
         """\
 
         """
-        super(NameMapper, self).__init__(u'rtm:basename', scope=scope, type=type)
+        super(NameMapper, self).__init__(u'rtm:basename', scope, type)
         self._lang2scope = lang2scope
 
-    def handle_literal(self, handler, error_handler, subject, predicate_iri, value, datatype, language):
+    def handle_literal(self, handler, error_handler, subject, predicate_iri,
+                       value, datatype, language):
         handler.startName()
         self.type(handler, predicate_iri)
         handler.value(value)
@@ -226,7 +234,8 @@ class TypeInstanceMapper(AbstractMapper):
     def __init__(self):
         super(TypeInstanceMapper, self).__init__(u'rtm:instance-of')
 
-    def handle_uri(self, handler, error_handler, subject, predicate_iri, obj, is_blank_node):
+    def handle_uri(self, handler, error_handler, subject, predicate_iri, obj,
+                   is_blank_node):
         handler.startIsa()
         handler.topicRef(_reference_from_object_iri(obj, is_blank_node))
         handler.endIsa()
@@ -237,13 +246,16 @@ class TypeInstanceScopedMapper(AbstractScopeTypeAwareMapper):
     rtm:instance-of implementation with an associated scope.
     """
     def __init__(self, scope):
-        super(TypeInstanceScopedMapper, self).__init__(u'rtm:instance-of', scope=scope, type=_TYPE_INSTANCE)
+        super(TypeInstanceScopedMapper, self).__init__(u'rtm:instance-of',
+                                                       scope, _TYPE_INSTANCE)
 
-    def handle_uri(self, handler, error_handler, subject, predicate_iri, obj, is_blank_node):
+    def handle_uri(self, handler, error_handler, subject, predicate_iri, obj,
+                   is_blank_node):
         handler.startAssociation()
         self.type(handler)
         self.role(handler, _TYPE_INSTANCE_INSTANCE, subject)
-        self.role(handler, _TYPE_INSTANCE_TYPE, _reference_from_object_iri(obj, is_blank_node))
+        self.role(handler, _TYPE_INSTANCE_TYPE,
+                  _reference_from_object_iri(obj, is_blank_node))
         self.process_scope(handler)
         handler.endAssociation()
 
@@ -253,13 +265,16 @@ class SupertypeSubtypeMapper(AbstractScopeTypeAwareMapper):
     rtm:subtype-of implementation with an optional scope.
     """
     def __init__(self, scope):
-        super(SupertypeSubtypeMapper, self).__init__(u'rtm:subtype-of', scope=scope, type=_SUPERTYPE_SUBTYPE)
+        super(SupertypeSubtypeMapper, self).__init__(u'rtm:subtype-of',
+                                                     scope, _SUPERTYPE_SUBTYPE)
 
-    def handle_uri(self, handler, error_handler, subject, predicate_iri, obj, is_blank_node):
+    def handle_uri(self, handler, error_handler, subject, predicate_iri, obj,
+                   is_blank_node):
         handler.startAssociation()
         self.type(handler)
         self.role(handler, _SUPERTYPE_SUBTYPE_SUBTYPE, subject)
-        self.role(handler, _SUPERTYPE_SUBTYPE_SUPERTYPE, _reference_from_object_iri(obj, is_blank_node))
+        self.role(handler, _SUPERTYPE_SUBTYPE_SUPERTYPE,
+                  _reference_from_object_iri(obj, is_blank_node))
         self.process_scope(handler)
         handler.endAssociation()
 
@@ -281,7 +296,8 @@ class IdentityMapper(AbstractMapper):
                                              or kind == mio.ITEM_IDENTIFIER and u'rtm:item-identifier')
         self._kind = kind
 
-    def handle_uri(self, handler, error_handler, subject, predicate_iri, obj, is_blank_node):
+    def handle_uri(self, handler, error_handler, subject, predicate_iri, obj,
+                   is_blank_node):
         if is_blank_node:
             error_handler.reject_blank_node(self.name)
         else:
@@ -340,24 +356,24 @@ class MappingHandler(object):
         pass
 
     def handleAssociation(self, predicate, subject_role, object_role, scope=None, type=None):
-        self.mapping[predicate] = AssociationMapper(subject_role=_sid(subject_role),
-                                                    object_role=_sid(object_role),
-                                                    scope=_sids(scope), type=_sid(type))
+        self.mapping[predicate] = AssociationMapper(_sid(subject_role),
+                                                    _sid(object_role),
+                                                    _sids(scope), _sid(type))
 
     def handleOccurrence(self, predicate, scope=None, type=None, lang2scope=False):
-        self.mapping[predicate] = OccurrenceMapper(scope=_sids(scope), type=_sid(type), lang2scope=lang2scope)
+        self.mapping[predicate] = OccurrenceMapper(_sids(scope), _sid(type), lang2scope)
 
     def handleName(self, predicate, scope=None, type=None, lang2scope=False):
-        self.mapping[predicate] = NameMapper(scope=_sids(scope), type=_sid(type), lang2scope=lang2scope)
+        self.mapping[predicate] = NameMapper(_sids(scope), _sid(type), lang2scope)
 
     def handleInstanceOf(self, predicate, scope=None):
         if not scope:
             self.mapping[predicate] = TypeInstanceMapper()
         else:
-            self.mapping[predicate] = TypeInstanceScopedMapper(scope=_sids(scope))
+            self.mapping[predicate] = TypeInstanceScopedMapper(_sids(scope))
 
     def handleSubtypeOf(self, predicate, scope=None):
-        self.mapping[predicate] = SupertypeSubtypeMapper(scope=_sids(scope))
+        self.mapping[predicate] = SupertypeSubtypeMapper(_sids(scope))
 
     def handleSubjectIdentifier(self, predicate):
         self.mapping[predicate] = IdentityMapper(mio.SUBJECT_IDENTIFIER)
@@ -379,4 +395,3 @@ def _sid(iri):
     if not iri:
         return None
     return mio.SUBJECT_IDENTIFIER, iri
-
